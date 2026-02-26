@@ -132,7 +132,7 @@ $products = [
                     @endif
                 </h5>
 
-                <h5 class="text-lg md:text-xl font-normal dark:text-white leading-[1.5]"><a href="{{ route('product-details', ['title' => Str::slug($item['title'])]) }}">{{ $item['title'] }}</a></h5>
+                <h5 class="text-lg md:text-xl font-normal dark:text-white leading-[1.5]"><a href="{{ route('product-details', ['slug' => Str::slug($item['title'])]) }}">{{ $item['title'] }}</a></h5>
             </div>
         </div>
     </div>

@@ -3,17 +3,17 @@ $reviews = [
     [
         'name' => 'Merlina Quexy', 
         'rate' => '( 125 )', 
-        'title' => "Furnixar's products have transformed my living space with their stylish designs and impeccable craftsmanship.", 
+        'title' => "PeytonGhalib's products have transformed my living space with their stylish designs and impeccable craftsmanship.", 
     ],
     [
         'name' => 'Merlina Quexy', 
         'rate' => '( 125 )', 
-        'title' => "Furnixar's products have transformed my living space with their stylish designs and impeccable craftsmanship.", 
+        'title' => "PeytonGhalib's products have transformed my living space with their stylish designs and impeccable craftsmanship.", 
     ],
     [
         'name' => 'Merlina Quexy', 
         'rate' => '( 125 )', 
-        'title' => "Furnixar's products have transformed my living space with their stylish designs and impeccable craftsmanship.", 
+        'title' => "PeytonGhalib's products have transformed my living space with their stylish designs and impeccable craftsmanship.", 
     ]
 ];
 @endphp

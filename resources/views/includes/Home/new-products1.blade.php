@@ -37,7 +37,7 @@ $products = [
 
 @foreach ($products as $item)
     <div class="relative overflow-hidden group">
-        <a href="{{ route('product-details', ['title' => Str::slug($item['title'])]) }}">
+        <a href="{{ route('product-details', ['slug' => Str::slug($item['title'])]) }}">
             <img class="w-full transform duration-300 group-hover:scale-110" src="{{ asset($item['img']) }}" alt="product-card">
         </a>
         
@@ -53,7 +53,7 @@ $products = [
             
             <div>
                 <h5 class="font-normal dark:text-white text-paragraph leading-[1.5] text-xl">
-                    <a href="{{ route('product-details', ['title' => Str::slug($item['title'])]) }}">
+                    <a href="{{ route('product-details', ['slug' => Str::slug($item['title'])]) }}">
                         {{ $item['title'] }}
                     </a>
                 </h5>

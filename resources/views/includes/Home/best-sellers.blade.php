@@ -50,7 +50,7 @@ $sellers = [
             <div class="absolute z-10 top-0 left-0 w-full h-full items-start justify-end flex flex-col p-7">
                 <div>
                     <h4 class="text-lg font-medium leading-none text-white transition-all group-hover:duration-100 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">{{ $item['price'] }}</h4>
-                    <h6 class="sm:text-xl font-normal text-white transition-all group-hover:duration-300 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 text-lg mt-3 md:mt-[15px] !leading-[1.5]"><a href="{{ route('product-details', ['title' => Str::slug($item['title'])]) }}">{{ $item['title'] }}</a></h6>
+                    <h6 class="sm:text-xl font-normal text-white transition-all group-hover:duration-300 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 text-lg mt-3 md:mt-[15px] !leading-[1.5]"><a href="{{ route('product-details', ['slug' => Str::slug($item['title'])]) }}">{{ $item['title'] }}</a></h6>
                     <ul class="flex items-center gap-2 mt-1 transition-all group-hover:duration-500 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
                         <li>
                             <svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">

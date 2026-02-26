@@ -2,13 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\Slider;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        return view('index');  
+        $sliders          = Slider::active()->get();
+        $featuredProducts = Product::where('is_active', true)->where('is_featured', true)->latest()->take(6)->get();
+        $newProducts      = Product::where('is_active', true)->latest()->take(4)->get();
+        $categories       = Category::where('is_active', true)->withCount('products')->get();
+        return view('index', compact('sliders', 'featuredProducts', 'newProducts', 'categories'));
     }
 
     public function indexV2()
@@ -103,22 +114,57 @@ class HomeController extends Controller
 
     public function myAccount()
     {
-        return view('my-account');  
+        $user   = Auth::user();
+        $orders = Order::where('user_id', $user->id)->with('items')->latest()->get();
+        return view('my-account', compact('user', 'orders'));
     }
 
     public function editAccount()
     {
-        return view('edit-account');  
+        $user = Auth::user();
+        return view('edit-account', compact('user'));
+    }
+
+    public function updateAccount(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name'                  => 'required|string|max:255',
+            'email'                 => 'required|email|unique:users,email,' . $user->id,
+            'current_password'      => 'nullable|string',
+            'password'              => 'nullable|string|min:6|confirmed',
+        ]);
+
+        $user->name  = $request->name;
+        $user->email = $request->email;
+
+        if ($request->filled('current_password')) {
+            if (!Hash::check($request->current_password, $user->password)) {
+                return back()->withErrors(['current_password' => 'Current password is incorrect.'])->withInput();
+            }
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return back()->with('success', 'Account updated successfully.');
     }
 
     public function orderHistory()
     {
-        return view('order-history');  
+        $user   = Auth::user();
+        $orders = Order::where('user_id', $user->id)->with('items')->latest()->get();
+        return view('order-history', compact('user', 'orders'));
     }
 
     public function wishlist()
     {
-        return view('wishlist');  
+        $wishlistItems = Wishlist::where('user_id', Auth::id())
+                                 ->with('product')
+                                 ->latest()
+                                 ->get();
+        return view('wishlist', compact('wishlistItems'));
     }
     
     public function login()
@@ -178,7 +224,13 @@ class HomeController extends Controller
 
     public function shopV1()
     {
-        return view('shop-v1');  
+        $activeCategory = request('category');
+        $products = Product::with('category')
+            ->where('is_active', true)
+            ->when($activeCategory, fn($q) => $q->whereHas('category', fn($q2) => $q2->where('slug', $activeCategory)))
+            ->get();
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        return view('shop-v1', compact('products', 'categories', 'activeCategory'));
     }
 
     public function shopV2()
@@ -198,7 +250,9 @@ class HomeController extends Controller
 
     public function productCategory()
     {
-        return view('product-category');  
+        $products   = Product::where('is_active', true)->latest()->paginate(12);
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        return view('product-category', compact('products', 'categories'));
     }
     
     public function productDetails()

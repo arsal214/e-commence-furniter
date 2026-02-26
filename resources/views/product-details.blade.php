@@ -52,13 +52,7 @@
             <li>/</li>
             <li><a href="{{ url('/shop-v1') }}">Shop</a></li>
             <li>/</li>
-            <li class="text-primary">
-                @if(!empty($item['title']))
-                    {{ $item['title'] }}
-                @else
-                    Classic Relaxable Chair
-                @endif
-            </li>
+            <li class="text-primary">{{ $item->name ?? 'Classic Relaxable Chair' }}</li>
         </ul>
     </div>
 </div>
@@ -70,9 +64,21 @@
         <div class="max-w-[1720px] mx-auto flex justify-between gap-10 flex-col lg:flex-row">
             <div class="w-full lg:w-[58%]">
                 <div class="relative product-dtls-wrapper">
-                    <button class="absolute top-5 left-0 p-2 !bg-[#E13939] text-lg leading-none text-white font-medium z-50">-10%</button>
+                    @if($item->sale_price)
+                    <button class="absolute top-5 left-0 p-2 !bg-[#E13939] text-lg leading-none text-white font-medium z-50">Sale</button>
+                    @endif
                     <div class="product-dtls-slider ">
-                        <div><img src="{{ !empty($item['img']) ? asset($item['img']) : asset('assets/img/gallery/product-detls/product-01.jpg') }}" class="w-full" alt="product"></div>
+                        <div>
+                            @if(!empty($item->image))
+                                @if(str_starts_with($item->image, 'assets/'))
+                                    <img src="{{ asset($item->image) }}" class="w-full" alt="{{ $item->name }}">
+                                @else
+                                    <img src="{{ Storage::url($item->image) }}" class="w-full" alt="{{ $item->name }}">
+                                @endif
+                            @else
+                                <img src="{{ asset('assets/img/gallery/product-detls/product-01.jpg') }}" class="w-full" alt="product">
+                            @endif
+                        </div>
                         <div><img src="{{ asset('assets/img/gallery/product-detls/product-02.jpg') }}" alt="product"></div>
                         <div><img src="{{ asset('assets/img/gallery/product-detls/product-03.jpg') }}" alt="product"></div>
                         <div><img src="{{ asset('assets/img/gallery/product-detls/product-04.jpg') }}" alt="product"></div>
@@ -80,7 +86,17 @@
                         <div><img src="{{ asset('assets/img/gallery/product-detls/product-02.jpg') }}" alt="product"></div>
                     </div>
                     <div class="product-dtls-nav">
-                        <div><img src="{{ !empty($item['img']) ? asset($item['img']) : asset('assets/img/gallery/product-detls/product-01.jpg') }}" alt="product"></div>
+                        <div>
+                            @if(!empty($item->image))
+                                @if(str_starts_with($item->image, 'assets/'))
+                                    <img src="{{ asset($item->image) }}" alt="{{ $item->name }}">
+                                @else
+                                    <img src="{{ Storage::url($item->image) }}" alt="{{ $item->name }}">
+                                @endif
+                            @else
+                                <img src="{{ asset('assets/img/gallery/product-detls/product-01.jpg') }}" alt="product">
+                            @endif
+                        </div>
                         <div><img src="{{ asset('assets/img/gallery/product-detls/product-02.jpg') }}" alt="product"></div>
                         <div><img src="{{ asset('assets/img/gallery/product-detls/product-03.jpg') }}" alt="product"></div>
                         <div><img src="{{ asset('assets/img/gallery/product-detls/product-04.jpg') }}" alt="product"></div>
@@ -91,22 +107,14 @@
             </div>
             <div class="lg:max-w-[635px] w-full">
                 <div class="pb-4 sm:pb-6 border-b border-bdr-clr dark:border-bdr-clr-drk">
-                    <h2 class="font-semibold leading-none md:text-4xl">
-                        @if(!empty($item['title']))
-                            {{ $item['title'] }}
-                        @else
-                            Classic Relaxable Chair
-                        @endif
-                    </h2>
+                    <h2 class="font-semibold leading-none md:text-4xl">{{ $item->name ?? 'Classic Relaxable Chair' }}</h2>
                     <div class="flex gap-4 items-center mt-[15px]">
-                        <span class="text-lg sm:text-xl leading-none pb-[5px] text-title line-through pl-2 inline-block dark:text-white">$140.99</span>
-                        <span class="text-2xl sm:text-3xl text-primary leading-none block">
-                            @if(!empty($item['price']))
-                                {{ $item['price'] }}
-                            @else
-                                $85.00
-                            @endif
-                        </span>
+                        @if($item->sale_price)
+                            <span class="text-lg sm:text-xl leading-none pb-[5px] text-title line-through pl-2 inline-block dark:text-white">${{ number_format($item->price, 2) }}</span>
+                            <span class="text-2xl sm:text-3xl text-primary leading-none block">${{ number_format($item->sale_price, 2) }}</span>
+                        @else
+                            <span class="text-2xl sm:text-3xl text-primary leading-none block">${{ number_format($item->price, 2) }}</span>
+                        @endif
                     </div>
 
                     <div class="mt-5 md:mt-7 flex items-center gap-4 flex-wrap">
@@ -151,89 +159,90 @@
                     </div>
 
                     <p class="sm:text-lg mt-5 md:mt-7">
-                        Experience the epitome of relaxation with our Classic Relaxable Chair. Crafted with plush cushioning and ergonomic design, it offers unparalleled comfort for lounging or reading. Its timeless style seamlessly blends with any decor, while the sturdy construction ensures durability for years to come.
+                        {{ $item->description ?? 'Experience the epitome of relaxation with our Classic Relaxable Chair. Crafted with plush cushioning and ergonomic design, it offers unparalleled comfort for lounging or reading.' }}
                     </p>
                 </div>
                 <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up" data-aos-delay="200">
-                    <div class="inc-dec flex items-center gap-2">
-                        <button class="dec w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
-                            <svg class="fill-current text-title dark:text-white" width="14" height="2" viewBox="0 0 14 2" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10.4361 0.203613H12.0736L7.81774 0.203615H13.8729V1.80309H7.81774L3.50809 1.80309H1.87053L6.18017 1.80309H0.125V0.203615H6.18017L10.4361 0.203613Z"/>
-                            </svg>
-                        </button>
-                        <input class="w-6 h-auto outline-none bg-transparent text-base mg:text-lg leading-none text-title dark:text-white text-center" type="text" value="1">
-                        <button class="inc  w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
-                            <svg class="fill-current text-title dark:text-white" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6.18017 0.110352H7.81774V6.16553H13.8729V7.76501H7.81774V13.8963H6.18017V7.76501H0.125V6.16553H6.18017V0.110352Z"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="flex gap-4 mt-4 sm:mt-6">
-                        <a href="{{ url('/cart') }}" class="btn btn-solid" data-text="Add to Cart">
-                            <span>Add to Cart</span>
-                        </a>
-                        <a href="#" class="btn btn-outline" data-text="Add to Wishlist">
-                            <span>Add to Wishlist</span>
-                        </a>
-                    </div>
+                    <form action="{{ route('cart.add') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $item->id }}">
+                        @if(!empty($item->sizes)) <input type="hidden" name="size"  id="selected-size"  value="{{ $item->sizes[0] ?? '' }}"> @endif
+                        @if(!empty($item->colors))<input type="hidden" name="color" id="selected-color" value="{{ $item->colors[0] ?? '' }}"> @endif
+                        <div class="inc-dec flex items-center gap-2">
+                            <button type="button" class="dec w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
+                                <svg class="fill-current text-title dark:text-white" width="14" height="2" viewBox="0 0 14 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10.4361 0.203613H12.0736L7.81774 0.203615H13.8729V1.80309H7.81774L3.50809 1.80309H1.87053L6.18017 1.80309H0.125V0.203615H6.18017L10.4361 0.203613Z"/>
+                                </svg>
+                            </button>
+                            <input id="qty-input" name="qty" class="w-6 h-auto outline-none bg-transparent text-base mg:text-lg leading-none text-title dark:text-white text-center" type="number" value="1" min="1">
+                            <button type="button" class="inc w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
+                                <svg class="fill-current text-title dark:text-white" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6.18017 0.110352H7.81774V6.16553H13.8729V7.76501H7.81774V13.8963H6.18017V7.76501H0.125V6.16553H6.18017V0.110352Z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="flex gap-4 mt-4 sm:mt-6">
+                            <button type="submit" class="btn btn-solid" data-text="Add to Cart">
+                                <span>Add to Cart</span>
+                            </button>
+                            <button type="button"
+                                class="wishlist-toggle-btn btn btn-outline"
+                                data-product-id="{{ $item->id }}"
+                                data-text-add="Add to Wishlist"
+                                data-text-remove="In Wishlist ♥">
+                                <span class="wishlist-btn-text">Add to Wishlist</span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
                 <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up" data-aos-delay="300">
                     <div class="flex gap-x-12 gap-y-3 flex-wrap">
-                        <h6 class="leading-none font-medium text-lg">SKU : CH_0015</h6>
-                        <h6 class="leading-none font-medium text-lg">Category : Chair</h6>
+                        <h6 class="leading-none font-medium text-lg">SKU : {{ $item->sku ?: 'N/A' }}</h6>
+                        <h6 class="leading-none font-medium text-lg">Category : {{ $item->category->name ?? 'N/A' }}</h6>
                     </div>
-                    <div class="flex gap-x-12 lg:gap-x-24 gap-y-3 flex-wrap mt-5 sm:mt-10">
-                        <div class="flex gap-[10px] items-center">
-                            <h6 class="leading-none font-medium text-lg">Size :</h6>
-                            <div class="flex gap-[10px]">
-                                <label class="product-size">
-                                    <input class="appearance-none hidden" type="radio" name="size" checked>
-                                    <span class="w-6 h-6 flex items-center justify-center pt-[2px] text-sm leading-none bg-[#E8E9EA] dark:bg-dark-secondary text-title dark:text-white duration-300">S</span>
+
+                    @if((!empty($item->sizes) && count($item->sizes)) || (!empty($item->colors) && count($item->colors)))
+                    <div class="flex gap-x-12 lg:gap-x-16 gap-y-5 flex-wrap mt-5 sm:mt-8">
+
+                        {{-- Sizes --}}
+                        @if(!empty($item->sizes) && count($item->sizes))
+                        <div class="flex gap-[10px] items-center flex-wrap">
+                            <h6 class="leading-none font-medium text-lg shrink-0">Size :</h6>
+                            <div class="flex gap-[10px] flex-wrap" id="size-options">
+                                @foreach($item->sizes as $i => $sz)
+                                <label class="product-size cursor-pointer">
+                                    <input class="appearance-none hidden size-radio" type="radio" name="size_display" value="{{ $sz }}" {{ $i === 0 ? 'checked' : '' }}>
+                                    <span class="min-w-[26px] px-2 h-6 flex items-center justify-center text-sm leading-none bg-[#E8E9EA] dark:bg-dark-secondary text-title dark:text-white duration-300">{{ $sz }}</span>
                                 </label>
-                                <label class="product-size">
-                                    <input class="appearance-none hidden" type="radio" name="size" >
-                                    <span class="w-6 h-6 flex items-center justify-center pt-[2px] text-sm leading-none bg-[#E8E9EA] dark:bg-dark-secondary text-title dark:text-white duration-300">M</span>
+                                @endforeach
+                            </div>
+                            @if(!empty($item->size_chart))
+                            <button type="button" id="sizeGuideBtn"
+                                    class="inline-flex items-center gap-1.5 text-sm text-primary border border-primary/40 hover:bg-primary hover:text-white px-3 py-1 transition-colors duration-200">
+                                <svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                                Size Guide
+                            </button>
+                            @endif
+                        </div>
+                        @endif
+
+                        {{-- Colors --}}
+                        @if(!empty($item->colors) && count($item->colors))
+                        <div class="flex gap-[10px] items-center flex-wrap">
+                            <h6 class="leading-none font-medium text-lg shrink-0">Color :</h6>
+                            <div class="flex gap-[10px] flex-wrap items-center" id="color-options">
+                                @foreach($item->colors as $i => $clr)
+                                <label class="product-color cursor-pointer">
+                                    <input class="appearance-none hidden color-radio" type="radio" name="color_display" value="{{ $clr }}" {{ $i === 0 ? 'checked' : '' }}>
+                                    <span class="px-3 py-[5px] text-sm leading-none border border-bdr-clr dark:border-bdr-clr-drk text-title dark:text-white duration-300">{{ $clr }}</span>
                                 </label>
-                                <label class="product-size">
-                                    <input class="appearance-none hidden" type="radio" name="size">
-                                    <span class="w-6 h-6 flex items-center justify-center pt-[2px] text-sm leading-none bg-[#E8E9EA] dark:bg-dark-secondary text-title dark:text-white duration-300">L</span>
-                                </label>
-                                <label class="product-size">
-                                    <input class="appearance-none hidden" type="radio" name="size">
-                                    <span class="w-6 h-6 flex items-center justify-center pt-[2px] text-sm leading-none bg-[#E8E9EA] dark:bg-dark-secondary text-title dark:text-white duration-300">XL</span>
-                                </label>
+                                @endforeach
                             </div>
                         </div>
-                        <div class="flex gap-[10px] items-center">
-                            <h6 class="leading-none font-medium text-lg">Color :</h6>
-                            <div class="flex gap-[10px] items-center">
-                                <label class="product-color">
-                                    <input class="appearance-none hidden" type="radio" name="color" >
-                                    <span class="border border-[#D68553] flex rounded-full border-opacity-0 duration-300 p-1">
-                                        <span class="w-4 h-4 rounded-full bg-[#D68553] flex"></span>
-                                    </span>
-                                </label>
-                                <label class="product-color">
-                                    <input class="appearance-none hidden" type="radio" name="color" checked>
-                                    <span class="border border-[#61646E] flex rounded-full border-opacity-0 duration-300 p-1">
-                                        <span class="w-4 h-4 rounded-full bg-[#61646E] flex"></span>
-                                    </span>
-                                </label>
-                                <label class="product-color">
-                                    <input class="appearance-none hidden" type="radio" name="color">
-                                    <span class="border border-[#E9E3DC] flex rounded-full border-opacity-0 duration-300 p-1">
-                                        <span class="w-4 h-4 rounded-full bg-[#E9E3DC] flex"></span>
-                                    </span>
-                                </label>
-                                <label class="product-color">
-                                    <input class="appearance-none hidden" type="radio" name="color">
-                                    <span class="border border-[#9A9088] flex rounded-full border-opacity-0 duration-300 p-1">
-                                        <span class="w-4 h-4 rounded-full bg-[#9A9088] flex"></span>
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
+                        @endif
+
                     </div>
+                    @endif
                 </div>
                 <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up" data-aos-delay="400">
                     <h4 class="font-medium leading-none text-2xl">Tags :</h4>
@@ -362,5 +371,107 @@
 @include('includes.Home.popup')
     
 @include('includes.footer')
-  
+
+{{-- ── Size Chart Modal ── --}}
+@if(!empty($item->size_chart))
+<div id="sizeChartModal"
+     class="fixed inset-0 z-[999] flex items-center justify-center px-4 py-8 opacity-0 invisible transition-all duration-300"
+     aria-modal="true" role="dialog">
+    {{-- Backdrop --}}
+    <div id="sizeChartBackdrop"
+         class="absolute inset-0 bg-title bg-opacity-80 backdrop-blur-sm"
+         onclick="closeSizeChart()"></div>
+    {{-- Panel --}}
+    <div class="relative bg-white dark:bg-title w-full max-w-3xl max-h-[90vh] overflow-y-auto z-10 p-5 sm:p-8 shadow-2xl">
+        {{-- Header --}}
+        <div class="flex items-center justify-between mb-5">
+            <h3 class="text-xl sm:text-2xl font-semibold leading-none dark:text-white">Size Guide</h3>
+            <button onclick="closeSizeChart()"
+                    class="w-9 h-9 flex items-center justify-center bg-gray-100 dark:bg-gray-700 hover:bg-primary hover:text-white text-title dark:text-white transition-colors duration-200">
+                <svg class="fill-current w-3 h-3" viewBox="0 0 12 12">
+                    <path d="M0.546875 1.70822L1.70481 0.550293L5.98646 4.83195L10.2681 0.550293L11.3991 1.6813L7.11746 5.96295L11.453 10.2985L10.295 11.4564L5.95953 7.12088L1.67788 11.4025L0.546875 10.2715L4.82853 5.98988L0.546875 1.70822Z"/>
+                </svg>
+            </button>
+        </div>
+        {{-- Chart Image --}}
+        <img src="{{ Storage::url($item->size_chart) }}"
+             alt="Size chart for {{ $item->name }}"
+             class="w-full h-auto object-contain">
+    </div>
+</div>
+@endif
+
+<script>
+// ── Size Chart Modal ──
+function openSizeChart() {
+    var modal = document.getElementById('sizeChartModal');
+    if (!modal) return;
+    modal.classList.remove('opacity-0', 'invisible');
+    document.body.style.overflow = 'hidden';
+}
+function closeSizeChart() {
+    var modal = document.getElementById('sizeChartModal');
+    if (!modal) return;
+    modal.classList.add('opacity-0', 'invisible');
+    document.body.style.overflow = '';
+}
+var sizeGuideBtn = document.getElementById('sizeGuideBtn');
+if (sizeGuideBtn) sizeGuideBtn.addEventListener('click', openSizeChart);
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeSizeChart();
+});
+</script>
+
+<script>
+// Sync size/color radio selections to the hidden cart form inputs
+(function () {
+    // Sizes
+    document.querySelectorAll('.size-radio').forEach(function (radio) {
+        // Apply active style on page load
+        if (radio.checked) applyActive(radio);
+
+        radio.addEventListener('change', function () {
+            var hidden = document.getElementById('selected-size');
+            if (hidden) hidden.value = this.value;
+            document.querySelectorAll('.size-radio').forEach(function (r) {
+                removeActive(r);
+            });
+            applyActive(this);
+        });
+    });
+
+    // Colors
+    document.querySelectorAll('.color-radio').forEach(function (radio) {
+        if (radio.checked) applyActive(radio);
+
+        radio.addEventListener('change', function () {
+            var hidden = document.getElementById('selected-color');
+            if (hidden) hidden.value = this.value;
+            document.querySelectorAll('.color-radio').forEach(function (r) {
+                removeActive(r);
+            });
+            applyActive(this);
+        });
+    });
+
+    function applyActive(radio) {
+        var span = radio.nextElementSibling;
+        if (!span) return;
+        span.style.background    = '#bb976d';
+        span.style.color         = '#ffffff';
+        span.style.borderColor   = '#bb976d';
+    }
+
+    function removeActive(radio) {
+        var span = radio.nextElementSibling;
+        if (!span) return;
+        span.style.background  = '';
+        span.style.color       = '';
+        span.style.borderColor = '';
+    }
+})();
+</script>
+
 @endsection

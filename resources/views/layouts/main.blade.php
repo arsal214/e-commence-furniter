@@ -6,17 +6,24 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Laravel 12 Furnixar & Home Decor eCommerce Template</title>
+        <title>PeytonGhalib</title>
         <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/gif" sizes="18x18">
 
         <!-- Meta tags for SEO -->
-        <meta content="	ceramics, decoration, ecommerce, ecommerce template, elementor, furniture, furniture store, furniture template, interior design, interior design template, shopping, simple ecommerce, store, store template" name="keywords">
-        <meta name="author" content="Shreethemes">
-        <meta name="website" content="https://shreethemes.in">
-        <meta name="email" content="support@shreethemes.in">
+        <meta content="	ceramics,furniture,PeytonGhalib, furniture store, interior design" name="keywords">
+        <meta name="author" content="PeytonGhalib">
+        <meta name="website" content="https://peytonghalib.com">
+        <meta name="email" content="support@peytonghalib.com">
         <meta name="version" content="1.0.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        @auth
+        <meta name="wishlist-ids" content="{{ json_encode(\App\Models\Wishlist::where('user_id', auth()->id())->pluck('product_id')) }}">
+        @else
+        <meta name="wishlist-ids" content="[]">
+        @endauth
+        <meta name="is-logged-in" content="{{ auth()->check() ? 'true' : 'false' }}">
+        <meta name="wishlist-toggle-url" content="{{ auth()->check() ? route('wishlist.toggle') : url('/login') }}">
 
         <!-- Main Stylesheet -->
         @vite('resources/css/app.css')
@@ -39,6 +46,18 @@
         </div>
         <!-- Preloader Start-->
 
+        <!-- Flash Messages -->
+        @if(session('success'))
+        <div id="flash-success" class="fixed top-5 right-5 z-[99999] bg-green-600 text-white px-5 py-3 rounded shadow-lg text-sm max-w-sm">
+            {{ session('success') }}
+        </div>
+        @endif
+        @if(session('error'))
+        <div id="flash-error" class="fixed top-5 right-5 z-[99999] bg-red-600 text-white px-5 py-3 rounded shadow-lg text-sm max-w-sm">
+            {{ session('error') }}
+        </div>
+        @endif
+
         <!-- Main Content -->
         <div class="content">
             @yield('content')
@@ -50,6 +69,82 @@
 
         <script src="{{ asset('assets/js/scripts.js') }}"></script>
         <script src="{{ asset('assets/js/base.js') }}"></script>
+        <script>
+            ['flash-success','flash-error'].forEach(function(id){
+                var el = document.getElementById(id);
+                if(el) setTimeout(function(){ el.style.transition='opacity .5s'; el.style.opacity='0'; setTimeout(function(){ el.remove(); },500); }, 4000);
+            });
+        </script>
+        @stack('scripts')
+
+        <!-- Wishlist Toggle JS -->
+        <script>
+        (function () {
+            const isLoggedIn   = document.querySelector('meta[name="is-logged-in"]')?.content === 'true';
+            const toggleUrl    = document.querySelector('meta[name="wishlist-toggle-url"]')?.content || '/login';
+            const csrfToken    = document.querySelector('meta[name="csrf-token"]')?.content || '';
+            let wishlistIds    = JSON.parse(document.querySelector('meta[name="wishlist-ids"]')?.content || '[]');
+
+            function updateButtons() {
+                document.querySelectorAll('.wishlist-toggle-btn').forEach(btn => {
+                    const pid = parseInt(btn.dataset.productId);
+                    const inWishlist = wishlistIds.includes(pid);
+                    const textEl = btn.querySelector('.wishlist-btn-text');
+                    const icon   = btn.querySelector('.wishlist-icon-outline');
+
+                    if (inWishlist) {
+                        btn.classList.add('wishlist-active');
+                        if (icon)   { icon.style.fill = '#E13939'; icon.style.color = '#E13939'; }
+                        if (textEl) textEl.textContent = 'In Wishlist ♥';
+                    } else {
+                        btn.classList.remove('wishlist-active');
+                        if (icon)   { icon.style.fill = ''; icon.style.color = ''; }
+                        if (textEl) textEl.textContent = 'Add to wishlist';
+                    }
+                });
+            }
+
+            function updateNavCount(count) {
+                const el = document.getElementById('nav-wishlist-count');
+                if (el) el.textContent = count;
+            }
+
+            document.addEventListener('click', function (e) {
+                const btn = e.target.closest('.wishlist-toggle-btn');
+                if (!btn) return;
+                e.preventDefault();
+
+                if (!isLoggedIn) {
+                    window.location.href = '/login?redirect=/wishlist';
+                    return;
+                }
+
+                const productId = btn.dataset.productId;
+                btn.disabled = true;
+
+                fetch(toggleUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ product_id: productId }),
+                })
+                .then(r => r.json())
+                .then(data => {
+                    wishlistIds = data.wishlist_ids || [];
+                    updateButtons();
+                    updateNavCount(data.count);
+                })
+                .catch(() => {})
+                .finally(() => { btn.disabled = false; });
+            });
+
+            // Init state on load
+            document.addEventListener('DOMContentLoaded', updateButtons);
+        })();
+        </script>
 
     </body>
 </html>

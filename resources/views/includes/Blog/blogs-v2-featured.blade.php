@@ -10,14 +10,14 @@ $blogs = [
     [
         'id' => 2,
         'img' => 'assets/img/shortcode/blog/blog-06.jpg', 
-        'title' => 'Elevate Your Space: 10 Stunning Room Decor Ideas from Furnixar', 
+        'title' => 'Elevate Your Space: 10 Stunning Room Decor Ideas from PeytonGhalib', 
         'tag' => 'Interior', 
         'date' => '6 Sep, 2025', 
     ],
     [
         'id' => 3,
         'img' => 'assets/img/shortcode/blog/blog-21.jpg', 
-        'title' => 'Transform Your Home: Room Decor Tips and Trends with Furnixar', 
+        'title' => 'Transform Your Home: Room Decor Tips and Trends with PeytonGhalib', 
         'tag' => 'Vase', 
         'date' => '6 Sep, 2025', 
     ]

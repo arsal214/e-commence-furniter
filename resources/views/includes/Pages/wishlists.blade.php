@@ -89,7 +89,7 @@ $wishlists = [
             
                 <div>
                 <h5 class="font-normal dark:text-white text-xl leading-[1.5]">
-                    <a href="{{ route('product-details', ['title' => Str::slug($item['title'])]) }}" class="text-underline">
+                    <a href="{{ route('product-details', ['slug' => Str::slug($item['title'])]) }}" class="text-underline">
                         {{ $item['title'] }}
                     </a>
                 </h5>

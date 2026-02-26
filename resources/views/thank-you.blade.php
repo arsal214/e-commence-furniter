@@ -15,7 +15,7 @@
                 <img src="{{ asset('assets/img/thank-you.png') }}" alt="thank-you">
             </div>
             <h3 class="leading-[1.2] mt-4 md:mt-6 text-2xl md:text-[32px] font-bold text-title dark:text-white">
-            For Shopping with Furnixar
+            For Shopping with PeytonGhalib
             </h3>
             <p class="mt-3 text-base sm:text-lg text-paragraph dark:text-white">
                 Please Check your email for Download Invoice . Or <a href="{{ url('/') }}" class="text-primary underline">Click here </a>

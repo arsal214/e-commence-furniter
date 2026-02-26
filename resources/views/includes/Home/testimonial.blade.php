@@ -4,13 +4,13 @@ $testimonials = [
         'img' => 'assets/img/testimonial/tmnl-02.jpg', 
         'name' => 'Jennifer Smith', 
         'title' => "Berminghum ,UK", 
-        'desc' => "Furnixar exceeded my expectations with their exceptional furniture pieces. The quality craftsmanship and attention to detail truly shine through in every product. My home has been transformed into a stylish sanctuary thanks to Furnixar!", 
+        'desc' => "PeytonGhalib exceeded my expectations with their exceptional furniture pieces. The quality craftsmanship and attention to detail truly shine through in every product. My home has been transformed into a stylish sanctuary thanks to PeytonGhalib!", 
     ],
     [
         'img' => 'assets/img/testimonial/tmnl-03.jpg', 
         'name' => 'Jackyer Smith', 
         'title' => "Berminghum ,UK", 
-        'desc' => "Furnixar exceeded my expectations with its exceptional furniture pieces. The quality craftsmanship and attention to detail truly shine through in every product. My home has been transformed into a stylish sanctuary thanks to Furnixar!", 
+        'desc' => "PeytonGhalib exceeded my expectations with its exceptional furniture pieces. The quality craftsmanship and attention to detail truly shine through in every product. My home has been transformed into a stylish sanctuary thanks to PeytonGhalib!", 
     ],
 ];
 @endphp

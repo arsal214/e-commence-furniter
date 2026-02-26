@@ -96,7 +96,7 @@ $arrivals = [
         </div>
         <div class="mt-5 md:mt-7">
             <h4 class="font-medium leading-none dark:text-white text-lg">{{ $item['price'] }}</h4>
-            <h5 class="mt-3 text-xl font-normal dark:text-white leading-[1.5]"><a href="{{ route('product-details', ['title' => Str::slug($item['title'])]) }}">{{ $item['title'] }}</a></h5>
+            <h5 class="mt-3 text-xl font-normal dark:text-white leading-[1.5]"><a href="{{ route('product-details', ['slug' => Str::slug($item['title'])]) }}">{{ $item['title'] }}</a></h5>
         </div>
     </div>
 @endforeach

@@ -36,129 +36,84 @@
                         </tr>
                     </thead>
                     <tbody class="table-body">
+                        @forelse ($cartItems as $item)
                         <tr>
                             <td class="md:w-[42%]">
                                 <div class="flex items-center gap-3 md:gap-4 lg:gap-6 cart-product">
                                     <div class="w-14 sm:w-20 flex-none">
-                                        <img src="{{ asset('assets/img/gallery/cart/cart-01.jpg') }}" alt="product">
+                                        @if($item['image'] && str_starts_with($item['image'], 'assets/'))
+                                            <img src="{{ asset($item['image']) }}" alt="{{ $item['name'] }}">
+                                        @elseif($item['image'])
+                                            <img src="{{ Storage::url($item['image']) }}" alt="{{ $item['name'] }}">
+                                        @else
+                                            <img src="{{ asset('assets/img/gallery/cart/cart-01.jpg') }}" alt="{{ $item['name'] }}">
+                                        @endif
                                     </div>
                                     <div class="flex-1">
-                                        <h6 class="leading-none font-medium text-lg">Chair</h6>
-                                        <h5 class="font-semibold leading-none mt-2 text-xl"><a href="#">Modern Sofa Set</a></h5>
+                                        <h5 class="font-semibold leading-none text-xl dark:text-white">
+                                            <a href="{{ route('product-details', $item['slug']) }}">{{ $item['name'] }}</a>
+                                        </h5>
+                                        @if(!empty($item['color']) || !empty($item['size']))
+                                        <div class="flex flex-wrap gap-x-3 gap-y-1 mt-2">
+                                            @if(!empty($item['color']))
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                <span class="font-medium text-title dark:text-white">Color:</span> {{ $item['color'] }}
+                                            </span>
+                                            @endif
+                                            @if(!empty($item['size']))
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                <span class="font-medium text-title dark:text-white">Size:</span> {{ $item['size'] }}
+                                            </span>
+                                            @endif
+                                        </div>
+                                        @endif
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">$45</h6>
+                                <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">${{ number_format($item['price'], 2) }}</h6>
                             </td>
                             <td>
-                                <div class="inc-dec flex items-center gap-2">
-                                    <button class="dec w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
+                                <form action="{{ route('cart.update') }}" method="POST" class="inc-dec flex items-center gap-2">
+                                    @csrf
+                                    <input type="hidden" name="cart_key" value="{{ $item['key'] }}">
+                                    <button type="button" class="dec w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
                                         <svg class="fill-current text-title dark:text-white" width="14" height="2" viewBox="0 0 14 2" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M10.4361 0.203613H12.0736L7.81774 0.203615H13.8729V1.80309H7.81774L3.50809 1.80309H1.87053L6.18017 1.80309H0.125V0.203615H6.18017L10.4361 0.203613Z"/>
                                         </svg>
                                     </button>
-                                    <input class="w-6 h-auto outline-none bg-transparent text-base mg:text-lg leading-none text-title dark:text-white text-center" type="text" value="1">
-                                    <button class="inc  w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
+                                    <input class="w-6 h-auto outline-none bg-transparent text-base leading-none text-title dark:text-white text-center cart-qty-input" name="qty" type="number" value="{{ $item['qty'] }}" min="1">
+                                    <button type="button" class="inc w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
                                         <svg class="fill-current text-title dark:text-white" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M6.18017 0.110352H7.81774V6.16553H13.8729V7.76501H7.81774V13.8963H6.18017V7.76501H0.125V6.16553H6.18017V0.110352Z"/>
                                         </svg>
                                     </button>
-                                </div>
+                                    <button type="submit" class="ml-1 text-xs text-primary underline">Update</button>
+                                </form>
                             </td>
                             <td>
-                                <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">$312</h6>
+                                <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">${{ number_format($item['price'] * $item['qty'], 2) }}</h6>
                             </td>
                             <td>
-                                <button class="w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center ml-auto duration-300 text-title dark:text-white">
-                                    <svg class="fill-current " width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M0.546875 1.70822L1.70481 0.550293L5.98646 4.83195L10.2681 0.550293L11.3991 1.6813L7.11746 5.96295L11.453 10.2985L10.295 11.4564L5.95953 7.12088L1.67788 11.4025L0.546875 10.2715L4.82853 5.98988L0.546875 1.70822Z"/>
-                                    </svg>
-                                </button>
+                                <form action="{{ route('cart.remove') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="cart_key" value="{{ $item['key'] }}">
+                                    <button type="submit" class="w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center ml-auto duration-300 text-title dark:text-white hover:bg-red-100">
+                                        <svg class="fill-current" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M0.546875 1.70822L1.70481 0.550293L5.98646 4.83195L10.2681 0.550293L11.3991 1.6813L7.11746 5.96295L11.453 10.2985L10.295 11.4564L5.95953 7.12088L1.67788 11.4025L0.546875 10.2715L4.82853 5.98988L0.546875 1.70822Z"/>
+                                        </svg>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
+                        @empty
                         <tr>
-                            <td class="md:w-[42%]">
-                                <div class="flex items-center gap-3 md:gap-4 lg:gap-6 cart-product">
-                                    <div class="w-14 sm:w-20 flex-none">
-                                        <img src="{{ asset('assets/img/gallery/cart/cart-02.jpg') }}" alt="product">
-                                    </div>
-                                    <div class="flex-1">
-                                        <h6 class="leading-none font-medium text-lg">Light/Lamp</h6>
-                                        <h5 class="font-semibold leading-none mt-2 text-xl"><a href="#">Classic Chair with Vase</a></h5>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">$120</h6>
-                            </td>
-                            <td>
-                                <div class="inc-dec flex items-center gap-2">
-                                    <button class="dec w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
-                                        <svg class="fill-current text-title dark:text-white" width="14" height="2" viewBox="0 0 14 2" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M10.4361 0.203613H12.0736L7.81774 0.203615H13.8729V1.80309H7.81774L3.50809 1.80309H1.87053L6.18017 1.80309H0.125V0.203615H6.18017L10.4361 0.203613Z"/>
-                                        </svg>
-                                    </button>
-                                    <input class="w-6 h-auto outline-none bg-transparent text-base mg:text-lg leading-none text-title dark:text-white text-center" type="text" value="1">
-                                    <button class="inc  w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
-                                        <svg class="fill-current text-title dark:text-white" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M6.18017 0.110352H7.81774V6.16553H13.8729V7.76501H7.81774V13.8963H6.18017V7.76501H0.125V6.16553H6.18017V0.110352Z"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </td>
-                            <td>
-                                <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">$780</h6>
-                            </td>
-                            <td>
-                                <button class="w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center ml-auto duration-300 text-title dark:text-white">
-                                    <svg class="fill-current " width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M0.546875 1.70822L1.70481 0.550293L5.98646 4.83195L10.2681 0.550293L11.3991 1.6813L7.11746 5.96295L11.453 10.2985L10.295 11.4564L5.95953 7.12088L1.67788 11.4025L0.546875 10.2715L4.82853 5.98988L0.546875 1.70822Z"/>
-                                    </svg>
-                                </button>
+                            <td colspan="5" class="text-center py-12">
+                                <p class="text-lg text-title dark:text-white">Your cart is empty.</p>
+                                <a href="{{ url('/shop-v1') }}" class="btn btn-sm btn-theme-solid mt-4 inline-block !text-white">Continue Shopping</a>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="md:w-[42%]">
-                                <div class="flex items-center gap-3 md:gap-4 lg:gap-6 cart-product">
-                                    <div class="w-14 sm:w-20 flex-none">
-                                        <img src="{{ asset('assets/img/gallery/cart/cart-03.jpg') }}" alt="product">
-                                    </div>
-                                    <div class="flex-1">
-                                        <h6 class="leading-none font-medium text-lg">Interior</h6>
-                                        <h5 class="font-semibold leading-none mt-2 text-xl"><a href="#">Luxury Hanging Lamp</a></h5>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">$90</h6>
-                            </td>
-                            <td>
-                                <div class="inc-dec flex items-center gap-2">
-                                    <button class="dec w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
-                                        <svg class="fill-current text-title dark:text-white" width="14" height="2" viewBox="0 0 14 2" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M10.4361 0.203613H12.0736L7.81774 0.203615H13.8729V1.80309H7.81774L3.50809 1.80309H1.87053L6.18017 1.80309H0.125V0.203615H6.18017L10.4361 0.203613Z"/>
-                                        </svg>
-                                    </button>
-                                    <input class="w-6 h-auto outline-none bg-transparent text-base mg:text-lg leading-none text-title dark:text-white text-center" type="text" value="1">
-                                    <button class="inc  w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
-                                        <svg class="fill-current text-title dark:text-white" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M6.18017 0.110352H7.81774V6.16553H13.8729V7.76501H7.81774V13.8963H6.18017V7.76501H0.125V6.16553H6.18017V0.110352Z"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </td>
-                            <td>
-                                <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">$380</h6>
-                            </td>
-                            <td>
-                                <button class="w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center ml-auto duration-300 text-title dark:text-white">
-                                    <svg class="fill-current " width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M0.546875 1.70822L1.70481 0.550293L5.98646 4.83195L10.2681 0.550293L11.3991 1.6813L7.11746 5.96295L11.453 10.2985L10.295 11.4564L5.95953 7.12088L1.67788 11.4025L0.546875 10.2715L4.82853 5.98988L0.546875 1.70822Z"/>
-                                    </svg>
-                                </button>
-                            </td>
-                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -179,17 +134,8 @@
                     <div class="text-right flex justify-end flex-col w-full ml-auto mr-0">
                         <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium">
                             <span>Sub Total:</span>
-                            <span>$870</span>
+                            <span>${{ number_format($cartTotal, 2) }}</span>
                         </div>
-                        <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                            <span>Coupon Discount:</span>
-                            <span>-$20</span>
-                        </div>
-                        <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                            <span>VAT:</span>
-                            <span> $5</span>
-                        </div>
-                        
                     </div>
                     <div class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk">
                         <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
@@ -238,7 +184,7 @@
                     <div class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk">
                         <div class="flex justify-between flex-wrap font-semibold leading-none text-2xl">
                             <span>Total:</span>
-                            <span>&nbsp;$850</span>
+                            <span>&nbsp;${{ number_format($cartTotal, 2) }}</span>
                         </div>
                     </div>
                 </div>
@@ -246,16 +192,75 @@
                     <a href="{{ url('/shop-v1') }}" class="btn btn-sm btn-outline" data-text="Continue Shopping">
                         Continue Shopping
                     </a>
-                    <a href="{{ url('/checkout') }}" class="btn btn-sm btn-theme-solid !text-white hover:!text-[#bb976d] before:!z-[-1]">
-                        Checkout
-                    </a>
+                    @auth
+                        <a href="{{ url('/checkout') }}" class="btn btn-sm btn-theme-solid !text-white hover:!text-[#bb976d] before:!z-[-1]">
+                            Checkout
+                        </a>
+                    @else
+                        <button onclick="document.getElementById('login-required-modal').classList.remove('hidden')"
+                            class="btn btn-sm btn-theme-solid !text-white hover:!text-[#bb976d] before:!z-[-1]">
+                            Checkout
+                        </button>
+                    @endauth
                 </div>
             </div>
-        </div>    
+        </div>
     </div>
 </div>
 <!-- Cart Area End -->
-   
+
+<!-- Login Required Modal -->
+<div id="login-required-modal" class="hidden fixed inset-0 z-[999] flex items-center justify-center px-4">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-title bg-opacity-70 backdrop-blur-sm" onclick="document.getElementById('login-required-modal').classList.add('hidden')"></div>
+    <!-- Modal Box -->
+    <div class="relative bg-white dark:bg-title w-full max-w-md p-8 sm:p-10 z-10">
+        <button onclick="document.getElementById('login-required-modal').classList.add('hidden')"
+            class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 hover:bg-primary hover:text-white text-title dark:text-white duration-200">
+            <svg class="fill-current w-3 h-3" viewBox="0 0 12 12"><path d="M0.546875 1.70822L1.70481 0.550293L5.98646 4.83195L10.2681 0.550293L11.3991 1.6813L7.11746 5.96295L11.453 10.2985L10.295 11.4564L5.95953 7.12088L1.67788 11.4025L0.546875 10.2715L4.82853 5.98988L0.546875 1.70822Z"/></svg>
+        </button>
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 fill-current text-primary" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+            </div>
+            <h3 class="text-2xl font-semibold text-title dark:text-white leading-none">Sign in to Checkout</h3>
+            <p class="text-gray-500 dark:text-gray-400 mt-3 text-base">Please login or create an account to complete your purchase.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <a href="{{ url('/login') }}?redirect={{ url('/checkout') }}"
+                class="btn btn-solid text-center" data-text="Login">
+                <span>Login</span>
+            </a>
+            <a href="{{ url('/register') }}"
+                class="btn btn-outline text-center" data-text="Register">
+                <span>Register</span>
+            </a>
+        </div>
+        <p class="text-center text-sm text-gray-400 dark:text-gray-500 mt-5">
+            Already have an account? <a href="{{ url('/login') }}" class="text-primary hover:underline">Sign in here</a>
+        </p>
+    </div>
+</div>
+
 @include('includes.footer6')
-  
+
+@push('scripts')
+<script>
+document.querySelectorAll('.inc-dec').forEach(function(form) {
+    var input = form.querySelector('.cart-qty-input');
+    form.querySelector('.inc').addEventListener('click', function() {
+        input.value = parseInt(input.value) + 1;
+        form.submit();
+    });
+    form.querySelector('.dec').addEventListener('click', function() {
+        var val = parseInt(input.value);
+        if (val > 1) {
+            input.value = val - 1;
+            form.submit();
+        }
+    });
+});
+</script>
+@endpush
+
 @endsection

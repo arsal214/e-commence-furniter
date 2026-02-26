@@ -20,21 +20,21 @@ class BlogV2Controller extends Controller
             [
                 'id' => 2,
                 'img' => 'assets/img/shortcode/blog/blog-06.jpg', 
-                'title' => 'Elevate Your Space: 10 Stunning Room Decor Ideas from Furnixar', 
+                'title' => 'Elevate Your Space: 10 Stunning Room Decor Ideas from PeytonGhalib', 
                 'tag' => 'Interior', 
                 'date' => '6 Sep, 2025', 
             ],
             [
                 'id' => 3,
                 'img' => 'assets/img/shortcode/blog/blog-21.jpg', 
-                'title' => 'Transform Your Home: Room Decor Tips and Trends with Furnixar', 
+                'title' => 'Transform Your Home: Room Decor Tips and Trends with PeytonGhalib', 
                 'tag' => 'Vase', 
                 'date' => '6 Sep, 2025', 
             ],
             [
                 'id' => 4,
                 'img' => 'assets/img/shortcode/blog/blog-27.jpg', 
-                'title' => 'Creating Your Dream Sanctuary: Inspirational Room Decor with Furnixar', 
+                'title' => 'Creating Your Dream Sanctuary: Inspirational Room Decor with PeytonGhalib', 
                 'tag' => 'Chair', 
                 'date' => '6 Sep, 2025', 
                 'desc' => 'Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .', 
@@ -42,7 +42,7 @@ class BlogV2Controller extends Controller
             [
                 'id' => 5,
                 'img' => 'assets/img/shortcode/blog/blog-28.jpg', 
-                'title' => 'From Drab to Fab: Room Makeover Inspiration by Furnixar', 
+                'title' => 'From Drab to Fab: Room Makeover Inspiration by PeytonGhalib', 
                 'tag' => 'Sofa', 
                 'date' => '6 Sep, 2025', 
                 'desc' => 'Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .', 
@@ -50,7 +50,7 @@ class BlogV2Controller extends Controller
             [
                 'id' => 6,
                 'img' => 'assets/img/shortcode/blog/blog-29.jpg', 
-                'title' => 'Small Space, Big Style: Room Decor Solutions from Furnixar', 
+                'title' => 'Small Space, Big Style: Room Decor Solutions from PeytonGhalib', 
                 'tag' => 'Vases', 
                 'date' => '6 Sep, 2025', 
                 'desc' => 'Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .', 
@@ -58,7 +58,7 @@ class BlogV2Controller extends Controller
             [
                 'id' => 7,
                 'img' => 'assets/img/shortcode/blog/blog-22.jpg', 
-                'title' => 'Innovative Room Decor: Unleashing Creativity with Furnixar', 
+                'title' => 'Innovative Room Decor: Unleashing Creativity with PeytonGhalib', 
                 'tag' => 'Interior', 
                 'date' => '6 Sep, 2025', 
                 'desc' => 'Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .', 
@@ -66,7 +66,7 @@ class BlogV2Controller extends Controller
             [
                 'id' => 8,
                 'img' => 'assets/img/shortcode/blog/blog-23.jpg', 
-                'title' => 'Timeless Elegance: Classic Room Decor Ideas from Furnixar', 
+                'title' => 'Timeless Elegance: Classic Room Decor Ideas from PeytonGhalib', 
                 'tag' => 'Chair', 
                 'date' => '6 Sep, 2025', 
                 'desc' => 'Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .', 
@@ -74,7 +74,7 @@ class BlogV2Controller extends Controller
             [
                 'id' => 9,
                 'img' => 'assets/img/shortcode/blog/blog-24.jpg', 
-                'title' => 'Budget-Friendly Brilliance: Room Decor Hacks by Furnixar', 
+                'title' => 'Budget-Friendly Brilliance: Room Decor Hacks by PeytonGhalib', 
                 'tag' => 'Sofa', 
                 'date' => '6 Sep, 2025', 
                 'desc' => 'Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .', 
@@ -82,7 +82,7 @@ class BlogV2Controller extends Controller
             [
                 'id' => 10,
                 'img' => 'assets/img/shortcode/blog/blog-25.jpg', 
-                'title' => 'Personalize Your Space: Custom Room Decor Options with Furnixar', 
+                'title' => 'Personalize Your Space: Custom Room Decor Options with PeytonGhalib', 
                 'tag' => 'Vases', 
                 'date' => '6 Sep, 2025', 
                 'desc' => 'Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .', 
@@ -90,7 +90,7 @@ class BlogV2Controller extends Controller
             [
                 'id' => 11,
                 'img' => 'assets/img/shortcode/blog/blog-26.jpg', 
-                'title' => 'ransform Your Home: Room Decor Tips and Trends with Furnixar', 
+                'title' => 'ransform Your Home: Room Decor Tips and Trends with PeytonGhalib', 
                 'tag' => 'Lamp', 
                 'date' => '6 Sep, 2025', 
                 'desc' => 'Nibh purus integer elementum in. ipsuim for now dolor sit amet of this conqure varius . . .', 

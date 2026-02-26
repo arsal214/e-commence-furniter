@@ -1,7 +1,7 @@
 <!-- resources/views/edit-account.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'Edit-Account Page')
+@section('title', 'Edit Account')
 
 @section('content')
 
@@ -20,11 +20,12 @@
 </div>
 <!-- Banner End -->
 
-<!-- My Profile Start -->
+<!-- Edit Account Start -->
 <div class="s-py-100" data-aos="fade-up">
     <div class="container-fluid">
-        <!-- portfolio Navs -->
         <div class="max-w-[1720px] mx-auto flex items-start gap-8 md:gap-12 2xl:gap-24 flex-col md:flex-row my-profile-navtab">
+
+            <!-- Sidebar Nav -->
             <div class="w-full md:w-[200px] lg:w-[300px] flex-none">
                 <ul class="divide-y dark:divide-paragraph text-title dark:text-white text-base sm:text-lg lg:text-xl flex flex-col justify-center leading-none">
                     <li class="pb-3 lg:pb-6 pl-6 lg:pl-12">
@@ -40,59 +41,81 @@
                         <a class="duration-300 hover:text-primary" href="{{ url('/wishlist') }}">Wishlist</a>
                     </li>
                     <li class="pt-3 lg:pt-6 pl-6 lg:pl-12">
-                        <a class="duration-300 hover:text-primary" href="{{ url('/login') }}">Logout</a>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="duration-300 hover:text-primary">Logout</button>
+                        </form>
                     </li>
                 </ul>
             </div>
+
+            <!-- Main Content -->
             <div class="w-full md:w-auto md:flex-1 overflow-auto">
-                <!-- Profile Content -->
-                <div class="w-full max-w-[951px] bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-8 lg:p-[50px]">
-                    <div class="flex items-start flex-col lg:flex-row gap-5 sm:gap-6">
-                        <div class="grid gap-5 sm:gap-6 w-full lg:w-1/2">
-                            <div>
-                                <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Full Name</label>
-                                <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300" type="text" placeholder="Enter your full name">
+
+                @if(session('success'))
+                    <div class="bg-green-50 border border-green-300 text-green-700 px-5 py-3 rounded text-sm mb-6">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <form action="{{ route('account.update') }}" method="POST">
+                    @csrf
+                    <div class="w-full max-w-[951px] bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-8 lg:p-[50px]">
+                        <h4 class="font-semibold text-xl md:text-2xl leading-none mb-6 dark:text-white">Personal Information</h4>
+
+                        <div class="flex items-start flex-col lg:flex-row gap-5 sm:gap-6">
+                            <!-- Left column -->
+                            <div class="grid gap-5 sm:gap-6 w-full lg:w-1/2">
+                                <div>
+                                    <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Full Name <span class="text-red-500">*</span></label>
+                                    <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border @error('name') border-red-400 @else border-[#E3E5E6] @enderror text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
+                                        type="text" name="name" value="{{ old('name', $user->name) }}" placeholder="Enter your full name" required>
+                                    @error('name')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Email Address <span class="text-red-500">*</span></label>
+                                    <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border @error('email') border-red-400 @else border-[#E3E5E6] @enderror text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
+                                        type="email" name="email" value="{{ old('email', $user->email) }}" placeholder="Enter your email address" required>
+                                    @error('email')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                                </div>
                             </div>
-                            <div>
-                                <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Designation</label>
-                                <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300" type="text" placeholder="Enter your designation">
-                            </div>
-                            <div>
-                                <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Phone No.</label>
-                                <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300 appearance-none" type="number" placeholder="Type your phone number">
-                            </div>
-                            <div>
-                                <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Mail</label>
-                                <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300" type="email" placeholder="Enter your email address">
+
+                            <!-- Right column - password -->
+                            <div class="grid gap-5 sm:gap-6 w-full lg:w-1/2">
+                                <div>
+                                    <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Current Password</label>
+                                    <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border @error('current_password') border-red-400 @else border-[#E3E5E6] @enderror text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
+                                        type="password" name="current_password" placeholder="Enter current password (to change)">
+                                    @error('current_password')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">New Password</label>
+                                    <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border @error('password') border-red-400 @else border-[#E3E5E6] @enderror text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
+                                        type="password" name="password" placeholder="Enter new password">
+                                    @error('password')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Confirm New Password</label>
+                                    <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
+                                        type="password" name="password_confirmation" placeholder="Confirm new password">
+                                </div>
                             </div>
                         </div>
-                        <div class="grid gap-5 sm:gap-6 w-full lg:w-1/2">
-                            <div>
-                                <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Location</label>
-                                <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300" type="text" placeholder="Enter your location">
-                            </div>
-                            <div>
-                                <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Bio</label>
-                                <textarea class="w-full h-28 md:h-[168px] bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300" name="Message" placeholder="Write your bio . . ."></textarea>
-                            </div>
-                            <div>
-                                <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Web / Social Media</label>
-                                <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300" type="text" placeholder="www.facebook.com/johndoe">
-                            </div>
+
+                        <div class="mt-5 sm:mt-8 md:mt-12">
+                            <button type="submit" class="btn btn-solid" data-text="Save Changes">
+                                <span>Save Changes</span>
+                            </button>
                         </div>
                     </div>
-                    <div class="mt-5 sm:mt-8 md:mt-12">
-                        <button class="btn btn-solid" data-text="Save Change">
-                            <span>Save Change</span>
-                        </button>
-                    </div>
-                </div>
+                </form>
+
             </div>
         </div>
     </div>
 </div>
-<!-- My Profile End -->
-    
+<!-- Edit Account End -->
+
 @include('includes.footer6')
-  
+
 @endsection

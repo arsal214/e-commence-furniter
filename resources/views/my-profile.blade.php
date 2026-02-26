@@ -65,7 +65,7 @@
                             <svg class="w-3 sm:w-[18px]" viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M16.2 0.0615234H1.8C0.81 0.0615234 0.00899999 0.849023 0.00899999 1.81152L0 12.3115C0 13.274 0.81 14.0615 1.8 14.0615H16.2C17.19 14.0615 18 13.274 18 12.3115V1.81152C18 0.849023 17.19 0.0615234 16.2 0.0615234ZM16.2 3.56152L9 7.93652L1.8 3.56152V1.81152L9 6.18652L16.2 1.81152V3.56152Z" fill="#BB976D"/>
                             </svg>
-                            <span class="leading-none font-medium text-base sm:text-lg">furnixar123@gmail.com</span>
+                            <span class="leading-none font-medium text-base sm:text-lg">PeytonGhalib123@gmail.com</span>
                         </a>
                         <a href="#" class="flex items-center gap-2">
                             <svg class="w-3 sm:w-[15px]" viewBox="0 0 15 21" fill="none" xmlns="http://www.w3.org/2000/svg">

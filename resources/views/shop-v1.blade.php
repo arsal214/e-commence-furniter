@@ -28,11 +28,10 @@
             <div>
                 <h4 class="font-medium leading-none text-xl sm:text-2xl mb-5 sm:mb-6">Choose Category</h4>
                 <div class="flex flex-wrap gap-[10px] md:gap-[15px]">
-                    <a class="btn btn-theme-outline btn-sm shop1-button" href="{{ url('/product-category') }}" data-text="Sofa & Chair"><span>Sofa & Chair</span></a>
-                    <a class="btn btn-theme-outline btn-sm shop1-button" href="{{ url('/product-category') }}" data-text="Full Interior"><span>Full Interior</span></a>
-                    <a class="btn btn-theme-outline btn-sm shop1-button" href="{{ url('/product-category') }}" data-text="Lamp & Vase"><span>Lamp & Vase</span></a>
-                    <a class="btn btn-theme-outline btn-sm shop1-button" href="{{ url('/product-category') }}" data-text="Table"><span>Table</span></a>
-                    <a class="btn btn-theme-outline btn-sm shop1-button" href="{{ url('/product-category') }}" data-text="Wood Design"><span>Wood Design</span></a>
+                    <a class="btn btn-sm shop1-button {{ !$activeCategory ? 'btn-theme-solid' : 'btn-theme-outline' }}" href="{{ url('/shop-v1') }}" data-text="All"><span>All</span></a>
+                    @foreach ($categories as $cat)
+                    <a class="btn btn-sm shop1-button {{ $activeCategory === $cat->slug ? 'btn-theme-solid' : 'btn-theme-outline' }}" href="{{ url('/shop-v1') }}?category={{ $cat->slug }}" data-text="{{ $cat->name }}"><span>{{ $cat->name }}</span></a>
+                    @endforeach
                 </div>
             </div>
             <div class="max-w-[562px] w-full grid sm:grid-cols-2 gap-8 md:gap-12">

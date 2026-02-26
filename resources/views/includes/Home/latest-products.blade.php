@@ -79,7 +79,7 @@ $products = [
         <div class="absolute z-10 top-0 left-0 w-full h-full items-start justify-end flex flex-col p-7">
             <div>
                 <h4 class="font-normal leading-none text-white transition-all group-hover:duration-100 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 text-2xl">{{ $item['price'] }}</h4>
-                <h6 class="font-normal mt-1 text-white transition-all group-hover:duration-300 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 leading-[1.5] text-lg"><a href="{{ route('product-details', ['title' => Str::slug($item['title'])]) }}">{{ $item['title'] }}</a></h6>
+                <h6 class="font-normal mt-1 text-white transition-all group-hover:duration-300 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 leading-[1.5] text-lg"><a href="{{ route('product-details', ['slug' => Str::slug($item['title'])]) }}">{{ $item['title'] }}</a></h6>
 
                 <ul class="flex items-center gap-2 mt-1 transition-all group-hover:duration-500 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
                     <li>

@@ -212,7 +212,7 @@
                                 <div class="xl:flex-1 max-w-[400px] sm:max-w-xl xl:pb-16 2xl:pb-24 crsl-slider-one-content text-center sm:text-left">
                                     <h4 class="leading-none font-medium dark:text-white">All products in store</h4>
                                     <h2 class="leading-none text-4xl sm:text-5xl xl:text-6xl 2xl:text-7xl font-bold mt-6 dark:text-white">Get <span class="text-primary">120%</span> Off</h2>
-                                    <p class="mt-4 md:mt-5 dark:text-white-light">Furnixar is a modern furniture HTML template for an eCommerce website designed to help you create an impressive online store for your furniture. </p>
+                                    <p class="mt-4 md:mt-5 dark:text-white-light">PeytonGhalib is a modern furniture HTML template for an eCommerce website designed to help you create an impressive online store for your furniture. </p>
                                     <div class="button">
                                         <a class="btn btn-outline mt-6" href="{{ url('/shop-v3') }}" data-text="Let's Shop Now"><span>Let's Shop Now</span></a>
                                     </div>

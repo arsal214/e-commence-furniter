@@ -4,7 +4,7 @@
     <div class="container">
         <div class="flex items-center justify-between gap-5 relative py-3 sm:py-5 max-w-1366 mx-auto header-wrapper">
             <div class="flex items-center gap-5 sm:gap-8 md:gap-12">
-                <a class="cursor-pointer block" href="{{ url('/') }}" aria-label="Furnixar"> 
+                <a class="cursor-pointer block" href="{{ url('/') }}" aria-label="PeytonGhalib"> 
                     <svg class="fill-current dark:text-white text-title w-[120px] sm:w-[200px]" viewBox="0 0 201 39" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M38.625 3.96289H57.8844V9.70269H44.6959V16.5358H56.0701V22.2756H44.6959V34.1651H38.625V3.96289Z"/>
                         <path d="M67.6545 35.0527C65.9798 35.0527 64.654 34.5744 63.5375 33.5494C62.421 32.5245 61.8627 31.2262 61.793 29.6546V16.2617H67.6545V27.5363C67.7243 28.3563 67.9336 28.9713 68.2825 29.4496C68.6314 29.9279 69.2595 30.1329 70.0968 30.1329C70.9342 30.1329 71.7018 29.8596 72.3298 29.2446C72.9578 28.6979 73.4463 27.878 73.7952 26.9213C74.1441 25.8964 74.3534 24.8031 74.3534 23.5048V16.2617H80.215V34.1644H74.9117L74.4232 30.8845L74.493 31.2262C74.0743 31.9778 73.5161 32.5928 72.8881 33.2078C72.26 33.7544 71.4924 34.2327 70.5853 34.5061C69.6782 34.8477 68.7012 35.0527 67.6545 35.0527Z"/>

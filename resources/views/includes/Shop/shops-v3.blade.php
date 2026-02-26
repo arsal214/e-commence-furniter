@@ -96,7 +96,7 @@ $shops = [
 @foreach ($shops as $item)
     <div class="group">
         <div class="relative overflow-hidden">
-            <a href="{{ route('product-details', ['title' => Str::slug($item['title'])]) }}">                            
+            <a href="{{ route('product-details', ['slug' => Str::slug($item['title'])]) }}">                            
                 <img class="w-full transform group-hover:scale-110 duration-300" src="{{ asset($item['img']) }}" alt="shop">
             </a>
 
@@ -146,7 +146,7 @@ $shops = [
 
             <div>
                 <h5 class="font-normal dark:text-white text-xl leading-[1.5]">
-                    <a href="{{ route('product-details', ['title' => Str::slug($item['title'])]) }}" class="text-underline">
+                    <a href="{{ route('product-details', ['slug' => Str::slug($item['title'])]) }}" class="text-underline">
                         {{ $item['title'] }}
                     </a>
                 </h5>

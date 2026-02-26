@@ -36,16 +36,16 @@
                 <div class="pb-7 md:pb-12">
                     <img class="w-full" src="{{ asset('assets/img/thumb/blog-details.jpg') }}" alt="blog-details" data-aos="fade-up" data-aos-delay="100">
                     <article class="prose prose-h3:!text-3xl prose-h4:!text-2xl sm:prose-lg dark:prose-p:text-white-light dark:prose-li:text-white-light dark:prose-blockquote:text-white max-w-full prose-blockquote:bg-primary prose-blockquote:bg-opacity-10 prose-blockquote:p-5 sm:prose-blockquote:p-7 md:prose-blockquote:text-2xl prose-blockquote:border-none prose-blockquote:not-italic prose-blockquote:before:content-[url('.{{ asset('assets/img/icon/qute.svg') }}')] prose-blockquote:flex prose-blockquote:gap-[10px] prose-blockquote:items-start prose-blockquote:text-xl prose-blockquote:flex-col sm:prose-blockquote:flex-row prose-li:list-none prose-li:before:relative prose-li:before:content-[url('.{{ asset('assets/img/icon/check.svg') }}')] prose-ol:!pl-0 sm:prose-ol:!pl-0 prose-ul:pl-0 sm:prose-ul:pl-0 prose-li:flex prose-li:items-start prose-li:gap-2 mt-8 md:mt-10">
-                        <p>In the realm of home decor, where style meets functionality, Furnixar stands as a beacon of innovation and elegance. With a commitment to quality craftsmanship and a keen eye for design, Furnixar products have the power to transform any living space into a sanctuary of comfort and beauty.
+                        <p>In the realm of home decor, where style meets functionality, PeytonGhalib stands as a beacon of innovation and elegance. With a commitment to quality craftsmanship and a keen eye for design, PeytonGhalib products have the power to transform any living space into a sanctuary of comfort and beauty.
 
-                            From cozy living rooms to serene bedrooms, Furnixar offers a diverse range of home decor solutions that cater to every taste and lifestyle. Let's delve into some of the key elements that make Furnixar a frontrunner in the world of home decor:</p>
+                            From cozy living rooms to serene bedrooms, PeytonGhalib offers a diverse range of home decor solutions that cater to every taste and lifestyle. Let's delve into some of the key elements that make PeytonGhalib a frontrunner in the world of home decor:</p>
                         <h3>Main features of our product</h3>
                         <ul>
                             <li>All the Lorem Ipsum generators on the Internet tend to repeat predefined on the Internet.</li>
                             <li>Adipiscing lobortis interdum fringilla euismod odio of this furniture.</li>
                             <li>Nibh purus integer elementum in tellus vulputate habitasse lorem ipsum vulputate.</li>
                         </ul>
-                        <p>Furnixar transcends the ordinary, offering home decor solutions that inspire and delight. With their dedication to craftsmanship, timeless design, and sustainability, Furnixar invites you to elevate your home and create a space that truly reflects your lifestyle and personality.Furnixar transcends the ordinary, offering home decor solutions that inspire and delight. </p>
+                        <p>PeytonGhalib transcends the ordinary, offering home decor solutions that inspire and delight. With their dedication to craftsmanship, timeless design, and sustainability, PeytonGhalib invites you to elevate your home and create a space that truly reflects your lifestyle and personality.PeytonGhalib transcends the ordinary, offering home decor solutions that inspire and delight. </p>
                         <blockquote class="lg:w-[940px] lg:h-[120px] lg:flex lg:items-center">
                             <img src="{{ asset('assets/img/icon/qute.svg') }}" alt="Quote Icon" class="quote-icon mt-6 relative -top-[66%]">
                             Nibh purus integer elementum in tellus vulputate habitasse of this is vulputate posuere habitant vel tempor varius.    
