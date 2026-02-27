@@ -221,7 +221,7 @@
 
 @push('scripts')
 @include('admin.products._variant_script')
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.tiny.cloud/1/{{ env('TINYMCE_API_KEY', 'no-api-key') }}/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
 tinymce.init({
     selector: '.tinymce-editor',
@@ -233,7 +233,6 @@ tinymce.init({
     content_css: 'default',
     branding: false,
     promotion: false,
-    license_key: 'gpl',
 });
 document.getElementById('imageInput').addEventListener('change', function () {
     const preview = document.getElementById('imagePreview');
