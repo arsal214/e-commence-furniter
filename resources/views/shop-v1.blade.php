@@ -54,16 +54,6 @@
                         </div>
                     </div>
                 </div>
-                <div>
-                    <h4 class="font-medium leading-none text-xl sm:text-2xl mb-5 sm:mb-6">Choose Brand</h4>
-                    <select class="outline-select small-select">
-                        <option value="1">Navana Furniture</option>
-                        <option value="2">RFL Furniture</option>
-                        <option value="2">Gazi Furniture</option>
-                        <option value="2">Plastic Furniture</option>
-                        <option value="2">Luxury Furniture</option>
-                    </select>
-                </div>
             </div>
         </div>
 
