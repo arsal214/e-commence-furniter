@@ -76,10 +76,24 @@
                         </select>
                     </div>
 
+                    {{-- Description --}}
                     <div class="sm:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
-                        <textarea name="description" rows="4"
-                                  class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors resize-none">{{ old('description') }}</textarea>
+                        <textarea name="description" id="description" class="tinymce-editor">{{ old('description') }}</textarea>
+                    </div>
+
+                    {{-- Review Content --}}
+                    <div class="sm:col-span-2 border-t border-gray-100 pt-5">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Customer Reviews / Testimonials</label>
+                        <p class="text-xs text-gray-400 mb-2">Shown in the "Reviews" tab on the product page.</p>
+                        <textarea name="review_content" id="review_content" class="tinymce-editor">{{ old('review_content') }}</textarea>
+                    </div>
+
+                    {{-- Shipping Info --}}
+                    <div class="sm:col-span-2 border-t border-gray-100 pt-5">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Shipping Information</label>
+                        <p class="text-xs text-gray-400 mb-2">Shown in the "Shipping" tab on the product page.</p>
+                        <textarea name="shipping_info" id="shipping_info" class="tinymce-editor">{{ old('shipping_info') }}</textarea>
                     </div>
 
                     <div class="sm:col-span-2">
@@ -173,7 +187,20 @@
 
 @push('scripts')
 @include('admin.products._variant_script')
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
+tinymce.init({
+    selector: '.tinymce-editor',
+    plugins: 'lists link image table code wordcount',
+    toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link image | table | code',
+    menubar: false,
+    height: 300,
+    skin: 'oxide',
+    content_css: 'default',
+    branding: false,
+    promotion: false,
+    license_key: 'gpl',
+});
 document.getElementById('imageInput').addEventListener('change', function () {
     const preview = document.getElementById('imagePreview');
     if (this.files && this.files[0]) {

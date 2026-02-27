@@ -6,7 +6,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>PeytonGhalib</title>
+        <title>@yield('title', 'PeytonGhalib') | PeytonGhalib</title>
         <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/gif" sizes="18x18">
 
         <!-- Meta tags for SEO -->
@@ -29,6 +29,7 @@
         @vite('resources/css/app.css')
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
         <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+        @stack('styles')
     </head>
 
     <body class="dark:bg-title">

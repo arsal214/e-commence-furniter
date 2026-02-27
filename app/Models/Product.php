@@ -8,8 +8,8 @@ use Illuminate\Support\Str;
 class Product extends Model
 {
     protected $fillable = [
-        'category_id', 'name', 'slug', 'description', 'price', 'sale_price',
-        'image', 'tag', 'is_featured', 'is_active', 'stock', 'sku',
+        'category_id', 'name', 'slug', 'description', 'review_content', 'shipping_info',
+        'price', 'sale_price', 'image', 'tag', 'is_featured', 'is_active', 'stock', 'sku',
         'colors', 'sizes', 'size_chart',
     ];
 

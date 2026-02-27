@@ -31,14 +31,44 @@
                     @php
                         $navCategories = \App\Models\Category::where('is_active', true)->orderBy('name')->get();
                     @endphp
-                    <li class="relative parent-parent-menu-item">
-                        <a href="#" class="home-link">Categories</a>
-                        <ul class="sub-menu lg:absolute z-50 lg:top-full lg:left-0 lg:min-w-[220px] lg:invisible lg:transition-all lg:bg-white lg:dark:bg-title lg:py-[15px] lg:pr-[30px]">
-                            <li><a href="{{ url('/shop-v1') }}" class="sub-menu-item">All Products</a></li>
-                            @foreach($navCategories as $navCat)
-                                <li><a href="{{ url('/shop-v1') }}?category={{ $navCat->slug }}" class="sub-menu-item">{{ $navCat->name }}</a></li>
-                            @endforeach
-                        </ul>
+                    <li class="relative parent-parent-menu-item group/cat">
+                        <a href="{{ url('/shop-v1') }}" class="home-link">Categories</a>
+
+                        {{-- Mega menu dropdown --}}
+                        <div class="lg:absolute lg:top-full lg:left-1/2 lg:-translate-x-1/2 z-50
+                                    lg:invisible lg:opacity-0 lg:translate-y-2
+                                    group-hover/cat:lg:visible group-hover/cat:lg:opacity-100 group-hover/cat:lg:translate-y-0
+                                    lg:transition-all lg:duration-200
+                                    bg-white dark:bg-title border-t-2 border-primary
+                                    lg:shadow-xl lg:min-w-[480px] lg:max-w-[680px] w-full
+                                    pt-3 pb-4 px-4 lg:p-5">
+
+                            {{-- "All Products" header row --}}
+                            <div class="flex items-center justify-between mb-3 pb-3 border-b border-[#E3E5E6] dark:border-bdr-clr-drk">
+                                <span class="text-xs uppercase tracking-widest text-gray-400 dark:text-white-light font-medium">Browse Categories</span>
+                                <a href="{{ url('/shop-v1') }}"
+                                   class="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
+                                    View All
+                                    <svg width="10" height="8" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M23.8198 6.61958L18.3757 1.17541C18.3531 1.65529 17.5487 1.88366 17.608 1.94303L22.1212 6.46168L0.567835 6.46168C0.267191 6.46168 0.0234375 6.70543 0.0234375 7.00612C0.0234375 7.30681 0.267191 7.55052 0.567835 7.55052L22.1212 7.55052L17.608 12.0637C17.3797 12.2593 17.3531 12.6029 17.5487 12.8313C17.7443 13.0597 18.0879 13.0863 18.3163 12.8907L23.8198 7.38714C24.0309 7.17488 24.0309 6.83194 23.8198 6.61958Z" fill="currentColor"/>
+                                    </svg>
+                                </a>
+                            </div>
+
+                            {{-- Category grid --}}
+                            <div class="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-1">
+                                @foreach($navCategories as $navCat)
+                                <a href="{{ url('/shop-v1') }}?category={{ $navCat->slug }}"
+                                   class="flex items-center gap-2 px-2 py-2 text-sm text-title dark:text-white
+                                          hover:text-primary hover:bg-[#F8F8F9] dark:hover:bg-white/5
+                                          duration-150 rounded-sm group/item sub-menu-item">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover/item:bg-primary flex-none duration-150"></span>
+                                    {{ $navCat->name }}
+                                </a>
+                                @endforeach
+                            </div>
+
+                        </div>
                     </li>
 
                     <li><a href="{{ url('/contact') }}" class="sub-menu-item">Contact</a></li>

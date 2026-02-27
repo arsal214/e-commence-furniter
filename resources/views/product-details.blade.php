@@ -1,7 +1,29 @@
 <!-- resources/views/product-details.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'Product-Details Page')
+@section('title', $item->name ?? 'Product Details')
+
+@push('styles')
+<style>
+/* Rich content (TinyMCE output) styles */
+.rich-content h1,.rich-content h2,.rich-content h3,.rich-content h4,.rich-content h5,.rich-content h6{font-weight:600;line-height:1.3;margin-top:1.25em;margin-bottom:.5em}
+.rich-content h1{font-size:1.6rem}.rich-content h2{font-size:1.35rem}.rich-content h3{font-size:1.2rem}.rich-content h4{font-size:1.05rem}
+.rich-content p{margin-bottom:.9em;line-height:1.7}
+.rich-content ul,.rich-content ol{padding-left:1.5em;margin-bottom:.9em}
+.rich-content ul{list-style:disc}.rich-content ol{list-style:decimal}
+.rich-content li{margin-bottom:.3em;line-height:1.6}
+.rich-content strong,.rich-content b{font-weight:600}
+.rich-content em,.rich-content i{font-style:italic}
+.rich-content a{color:#bb976d;text-decoration:underline}
+.rich-content table{width:100%;border-collapse:collapse;margin-bottom:1em;font-size:.9rem}
+.rich-content table th,.rich-content table td{border:1px solid #e5e7eb;padding:.5rem .75rem;text-align:left}
+.rich-content table th{background:#f9fafb;font-weight:600}
+.dark .rich-content table th{background:#2d3748}.dark .rich-content table td,.dark .rich-content table th{border-color:#4a5568}
+.rich-content blockquote{border-left:4px solid #bb976d;padding:.5rem 1rem;margin:1em 0;color:#6b7280;font-style:italic}
+.rich-content img{max-width:100%;height:auto;border-radius:.25rem;margin:.5em 0}
+.rich-content hr{border:none;border-top:1px solid #e5e7eb;margin:1.5em 0}
+</style>
+@endpush
 
 @section('content')
 
@@ -63,45 +85,33 @@
     <div class="container-fluid">
         <div class="max-w-[1720px] mx-auto flex justify-between gap-10 flex-col lg:flex-row">
             <div class="w-full lg:w-[58%]">
+                @php
+                    $productImgSrc = !empty($item->image)
+                        ? (str_starts_with($item->image, 'assets/') ? asset($item->image) : Storage::url($item->image))
+                        : asset('assets/img/gallery/product-detls/product-01.jpg');
+                @endphp
                 <div class="relative product-dtls-wrapper">
-                    @if($item->sale_price)
-                    <button class="absolute top-5 left-0 p-2 !bg-[#E13939] text-lg leading-none text-white font-medium z-50">Sale</button>
+                    {{-- Badge from admin tag field --}}
+                    @if($item->tag)
+                        @php
+                            $badgeBg    = match($item->tag) { 'Sale' => '#1CB28E', 'NEW' => '#9739E1', default => '#E13939' };
+                            $badgeLabel = match($item->tag) { 'Sale' => 'Hot Sale', 'NEW' => 'NEW', 'OFF' => '10% OFF', 'OFF1' => '15% OFF', default => $item->tag };
+                        @endphp
+                        <span class="absolute top-5 left-0 z-50 px-3 py-1.5 text-sm font-semibold text-white leading-none"
+                              style="background:{{ $badgeBg }}">{{ $badgeLabel }}</span>
+                    @elseif($item->sale_price)
+                        <span class="absolute top-5 left-0 z-50 px-3 py-1.5 text-sm font-semibold text-white leading-none"
+                              style="background:#E13939">Sale</span>
                     @endif
-                    <div class="product-dtls-slider ">
+                    <div class="product-dtls-slider">
                         <div>
-                            @if(!empty($item->image))
-                                @if(str_starts_with($item->image, 'assets/'))
-                                    <img src="{{ asset($item->image) }}" class="w-full" alt="{{ $item->name }}">
-                                @else
-                                    <img src="{{ Storage::url($item->image) }}" class="w-full" alt="{{ $item->name }}">
-                                @endif
-                            @else
-                                <img src="{{ asset('assets/img/gallery/product-detls/product-01.jpg') }}" class="w-full" alt="product">
-                            @endif
+                            <img src="{{ $productImgSrc }}" class="w-full" alt="{{ $item->name }}">
                         </div>
-                        <div><img src="{{ asset('assets/img/gallery/product-detls/product-02.jpg') }}" alt="product"></div>
-                        <div><img src="{{ asset('assets/img/gallery/product-detls/product-03.jpg') }}" alt="product"></div>
-                        <div><img src="{{ asset('assets/img/gallery/product-detls/product-04.jpg') }}" alt="product"></div>
-                        <div><img src="{{ asset('assets/img/gallery/product-detls/product-01.jpg') }}" alt="product"></div>
-                        <div><img src="{{ asset('assets/img/gallery/product-detls/product-02.jpg') }}" alt="product"></div>
                     </div>
                     <div class="product-dtls-nav">
                         <div>
-                            @if(!empty($item->image))
-                                @if(str_starts_with($item->image, 'assets/'))
-                                    <img src="{{ asset($item->image) }}" alt="{{ $item->name }}">
-                                @else
-                                    <img src="{{ Storage::url($item->image) }}" alt="{{ $item->name }}">
-                                @endif
-                            @else
-                                <img src="{{ asset('assets/img/gallery/product-detls/product-01.jpg') }}" alt="product">
-                            @endif
+                            <img src="{{ $productImgSrc }}" alt="{{ $item->name }}">
                         </div>
-                        <div><img src="{{ asset('assets/img/gallery/product-detls/product-02.jpg') }}" alt="product"></div>
-                        <div><img src="{{ asset('assets/img/gallery/product-detls/product-03.jpg') }}" alt="product"></div>
-                        <div><img src="{{ asset('assets/img/gallery/product-detls/product-04.jpg') }}" alt="product"></div>
-                        <div><img src="{{ asset('assets/img/gallery/product-detls/product-01.jpg') }}" alt="product"></div>
-                        <div><img src="{{ asset('assets/img/gallery/product-detls/product-02.jpg') }}" alt="product"></div>
                     </div>
                 </div>
             </div>
@@ -117,50 +127,12 @@
                         @endif
                     </div>
 
-                    <div class="mt-5 md:mt-7 flex items-center gap-4 flex-wrap">
-                        <h4 class="text-xl md:text-[22px] font-semibold !leading-none">Hurry Up!</h4>
-                        <div class="overflow-auto">
-                            <div class="py-2 px-3 bg-[#FAF2F2] rounded-[51px] flex items-end gap-[6px] w-[360px]">
-                                <svg class="w-[15px]" height="20" viewBox="0 0 15 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12.6923 7.59087C12.6383 7.52329 12.573 7.53657 12.5387 7.55036C12.51 7.562 12.4442 7.59919 12.4533 7.69239C12.4642 7.80431 12.4704 7.91841 12.4715 8.03157C12.4764 8.50102 12.2881 8.96094 11.9549 9.2934C11.6238 9.62371 11.1884 9.80168 10.7247 9.79652C10.0913 9.78844 9.56601 9.45809 9.20551 8.84118C8.90742 8.33106 9.03844 7.67313 9.17715 6.97654C9.25832 6.5688 9.34227 6.14716 9.34227 5.74588C9.34227 2.62132 7.24173 0.818669 5.98962 0.0222265C5.96373 0.00578123 5.93908 0 5.91724 0C5.88173 0 5.85361 0.0153124 5.83974 0.0246874C5.81287 0.0428905 5.76986 0.0843747 5.78369 0.157812C6.26228 2.69929 4.83478 4.22783 3.32346 5.84611C1.76566 7.51419 0 9.40485 0 12.8147C0 16.7767 3.22331 20 7.18532 20C10.4475 20 13.3237 17.7256 14.1796 14.4692C14.7633 12.2487 14.1517 9.42031 12.6923 7.59087ZM7.36458 18.4663C6.37247 18.5115 5.42896 18.1557 4.7083 17.4667C3.99537 16.7849 3.58647 15.8336 3.58647 14.8565C3.58647 13.0228 4.28756 11.6768 6.17326 9.88973C6.20412 9.86047 6.23572 9.85121 6.26326 9.85121C6.28822 9.85121 6.30986 9.85883 6.32474 9.86598C6.35611 9.88109 6.40767 9.91852 6.40072 9.99945C6.33329 10.784 6.33447 11.4352 6.40415 11.9351C6.58228 13.2118 7.51692 14.0697 8.73 14.0697C9.32477 14.0697 9.89129 13.8458 10.3252 13.4394C10.3756 13.3922 10.4318 13.3982 10.4534 13.4028C10.4819 13.409 10.5202 13.4265 10.5402 13.4748C10.7202 13.9092 10.8121 14.3703 10.8135 14.8453C10.8193 16.7564 9.27207 18.3808 7.36458 18.4663Z" fill="#E13939"/>
-                                </svg>                                
-                                <h6 class="text-lg font-medium leading-none !text-[#E13939] whitespace-nowrap">Sale Ends :</h6>
-                                <div class="countdown-clock flex gap-[10px] items-center">
-                                    <div class="countdown-item flex">
-                                        <div class="ci-inner text-lg font-medium leading-none text-[#E13939]">
-                                            <div class="clock-days ci-value"></div>
-                                        </div>
-                                        <p class="text-lg font-medium leading-none text-[#E13939]">D</p>
-                                    </div>
-                                    <p class="text-lg font-medium leading-none text-[#E13939]">:</p>
-                                    <div class="countdown-item flex">
-                                        <div class="ci-inner text-lg font-medium leading-none text-[#E13939]">
-                                            <div class="clock-hours ci-value"></div>
-                                        </div>
-                                        <p class="text-lg font-medium leading-none text-[#E13939]">H</p>
-                                    </div>
-                                    <p class="text-lg font-medium leading-none text-[#E13939]">:</p>
-                                    <div class="countdown-item flex">
-                                        <div class="ci-inner text-lg font-medium leading-none text-[#E13939]">
-                                            <div class="clock-minutes ci-value"></div>
-                                        </div>
-                                        <p class="text-lg font-medium leading-none text-[#E13939]">M</p>
-                                    </div>
-                                    <p class="text-lg font-medium leading-none text-[#E13939]">:</p>
-                                    <div class="countdown-item flex">
-                                        <div class="ci-inner text-lg font-medium leading-none text-[#E13939]">
-                                            <div class="clock-seconds ci-value"></div>
-                                        </div>
-                                        <p class="text-lg font-medium leading-none text-[#E13939]">S</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <p class="sm:text-lg mt-5 md:mt-7">
-                        {{ $item->description ?? 'Experience the epitome of relaxation with our Classic Relaxable Chair. Crafted with plush cushioning and ergonomic design, it offers unparalleled comfort for lounging or reading.' }}
-                    </p>
+                    @if($item->description)
+                    <div class="sm:text-lg mt-5 md:mt-7 rich-content leading-relaxed text-paragraph dark:text-white/80">
+                        {!! $item->description !!}
+                    </div>
+                    @endif
                 </div>
                 <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up" data-aos-delay="200">
                     <form action="{{ route('cart.add') }}" method="POST">
@@ -197,8 +169,23 @@
                 </div>
                 <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up" data-aos-delay="300">
                     <div class="flex gap-x-12 gap-y-3 flex-wrap">
-                        <h6 class="leading-none font-medium text-lg">SKU : {{ $item->sku ?: 'N/A' }}</h6>
-                        <h6 class="leading-none font-medium text-lg">Category : {{ $item->category->name ?? 'N/A' }}</h6>
+                        @if($item->sku)
+                        <h6 class="leading-none font-medium text-lg">SKU : <span class="font-normal">{{ $item->sku }}</span></h6>
+                        @endif
+                        @if($item->category)
+                        <h6 class="leading-none font-medium text-lg">Category :
+                            <a href="{{ url('/shop-v1?category=' . $item->category->slug) }}" class="font-normal hover:text-primary duration-200">{{ $item->category->name }}</a>
+                        </h6>
+                        @endif
+                        @if($item->tag)
+                        <h6 class="leading-none font-medium text-lg">Badge :
+                            @php
+                                $bdBg    = match($item->tag) { 'Sale' => 'bg-[#1CB28E]', 'NEW' => 'bg-[#9739E1]', default => 'bg-[#E13939]' };
+                                $bdLabel = match($item->tag) { 'Sale' => 'Hot Sale', 'NEW' => 'NEW', 'OFF' => '10% OFF', 'OFF1' => '15% OFF', default => $item->tag };
+                            @endphp
+                            <span class="text-sm px-2 py-0.5 text-white font-semibold rounded-sm {{ $bdBg }}">{{ $bdLabel }}</span>
+                        </h6>
+                        @endif
                     </div>
 
                     @if((!empty($item->sizes) && count($item->sizes)) || (!empty($item->colors) && count($item->colors)))
@@ -244,16 +231,26 @@
                     </div>
                     @endif
                 </div>
+                @if($item->category || $item->colors || $item->sizes)
                 <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up" data-aos-delay="400">
                     <h4 class="font-medium leading-none text-2xl">Tags :</h4>
                     <div class="flex flex-wrap gap-[10px] md:gap-[15px] mt-5 md:mt-6">
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Chair"><span>Chair</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Art & Paint"><span>Art & Paint</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Mirror"><span>Mirror</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Table"><span>Table</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Lamp"><span>Lamp</span></a>
+                        @if($item->category)
+                            <a class="btn btn-theme-outline btn-xs"
+                               href="{{ url('/shop-v1?category=' . $item->category->slug) }}"
+                               data-text="{{ $item->category->name }}">
+                                <span>{{ $item->category->name }}</span>
+                            </a>
+                        @endif
+                        @foreach($item->colors ?? [] as $clr)
+                            <span class="btn btn-theme-outline btn-xs" data-text="{{ $clr }}"><span>{{ $clr }}</span></span>
+                        @endforeach
+                        @foreach($item->sizes ?? [] as $sz)
+                            <span class="btn btn-theme-outline btn-xs" data-text="Size {{ $sz }}"><span>Size {{ $sz }}</span></span>
+                        @endforeach
                     </div>
                 </div>
+                @endif
                 <div class="pt-4 sm:pt-6" data-aos="fade-up" data-aos-delay="500">
                     <div class="flex items-center gap-6">
                         <h6 class="font-normal text-lg">Share : </h6>
@@ -284,71 +281,77 @@
 </div>
 <!-- Product Slider End -->
 
-<!-- Description Start -->
+<!-- Tabs: Description / Reviews / Shipping Start -->
 <div class="s-py-50">
     <div class="container-fluid">
         <div class="max-w-[985px] mx-auto">
-            <div class="product-dtls-navtab  border-y border-bdr-clr dark:border-bdr-clr-drk">
-                <ul id="user-nav-tabs" class=" text-title dark:text-white text-base sm:text-lg lg:text-xl flex leading-none gap-3 sm:gap-6 md:gap-12 lg:gap-24 justify-between sm:justify-start max-w-md sm:max-w-full">
-                    <li role="presentation" class="py-3 sm:py-5 lg:6 relative before:absolute before:w-full before:h-[1px] before:bg-title before:top-full before:left-0 before:duration-300 dark:before:bg-white before:opacity-0 active "><a class="duration-300 hover:text-primary" href="#c1">Description</a></li>
-                    <li role="presentation" class="py-3 sm:py-5 lg:6 relative before:absolute before:w-full before:h-[1px] before:bg-title before:top-full before:left-0 before:duration-300 dark:before:bg-white before:opacity-0"><a class="duration-300 hover:text-primary" href="#c2">Vendor Info</a></li>
-                    <li role="presentation" class="py-3 sm:py-5 lg:6 relative before:absolute before:w-full before:h-[1px] before:bg-title before:top-full before:left-0 before:duration-300 dark:before:bg-white before:opacity-0"><a class="duration-300 hover:text-primary" href="#c3">Review</a></li>
-                    <li role="presentation" class="py-3 sm:py-5 lg:6 relative before:absolute before:w-full before:h-[1px] before:bg-title before:top-full before:left-0 before:duration-300 dark:before:bg-white before:opacity-0"><a class="duration-300 hover:text-primary" href="#c4">Shipping</a></li>
-                </ul>
+
+            {{-- Tab buttons --}}
+            <div class="flex gap-0 border-b border-bdr-clr dark:border-bdr-clr-drk mb-8 overflow-x-auto">
+                <button onclick="switchTab('tab-desc', this)"
+                        class="pdtab-btn px-5 py-3 text-sm sm:text-base font-medium leading-none whitespace-nowrap border-b-2 border-primary text-primary"
+                        data-active="true">
+                    Description
+                </button>
+                @if($item->review_content)
+                <button onclick="switchTab('tab-review', this)"
+                        class="pdtab-btn px-5 py-3 text-sm sm:text-base font-medium leading-none whitespace-nowrap border-b-2 border-transparent text-paragraph dark:text-white/60 hover:text-primary duration-200">
+                    Reviews
+                </button>
+                @endif
+                @if($item->shipping_info)
+                <button onclick="switchTab('tab-shipping', this)"
+                        class="pdtab-btn px-5 py-3 text-sm sm:text-base font-medium leading-none whitespace-nowrap border-b-2 border-transparent text-paragraph dark:text-white/60 hover:text-primary duration-200">
+                    Shipping
+                </button>
+                @endif
             </div>
-            <div id="content" class="mt-5 sm:mt-8 lg:mt-12 mx-0 sm:mr-5 md:mr-8 lg:mr-12">
-                <div id="content1">
-                    <p class="sm:text-lg">Crafted with plush cushioning and ergonomic design, it offers unparalleled comfort for lounging or reading. Its timeless style seamlessly blends with any decor, while the sturdy construction ensures durability for years to come. Whether you're unwinding after a long day or enjoying a leisurely weekend, this chair provides the perfect retreat.</p>
-                    <ul class="mt-4 sm:mt-6 grid gap-4 sm:gap-5 sm:text-lg leading-none">
-                        <li>Leather : From Japan</li>
-                        <li>Brand : Navana</li>
-                        <li>Weight : 1kg</li>
-                        <li>Color : Wooden , Whtie , Blue , Orange</li>
-                    </ul>
-                </div>
-                <div id="content2">
-                    <div class="max-w-[680px] flex items-start justify-between gap-y-8 gap-x-10 flex-wrap">
-                        <div>
-                            <span class="text-primary sm:text-lg leading-none block">Shop Name</span>
-                            <h4 class="font-medium mt-2 sm:mt-3 text-xl sm:text-2xl leading-none">John Furniture House</h4>
-                            <ul class="mt-4 sm:mt-6 grid gap-3 sm:text-lg">
-                                <li>Vendor : John Smith Doe</li>
-                                <li>Shop : West New York, NY, 1234589</li>
-                                <li>Mail : johnmsmith@gmail.com</li>
-                                <li>Call : +11 - 01234 5678</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <span class="text-primary sm:text-lg leading-none block">Shop Name</span>
-                            <h4 class="font-medium mt-2 sm:mt-3 text-xl sm:text-2xl leading-none">Furniture Gallery</h4>
-                            <ul class="mt-4 sm:mt-6 grid gap-3 sm:text-lg">
-                                <li>Vendor : John Smith Doe</li>
-                                <li>Shop : West New York, NY, 1234589</li>
-                                <li>Mail : johnmsmith@gmail.com</li>
-                                <li>Call : +11 - 01234 5678</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div id="content3">
-                    <div class="max-w-[905px] flex items-start xl:justify-between gap-8 flex-wrap">
-                        
-                        <!-- includes/Shop/review.blade.php -->
-                        @include('includes.Shop.review')
 
+            {{-- Description Panel --}}
+            <div id="tab-desc" class="pdtab-panel">
+                @if($item->description)
+                    <div class="rich-content leading-relaxed">
+                        {!! $item->description !!}
                     </div>
-                </div>
-                <div id="content4">
-                    
-                    <!-- includes/Shop/shipping.blade.php -->
-                    @include('includes.Shop.shipping')
+                @else
+                    <p class="text-gray-400 italic">No description available for this product.</p>
+                @endif
+            </div>
 
+            {{-- Reviews Panel --}}
+            @if($item->review_content)
+            <div id="tab-review" class="pdtab-panel hidden">
+                <div class="rich-content leading-relaxed">
+                    {!! $item->review_content !!}
                 </div>
             </div>
+            @endif
+
+            {{-- Shipping Panel --}}
+            @if($item->shipping_info)
+            <div id="tab-shipping" class="pdtab-panel hidden">
+                <div class="rich-content leading-relaxed">
+                    {!! $item->shipping_info !!}
+                </div>
+            </div>
+            @endif
+
         </div>
     </div>
 </div>
-<!-- Description End -->
+<script>
+function switchTab(panelId, btn) {
+    document.querySelectorAll('.pdtab-panel').forEach(function(p){ p.classList.add('hidden'); });
+    document.querySelectorAll('.pdtab-btn').forEach(function(b){
+        b.classList.remove('border-primary','text-primary');
+        b.classList.add('border-transparent','text-paragraph','dark:text-white/60');
+    });
+    document.getElementById(panelId).classList.remove('hidden');
+    btn.classList.add('border-primary','text-primary');
+    btn.classList.remove('border-transparent','text-paragraph','dark:text-white/60');
+}
+</script>
+<!-- Tabs End -->
 
 <!-- Related Product Start -->
 <div class="s-py-50-100">
