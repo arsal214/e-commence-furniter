@@ -35,7 +35,7 @@ class ContactController extends Controller
                     'Subject: ' . $data['subject'] . "\n" . 
                     'Message: ' . $data['Message'], 
                 function ($message) use ($data) {
-                    $message->to('your-email@gmail.com') // Replace with your email
+                    $message->to('peytonexpress44@gmail.com')
                             ->subject($data['subject']);
                 }
             );

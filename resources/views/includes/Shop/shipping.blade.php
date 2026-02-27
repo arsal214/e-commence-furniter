@@ -1,19 +1,19 @@
 @php
 $shippings = [
     [
-        'class' => '', 
-        'title' => 'For Shipping', 
-        'desc' => "Shipping times may vary based on your location and the selected delivery option. Please review our shipping policies for details on processing times, charges, and tracking updates. Contact us for any shipping-related inquiries or assistance.", 
+        'class' => '',
+        'title' => 'Shipping & Delivery',
+        'desc' => "We offer standard and express delivery options across all product categories. Orders are typically processed within 1–2 business days. Delivery times vary by location — standard delivery takes 3–7 business days, while express delivery arrives within 1–2 business days. Free shipping is available on orders over a set threshold. Once shipped, you will receive a tracking number via email.",
     ],
     [
-        'class' => 'mt-5 sm:mt-6', 
-        'title' => 'Item Return', 
-        'desc' => "We offer a hassle-free process to ensure your satisfaction. Please review our return policy for eligibility and steps to initiate a return. we offer a hassle-free process to ensure your satisfaction. Please review our return policy for eligibility and steps to initiate a return.", 
+        'class' => 'mt-5 sm:mt-6',
+        'title' => 'Returns & Exchanges',
+        'desc' => "Not happy with your purchase? We offer a 30-day hassle-free return policy on most items. Products must be in their original, unused condition with all packaging intact. To initiate a return, contact our support team with your order number and reason for return. Refunds are processed within 5–7 business days after we receive the item.",
     ],
     [
-        'class' => 'mt-5 sm:mt-6', 
-        'title' => 'Accepted Problem Issue', 
-        'desc' => "Choose from multiple methods, including credit cards, debit cards, and online payment gateways. All transactions are encrypted to ensure your information remains safe. For any payment-related concerns, our support team is here to assist.", 
+        'class' => 'mt-5 sm:mt-6',
+        'title' => 'Damaged or Incorrect Items',
+        'desc' => "If you received a damaged, defective, or incorrect item, please contact us within 48 hours of delivery. Attach a photo of the item and your order details to your message. We will arrange a replacement or full refund at no extra cost to you. Your satisfaction is our top priority and we resolve all such issues promptly.",
     ]
 ];
 @endphp

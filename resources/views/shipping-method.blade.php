@@ -34,8 +34,8 @@
                         <path d="M55.3901 27.1234C55.2373 26.8467 54.8892 26.7463 54.6125 26.8991C54.6085 26.9014 54.6043 26.9036 54.6003 26.9059C54.3193 27.0506 54.2087 27.3956 54.3532 27.6767C54.3535 27.6773 54.3539 27.678 54.3542 27.6786C54.3542 27.6786 55.207 29.3956 54.3142 32.429C54.2219 32.7313 54.3921 33.0512 54.6945 33.1434C54.6955 33.1437 54.6966 33.1439 54.6976 33.1444C54.7528 33.1499 54.8084 33.1499 54.8636 33.1444C55.1264 33.1548 55.3625 32.9848 55.4359 32.7323C56.4718 29.2239 55.4359 27.2093 55.3901 27.1234Z" fill="#BB976D"></path>
                     </svg>
                 </div>
-                <h3 class="font-medium leading-none mt-4 md:mt-6 text-2xl md:text-3xl">Delivery Option</h3>
-                <p class="mt-3">Delivery Option: Choose your preferred delivery option for seamless convenience. Get your items delivered on your terms, hassle-free. </p>
+                <h3 class="font-medium leading-none mt-4 md:mt-6 text-2xl md:text-3xl">Delivery Options</h3>
+                <p class="mt-3">We offer flexible delivery options to suit your schedule and budget. Whether you need your order fast or are happy to wait for free delivery, we have you covered. All orders are trackable from dispatch to your doorstep.</p>
             </div>
             <!-- Table -->
             <div class="overflow-x-auto border-b border-dashed border-primary pb-6 md:pb-10" data-aos="fade-up" data-aos-delay="100">
@@ -50,32 +50,32 @@
                     </thead>
                     <tbody>
                         <tr class="text-base sm:text-lg text-title dark:text-white leading-none text-left border-b border-bdr-clr dark:border-bdr-clr-drk">
+                            <td class="p-4 sm:p-5 whitespace-nowrap">Free Standard Delivery</td>
+                            <td class="p-4 sm:p-5 whitespace-nowrap">5–7 Business Days</td>
+                            <td class="p-4 sm:p-5 whitespace-nowrap">FREE (orders over $50)</td>
+                        </tr>
+                        <tr class="text-base sm:text-lg text-title dark:text-white leading-none text-left border-b border-bdr-clr dark:border-bdr-clr-drk">
                             <td class="p-4 sm:p-5 whitespace-nowrap">Standard Delivery</td>
-                            <td class="p-4 sm:p-5 whitespace-nowrap">2 Days</td>
-                            <td class="p-4 sm:p-5 whitespace-nowrap">$5</td>
+                            <td class="p-4 sm:p-5 whitespace-nowrap">3–5 Business Days</td>
+                            <td class="p-4 sm:p-5 whitespace-nowrap">$4.99</td>
                         </tr>
                         <tr class="text-base sm:text-lg text-title dark:text-white leading-none text-left border-b border-bdr-clr dark:border-bdr-clr-drk">
-                            <td class="p-4 sm:p-5 whitespace-nowrap">Quick Delivery</td>
-                            <td class="p-4 sm:p-5 whitespace-nowrap">1 Days</td>
-                            <td class="p-4 sm:p-5 whitespace-nowrap">$7.5</td>
-                        </tr>
-                        <tr class="text-base sm:text-lg text-title dark:text-white leading-none text-left border-b border-bdr-clr dark:border-bdr-clr-drk">
-                            <td class="p-4 sm:p-5 whitespace-nowrap">Regular Working Day</td>
-                            <td class="p-4 sm:p-5 whitespace-nowrap">3 Days</td>
-                            <td class="p-4 sm:p-5 whitespace-nowrap">FREE</td>
+                            <td class="p-4 sm:p-5 whitespace-nowrap">Express Delivery</td>
+                            <td class="p-4 sm:p-5 whitespace-nowrap">1–2 Business Days</td>
+                            <td class="p-4 sm:p-5 whitespace-nowrap">$9.99</td>
                         </tr>
                         <tr class="text-base sm:text-lg text-title dark:text-white leading-none text-left">
-                            <td class="p-4 sm:p-5 whitespace-nowrap">Super Fast Delivery</td>
-                            <td class="p-4 sm:p-5 whitespace-nowrap">12 Hour</td>
-                            <td class="p-4 sm:p-5 whitespace-nowrap">$10</td>
+                            <td class="p-4 sm:p-5 whitespace-nowrap">Next Day Delivery</td>
+                            <td class="p-4 sm:p-5 whitespace-nowrap">Next Business Day</td>
+                            <td class="p-4 sm:p-5 whitespace-nowrap">$14.99</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <!-- Content -->
             <div class="mt-8 md:mt-12">
-                <h3 class="font-medium leading-none text-2xl md:text-3xl" data-aos="fade-up">Shipping Rule</h3>
-                <p class="text-base sm:text-lg mt-3 md:mt-4" data-aos="fade-up" data-aos-delay="100">Shipping Rule: Discover our transparent shipping rules, ensuring clarity and peace of mind. We prioritize efficient delivery, ensuring your items arrive safely and on time. With clear guidelines in place, you can shop confidently knowing your orders are handled with care. </p>
+                <h3 class="font-medium leading-none text-2xl md:text-3xl" data-aos="fade-up">Shipping Rules & Notes</h3>
+                <p class="text-base sm:text-lg mt-3 md:mt-4" data-aos="fade-up" data-aos-delay="100">All orders are processed within 1–2 business days (excluding weekends and public holidays). Delivery times are estimates and may vary during peak seasons or due to factors outside our control. We ship to all major cities and regions nationwide. For orders containing multiple items, products may be shipped separately and arrive at different times. A tracking link will be sent to your email once your order is dispatched. For any shipping enquiries, please contact our support team.</p>
             </div>
         </div>
     </div>
