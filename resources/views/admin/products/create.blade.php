@@ -96,12 +96,28 @@
                         <textarea name="shipping_info" id="shipping_info" class="tinymce-editor">{{ old('shipping_info') }}</textarea>
                     </div>
 
+                    {{-- Primary Image --}}
                     <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Product Image</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Primary Image
+                            <span class="text-gray-400 font-normal ml-1 text-xs">shown in shop listings &amp; thumbnails</span>
+                        </label>
                         <input type="file" name="image" accept="image/*" id="imageInput"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
                         <p class="text-xs text-gray-400 mt-1">Max 4MB. JPG, PNG, WEBP.</p>
                         <img id="imagePreview" src="#" alt="Preview" class="mt-3 w-28 h-28 object-cover rounded-lg border border-gray-200 hidden">
+                    </div>
+
+                    {{-- Additional Gallery Images --}}
+                    <div class="sm:col-span-2 border-t border-gray-100 pt-5">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Additional Gallery Images
+                            <span class="text-gray-400 font-normal ml-1 text-xs">shown in the product detail image slider</span>
+                        </label>
+                        <p class="text-xs text-gray-400 mb-3">Select multiple images at once. Max 4MB each.</p>
+                        <input type="file" name="images[]" accept="image/*" id="galleryInput" multiple
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
+                        <div id="galleryPreviewList" class="flex flex-wrap gap-3 mt-3"></div>
                     </div>
                 </div>
             </div>
@@ -191,7 +207,7 @@
 <script>
 tinymce.init({
     selector: '.tinymce-editor',
-    plugins: 'lists link image table code wordcount',
+    plugins: 'lists link image table code wordcount',oh
     toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link image | table | code',
     menubar: false,
     height: 300,
@@ -213,6 +229,20 @@ document.getElementById('sizeChartInput').addEventListener('change', function ()
         preview.src = URL.createObjectURL(this.files[0]);
         preview.classList.remove('hidden');
     }
+});
+document.getElementById('galleryInput').addEventListener('change', function () {
+    const list = document.getElementById('galleryPreviewList');
+    list.innerHTML = '';
+    Array.from(this.files).forEach(function (file) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'relative';
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.className = 'w-24 h-24 object-cover rounded-lg border border-gray-200';
+        img.alt = file.name;
+        wrapper.appendChild(img);
+        list.appendChild(wrapper);
+    });
 });
 </script>
 @endpush

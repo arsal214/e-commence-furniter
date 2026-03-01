@@ -96,8 +96,12 @@
                         <textarea name="shipping_info" id="shipping_info" class="tinymce-editor">{{ old('shipping_info', $product->shipping_info) }}</textarea>
                     </div>
 
+                    {{-- Primary Image --}}
                     <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Product Image</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                            Primary Image
+                            <span class="text-gray-400 font-normal ml-1 text-xs">shown in shop listings &amp; thumbnails</span>
+                        </label>
                         @if ($product->image)
                             <div class="mb-3">
                                 @if (str_starts_with($product->image, 'assets/'))
@@ -113,6 +117,37 @@
                         <input type="file" name="image" accept="image/*" id="imageInput"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
                         <p class="text-xs text-gray-400 mt-1">Max 4MB. JPG, PNG, WEBP.</p>
+                    </div>
+
+                    {{-- Gallery Images --}}
+                    <div class="sm:col-span-2 border-t border-gray-100 pt-5">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Additional Gallery Images
+                            <span class="text-gray-400 font-normal ml-1 text-xs">shown in the product detail image slider</span>
+                        </label>
+
+                        @if($product->productImages->isNotEmpty())
+                        <p class="text-xs text-gray-400 mb-3">Check the box on any image to remove it when you save.</p>
+                        <div class="flex flex-wrap gap-3 mb-4">
+                            @foreach($product->productImages as $img)
+                            <div class="relative group">
+                                <img src="{{ Storage::url($img->image) }}"
+                                     class="w-24 h-24 object-cover rounded-lg border border-gray-200"
+                                     alt="Gallery image">
+                                <label class="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                    <input type="checkbox" name="remove_images[]" value="{{ $img->id }}"
+                                           class="w-4 h-4 accent-red-500 mb-1">
+                                    <span class="text-white text-[10px] font-medium">Remove</span>
+                                </label>
+                            </div>
+                            @endforeach
+                        </div>
+                        @endif
+
+                        <p class="text-xs text-gray-400 mb-2">Add more gallery images (select multiple). Max 4MB each.</p>
+                        <input type="file" name="images[]" accept="image/*" id="galleryInput" multiple
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
+                        <div id="galleryPreviewList" class="flex flex-wrap gap-3 mt-3"></div>
                     </div>
                 </div>
             </div>
@@ -240,6 +275,20 @@ document.getElementById('imageInput').addEventListener('change', function () {
         preview.src = URL.createObjectURL(this.files[0]);
         preview.classList.remove('hidden');
     }
+});
+document.getElementById('galleryInput').addEventListener('change', function () {
+    const list = document.getElementById('galleryPreviewList');
+    list.innerHTML = '';
+    Array.from(this.files).forEach(function (file) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'relative';
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.className = 'w-24 h-24 object-cover rounded-lg border border-gray-200';
+        img.alt = file.name;
+        wrapper.appendChild(img);
+        list.appendChild(wrapper);
+    });
 });
 
 // Size chart — preview new upload

@@ -8,7 +8,7 @@ class ProductController extends Controller
 {
     public function show(string $slug)
     {
-        $item = Product::with('category')
+        $item = Product::with(['category', 'productImages'])
             ->where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();

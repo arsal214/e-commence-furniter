@@ -86,9 +86,16 @@
         <div class="max-w-[1720px] mx-auto flex justify-between gap-10 flex-col lg:flex-row">
             <div class="w-full lg:w-[58%]">
                 @php
-                    $productImgSrc = !empty($item->image)
+                    $defaultImg = asset('assets/img/gallery/product-detls/product-01.jpg');
+                    $primarySrc = !empty($item->image)
                         ? (str_starts_with($item->image, 'assets/') ? asset($item->image) : Storage::url($item->image))
-                        : asset('assets/img/gallery/product-detls/product-01.jpg');
+                        : $defaultImg;
+
+                    // Build full gallery array: primary image first, then additional images
+                    $galleryImages = collect([$primarySrc]);
+                    foreach ($item->productImages as $pi) {
+                        $galleryImages->push(Storage::url($pi->image));
+                    }
                 @endphp
                 <div class="relative product-dtls-wrapper">
                     {{-- Badge from admin tag field --}}
@@ -104,14 +111,18 @@
                               style="background:#E13939">Sale</span>
                     @endif
                     <div class="product-dtls-slider">
+                        @foreach($galleryImages as $src)
                         <div>
-                            <img src="{{ $productImgSrc }}" class="w-full" alt="{{ $item->name }}">
+                            <img src="{{ $src }}" class="w-full" alt="{{ $item->name }}">
                         </div>
+                        @endforeach
                     </div>
                     <div class="product-dtls-nav">
+                        @foreach($galleryImages as $src)
                         <div>
-                            <img src="{{ $productImgSrc }}" alt="{{ $item->name }}">
+                            <img src="{{ $src }}" alt="{{ $item->name }}">
                         </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
