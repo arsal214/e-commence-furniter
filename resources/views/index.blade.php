@@ -29,7 +29,7 @@
                     @endif
                 </div>
             </div>
-            <div class="absolute z-10 right-[10%] xl:right-[40%] bottom-1/4 hidden md:block shape-02">
+            {{-- <div class="absolute z-10 right-[10%] xl:right-[40%] bottom-1/4 hidden md:block shape-02">
                 <svg width="101" height="83" viewBox="0 0 101 83" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M29.1775 77.3654C11.2192 68.7991 -2.66244 48.3121 0.433831 32.2115C3.4785 16.0593 23.6043 4.29344 44.8653 0.990749C66.0748 -2.36354 88.626 2.74531 96.6247 17.143C104.572 31.5922 98.0696 55.3303 83.6719 68.9023C69.3259 82.5259 47.1875 85.8802 29.1775 77.3654Z" fill="{{ $slide->badge_color }}"/>
                 </svg>
@@ -37,7 +37,7 @@
                     <h3 class="font-semibold leading-none text-white text-3xl">-5%</h3>
                     <p class="leading-none text-white mt-1">OFF</p>
                 </div>
-            </div>
+            </div> --}}
             @endif
 
             <div class="flex items-center justify-between gap-8 flex-col sm:flex-row">
