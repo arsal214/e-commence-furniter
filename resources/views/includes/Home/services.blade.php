@@ -19,18 +19,28 @@ $services = [
         'data' => "300", 
     ],
     [
-        'img' => 'assets/img/svg/support.svg', 
-        'title' => "Customer Support", 
-        'desc' => "Our dedicated customer support team is here to assist you every step of the way. Reach out to us anytime for prompt, friendly help.", 
-        'data' => "400", 
+        'img' => 'assets/img/svg/support.svg',
+        'title' => "Customer Support",
+        'desc' => "Our dedicated customer support team is here to assist you every step of the way. Reach out to us anytime for prompt, friendly help.",
+        'data' => "400",
+        'email' => "support@peytonghalib.com",
     ]
 ];
 @endphp
 
 @foreach ($services as $item)
-    <div class="why-choose-card p-6 rounded-[10px]" data-aos="fade-up" data-aos-delay="{{ $item['data'] }}">
-        <img src="{{ asset($item['img']) }}" class="w-12 h-12" alt="">
-        <h4 class="font-semibold leading-none mt-5 sm:mt-7 text-xl md:text-2xl">{{ $item['title'] }}</h4>
-        <p class="mt-[15px]">{{ $item['desc'] }} </p>
-    </div>
+    @if (!empty($item['email']))
+        <a href="mailto:{{ $item['email'] }}" class="why-choose-card p-6 rounded-[10px] block cursor-pointer" data-aos="fade-up" data-aos-delay="{{ $item['data'] }}">
+            <img src="{{ asset($item['img']) }}" class="w-12 h-12" alt="">
+            <h4 class="font-semibold leading-none mt-5 sm:mt-7 text-xl md:text-2xl">{{ $item['title'] }}</h4>
+            <p class="mt-[15px]">{{ $item['desc'] }}</p>
+            <span class="inline-block mt-3 text-sm font-medium" style="color: #bb976d;">{{ $item['email'] }}</span>
+        </a>
+    @else
+        <div class="why-choose-card p-6 rounded-[10px]" data-aos="fade-up" data-aos-delay="{{ $item['data'] }}">
+            <img src="{{ asset($item['img']) }}" class="w-12 h-12" alt="">
+            <h4 class="font-semibold leading-none mt-5 sm:mt-7 text-xl md:text-2xl">{{ $item['title'] }}</h4>
+            <p class="mt-[15px]">{{ $item['desc'] }}</p>
+        </div>
+    @endif
 @endforeach
