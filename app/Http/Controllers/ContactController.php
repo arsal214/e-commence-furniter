@@ -29,7 +29,7 @@ class ContactController extends Controller
             $data = $request->only(['name', 'email', 'number', 'subject', 'Message']);
             
             // Send email
-            Mail::to($data['email'])->send(new Contactus($data));
+            Mail::to('peytonexpress44@gmail.com')->send(new Contactus($data));
 
             // Return raw HTML for success
             $successMessage = "
