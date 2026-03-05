@@ -1,16 +1,24 @@
 <x-mail::message>
-# Hello, you have received an enquiry!
+# New Contact Form Enquiry
 
-<h3>Name: {{ $data['name'] }}</h3>
-<h3>Email: {{ $data['email'] }}</h3>
-<h3>Number: {{ $data['number'] }}</h3>
-<h3>Subject: {{ $data['subject'] }}</h3>
-<h3>Message: {{ $data['Message'] }}</h3>
+You have received a new message from the contact form.
 
-<x-mail::button :url="''">
-    Button Text
-</x-mail::button>
+---
 
-Thanks,  
+**Name:** {{ $data['name'] }}
+
+**Email:** {{ $data['email'] }}
+
+**Phone:** {{ $data['number'] }}
+
+**Subject:** {{ $data['subject'] }}
+
+**Message:**
+
+{{ $data['Message'] }}
+
+---
+
+Thanks,
 {{ config('app.name') }}
 </x-mail::message>

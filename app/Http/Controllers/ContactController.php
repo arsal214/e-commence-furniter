@@ -10,7 +10,7 @@ class ContactController extends Controller
 {
     public function show()
     {
-        return view('emails.contact');
+        return view('contact');
     }
 
     public function send(Request $request)
@@ -29,16 +29,7 @@ class ContactController extends Controller
             $data = $request->only(['name', 'email', 'number', 'subject', 'Message']);
             
             // Send email
-            Mail::raw('Name: ' . $data['name'] . "\n" . 
-                    'Email: ' . $data['email'] . "\n" . 
-                    'Number: ' . $data['number'] . "\n" . 
-                    'Subject: ' . $data['subject'] . "\n" . 
-                    'Message: ' . $data['Message'], 
-                function ($message) use ($data) {
-                    $message->to('peytonexpress44@gmail.com')
-                            ->subject($data['subject']);
-                }
-            );
+            Mail::to($data['email'])->send(new Contactus($data));
 
             // Return raw HTML for success
             $successMessage = "

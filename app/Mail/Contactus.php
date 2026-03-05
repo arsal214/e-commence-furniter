@@ -28,16 +28,8 @@ class Contactus extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Contactus',
-            from: new Address('your-email@gmail.com', 'Acme Media'), // Replace with your email
+            subject: $this->data['subject'],
         );
-    }
-
-    public function build()
-    {
-        return $this->view('emails.contact')
-                    ->subject($this->data['subject'])
-                    ->with('data', $this->data);
     }
 
     /**

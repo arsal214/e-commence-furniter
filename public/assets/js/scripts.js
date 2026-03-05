@@ -1814,6 +1814,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorMsg = document.getElementById("error-msg");
     const responseDiv = document.getElementById("simple-msg");
 
+    const submitBtn = document.getElementById("submit");
+    const submitInner = submitBtn ? submitBtn.querySelector('a') : null;
+
+    function setLoading(loading) {
+        if (!submitBtn) return;
+        if (loading) {
+            submitBtn.disabled = true;
+            submitBtn.style.pointerEvents = 'none';
+            submitBtn.style.opacity = '0.7';
+            if (submitInner) submitInner.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;"><svg style="animation:spin 1s linear infinite;width:18px;height:18px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle style="opacity:.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path style="opacity:.75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>Sending...</span>';
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.style.pointerEvents = '';
+            submitBtn.style.opacity = '';
+            if (submitInner) submitInner.innerHTML = '<span>Send Message</span>';
+        }
+    }
+
     form.onsubmit = async function (e) {
         e.preventDefault();
 
@@ -1835,6 +1853,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!number) return showError("*Please enter an Number*");
         if (!subject) return showError("*Please enter a Subject*");
         if (!Message) return showError("*Please enter a Message*");
+
+        setLoading(true);
 
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -1859,7 +1879,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 responseDiv.innerHTML = result.message;
-                form.reset(); // clear form fields
+                form.reset();
             } else {
                 showError(result.message || "Something went wrong.");
             }
@@ -1867,6 +1887,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("An unexpected error occurred:", error);
             showError("An unexpected error occurred. Please try again later.");
+        } finally {
+            setLoading(false);
         }
     };
 

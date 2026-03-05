@@ -1,7 +1,7 @@
 <!-- resources/views/index.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'Index Page')
+@section('title', 'Home')
 
 @section('content')
 
