@@ -2,24 +2,24 @@
 $blogs = [
     [
         'id' => 16,
-        'img' => 'assets/img/home-v5/blog-01.jpg', 
-        'title' => 'Home Office Storage Ideas to Boost Productivity in 2025.', 
-        'tag' => 'Vase', 
-        'date' => '6 Sep, 2025', 
+        'img' => 'assets/img/home-v5/blog-01.jpg',
+        'title' => 'Home Office Storage Ideas to Boost Productivity in 2026',
+        'tag' => 'Home & Living',
+        'date' => '5 Jan, 2026',
     ],
     [
         'id' => 17,
-        'img' => 'assets/img/home-v5/blog-02.jpg', 
-        'title' => 'The Consectetur purus habitasse ut diam habitant varius.', 
-        'tag' => 'Interior', 
-        'date' => '6 Sep, 2025', 
+        'img' => 'assets/img/home-v5/blog-02.jpg',
+        'title' => 'Top Skincare Routines and the Products You Actually Need',
+        'tag' => 'Beauty',
+        'date' => '12 Jan, 2026',
     ],
     [
         'id' => 18,
-        'img' => 'assets/img/home-v5/blog-03.jpg', 
-        'title' => 'The Key Components of a Quality Sofa habitant vel tempor.', 
-        'tag' => 'Sofa', 
-        'date' => '6 Sep, 2025', 
+        'img' => 'assets/img/home-v5/blog-03.jpg',
+        'title' => 'Gear Up for Fitness: Essential Sports Equipment for Every Level',
+        'tag' => 'Sports',
+        'date' => '19 Jan, 2026',
     ]
 ];
 @endphp

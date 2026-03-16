@@ -162,7 +162,7 @@
 <!-- New Product Area End -->
 
 <!-- Choose Area Start -->
-<div class="s-py-100 bg-overlay dark:before:bg-title dark:before:bg-opacity-80" style="background-image: url('{{ asset('assets/img/home-v1/choose-us-bg.jpg') }}');">
+<div class="s-py-100 bg-overlay dark:before:bg-title dark:before:bg-opacity-80" style="background-image: url('{{ asset('assets/img/home-v1/bg.png') }}');">
     <img class="absolute top-0 right-0 w-[20%] z-[-1]" src="{{ asset('assets/img/home-v1/shape-01.png') }}" alt="shape">
     <div class="container-fluid">
         <div class="max-w-[1720px] mx-auto">
@@ -247,32 +247,117 @@
 </div> --}}
 <!-- Blog End -->
 
-<!-- Partner Start -->
-<div class="s-py-50-100">
+<!-- Customer Reviews Start -->
+<div class="s-py-50-100 bg-[#F8F6F3] dark:bg-title">
     <div class="container-fluid">
+        <!-- Section Title -->
         <div class="max-w-xl mx-auto mb-8 md:mb-12 text-center" data-aos="fade-up">
-            <div>
-                <svg class="mx-auto w-14 sm:w-24" viewBox="0 0 64 63" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M62.7358 44.5708L53.5821 35.2916L60.1592 28.4808C62.0554 26.5157 61.9988 23.3742 60.0349 21.478C59.1698 20.6425 58.0772 20.186 56.9623 20.1035C57.5677 19.2496 57.8852 18.2283 57.8667 17.1602C57.8434 15.8374 57.3069 14.6032 56.3545 13.684C55.4119 12.7747 54.1999 12.3132 52.9829 12.2972C53.2856 11.634 53.4382 10.9068 53.4246 10.1574C53.4013 8.83462 52.8648 7.5992 51.9136 6.68125C50.3435 5.16527 48.024 4.89579 46.1868 5.84943C46.1167 4.59924 45.5876 3.44011 44.6819 2.56522C43.7012 1.61897 42.3514 1.10831 40.9769 1.16368C39.9137 1.20798 38.9367 1.57836 38.1603 2.22314L34.1378 0.324483C32.8433 -0.285845 31.2916 -0.0188265 30.2752 0.987723L26.4533 4.77643L25.3237 3.60623C23.4263 1.64235 20.2848 1.58698 18.3197 3.48441C17.4141 4.35929 16.8849 5.51965 16.816 6.76984C14.9789 5.81497 12.6582 6.08322 11.088 7.5992C10.1369 8.51838 9.60038 9.75257 9.577 11.0754C9.56346 11.826 9.71727 12.5532 10.02 13.2164C8.80301 13.2337 7.58974 13.6926 6.64717 14.6032C5.69477 15.5224 5.15827 16.7566 5.13489 18.0794C5.11643 19.1462 5.4339 20.1675 6.04054 21.0227C4.9257 21.1052 3.83179 21.5617 2.96675 22.3972C1.00287 24.2934 0.946268 27.4349 2.84247 29.4L7.49745 34.2198C8.15823 34.904 8.97036 35.3556 9.83048 35.5746C9.57946 35.9019 9.3149 36.2169 9.06388 36.4729L0.297794 44.54C-0.0775082 44.8858 -0.100888 45.4691 0.243652 45.8444C0.425766 46.0425 0.674327 46.1422 0.922888 46.1422C1.14684 46.1422 1.37079 46.0609 1.54798 45.8985L10.3313 37.8154C10.3424 37.8043 10.3534 37.7944 10.3645 37.7834C10.9884 37.1484 11.627 36.2834 12.0565 35.6288C12.9486 35.4466 13.8001 35.0197 14.5027 34.3417C15.4551 33.4225 15.9916 32.1871 16.015 30.8643C16.0199 30.564 15.9977 30.2687 15.951 29.9783C16.2266 30.0263 16.5059 30.0509 16.7853 30.0509C18.0244 30.0509 19.266 29.5895 20.2257 28.6629C21.1769 27.7437 21.7146 26.5095 21.7368 25.1867C21.7417 24.9333 21.727 24.6822 21.6937 24.4361C22.0124 24.4989 22.3361 24.5309 22.6597 24.5309C23.8988 24.5309 25.1404 24.0694 26.1002 23.1429C27.0513 22.2237 27.5891 20.9895 27.6124 19.6667C27.6161 19.3899 27.5977 19.1167 27.5583 18.8484C27.8561 18.9038 28.1563 18.9321 28.459 18.9321C29.6981 18.9321 30.9385 18.4707 31.8983 17.5441C32.8507 16.6249 33.3872 15.3907 33.4106 14.0679C33.4302 12.8928 33.0426 11.7743 32.3117 10.8711C32.4815 10.7296 32.6452 10.5795 32.8015 10.417C32.8408 10.3752 39.0032 3.97538 39.0352 3.93846C39.5335 3.3712 40.2497 3.04143 41.052 3.0082C41.9256 2.97375 42.7808 3.29491 43.3998 3.89293C43.9965 4.47004 44.3337 5.24402 44.3485 6.07461C44.362 6.90397 44.0532 7.69026 43.476 8.28705C43.4182 8.35227 42.312 9.48063 42.296 9.52247C42.0044 9.92115 42.0782 10.4786 42.4646 10.7874C42.8362 11.0852 43.3739 11.0508 43.7049 10.7087L46.2373 8.08525C47.4272 6.85352 49.3984 6.81783 50.6314 8.00896C51.2282 8.58483 51.5654 9.36005 51.5789 10.1894C51.5937 11.0188 51.2848 11.805 50.7065 12.4043C49.9706 13.1721 48.5986 14.5872 47.8628 15.3661C47.768 15.4646 47.7004 15.579 47.6585 15.6996C47.5342 16.054 47.6376 16.4625 47.9415 16.7147C48.3205 17.0273 48.8779 16.9891 49.2102 16.6274L50.8111 14.9601C52.0108 13.8551 53.8848 13.8649 55.0723 15.0117C55.6703 15.5888 56.0062 16.3628 56.021 17.1934C56.0358 18.0228 55.7257 18.8091 55.1498 19.4058C55.1498 19.4058 53.2388 21.3845 53.0481 21.5814C52.6716 21.9431 52.6814 22.5719 53.0678 22.9202C53.4923 23.3201 54.1396 23.2007 54.4718 22.77C55.6715 21.649 57.5591 21.6527 58.7527 22.8057C59.9857 23.9956 60.0201 25.9669 58.8315 27.1986L47.5761 38.8539C47.4493 38.9843 47.3177 39.1172 47.1848 39.2452C46.8181 39.5996 46.8095 40.1841 47.1639 40.5508C47.3447 40.7378 47.5859 40.8313 47.8271 40.8313C48.0584 40.8313 48.2898 40.7452 48.4694 40.5717C48.5974 40.4671 52.0649 36.858 52.2987 36.6205L61.4217 45.8678C61.6025 46.0499 61.84 46.1422 62.0787 46.1422C62.3125 46.1422 62.5476 46.0536 62.7272 45.8764C63.0902 45.5183 63.0939 44.9338 62.7358 44.5708ZM13.2205 33.014C11.9875 34.2038 10.0151 34.1706 8.82516 32.9377L4.17018 28.1178C2.98151 26.8848 3.01597 24.9148 4.24893 23.7249C5.48189 22.5338 7.45192 22.5682 8.64305 23.8C8.74641 23.9058 13.1971 28.514 13.2968 28.6186C13.8739 29.2154 14.184 30.0017 14.1692 30.8323C14.1545 31.6616 13.8173 32.4368 13.2205 33.014ZM18.9436 27.3352C17.7106 28.5251 15.7393 28.4906 14.5494 27.2589C13.1085 25.7675 9.23615 21.7573 7.85183 20.3238C7.27596 19.727 6.96587 18.9407 6.98064 18.1114C6.99541 17.282 7.33133 16.5068 7.92936 15.9309C9.16109 14.741 11.1311 14.7742 12.321 16.006L19.0211 22.9435C19.597 23.5403 19.9058 24.3254 19.8923 25.1547C19.8775 25.9841 19.5404 26.7581 18.9436 27.3352ZM30.6161 16.2164C29.3831 17.4063 27.4131 17.3718 26.222 16.1401L24.3282 14.1787C23.9738 13.812 23.3894 13.8009 23.0227 14.1553C22.6572 14.5097 22.6461 15.0942 23.0005 15.4609L24.8943 17.4223C25.4714 18.0191 25.7815 18.8041 25.7667 19.6347C25.7519 20.4641 25.4148 21.2393 24.818 21.8152C23.585 23.0051 21.6137 22.9706 20.4239 21.7389C20.3328 21.6441 12.385 13.4145 12.2939 13.3198C11.7168 12.723 11.408 11.9379 11.4227 11.1074C11.4363 10.278 11.7734 9.50401 12.3702 8.92691C13.6032 7.73702 15.5745 7.77147 16.7643 9.0032C17.558 9.82518 19.2253 11.5516 20.0264 12.3809C20.3808 12.7476 20.9653 12.7587 21.332 12.4043C21.6987 12.0499 21.7085 11.4654 21.3541 11.0987L19.5256 9.205C18.962 8.62175 18.6532 7.8576 18.6532 7.04917V6.99256C18.6679 6.16321 19.0051 5.38799 19.6019 4.81212C20.8348 3.62222 22.8049 3.65545 23.996 4.88841L25.1416 6.07461L24.3602 6.84982C23.3758 7.82438 23.3586 9.42772 24.3208 10.4244C25.4406 11.5848 26.9455 12.2234 28.5575 12.2234H28.5624C29.3056 12.2222 30.0254 12.0844 30.6948 11.8247C31.2695 12.4215 31.5796 13.2066 31.5648 14.0359C31.55 14.8653 31.2129 15.6405 30.6161 16.2164ZM31.4713 9.13733C30.7035 9.93592 29.6698 10.3764 28.5612 10.3777H28.5575C27.4512 10.3777 26.4176 9.93838 25.6486 9.14225C25.384 8.86908 25.3889 8.42856 25.6584 8.16154L31.5746 2.29944C31.8737 2.00165 32.276 1.84538 32.6821 1.84538C32.9085 1.84538 33.1374 1.89337 33.3503 1.99427L36.7858 3.61484L31.4713 9.13733Z" fill="#BB976D"/>
-                    <path d="M45.1617 62.7448C44.9833 62.9146 44.7544 62.9995 44.5268 62.9995C44.2819 62.9995 44.0383 62.9036 43.8574 62.7128C43.8574 62.7128 31.8637 50.0855 31.8945 50.1544C31.7468 50.2983 31.6016 50.4448 31.4589 50.5936L20.0546 62.7092C19.8725 62.9023 19.6276 62.9995 19.3815 62.9995C19.1551 62.9995 18.9275 62.9159 18.749 62.7485C18.3787 62.3991 18.3602 61.8158 18.7097 61.4442L30.1213 49.3213C32.8678 46.4616 36.3292 44.3833 40.1364 43.3054C41.4764 42.9264 42.7672 42.3788 43.9731 41.6774C44.4124 41.4215 44.9784 41.5704 45.2343 42.0109C45.4903 42.4514 45.3414 43.0175 44.9009 43.2734C43.5621 44.0523 42.1286 44.6602 40.6384 45.0822C37.9412 45.8451 35.4346 47.1593 33.2739 48.9226C33.4018 49.0494 45.195 61.4405 45.195 61.4405C45.5457 61.8097 45.5309 62.3941 45.1617 62.7448Z" fill="#BB976D"/>
-                </svg>                                              
-            </div>
-            <h3 class="leading-none mt-4 md:mt-6 text-2xl md:text-3xl font-bold">Trusted Partner</h3>
-            <p class="mt-3">Count on our trusted partnerships to deliver excellence. Collaborating with industry leaders ensures top-quality products and services for your satisfaction. </p>
+            <span class="text-xs uppercase tracking-widest text-primary font-semibold">What our customers say</span>
+            <h3 class="leading-tight mt-2 text-2xl md:text-3xl font-bold text-title dark:text-white">Customer Reviews</h3>
+            <p class="mt-3 text-paragraph dark:text-white-light">Real stories from real shoppers. See why thousands of customers love shopping with PeytonGhalib.</p>
         </div>
-        <div data-aos="fade-up" data-aos-delay="100">
-            
-            <!-- includes/Home/trusted-partner.blade.php -->
-            @include('includes.Home.trusted-partner')
 
+        <!-- Reviews Slider -->
+        <div class="max-w-[1720px] mx-auto relative group" data-aos="fade-up" data-aos-delay="100">
+            <div class="owl-carousel reviews-slider"
+                 data-carousel-items="3"
+                 data-carousel-xl="3"
+                 data-carousel-lg="2"
+                 data-carousel-md="2"
+                 data-carousel-sm="1"
+                 data-carousel-xs="1"
+                 data-carousel-margin="24"
+                 data-carousel-loop="true"
+                 data-carousel-autoplay="true"
+                 data-carousel-dots="true">
+
+                @php
+                $reviews = [
+                    ['name' => 'Sarah M.',       'rating' => 5, 'review' => 'Absolutely love my purchase! The quality exceeded my expectations and delivery was super fast. PeytonGhalib is now my go-to store for everything.'],
+                    ['name' => 'James R.',       'rating' => 5, 'review' => 'Great selection and amazing prices. The checkout process was smooth and my order arrived well-packaged. Highly recommend!'],
+                    ['name' => 'Aisha K.',       'rating' => 4, 'review' => 'Really impressed with the customer service. They resolved my query within hours. The product itself is top-notch quality.'],
+                    ['name' => 'Daniel T.',      'rating' => 5, 'review' => 'I\'ve been shopping here for months and every single order has been perfect. Fast shipping, great products — 10/10!'],
+                    ['name' => 'Priya S.',       'rating' => 5, 'review' => 'The product photos are exactly what you get in real life. No surprises — just great quality. I\'ll definitely be ordering again soon.'],
+                    ['name' => 'Michael B.',     'rating' => 4, 'review' => 'PeytonGhalib has an incredible range of products. Found exactly what I was looking for at a fair price. Very satisfied with my order.'],
+                    ['name' => 'Fatima A.',      'rating' => 5, 'review' => 'Exceptional shopping experience from start to finish. The packaging was beautiful and the product quality is outstanding. Love it!'],
+                    ['name' => 'Chris L.',       'rating' => 5, 'review' => 'Fast delivery and the items were exactly as described. This store genuinely cares about customer satisfaction. Will shop again!'],
+                ];
+                @endphp
+
+                @foreach($reviews as $review)
+                <div class="bg-white dark:bg-[#1a1a2e] rounded-sm p-6 md:p-8 shadow-sm flex flex-col h-full border border-transparent hover:border-primary duration-300">
+
+                    <!-- Stars -->
+                    <div class="flex items-center gap-1 mb-4">
+                        @for($s = 1; $s <= 5; $s++)
+                            @if($s <= $review['rating'])
+                                <svg class="w-4 h-4 text-[#F5A623] fill-current" viewBox="0 0 20 20"><path d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z"/></svg>
+                            @else
+                                <svg class="w-4 h-4 text-gray-300 fill-current" viewBox="0 0 20 20"><path d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z"/></svg>
+                            @endif
+                        @endfor
+                        <span class="ml-1 text-xs text-gray-400 dark:text-white-light font-medium">{{ $review['rating'] }}.0</span>
+                    </div>
+
+                    <!-- Review Text -->
+                    <p class="text-paragraph dark:text-white-light text-sm leading-relaxed flex-1">&ldquo;{{ $review['review'] }}&rdquo;</p>
+
+                    <!-- Divider -->
+                    <div class="my-5 border-t border-[#E3E5E6] dark:border-bdr-clr-drk"></div>
+
+                    <!-- Customer Info -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-none">
+                            <span class="text-primary font-bold text-base leading-none">{{ strtoupper(substr($review['name'], 0, 1)) }}</span>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-sm text-title dark:text-white leading-none">{{ $review['name'] }}</h5>
+                            <span class="text-xs text-gray-400 dark:text-white-light mt-1 block">Verified Buyer</span>
+                        </div>
+                        <div class="ml-auto">
+                            <svg class="w-7 h-7 text-primary/20 fill-current" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                        </div>
+                    </div>
+
+                </div>
+                @endforeach
+
+            </div>
+
+            <!-- Slider Navigation -->
+            <button class="icon reviews_prev w-9 h-9 md:w-12 md:h-12 flex items-center justify-center text-title duration-300 bg-white hover:bg-primary hover:text-white transform p-2 absolute top-1/2 -translate-y-1/2 -left-4 md:-left-6 z-[999] shadow-md" aria-label="Previous Review">
+                <svg class="fill-current" width="18" height="12" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0.180223 7.38726L5.62434 12.8314C5.8199 13.0598 6.16359 13.0864 6.39195 12.8908C6.62031 12.6952 6.64693 12.3515 6.45132 12.1232C6.43307 12.1019 6.41324 12.082 6.39195 12.0638L1.87877 7.54516L23.4322 7.54516C23.7328 7.54516 23.9766 7.30141 23.9766 7.00072C23.9766 6.70003 23.7328 6.45632 23.4322 6.45632L1.87877 6.45632L6.39195 1.94314C6.62031 1.74758 6.64693 1.40389 6.45132 1.17553C6.25571 0.947171 5.91207 0.920551 5.68371 1.11616C5.66242 1.13441 5.64254 1.15424 5.62434 1.17553L0.180175 6.6197C-0.0308748 6.83196 -0.0308748 7.1749 0.180223 7.38726Z"/>
+                </svg>
+            </button>
+            <button class="icon reviews_next w-9 h-9 md:w-12 md:h-12 flex items-center justify-center text-title duration-300 bg-white hover:bg-primary hover:text-white transform p-2 absolute top-1/2 -translate-y-1/2 -right-4 md:-right-6 z-[999] shadow-md" aria-label="Next Review">
+                <svg class="fill-current" width="18" height="12" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M23.8198 6.61958L18.3757 1.17541C18.1801 0.947054 17.8364 0.920433 17.608 1.11604C17.3797 1.31161 17.3531 1.65529 17.5487 1.88366C17.5669 1.90494 17.5868 1.92483 17.608 1.94303L22.1212 6.46168L0.567835 6.46168C0.267191 6.46168 0.0234375 6.70543 0.0234375 7.00612C0.0234375 7.30681 0.267191 7.55052 0.567835 7.55052L22.1212 7.55052L17.608 12.0637C17.3797 12.2593 17.3531 12.6029 17.5487 12.8313C17.7443 13.0597 18.0879 13.0863 18.3163 12.8907C18.3376 12.8724 18.3575 12.8526 18.3757 12.8313L23.8198 7.38714C24.0309 7.17488 24.0309 6.83194 23.8198 6.61958Z"/>
+                </svg>
+            </button>
         </div>
+
     </div>
 </div>
-<!-- Partner End -->
+<!-- Customer Reviews End -->
 
 <!-- includes/Home/popup.blade.php -->
-@include('includes.Home.popup')    
+@include('includes.Home.popup')
 
 @include('includes.footer')
-  
+
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        var reviewsSlider = $('.reviews-slider');
+        $('.reviews_next').on('click', function () {
+            reviewsSlider.trigger('next.owl.carousel');
+        });
+        $('.reviews_prev').on('click', function () {
+            reviewsSlider.trigger('prev.owl.carousel', [300]);
+        });
+    });
+</script>
+@endpush
+
 @endsection

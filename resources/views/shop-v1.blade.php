@@ -37,37 +37,77 @@
             <div class="max-w-[562px] w-full grid sm:grid-cols-2 gap-8 md:gap-12">
                 <div>
                     <h4 class="font-medium leading-none text-xl sm:text-2xl mb-5 sm:mb-6">Price Range</h4>
-                    <div class="grid grid-cols-2 gap-[15px]">
-                        <div class="py-[10px] px-5 border border-title dark:border-white-light flex items-center justify-center gap-[5px]">
-                            <span class="text-title dark:text-white font-medium leading-none">Min:</span>
-                            <div class="relative">
-                                <span class="text-title dark:text-white font-medium leading-none absolute left-0 top-[82%] block transform -translate-y-1/2">$</span>
-                                <input class="pl-[10px] w-full appearance-none bg-transparent text-title dark:text-white font-medium leading-none placeholder:text-title dark:placeholder:text-white placeholder  placeholder:font-medium placeholder:leading-none outline-none " type="number" placeholder="0" value="0">
+                    <form method="GET" action="{{ url('/shop-v1') }}" class="flex flex-col gap-3">
+                        @if($activeCategory)
+                            <input type="hidden" name="category" value="{{ $activeCategory }}">
+                        @endif
+                        <div class="grid grid-cols-2 gap-[15px]">
+                            <div class="py-[10px] px-5 border border-title dark:border-white-light flex items-center justify-center gap-[5px]">
+                                <span class="text-title dark:text-white font-medium leading-none">Min:</span>
+                                <div class="relative">
+                                    <span class="text-title dark:text-white font-medium leading-none absolute left-0 top-[82%] block transform -translate-y-1/2">$</span>
+                                    <input class="pl-[10px] w-full appearance-none bg-transparent text-title dark:text-white font-medium leading-none placeholder:text-title dark:placeholder:text-white placeholder placeholder:font-medium placeholder:leading-none outline-none" type="number" name="min_price" placeholder="0" value="{{ $minPrice > 0 ? $minPrice : '' }}" min="0">
+                                </div>
+                            </div>
+                            <div class="py-[10px] px-5 border border-title dark:border-white-light flex items-center justify-center gap-[5px]">
+                                <span class="text-title dark:text-white font-medium leading-none">Max:</span>
+                                <div class="relative">
+                                    <span class="text-title dark:text-white font-medium leading-none absolute left-0 top-[82%] block transform -translate-y-1/2">$</span>
+                                    <input class="pl-[10px] w-full appearance-none bg-transparent text-title dark:text-white font-medium leading-none placeholder:text-title dark:placeholder:text-white placeholder:font-medium placeholder:leading-none outline-none" type="number" name="max_price" placeholder="9999" value="{{ $maxPrice < 9999 ? $maxPrice : '' }}" min="0">
+                                </div>
                             </div>
                         </div>
-                        <div class="py-[10] px-5 border border-title dark:border-white-light flex items-center justify-center gap-[5px]">
-                            <span class="text-title dark:text-white font-medium leading-none">Max:</span>
-                            <div class="relative">
-                                <span class="text-title dark:text-white  font-medium leading-none absolute left-0 top-[82%] block transform -translate-y-1/2">$</span>
-                                <input class="pl-[10px] w-full appearance-none bg-transparent text-title dark:text-white font-medium leading-none placeholder:text-title dark:placeholder:text-white  placeholder:font-medium placeholder:leading-none outline-none " type="number" placeholder="100" value="100">
-                            </div>
-                        </div>
-                    </div>
+                        <button type="submit" class="btn btn-sm btn-theme-solid w-full !text-white" data-text="Apply Filter"><span>Apply Filter</span></button>
+                    </form>
                 </div>
             </div>
         </div>
 
         <div class="max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-8 pt-8 md:pt-[50px]" data-aos="fade-up" data-aos-delay="200">
-            
+
             <!-- includes/Shop/shops-v1.blade.php -->
             @include('includes.Shop.shops-v1')
 
         </div>
-        <div class="text-center mt-7 md:mt-12">
-            <a href="{{ url('/shop-v1') }}" class="btn btn-outline" data-text="Load More">
-                <span>Load More</span>
-            </a>
+
+        @if ($products->hasPages())
+        <div class="flex items-center justify-center gap-2 mt-8 md:mt-12 flex-wrap">
+            {{-- Previous --}}
+            @if ($products->onFirstPage())
+                <span class="w-10 h-10 flex items-center justify-center border border-[#E3E5E6] dark:border-bdr-clr-drk text-gray-300 cursor-not-allowed">
+                    <svg width="8" height="12" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.18 7.39L5.62 12.83C5.82 13.06 6.16 13.09 6.39 12.89C6.62 12.70 6.65 12.35 6.45 12.12L1.88 7.55H23.43C23.73 7.55 23.98 7.30 23.98 7.00C23.98 6.70 23.73 6.46 23.43 6.46H1.88L6.39 1.94C6.62 1.75 6.65 1.40 6.45 1.18C6.26 0.95 5.91 0.92 5.68 1.12L0.18 6.62C-0.03 6.83 -0.03 7.17 0.18 7.39Z" fill="currentColor"/></svg>
+                </span>
+            @else
+                <a href="{{ $products->previousPageUrl() }}" class="w-10 h-10 flex items-center justify-center border border-[#E3E5E6] dark:border-bdr-clr-drk hover:border-primary hover:text-primary duration-200">
+                    <svg width="8" height="12" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.18 7.39L5.62 12.83C5.82 13.06 6.16 13.09 6.39 12.89C6.62 12.70 6.45 12.12L1.88 7.55H23.43C23.73 7.55 23.98 7.30 23.98 7.00C23.98 6.70 23.73 6.46 23.43 6.46H1.88L6.39 1.94C6.62 1.75 6.45 1.18C6.26 0.95 5.91 0.92 5.68 1.12L0.18 6.62C-0.03 6.83 -0.03 7.17 0.18 7.39Z" fill="currentColor"/></svg>
+                </a>
+            @endif
+
+            {{-- Page Numbers --}}
+            @foreach ($products->getUrlRange(max(1, $products->currentPage()-2), min($products->lastPage(), $products->currentPage()+2)) as $page => $url)
+                @if ($page == $products->currentPage())
+                    <span class="w-10 h-10 flex items-center justify-center bg-primary text-white font-semibold">{{ $page }}</span>
+                @else
+                    <a href="{{ $url }}" class="w-10 h-10 flex items-center justify-center border border-[#E3E5E6] dark:border-bdr-clr-drk hover:border-primary hover:text-primary duration-200">{{ $page }}</a>
+                @endif
+            @endforeach
+
+            {{-- Next --}}
+            @if ($products->hasMorePages())
+                <a href="{{ $products->nextPageUrl() }}" class="w-10 h-10 flex items-center justify-center border border-[#E3E5E6] dark:border-bdr-clr-drk hover:border-primary hover:text-primary duration-200">
+                    <svg width="8" height="12" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M23.82 6.62L18.38 1.18C18.18 0.95 17.84 0.92 17.61 1.12C17.38 1.31 17.35 1.66 17.55 1.88L22.12 6.46H0.57C0.27 6.46 0.02 6.71 0.02 7.01C0.02 7.31 0.27 7.55 0.57 7.55H22.12L17.61 12.06C17.38 12.26 17.35 12.60 17.55 12.83C17.74 13.06 18.09 13.09 18.32 12.89L23.82 7.39C24.03 7.17 24.03 6.83 23.82 6.62Z" fill="currentColor"/></svg>
+                </a>
+            @else
+                <span class="w-10 h-10 flex items-center justify-center border border-[#E3E5E6] dark:border-bdr-clr-drk text-gray-300 cursor-not-allowed">
+                    <svg width="8" height="12" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M23.82 6.62L18.38 1.18C18.18 0.95 17.84 0.92 17.61 1.12C17.38 1.31 17.35 1.66 17.55 1.88L22.12 6.46H0.57C0.27 6.46 0.02 6.71 0.02 7.01C0.02 7.31 0.27 7.55 0.57 7.55H22.12L17.61 12.06C17.38 12.26 17.35 12.60 17.55 12.83C17.74 13.06 18.09 13.09 18.32 12.89L23.82 7.39C24.03 7.17 24.03 6.83 23.82 6.62Z" fill="currentColor"/></svg>
+                </span>
+            @endif
         </div>
+        <p class="text-center text-sm text-gray-400 dark:text-white-light mt-3">
+            Showing {{ $products->firstItem() }}–{{ $products->lastItem() }} of {{ $products->total() }} products
+        </p>
+        @endif
+
     </div>
 </div>
 <!-- Shop End -->
@@ -76,5 +116,5 @@
 @include('includes.Home.popup')
 
 @include('includes.footer')
-  
+
 @endsection

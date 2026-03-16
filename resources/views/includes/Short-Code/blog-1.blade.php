@@ -2,21 +2,21 @@
 $blogs = [
     [
         'img' => 'assets/img/shortcode/blog/blog-01.jpg', 
-        'title' => 'Auctor sit elementum habitant vel tempor varius.', 
-        'tag' => 'Interior', 
-        'date' => '6 Sep, 2025', 
+        'title' => '10 Must-Have Home Essentials to Upgrade Your Space This Year',
+        'tag' => 'Home & Living',
+        'date' => '10 Jan, 2026',
     ],
     [
         'img' => 'assets/img/shortcode/blog/blog-02.jpg', 
-        'title' => 'Consectetur purus habitasse ut diam habitant varius.', 
-        'tag' => 'Chair', 
-        'date' => '6 Sep, 2025', 
+        'title' => 'The Ultimate Guide to Smart Shopping: Save More Every Time',
+        'tag' => 'Shopping Tips',
+        'date' => '18 Jan, 2026',
     ],
     [
         'img' => 'assets/img/shortcode/blog/blog-03.jpg', 
-        'title' => 'Far far away of furniture of this habitant vel tempor.', 
-        'tag' => 'Vase', 
-        'date' => '6 Sep, 2025', 
+        'title' => 'Top 7 Fashion Trends You Need to Know About This Season',
+        'tag' => 'Fashion',
+        'date' => '25 Jan, 2026',
     ]
 ];
 @endphp

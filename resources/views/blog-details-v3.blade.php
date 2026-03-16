@@ -13,9 +13,9 @@
         <div class="max-w-[1360px] mx-auto ">
             <ul class="flex items-center gap-[10px] flex-wrap">
                 <li class="text-[15px] leading-none dark:text-white">6 Sep, 2025</li>
-                <li><a href="{{ url('/blog-tag') }}" class="inline-block text-title font-medium text-[15px] leading-none py-[10px] px-5 rounded-md bg-primary-midum">Interior</a></li>
+                <li><a href="{{ url('/blog-tag') }}" class="inline-block text-title font-medium text-[15px] leading-none py-[10px] px-5 rounded-md bg-primary-midum">Home & Living</a></li>
             </ul>
-            <h1 class="text-2xl leading-snug sm:text-3xl sm:leading-snug md:text-[40px] mt-4 md:mt-6 md:leading-snug max-w-[940px] font-bold">Furniture Trends for Modern Homes </h1>
+            <h1 class="text-2xl leading-snug sm:text-3xl sm:leading-snug md:text-[40px] mt-4 md:mt-6 md:leading-snug max-w-[940px] font-bold">Smart Living: Top Home & Lifestyle Trends for 2026</h1>
             <!-- Author -->
             <div class="mt-4 sm:mt-5 flex items-center gap-3">
                 <div class="w-12 h-12 rounded-full overflow-hidden">
@@ -39,38 +39,38 @@
                         <p>In the realm of home decor, where style meets functionality, PeytonGhalib stands as a beacon of innovation and elegance. With a commitment to quality craftsmanship and a keen eye for design, PeytonGhalib products have the power to transform any living space into a sanctuary of comfort and beauty.
 
                             From cozy living rooms to serene bedrooms, PeytonGhalib offers a diverse range of home decor solutions that cater to every taste and lifestyle. Let's delve into some of the key elements that make PeytonGhalib a frontrunner in the world of home decor:</p>
-                        <h3>Main features of our product</h3>
+                        <h3>What makes PeytonGhalib different</h3>
                         <ul>
-                            <li>All the Lorem Ipsum generators on the Internet tend to repeat predefined on the Internet.</li>
-                            <li>Adipiscing lobortis interdum fringilla euismod odio of this furniture.</li>
-                            <li>Nibh purus integer elementum in tellus vulputate habitasse lorem ipsum vulputate.</li>
+                            <li>Wide selection of products across electronics, fashion, home & living, sports, and beauty.</li>
+                            <li>Competitive pricing with regular discounts, seasonal sales, and exclusive member offers.</li>
+                            <li>Fast, reliable delivery with real-time order tracking and hassle-free returns policy.</li>
                         </ul>
                         <p>PeytonGhalib transcends the ordinary, offering home decor solutions that inspire and delight. With their dedication to craftsmanship, timeless design, and sustainability, PeytonGhalib invites you to elevate your home and create a space that truly reflects your lifestyle and personality.PeytonGhalib transcends the ordinary, offering home decor solutions that inspire and delight. </p>
                         <blockquote class="lg:w-[940px] lg:h-[120px] lg:flex lg:items-center">
                             <img src="{{ asset('assets/img/icon/qute.svg') }}" alt="Quote Icon" class="quote-icon mt-6 relative -top-[66%]">
-                            Nibh purus integer elementum in tellus vulputate habitasse of this is vulputate posuere habitant vel tempor varius.    
+                            Quality products, unbeatable prices, and exceptional service — that's the PeytonGhalib promise to every customer, every single day.
                         </blockquote>
 
-                        <h4>Main features of our product</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Suscipit, beatae dolore! Facere, neque perspiciatis laudantium adipisci fugit sequi nemo illum!</p>
+                        <h4>Why customers choose PeytonGhalib</h4>
+                        <p>Our customers keep coming back because we consistently deliver on quality, value, and trust. Here's what sets us apart from the rest:</p>
                         <ol>
-                            <li>All the Lorem Ipsum generators on the Internet tend to repeat predefined on the Internet.</li>
-                            <li>Adipiscing lobortis interdum fringilla euismod odio of this furniture.</li>
-                            <li>Nibh purus integer elementum in tellus vulputate habitasse lorem ipsum vulputate.</li>
+                            <li>Curated product selections reviewed and tested for quality before listing on our platform.</li>
+                            <li>Secure checkout with multiple payment options including cards, wallets, and buy-now-pay-later.</li>
+                            <li>Dedicated customer support available 7 days a week to help with orders, returns, and inquiries.</li>
                         </ol>
 
-                        <p>All the Lorem Ipsum generators on the Internet tend to repeat predefined on the Internet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non, lobortis in in tortor lectus iaculis viverra. Adipiscing lobortis interdum fringilla euismod odio vitae nam pulvinar elementum. Nibh purus integer elementum in. Tellus vulputate habitasse ut vulputate posuere habitant vel tempor varius.  </p>
+                        <p>At PeytonGhalib, we believe that great shopping experiences are built on trust, transparency, and a genuine commitment to customer satisfaction. Whether you're upgrading your home, refreshing your wardrobe, or finding the perfect gift, our diverse catalogue has something for everyone. Shop confidently knowing that every product is backed by our quality guarantee and easy returns policy.</p>
                     </article>
                         <div class="mt-5 sm:mt-7 lg:mt-10 py-5 sm:py-7 lg:py-10 border-y border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up">
                         <div class="flex items-center justify-between flex-wrap gap-6">
                             <div class="flex items-center justify-center gap-4">
                                 <h6 class="font-normal whitespace-nowrap text-lg">Tags :</h6>
                                 <div class="flex flex-wrap gap-[10px]">
-                                    <a class="btn btn-theme-outline btn-xs border-bdr-clr dark:!border-bdr-clr-drk !border-opacity-[15%] !text-base !font-normal" href="{{ url('/blog-tag') }}" data-text="Chair"><span>Chair</span></a>
-                                    <a class="btn btn-theme-outline btn-xs border-bdr-clr dark:!border-bdr-clr-drk !border-opacity-[15%] !text-base !font-normal" href="{{ url('/blog-tag') }}" data-text="Art & Paint"><span>Art & Paint</span></a>
-                                    <a class="btn btn-theme-outline btn-xs border-bdr-clr dark:!border-bdr-clr-drk !border-opacity-[15%] !text-base !font-normal" href="{{ url('/blog-tag') }}" data-text="Mirror"><span>Mirror</span></a>
-                                    <a class="btn btn-theme-outline btn-xs border-bdr-clr dark:!border-bdr-clr-drk !border-opacity-[15%] !text-base !font-normal" href="{{ url('/blog-tag') }}" data-text="Table"><span>Table</span></a>
-                                    <a class="btn btn-theme-outline btn-xs border-bdr-clr dark:!border-bdr-clr-drk !border-opacity-[15%] !text-base !font-normal" href="{{ url('/blog-tag') }}" data-text="Lamp"><span>Lamp</span></a>
+                                    <a class="btn btn-theme-outline btn-xs border-bdr-clr dark:!border-bdr-clr-drk !border-opacity-[15%] !text-base !font-normal" href="{{ url('/blog-tag') }}" data-text="Electronics"><span>Electronics</span></a>
+                                    <a class="btn btn-theme-outline btn-xs border-bdr-clr dark:!border-bdr-clr-drk !border-opacity-[15%] !text-base !font-normal" href="{{ url('/blog-tag') }}" data-text="Fashion"><span>Fashion</span></a>
+                                    <a class="btn btn-theme-outline btn-xs border-bdr-clr dark:!border-bdr-clr-drk !border-opacity-[15%] !text-base !font-normal" href="{{ url('/blog-tag') }}" data-text="Home & Living"><span>Home & Living</span></a>
+                                    <a class="btn btn-theme-outline btn-xs border-bdr-clr dark:!border-bdr-clr-drk !border-opacity-[15%] !text-base !font-normal" href="{{ url('/blog-tag') }}" data-text="Sports"><span>Sports</span></a>
+                                    <a class="btn btn-theme-outline btn-xs border-bdr-clr dark:!border-bdr-clr-drk !border-opacity-[15%] !text-base !font-normal" href="{{ url('/blog-tag') }}" data-text="Beauty"><span>Beauty</span></a>
                                 </div>
                             </div>
                             <div class="flex items-center justify-center gap-6">
@@ -109,9 +109,9 @@
                             <div class="flex-1">
                                 <ul class="flex items-center gap-[10px] flex-wrap">
                                     <li class="text-[15px] leading-none dark:text-white">6 Sep, 2025</li>
-                                    <li><a href="{{ url('/blog-tag') }}" class="inline-block text-title font-medium text-[15px] leading-none py-[10px] px-5 rounded-md group-hover:bg-primary group-hover:text-white duration-300 bg-[#dbcbbd]">Interior</a></li>
+                                    <li><a href="{{ url('/blog-tag') }}" class="inline-block text-title font-medium text-[15px] leading-none py-[10px] px-5 rounded-md group-hover:bg-primary group-hover:text-white duration-300 bg-[#dbcbbd]">Shopping Tips</a></li>
                                 </ul>
-                                <h5 class="mt-3 font-medium dark:text-white leading-[1.5] text-xl"><a href="{{ url('/blog-details-v2') }}" class="text-underline">Consectetur purus habitasse ut diam habitant varius.</a></h5>
+                                <h5 class="mt-3 font-medium dark:text-white leading-[1.5] text-xl"><a href="{{ url('/blog-details-v2') }}" class="text-underline">Smart Shopping Tips to Save More on Every Order</a></h5>
                             </div>
                             </div>
                     </div>
@@ -124,9 +124,9 @@
                             <div class="flex-1">
                                 <ul class="flex items-center gap-[10px] flex-wrap">
                                     <li class="text-[15px] leading-none dark:text-white">6 Sep, 2025</li>
-                                    <li><a href="{{ url('/blog-tag') }}" class="inline-block text-title font-medium text-[15px] leading-none py-[10px] px-5 rounded-md group-hover:bg-primary group-hover:text-white duration-300 bg-[#dbcbbd]">Vases</a></li>
+                                    <li><a href="{{ url('/blog-tag') }}" class="inline-block text-title font-medium text-[15px] leading-none py-[10px] px-5 rounded-md group-hover:bg-primary group-hover:text-white duration-300 bg-[#dbcbbd]">Beauty</a></li>
                                 </ul>
-                                <h5 class="mt-3 font-medium dark:text-white leading-[1.5] text-xl"><a href="{{ url('/blog-details-v1') }}" class="text-underline">Far far away of furniture of this habitant vel tempor. </a></h5>
+                                <h5 class="mt-3 font-medium dark:text-white leading-[1.5] text-xl"><a href="{{ url('/blog-details-v1') }}" class="text-underline">Your Complete Guide to Skincare: What Works and Why</a></h5>
                             </div>
                         </div>
                     </div>
@@ -142,7 +142,7 @@
                                 </div>
                                 <div class="max-w-[532px] w-full">
                                     <h6 class="font-medium leading-none text-lg">Michele Obama</h6>
-                                    <p class="mt-2 sm:mt-3">Adipiscing lobortis interdum fringilla  odio vitae nam pulvinar elementum. Nibh purus this integer. Auctor sit tempor varius. </p>
+                                    <p class="mt-2 sm:mt-3">Really enjoyed this article! The tips are practical and easy to follow. PeytonGhalib always delivers great content alongside great products.</p>
                                 </div>
                                 <a href="#" class="absolute top-0 right-0 text-title leading-none dark:text-white">
                                     Reply
@@ -154,7 +154,7 @@
                                 </div>
                                 <div class="max-w-[532px] w-full">
                                     <h6 class="font-medium leading-none text-lg">John Smith Doe</h6>
-                                    <p class="mt-2 sm:mt-3">Adipiscing lobortis interdum fringilla  odio vitae nam pulvinar elementum. Nibh purus this integer. Auctor sit tempor varius. </p>
+                                    <p class="mt-2 sm:mt-3">Really enjoyed this article! The tips are practical and easy to follow. PeytonGhalib always delivers great content alongside great products.</p>
                                 </div>
                                 <a href="#" class="absolute top-5 right-0 text-title leading-none dark:text-white">
                                     Reply
@@ -167,7 +167,7 @@
                             </div>
                             <div class="max-w-[532px] w-full">
                                 <h6 class="font-medium leading-none text-lg">Max Franklline</h6>
-                                <p class="mt-2 sm:mt-3">Adipiscing lobortis interdum fringilla  odio vitae nam pulvinar elementum. Nibh purus this integer. Auctor sit tempor varius. </p>
+                                <p class="mt-2 sm:mt-3">Really enjoyed this article! The tips are practical and easy to follow. PeytonGhalib always delivers great content alongside great products.</p>
                             </div>
                             <a href="#" class="absolute top-5 right-0 text-title leading-none dark:text-white">
                                 Reply
@@ -201,39 +201,39 @@
                 <div class="bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-[30px]">
                     <h4 class="font-medium leading-none text-xl sm:text-2xl mb-5 sm:mb-6">Categoryies</h4>
                     <ul class="grid gap-3 sm:gap-[15px] text-base sm:text-lg text-title dark:text-white list-disc pl-5">
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="#">Chair</a></li>
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="#">Table</a></li>
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="#">Sofa Set</a></li>
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="#">Lamp</a></li>
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="#">Vases</a></li>
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="#">Mirror</a></li>
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="#">Art & Design</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Electronics</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Fashion</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Home & Living</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Sports & Fitness</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Beauty & Care</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Kids & Baby</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Shopping Tips</a></li>
                     </ul>
                 </div>
                 <!-- Recent Posts -->
                 <div class="bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-[30px]">
                     <h4 class="font-medium leading-none text-xl sm:text-2xl mb-5 sm:mb-6">Recent Posts</h4>
                     <div class="grid gap-[10px]">
-                        <h6 class="font-medium group text-base sm:text-lg pb-[10px] border-b border-bdr-clr dark:border-[#172430]"><a class="text-underline" href="{{ url('/blog-details-v1') }}">Auctor sit elementum habitant vel tempor varius. </a></h6>
-                        <h6 class="font-medium group text-base sm:text-lg pb-[10px] border-b border-bdr-clr dark:border-[#172430]"><a class="text-underline" href="{{ url('/blog-details-v2') }}">Consectetur purus habitasse ut diam habitant varius.</a></h6>
-                        <h6 class="font-medium group text-base sm:text-lg pb-[10px] border-b border-bdr-clr dark:border-[#172430]"><a class="text-underline" href="{{ url('/blog-details-v3') }}">Auctor sit elementum habitant vel tempor varius. </a></h6>
-                        <h6 class="font-medium group text-base sm:text-lg"><a class="text-underline" href="#">Far far away of furniture of this habitant vel tempor. </a></h6>
+                        <h6 class="font-medium group text-base sm:text-lg pb-[10px] border-b border-bdr-clr dark:border-[#172430]"><a class="text-underline" href="{{ url('/blog-details-v1') }}">Smart Shopping Tips to Save More on Every Order</a></h6>
+                        <h6 class="font-medium group text-base sm:text-lg pb-[10px] border-b border-bdr-clr dark:border-[#172430]"><a class="text-underline" href="{{ url('/blog-details-v2') }}">Top Trends in Home Living: What's Hot This Season</a></h6>
+                        <h6 class="font-medium group text-base sm:text-lg pb-[10px] border-b border-bdr-clr dark:border-[#172430]"><a class="text-underline" href="{{ url('/blog-details-v3') }}">Smart Living: Top Home & Lifestyle Trends for 2026</a></h6>
+                        <h6 class="font-medium group text-base sm:text-lg"><a class="text-underline" href="{{ url('/blog-v1') }}">Your Complete Guide to Skincare: What Works and Why</a></h6>
                     </div>
                 </div>
                 <!-- Popular Tags -->
                 <div class="bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-[30px]">
                     <h4 class="font-medium leading-none text-xl sm:text-2xl mb-5 sm:mb-6">Popular Tags</h4>
                     <div class="flex flex-wrap gap-[10px] md:gap-[15px] mt-5 md:mt-6">
-                        <a class="btn btn-outline btn-xs" href="#" data-text="Chair"><span>Chair</span></a>
-                        <a class="btn btn-outline btn-xs" href="#" data-text="Art & Paint"><span>Art & Paint</span></a>
-                        <a class="btn btn-outline btn-xs" href="#" data-text="Mirror"><span>Mirror</span></a>
-                        <a class="btn btn-outline btn-xs" href="#" data-text="Table"><span>Table</span></a>
-                        <a class="btn btn-outline btn-xs" href="#" data-text="Lamp"><span>Lamp</span></a>
-                        <a class="btn btn-outline btn-xs" href="#" data-text="Lamp"><span>Vases</span></a>
-                        <a class="btn btn-outline btn-xs" href="#" data-text="Lamp"><span>Sofa Set</span></a>
-                        <a class="btn btn-outline btn-xs" href="#" data-text="Lamp"><span>Mirror</span></a>
-                        <a class="btn btn-outline btn-xs" href="#" data-text="Lamp"><span>Airt & Design</span></a>
-                        <a class="btn btn-outline btn-xs" href="#" data-text="Lamp"><span>Valuput</span></a>
+                        <a class="btn btn-outline btn-xs" href="#" data-text="Electronics"><span>Electronics</span></a>
+                        <a class="btn btn-outline btn-xs" href="#" data-text="Fashion"><span>Fashion</span></a>
+                        <a class="btn btn-outline btn-xs" href="#" data-text="Home & Living"><span>Home & Living</span></a>
+                        <a class="btn btn-outline btn-xs" href="#" data-text="Sports"><span>Sports</span></a>
+                        <a class="btn btn-outline btn-xs" href="#" data-text="Beauty"><span>Beauty</span></a>
+                        <a class="btn btn-outline btn-xs" href="#" data-text="Kids & Baby"><span>Kids & Baby</span></a>
+                        <a class="btn btn-outline btn-xs" href="#" data-text="Shopping Tips"><span>Shopping Tips</span></a>
+                        <a class="btn btn-outline btn-xs" href="#" data-text="Trending"><span>Trending</span></a>
+                        <a class="btn btn-outline btn-xs" href="#" data-text="Sale"><span>Sale</span></a>
+                        <a class="btn btn-outline btn-xs" href="#" data-text="New Arrivals"><span>New Arrivals</span></a>
                     </div>
                 </div>
             </div>

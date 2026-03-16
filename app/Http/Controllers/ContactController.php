@@ -13,6 +13,13 @@ class ContactController extends Controller
         return view('contact');
     }
 
+    public function newsletter(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+        // Store in session as confirmation (extend later to save to DB or mail service)
+        return back()->with('newsletter_success', 'Thank you for subscribing! You\'ll hear from us soon.');
+    }
+
     public function send(Request $request)
     {
         try {

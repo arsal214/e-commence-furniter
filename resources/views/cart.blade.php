@@ -184,7 +184,7 @@
                     <div class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk">
                         <div class="flex justify-between flex-wrap font-semibold leading-none text-2xl">
                             <span>Total:</span>
-                            <span>&nbsp;${{ number_format($cartTotal, 2) }}</span>
+                            <span id="cart-grand-total">&nbsp;${{ number_format($cartTotal, 2) }}</span>
                         </div>
                     </div>
                 </div>
@@ -246,6 +246,22 @@
 
 @push('scripts')
 <script>
+// Update grand total when shipping option selected
+(function() {
+    var subtotal = {{ $cartTotal }};
+    var shippingCosts = { 'free': 0, 'fast': 10, 'local': 15 };
+    var radios = document.querySelectorAll('input[name="item-type"]');
+    var labels = ['free', 'fast', 'local'];
+    var totalEl = document.getElementById('cart-grand-total');
+
+    radios.forEach(function(radio, i) {
+        radio.addEventListener('change', function() {
+            var shipping = shippingCosts[labels[i]] || 0;
+            totalEl.textContent = ' $' + (subtotal + shipping).toFixed(2);
+        });
+    });
+})();
+
 document.querySelectorAll('.inc-dec').forEach(function(form) {
     var input = form.querySelector('.cart-qty-input');
     form.querySelector('.inc').addEventListener('click', function() {

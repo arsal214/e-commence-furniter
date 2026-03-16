@@ -48,11 +48,11 @@
                 <!-- Profile Content -->
                 <div class="w-full max-w-[951px] bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-8 lg:p-[50px]">
                     <div>
-                        <h3 class="font-semibold leading-none text-3xl">Kathlene Roser</h3>
-                        <span class="leading-none mt-3">Product Designer</span>
+                        <h3 class="font-semibold leading-none text-3xl">{{ Auth::user()->name ?? 'My Account' }}</h3>
+                        <span class="leading-none mt-3">PeytonGhalib Customer</span>
                     </div>
                     <p class="text-base sm:text-lg mt-5 sm:mt-8 md:mt-10 text-justify">
-                        All the Lorem Ipsum generators on the Internet tend to repeat predefined on the Internet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non, lobortis in in tortor lectus iaculis viverra. Adipiscing lobortis interdum fringilla euismod odio vitae nam pulvinar elementum. Nibh purus integer elementum in. Tellus vulputate habitasse ut vulputate posuere habitant vel tempor varius. 
+                        Welcome to your PeytonGhalib account. Here you can manage your personal details, review your order history, track active shipments, manage your saved wishlist, and update your preferences. Thank you for shopping with us!
                     </p>
                     <div class="mt-5 sm:mt-8 md:mt-10 grid gap-4 sm:gap-6">
                         <a href="#" class="flex items-center gap-2">
@@ -65,7 +65,7 @@
                             <svg class="w-3 sm:w-[18px]" viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M16.2 0.0615234H1.8C0.81 0.0615234 0.00899999 0.849023 0.00899999 1.81152L0 12.3115C0 13.274 0.81 14.0615 1.8 14.0615H16.2C17.19 14.0615 18 13.274 18 12.3115V1.81152C18 0.849023 17.19 0.0615234 16.2 0.0615234ZM16.2 3.56152L9 7.93652L1.8 3.56152V1.81152L9 6.18652L16.2 1.81152V3.56152Z" fill="#BB976D"/>
                             </svg>
-                            <span class="leading-none font-medium text-base sm:text-lg">PeytonGhalib123@gmail.com</span>
+                            <span class="leading-none font-medium text-base sm:text-lg">peytonexpress44@gmail.com</span>
                         </a>
                         <a href="#" class="flex items-center gap-2">
                             <svg class="w-3 sm:w-[15px]" viewBox="0 0 15 21" fill="none" xmlns="http://www.w3.org/2000/svg">

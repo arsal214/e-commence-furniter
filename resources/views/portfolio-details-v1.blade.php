@@ -65,7 +65,7 @@
                             @endif
                         </h2>
                         <p class="mt-3 text-base sm:text-lg">
-                            All the Lorem Ipsum generators on the Internet tend to repeat predefined on the Internet. Lorem ipsum dolor sit amet, consectetur vulputate posuere habitant vel tempor varius.
+                            This project showcases PeytonGhalib's commitment to delivering quality products with exceptional design. Every detail has been carefully considered to meet the needs of our diverse customer base, combining functionality with modern aesthetics.
                         </p>
                     </div>
 
@@ -73,7 +73,7 @@
                         <tbody class="w-full block">
                             <tr class="border-b border-black/10 dark:border-bdr-clr-drk py-4">
                                 <th class="text-[18px] sm:text-[20px] font-medium">Client</th>
-                                <td class='text-base sm:text-lg'>Wordpress</td>
+                                <td class='text-base sm:text-lg'>PeytonGhalib</td>
                             </tr>
                             <tr class="border-b border-black/10 dark:border-bdr-clr-drk py-4">
                                 <th>Designer</th>
@@ -85,7 +85,7 @@
                             </tr>
                             <tr class="py-4">
                                 <th>Website</th>
-                                <td>demosite.com</td>
+                                <td>peytonexpress44.com</td>
                             </tr>
                         </tbody>
                     </table>

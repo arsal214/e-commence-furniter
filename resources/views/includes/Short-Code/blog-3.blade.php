@@ -1,16 +1,16 @@
 @php
 $blogs = [
     [
-        'img' => 'assets/img/shortcode/blog/blog-05.jpg', 
-        'title' => 'Auctor sit elementum habitant vel tempor varius.', 
-        'tag' => 'Interior', 
-        'date' => '6 Sep, 2025', 
+        'img' => 'assets/img/shortcode/blog/blog-05.jpg',
+        'title' => '10 Must-Have Home Essentials You Can Get for Under $50 This Season',
+        'tag' => 'Home & Living',
+        'date' => '12 Jan, 2026',
     ],
     [
-        'img' => 'assets/img/shortcode/blog/blog-06.jpg', 
-        'title' => 'Lorem ipsum dolor sit amet of this constent for new habitant vel tempor varius.', 
-        'tag' => 'Interior', 
-        'date' => '6 Sep, 2025', 
+        'img' => 'assets/img/shortcode/blog/blog-06.jpg',
+        'title' => 'Top Tech Picks of 2026: The Best Gadgets to Upgrade Your Life',
+        'tag' => 'Electronics',
+        'date' => '20 Jan, 2026',
     ]
 ];
 @endphp

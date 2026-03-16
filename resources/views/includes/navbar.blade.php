@@ -18,9 +18,6 @@
                         <a href="#"  class="home-link">Pages</a>
                         <ul class="sub-menu lg:absolute z-50 lg:top-full lg:left-0 lg:min-w-[220px] lg:invisible lg:transition-all lg:bg-white lg:dark:bg-title lg:py-[15px] lg:pr-[30px]">
                             <li><a href="{{ url('/about') }}" class="sub-menu-item">About Us</a></li>
-                            <li><a href="{{ url('/pricing') }}" class="sub-menu-item">Price Plan</a></li>
-                            <li><a href="{{ url('/team') }}" class="sub-menu-item">Team Member</a></li>
-                            <li><a href="{{ url('/our-clients') }}" class="sub-menu-item">Clients</a></li>
                             <li><a href="{{ url('/faq') }}" class="sub-menu-item">FAQs</a></li>
                             <li><a href="{{ url('/terms-and-conditions') }}" class="sub-menu-item">Terms & conditions</a></li>
                         </ul>
@@ -32,7 +29,7 @@
                         $navCategories = \App\Models\Category::where('is_active', true)->orderBy('name')->get();
                     @endphp
                     <li class="relative parent-parent-menu-item group/cat">
-                        <a href="{{ url('/shop-v1') }}" class="home-link">Categories</a>
+                        <a href="{{ url('/categories') }}" class="home-link">Categories</a>
 
                         {{-- Mega menu dropdown --}}
                         <div class="lg:absolute lg:top-full lg:left-1/2 lg:-translate-x-1/2 z-50
@@ -46,7 +43,7 @@
                             {{-- "All Products" header row --}}
                             <div class="flex items-center justify-between mb-3 pb-3 border-b border-[#E3E5E6] dark:border-bdr-clr-drk">
                                 <span class="text-xs uppercase tracking-widest text-gray-400 dark:text-white-light font-medium">Browse Categories</span>
-                                <a href="{{ url('/shop-v1') }}"
+                                <a href="{{ url('/categories') }}"
                                    class="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
                                     View All
                                     <svg width="10" height="8" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -303,11 +300,11 @@
                 <div class="mt-10 md:mt-12">
                     <h4 class="font-medium leading-none text-2xl">Popular Tags</h4>
                     <div class="flex flex-wrap gap-[10px] md:gap-[15px] mt-5 md:mt-6">
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Chair"><span>Chair</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Art & Paint"><span>Art & Paint</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Mirror"><span>Mirror</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Table"><span>Table</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Lamp"><span>Lamp</span></a>
+                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop-v1') }}?search=electronics" data-text="Electronics"><span>Electronics</span></a>
+                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop-v1') }}?search=fashion" data-text="Fashion"><span>Fashion</span></a>
+                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop-v1') }}?search=home" data-text="Home & Living"><span>Home & Living</span></a>
+                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop-v1') }}?search=sports" data-text="Sports"><span>Sports</span></a>
+                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop-v1') }}?search=beauty" data-text="Beauty"><span>Beauty</span></a>
                     </div>
                 </div>
             </div>
@@ -318,33 +315,49 @@
 
 <script>
     const currentPath = window.location.pathname.replace(/\/$/, '');
+    const currentSearch = window.location.search;
+    const currentFull = currentPath + currentSearch;
 
+    // Match sub-menu items by full URL (pathname + query string)
+    // so /shop-v1?category=foo does NOT match when on /shop-v1
     const subMenuItems = document.querySelectorAll('.sub-menu-item');
     subMenuItems.forEach((item) => {
-        const itemPath = new URL(item.href).pathname.replace(/\/$/, '');
+        try {
+            const itemUrl = new URL(item.href);
+            const itemFull = itemUrl.pathname.replace(/\/$/, '') + itemUrl.search;
 
-        if (itemPath === currentPath) {
-            item.classList.add('active');
+            if (itemFull === currentFull) {
+                item.classList.add('active');
 
-            // Highlight all parent menus recursively
-            let parentMenu = item.closest('.parent-menu-item');
-            while (parentMenu && !parentMenu.classList.contains('processed')) {
-                const parentLink = parentMenu.querySelector('a');
-                if (parentLink) {
-                    parentLink.classList.add('active');
+                // Highlight all parent menus recursively
+                let parentMenu = item.closest('.parent-menu-item');
+                while (parentMenu && !parentMenu.classList.contains('processed')) {
+                    const parentLink = parentMenu.querySelector('a');
+                    if (parentLink) parentLink.classList.add('active');
+                    parentMenu.classList.add('processed');
+                    parentMenu = parentMenu.closest('.parent-parent-menu-item');
                 }
-                parentMenu.classList.add('processed');
-                parentMenu = parentMenu.closest('.parent-parent-menu-item');
-            }
 
-            // Highlight the top-level parent menu
-            const topLevelMenu = item.closest('.parent-parent-menu-item');
-            if (topLevelMenu) {
-                const topLevelLink = topLevelMenu.querySelector('.home-link');
-                if (topLevelLink) {
-                    topLevelLink.classList.add('active');
+                // Highlight the top-level parent menu
+                const topLevelMenu = item.closest('.parent-parent-menu-item');
+                if (topLevelMenu) {
+                    const topLevelLink = topLevelMenu.querySelector('.home-link');
+                    if (topLevelLink) topLevelLink.classList.add('active');
                 }
             }
-        }
+        } catch(e) {}
+    });
+
+    // Also highlight top-level direct links (Shop, Categories, Home)
+    // which are home-link anchors that are direct children of parent-parent-menu-item
+    // Skip href="#" links (e.g. Pages dropdown trigger) — they resolve to the current path
+    document.querySelectorAll('.parent-parent-menu-item > a.home-link').forEach((link) => {
+        if (link.getAttribute('href') === '#') return;
+        try {
+            const linkPath = new URL(link.href).pathname.replace(/\/$/, '');
+            if (linkPath && linkPath === currentPath) {
+                link.classList.add('active');
+            }
+        } catch(e) {}
     });
 </script>

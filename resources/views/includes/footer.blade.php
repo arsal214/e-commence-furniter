@@ -8,10 +8,16 @@
                     <h2 class="font-bold leading-none text-white text-4xl">Newsletter</h2>
                     <p class="mt-2 sm:mt-4 text-white-light">Stay in the loop with exclusive offers and updates. Subscribe to our newsletter for the latest trends and promotions </p>
                 </div>
-                <div class="mt-4 lg:mt-6 sm:flex md:max-w-[478px] w-full">
-                    <input class="w-full h-12 md:h-14 bg-white bg-opacity-[0.03] border border-white text-white placeholder:text-white-light border-opacity-30 focus:border-primary p-4 outline-none sm:flex-1 sm:border-r-0 duration-300" type="text" placeholder="Enter your email address">
-                    <button class="w-full h-12 bg-primary text-white flex items-center justify-center text-base md:text-lg font-medium p-3 mt-3 sm:mt-0 sm:w-32 sm:h-auto sm:flex-none">Subscribe</button>
-                </div>
+                <form action="{{ route('newsletter.subscribe') }}" method="POST" class="mt-4 lg:mt-6 md:max-w-[478px] w-full">
+                    @csrf
+                    @if(session('newsletter_success'))
+                        <p class="text-green-400 text-sm mb-2">{{ session('newsletter_success') }}</p>
+                    @endif
+                    <div class="sm:flex">
+                        <input class="w-full h-12 md:h-14 bg-white bg-opacity-[0.03] border border-white text-white placeholder:text-white-light border-opacity-30 focus:border-primary p-4 outline-none sm:flex-1 sm:border-r-0 duration-300" type="email" name="email" placeholder="Enter your email address" required>
+                        <button type="submit" class="w-full h-12 bg-primary text-white flex items-center justify-center text-base md:text-lg font-medium p-3 mt-3 sm:mt-0 sm:w-32 sm:h-auto sm:flex-none">Subscribe</button>
+                    </div>
+                </form>
             </div>
 
             <!-- Main Footer -->
@@ -21,27 +27,25 @@
                     <div>
                     <h4 class="font-bold text-white leading-none mb-5 md:mb-6 text-xl md:text-2xl">Sitemap</h4>
                     <ul class="text-white leading-none flex flex-col gap-4">
-                        <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/about') }}">About</a></li>
-                        {{-- <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/team') }}">Team</a></li> --}}
-                        {{-- <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/portfolio-v1') }}">Portfolio</a></li> --}}
-                        {{-- <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/our-clients') }}">Clients</a></li> --}}
-                        {{-- <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/error') }}">Error</a></li> --}}
+                        <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/about') }}">About Us</a></li>
+                        <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/faq') }}">FAQs</a></li>
+                        <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/terms-and-conditions') }}">Terms & Conditions</a></li>
+                        <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/contact') }}">Contact Us</a></li>
                     </ul>
                 </div>
                     <div>
                     <h4 class="font-bold text-white leading-none mb-5 md:mb-6 text-xl md:text-2xl">Others</h4>
                     <ul class="text-white leading-none flex flex-col gap-4">
-                        <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/shipping-method') }}">Shipping Method</a></li>
-                        {{-- <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/payment-method') }}">Payment Method</a></li> --}}
-                        {{-- <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/my-profile') }}">My Account</a></li> --}}
-                        {{-- <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/coming-soon') }}">Coming Soon</a></li> --}}
+                        <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/categories') }}">All Categories</a></li>
+                        <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/my-account') }}">My Account</a></li>
+                        <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/order-history') }}">Order History</a></li>
                     </ul>
                 </div>
                 </div>
 
                 <div class="lg:max-w-[522px] w-full sm:text-center -order-1 lg:order-none">
                     <img class="sm:mx-auto w-[150px] sm:w-auto" src="{{ asset('assets/img/logo.svg') }}" alt="logo">
-                    <p class="mt-4 text-white-light max-w-[522px] sm:mx-auto">PeytonGhalib is a modern furniture Laravel 12 template for an eCommerce website designed to help you create an impressive online store for your furniture. </p>
+                    <p class="mt-4 text-white-light max-w-[522px] sm:mx-auto">PeytonGhalib is your one-stop online destination for thousands of products across electronics, fashion, home & living, sports, beauty, and more — all at unbeatable prices with fast, reliable delivery.</p>
                     <div class="flex items-center sm:justify-center gap-4 mt-6">
                         <a href="#" class="w-10 h-10 rounded-full border border-white border-opacity-50 flex items-center justify-center group hover:border-primary duration-300" aria-label="Facebook">
                             <svg class="fill-current text-white group-hover:text-primary duration-300 " width="9" height="17" viewBox="0 0 9 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -74,11 +78,10 @@
                     <div>
                     <h4 class="font-bold text-white leading-none mb-5 md:mb-6 text-xl md:text-2xl">Shop</h4>
                     <ul class="text-white leading-none flex flex-col gap-4">
-                        <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Shop</a></li>
-                        {{-- <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/product-details') }}">Product Single</a></li> --}}
-                        {{-- <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/cart') }}">Cart</a></li> --}}
-                        {{-- <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/checkout') }}">Checkout</a></li> --}}
+                        <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">All Products</a></li>
+                        <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/cart') }}">Cart</a></li>
                         <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/wishlist') }}">Wishlist</a></li>
+                        <li class="duration-100 hover:text-primary inline-block group"><a class="text-underline-primary" href="{{ url('/checkout') }}">Checkout</a></li>
                     </ul>
                 </div>
                     <div>

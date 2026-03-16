@@ -3,9 +3,9 @@ $blogs = [
     [
         'id' => 1,
         'img' => 'assets/img/shortcode/blog/blog-05.jpg', 
-        'title' => 'The Key Components of a Quality Sofa habitant vel tempor varius.', 
-        'tag' => 'Sofa', 
-        'date' => '6 Sep, 2025', 
+        'title' => 'Top 10 Products Our Customers Love Most This Season',
+        'tag' => 'Trending',
+        'date' => '5 Jan, 2026',
     ],
     [
         'id' => 2,

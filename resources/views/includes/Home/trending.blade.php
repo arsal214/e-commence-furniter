@@ -18,7 +18,7 @@ $trendings = [
         'id' => 31,
         'img' => 'assets/img/home-v4/treading-03.jpg', 
         'price' => '$122.75 - $310.50', 
-        'title' => 'New Modern Luxury Table with Pops Lorem ipsum Furniture', 
+        'title' => 'Modern Ergonomic Desk with Adjustable Height',
         'rate' => '( 123 )',
     ],
     [

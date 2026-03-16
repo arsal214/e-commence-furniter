@@ -1,7 +1,7 @@
 <!-- resources/views/pricing.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'Pricing Page')
+@section('title', 'Membership Plans')
 
 @section('content')
 
@@ -10,11 +10,11 @@
 <!-- Banner Start -->
 <div class="flex items-center gap-4 flex-wrap bg-overlay p-14 sm:p-16 before:bg-title before:bg-opacity-70" style="background-image:url('{{ asset('assets/img/shortcode/breadcumb.jpg') }}');">
     <div class="text-center w-full">
-        <h2 class="text-white text-8 md:text-[40px] font-normal leading-none text-center">Pricing</h2>
+        <h2 class="text-white text-8 md:text-[40px] font-normal leading-none text-center">Membership Plans</h2>
         <ul class="flex items-center justify-center gap-[10px] text-base md:text-lg leading-none font-normal text-white mt-3 md:mt-4">
             <li><a href="{{ url('/') }}">Home</a></li>
             <li>/</li>
-            <li class="text-primary">Pricing</li>
+            <li class="text-primary">Membership</li>
         </ul>
     </div>
 </div>
@@ -33,8 +33,8 @@
                     <path d="M55.3901 27.1234C55.2373 26.8467 54.8892 26.7463 54.6125 26.8991C54.6085 26.9014 54.6043 26.9036 54.6003 26.9059C54.3193 27.0506 54.2087 27.3956 54.3532 27.6767C54.3535 27.6773 54.3539 27.678 54.3542 27.6786C54.3542 27.6786 55.207 29.3956 54.3142 32.429C54.2219 32.7313 54.3921 33.0512 54.6945 33.1434C54.6955 33.1437 54.6966 33.1439 54.6976 33.1444C54.7528 33.1499 54.8084 33.1499 54.8636 33.1444C55.1264 33.1548 55.3625 32.9848 55.4359 32.7323C56.4718 29.2239 55.4359 27.2093 55.3901 27.1234Z" fill="#BB976D"/>
                 </svg>
             </div>
-            <h3 class="font-medium leading-none mt-4 md:mt-6 text-2xl md:text-3xl">Choose Price Plan</h3>
-            <p class="mt-3">Discover the ideal plan to suit your budget and requirements. Choose flexibility and affordability with our tailored pricing options.</p>
+            <h3 class="font-medium leading-none mt-4 md:mt-6 text-2xl md:text-3xl">Choose Your Membership</h3>
+            <p class="mt-3">Join the PeytonGhalib membership programme and unlock exclusive discounts, free shipping, early access to new arrivals, and priority customer support. Choose the plan that suits your shopping lifestyle.</p>
         </div>
         <div class="mb-8 flex items-center justify-center">
             <div class="switch-wrapper p-[5px] bg-[#F7F7F7] dark:bg-dark-card-bg border border-title/10 dark:border-white/10 rounded-[70px] mx-auto relative inline-flex">

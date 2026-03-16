@@ -1,16 +1,16 @@
 @php
 $testimonials = [
     [
-        'img' => 'assets/img/testimonial/tmnl-02.jpg', 
-        'name' => 'Jennifer Smith', 
-        'title' => 'Berminghum ,UK', 
-        'desc' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non, lobortis in in tortor lectus elementum. Nibh purus integer elementum in. Tellus  habitant vel tempor lorem ipsuim dolor sit amet of this conqure varius.', 
+        'img' => 'assets/img/testimonial/tmnl-02.jpg',
+        'name' => 'Jennifer Smith',
+        'title' => 'New York, USA',
+        'desc' => 'PeytonGhalib has completely changed how I shop online. The product range is incredible, prices are genuinely competitive, and my orders always arrive on time. Their customer support team went above and beyond to help me with an exchange. Highly recommended!',
     ],
     [
-        'img' => 'assets/img/testimonial/tmnl-03.jpg', 
-        'name' => 'Jackyer Smith', 
-        'title' => 'Berminghum ,UK', 
-        'desc' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non, lobortis in in tortor lectus elementum. Nibh purus integer elementum in. Tellus  habitant vel tempor lorem ipsuim dolor sit amet of this conqure varius.', 
+        'img' => 'assets/img/testimonial/tmnl-03.jpg',
+        'name' => 'Marcus Taylor',
+        'title' => 'London, UK',
+        'desc' => 'I\'ve been a regular customer for over a year now. Whether I\'m buying electronics, clothing, or home essentials, PeytonGhalib always delivers quality products quickly. The Gold membership has saved me a lot on shipping too — absolutely worth it.',
     ]
 ];
 @endphp

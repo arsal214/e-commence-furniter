@@ -222,15 +222,39 @@ class HomeController extends Controller
         return view('payment-failure');  
     }
 
-    public function shopV1()
+    public function shopV1(Request $request)
     {
-        $activeCategory = request('category');
+        $activeCategory = $request->get('category');
+        $minPrice       = (float) $request->get('min_price', 0);
+        $maxPrice       = (float) $request->get('max_price', 9999);
+
         $products = Product::with('category')
             ->where('is_active', true)
             ->when($activeCategory, fn($q) => $q->whereHas('category', fn($q2) => $q2->where('slug', $activeCategory)))
-            ->get();
+            ->when($minPrice > 0, fn($q) => $q->where(function ($q2) use ($minPrice) {
+                $q2->where('sale_price', '>=', $minPrice)
+                   ->orWhere(function ($q3) use ($minPrice) {
+                       $q3->whereNull('sale_price')->where('price', '>=', $minPrice);
+                   });
+            }))
+            ->when($maxPrice < 9999, fn($q) => $q->where(function ($q2) use ($maxPrice) {
+                $q2->where('sale_price', '<=', $maxPrice)
+                   ->orWhere(function ($q3) use ($maxPrice) {
+                       $q3->whereNull('sale_price')->where('price', '<=', $maxPrice);
+                   });
+            }))
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
+
         $categories = Category::where('is_active', true)->orderBy('name')->get();
-        return view('shop-v1', compact('products', 'categories', 'activeCategory'));
+        return view('shop-v1', compact('products', 'categories', 'activeCategory', 'minPrice', 'maxPrice'));
+    }
+
+    public function categories()
+    {
+        $categories = Category::where('is_active', true)->withCount('products')->orderBy('name')->get();
+        return view('categories', compact('categories'));
     }
 
     public function shopV2()
