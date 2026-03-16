@@ -58,7 +58,7 @@
                     @if ($slide->image)
                         <img class="slider-img" src="{{ Storage::url($slide->image) }}" alt="{{ $slide->title }}">
                     @else
-                        <img class="slider-img" src="{{ asset('assets/img/home-v1/banner-01.png') }}" alt="{{ $slide->title }}">
+                        <img class="slider-img" src="{{ asset('assets/img/home-v1/banner.png') }}" alt="{{ $slide->title }}">
                     @endif
                 </div>
             </div>
@@ -81,7 +81,7 @@
                     </div>
                 </div>
                 <div class="sm:max-w-[750px] w-full">
-                    <img class="slider-img" src="{{ asset('assets/img/home-v1/banner-01.png') }}" alt="banner-slider">
+                    <img class="slider-img" src="{{ asset('assets/img/home-v1/banner.png') }}" alt="banner-slider">
                 </div>
             </div>
         </div>
