@@ -8,7 +8,7 @@
 @include('includes.navbar')
 
 <!-- Banner Start -->
-<div class="flex items-center gap-4 flex-wrap bg-overlay p-14 sm:p-16 before:bg-title before:bg-opacity-70" style="background-image:url('{{ asset('assets/img/shortcode/breadcumb.jpg') }}');">
+<div class="flex items-center gap-4 flex-wrap bg-overlay p-14 sm:p-16 before:bg-title before:bg-opacity-70" style="background-image:url('{{ asset('assets/img/shortcode/bg-about.png') }}');">
     <div class="text-center w-full">
         <h2 class="text-white text-8 md:text-[40px] font-normal leading-none text-center">About Us</h2>
         <ul class="flex items-center justify-center gap-[10px] text-base md:text-lg leading-none font-normal text-white mt-3 md:mt-4 flex-wrap">
