@@ -37,12 +37,15 @@ class ProductController extends Controller
             'images.*'       => ['nullable', 'image', 'max:4096'],
             'size_chart'     => ['nullable', 'image', 'max:8192'],
             'tag'            => ['nullable', 'in:Sale,NEW,OFF,OFF1'],
-            'sku'            => ['nullable', 'string', 'max:100'],
-            'stock'          => ['required', 'integer', 'min:0'],
-            'is_featured'    => ['nullable', 'boolean'],
-            'is_active'      => ['nullable', 'boolean'],
-            'colors_raw'     => ['nullable', 'string'],
-            'sizes_raw'      => ['nullable', 'string'],
+            'sku'           => ['nullable', 'string', 'max:100'],
+            'stock'         => ['required', 'integer', 'min:0'],
+            'is_featured'   => ['nullable', 'boolean'],
+            'is_active'     => ['nullable', 'boolean'],
+            'colors_raw'    => ['nullable', 'string'],
+            'sizes_raw'     => ['nullable', 'string'],
+            'supplier_name' => ['nullable', 'string', 'max:100'],
+            'supplier_url'  => ['nullable', 'url', 'max:500'],
+            'supplier_sku'  => ['nullable', 'string', 'max:100'],
         ]);
 
         $data['slug']        = Str::slug($data['name']);
@@ -103,12 +106,15 @@ class ProductController extends Controller
             'remove_images'      => ['nullable', 'array'],
             'remove_images.*'    => ['integer'],
             'tag'                => ['nullable', 'in:Sale,NEW,OFF,OFF1'],
-            'sku'                => ['nullable', 'string', 'max:100'],
-            'stock'              => ['required', 'integer', 'min:0'],
-            'is_featured'        => ['nullable', 'boolean'],
-            'is_active'          => ['nullable', 'boolean'],
-            'colors_raw'         => ['nullable', 'string'],
-            'sizes_raw'          => ['nullable', 'string'],
+            'sku'           => ['nullable', 'string', 'max:100'],
+            'stock'         => ['required', 'integer', 'min:0'],
+            'is_featured'   => ['nullable', 'boolean'],
+            'is_active'     => ['nullable', 'boolean'],
+            'colors_raw'    => ['nullable', 'string'],
+            'sizes_raw'     => ['nullable', 'string'],
+            'supplier_name' => ['nullable', 'string', 'max:100'],
+            'supplier_url'  => ['nullable', 'url', 'max:500'],
+            'supplier_sku'  => ['nullable', 'string', 'max:100'],
         ]);
 
         $data['is_featured'] = $request->boolean('is_featured');

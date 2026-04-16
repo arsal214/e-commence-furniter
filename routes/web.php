@@ -67,6 +67,7 @@ Route::get('/error', [HomeController::class, 'error']);
 
 Route::get('/coming-soon', [HomeController::class, 'comingSoon']);
 Route::get('/thank-you',   [HomeController::class, 'thankYou'])->name('thank-you');
+Route::get('/track-order', [HomeController::class, 'trackOrder'])->name('track-order');
 
 Route::get('/shipping-method',       [HomeController::class, 'shippingMethod']);
 Route::get('/payment-method',        [HomeController::class, 'paymentMethod']);

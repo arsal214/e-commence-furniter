@@ -1,52 +1,219 @@
 @php
-$fallbackImages = [
-    'assets/img/home-v1/pdct-cgry-01.jpg',
-    'assets/img/home-v1/pdct-cgry-02.jpg',
-    'assets/img/home-v1/pdct-cgry-03.jpg',
+/**
+ * Gradient palette — 8 rich, luxury tones for a furniture brand.
+ * Each category rotates through these so every card looks intentional.
+ */
+$catGradients = [
+    ['from' => '#C8956A', 'to' => '#7B4A2D', 'accent' => '#F4CFA8'],  // Warm Oak
+    ['from' => '#3D5A73', 'to' => '#1A2E3F', 'accent' => '#A8C8E0'],  // Deep Navy
+    ['from' => '#6B8A6E', 'to' => '#3A5240', 'accent' => '#B8D4BA'],  // Sage Green
+    ['from' => '#8A6B8A', 'to' => '#4A3350', 'accent' => '#D4B8D4'],  // Dusty Plum
+    ['from' => '#9A7B55', 'to' => '#5C3F25', 'accent' => '#E0C89A'],  // Walnut Brown
+    ['from' => '#5E7A8B', 'to' => '#2C4455', 'accent' => '#A8C4D4'],  // Steel Blue
+    ['from' => '#A07868', 'to' => '#5C3830', 'accent' => '#DEC0B8'],  // Rosewood
+    ['from' => '#7A8B5E', 'to' => '#3D4D28', 'accent' => '#C4D4A0'],  // Olive
 ];
+
 @endphp
 
+{{-- ─── Per-card styles (animation only — not color-specific) ─── --}}
+<style>
+.pgcat-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+    height: 300px;
+    transition: transform .35s cubic-bezier(.22,.68,0,1.15),
+                box-shadow .35s ease;
+}
+.pgcat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 60px rgba(0,0,0,.22);
+}
+/* Image texture layer */
+.pgcat-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: .18;
+    transition: opacity .4s ease, transform .5s ease;
+    mix-blend-mode: luminosity;
+}
+.pgcat-card:hover .pgcat-img {
+    opacity: .26;
+    transform: scale(1.06);
+}
+/* Noise texture overlay */
+.pgcat-noise {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: .4;
+    pointer-events: none;
+}
+/* Content wrapper */
+.pgcat-body {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 20px 24px;
+    text-align: center;
+}
+/* Category name */
+.pgcat-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    letter-spacing: .2px;
+    margin: 0 0 8px;
+    text-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+/* Count pill */
+.pgcat-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.2);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    margin-bottom: 0;
+    transition: background .3s;
+}
+.pgcat-card:hover .pgcat-count {
+    background: rgba(255,255,255,.22);
+}
+/* CTA bar — slides up from bottom */
+.pgcat-cta {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(255,255,255,.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,.15);
+    transform: translateY(100%);
+    transition: transform .3s cubic-bezier(.22,.68,0,1.1);
+}
+.pgcat-card:hover .pgcat-cta {
+    transform: translateY(0);
+}
+.pgcat-cta span {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+}
+.pgcat-cta svg {
+    transition: transform .3s ease;
+}
+.pgcat-card:hover .pgcat-cta svg {
+    transform: translateX(4px);
+}
+/* Corner accent dot */
+.pgcat-dot {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.5);
+    box-shadow: 0 0 0 3px rgba(255,255,255,.15);
+}
+/* Number badge — top left */
+.pgcat-num {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-size: 11px;
+    font-weight: 800;
+    color: rgba(255,255,255,.4);
+    letter-spacing: 1px;
+    font-variant-numeric: tabular-nums;
+}
+/* Active state for touch */
+.pgcat-card:active {
+    transform: translateY(-3px) scale(.98);
+}
+</style>
+
 @forelse ($categories as $index => $category)
-    @php
-        $imgSrc = null;
-        if ($category->image) {
-            $imgSrc = str_starts_with($category->image, 'assets/')
-                ? asset($category->image)
-                : Storage::url($category->image);
-        } else {
-            $imgSrc = asset($fallbackImages[$index % count($fallbackImages)]);
-        }
-    @endphp
+@php
+    $g   = $catGradients[$index % count($catGradients)];
+    $num = str_pad($index + 1, 2, '0', STR_PAD_LEFT);
 
-    <a class="relative block overflow-hidden group h-[220px] sm:h-[240px]"
-       href="{{ url('/shop-v1?category=' . $category->slug) }}">
+    // Image source (only used as a subtle texture layer)
+    $imgSrc = null;
+    if ($category->image) {
+        $imgSrc = str_starts_with($category->image, 'assets/')
+            ? asset($category->image)
+            : Storage::url($category->image);
+    }
+@endphp
 
-        {{-- Image with zoom on hover --}}
-        <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-             src="{{ $imgSrc }}"
-             alt="{{ $category->name }}">
+<a class="pgcat-card"
+   href="{{ url('/shop-v1?category=' . $category->slug) }}"
+   style="background: linear-gradient(145deg, {{ $g['from'] }} 0%, {{ $g['to'] }} 100%);">
 
-        {{-- Gradient overlay --}}
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent duration-300 group-hover:from-black/80"></div>
+    {{-- Noise texture --}}
+    <div class="pgcat-noise"></div>
 
-        {{-- Label --}}
-        <div class="absolute bottom-0 left-0 w-full px-5 pb-5 pt-8">
-            <span class="text-xs font-medium uppercase tracking-widest text-primary bg-black/40 px-2 py-1 rounded-sm">
-                {{ $category->products_count }} {{ Str::plural('item', $category->products_count) }}
-            </span>
-            <h4 class="text-lg sm:text-xl font-semibold text-white mt-2 leading-tight group-hover:text-primary duration-300">
-                {{ $category->name }}
-            </h4>
-        </div>
+    {{-- Image as subtle texture (only if image exists) --}}
+    @if($imgSrc)
+    <img class="pgcat-img" src="{{ $imgSrc }}" alt="{{ $category->name }}" loading="lazy">
+    @endif
 
-        {{-- Arrow icon on hover --}}
-        <div class="absolute top-4 right-4 w-8 h-8 bg-primary flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 duration-300">
-            <svg width="14" height="14" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M23.8198 6.61958L18.3757 1.17541C18.1801 0.947054 17.8364 0.920433 17.608 1.11604C17.3797 1.31161 17.3531 1.65529 17.5487 1.88366C17.5669 1.90494 17.5868 1.92483 17.608 1.94303L22.1212 6.46168L0.567835 6.46168C0.267191 6.46168 0.0234375 6.70543 0.0234375 7.00612C0.0234375 7.30681 0.267191 7.55052 0.567835 7.55052L22.1212 7.55052L17.608 12.0637C17.3797 12.2593 17.3531 12.6029 17.5487 12.8313C17.7443 13.0597 18.0879 13.0863 18.3163 12.8907C18.3376 12.8724 18.3575 12.8526 18.3757 12.8313L23.8198 7.38714C24.0309 7.17488 24.0309 6.83194 23.8198 6.61958Z" fill="white"/>
+    {{-- Top decorative elements --}}
+    <span class="pgcat-num">{{ $num }}</span>
+    <span class="pgcat-dot"></span>
+
+    {{-- Main content --}}
+    <div class="pgcat-body">
+        {{-- Name --}}
+        <h4 class="pgcat-name">{{ $category->name }}</h4>
+
+        {{-- Product count pill --}}
+        <span class="pgcat-count" style="color: {{ $g['accent'] }};">
+            <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+                <circle cx="4.5" cy="4.5" r="4.5" fill="currentColor" opacity=".4"/>
+                <circle cx="4.5" cy="4.5" r="2" fill="currentColor"/>
             </svg>
-        </div>
+            {{ $category->products_count }} {{ Str::plural('item', $category->products_count) }}
+        </span>
+    </div>
 
-    </a>
+    {{-- Hover CTA bar --}}
+    <div class="pgcat-cta">
+        <span>Explore Collection</span>
+        <svg width="14" height="10" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M23.82 6.62L18.38 1.18C18.18.95 17.84.92 17.61 1.12C17.38 1.31 17.35 1.66 17.55 1.88L22.12 6.46L.57 6.46C.27 6.46.02 6.71.02 7.01C.02 7.31.27 7.55.57 7.55L22.12 7.55L17.61 12.06C17.38 12.26 17.35 12.6 17.55 12.83C17.74 13.06 18.09 13.09 18.32 12.89L23.82 7.39C24.03 7.17 24.03 6.83 23.82 6.62Z" fill="white"/>
+        </svg>
+    </div>
+
+</a>
 @empty
-    <p class="text-gray-400 text-center py-8 w-full">No categories found.</p>
+<p class="text-gray-400 text-center py-8 w-full">No categories found.</p>
 @endforelse

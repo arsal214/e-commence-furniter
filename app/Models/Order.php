@@ -11,6 +11,8 @@ class Order extends Model
         'address', 'address2', 'notes', 'payment_method',
         'payment_status', 'stripe_payment_intent', 'shipping',
         'subtotal', 'shipping_cost', 'total', 'status',
+        'tracking_number', 'supplier_name', 'supplier_order_id',
+        'supplier_tracking', 'carrier', 'shipped_at',
     ];
 
     public function items()

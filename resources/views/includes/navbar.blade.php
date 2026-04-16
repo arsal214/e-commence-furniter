@@ -27,20 +27,31 @@
                     </li>
                     @php
                         $navCategories = \App\Models\Category::where('is_active', true)->orderBy('name')->get();
+                        $catPalette = [
+                            ['bg'=>'#FFF3E8','icon'=>'#E8924A','emoji'=>'🛋️'],
+                            ['bg'=>'#EAF4EA','icon'=>'#4A9E4A','emoji'=>'🪑'],
+                            ['bg'=>'#EAF0FB','icon'=>'#4A6BBF','emoji'=>'🛏️'],
+                            ['bg'=>'#FBF0EA','icon'=>'#BF6B4A','emoji'=>'🚪'],
+                            ['bg'=>'#F3EAFB','icon'=>'#8A4ABF','emoji'=>'💡'],
+                            ['bg'=>'#EAFBF8','icon'=>'#4ABFB0','emoji'=>'🪞'],
+                            ['bg'=>'#FBFBEA','icon'=>'#BFBA4A','emoji'=>'🖼️'],
+                            ['bg'=>'#FBEAEA','icon'=>'#BF4A4A','emoji'=>'🏺'],
+                        ];
                     @endphp
                     <li class="relative parent-parent-menu-item group/cat">
-                        <a href="{{ url('/categories') }}" class="home-link">Categories</a>
+                        {{-- Mobile: button opens drawer | Desktop: link to /categories --}}
+                        <a href="{{ url('/categories') }}"
+                           class="home-link"
+                           id="nav-categories-trigger">Categories</a>
 
-                        {{-- Mega menu dropdown --}}
-                        <div class="lg:absolute lg:top-full lg:left-1/2 lg:-translate-x-1/2 z-50
+                        {{-- ── Desktop Mega Menu (hover, lg+ only) ── --}}
+                        <div class="hidden lg:block lg:absolute lg:top-full lg:left-1/2 lg:-translate-x-1/2 z-50
                                     lg:invisible lg:opacity-0 lg:translate-y-2
                                     group-hover/cat:lg:visible group-hover/cat:lg:opacity-100 group-hover/cat:lg:translate-y-0
                                     lg:transition-all lg:duration-200
                                     bg-white dark:bg-title border-t-2 border-primary
-                                    lg:shadow-xl lg:min-w-[480px] lg:max-w-[680px] w-full
+                                    lg:shadow-xl lg:min-w-[480px] lg:max-w-[680px]
                                     pt-3 pb-4 px-4 lg:p-5">
-
-                            {{-- "All Products" header row --}}
                             <div class="flex items-center justify-between mb-3 pb-3 border-b border-[#E3E5E6] dark:border-bdr-clr-drk">
                                 <span class="text-xs uppercase tracking-widest text-gray-400 dark:text-white-light font-medium">Browse Categories</span>
                                 <a href="{{ url('/categories') }}"
@@ -51,9 +62,7 @@
                                     </svg>
                                 </a>
                             </div>
-
-                            {{-- Category grid --}}
-                            <div class="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-1">
+                            <div class="grid grid-cols-3 gap-x-4 gap-y-1">
                                 @foreach($navCategories as $navCat)
                                 <a href="{{ url('/shop-v1') }}?category={{ $navCat->slug }}"
                                    class="flex items-center gap-2 px-2 py-2 text-sm text-title dark:text-white
@@ -64,7 +73,6 @@
                                 </a>
                                 @endforeach
                             </div>
-
                         </div>
                     </li>
 
@@ -311,6 +319,267 @@
         </div>
     </div>
 </div>
+<!-- ══════════════════════════════════════════════
+     Mobile Category Drawer  (hidden on lg+)
+══════════════════════════════════════════════ -->
+<div id="mob-cat-overlay"
+     aria-modal="true"
+     role="dialog"
+     aria-label="Browse Categories"
+     style="display:none; position:fixed; inset:0; z-index:99999;">
+
+    {{-- Backdrop --}}
+    <div id="mob-cat-backdrop"
+         style="position:absolute;inset:0;background:rgba(0,0,0,.45);
+                backdrop-filter:blur(3px);opacity:0;transition:opacity .3s ease;"></div>
+
+    {{-- Slide-in Panel --}}
+    <div id="mob-cat-panel"
+         style="position:absolute;top:0;right:0;height:100%;width:min(100vw, 360px);
+                background:#fff;display:flex;flex-direction:column;
+                transform:translateX(100%);transition:transform .32s cubic-bezier(.22,.68,0,1.2);
+                box-shadow:-8px 0 40px rgba(0,0,0,.14);">
+
+        {{-- Panel Header --}}
+        <div style="display:flex;align-items:center;gap:10px;padding:18px 20px 16px;
+                    border-bottom:1px solid #f0f0f0;background:#fff;flex-shrink:0;">
+            <button id="mob-cat-close"
+                    aria-label="Back to menu"
+                    style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+                           border-radius:50%;border:1.5px solid #e8e8e8;background:transparent;cursor:pointer;
+                           transition:background .2s,border-color .2s;flex-shrink:0;"
+                    onmouseover="this.style.background='#f5f5f5'"
+                    onmouseout="this.style.background='transparent'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+            </button>
+            <div style="flex:1">
+                <p style="margin:0;font-size:11px;color:#aaa;font-weight:500;text-transform:uppercase;letter-spacing:.8px;line-height:1;">Menu</p>
+                <h3 style="margin:2px 0 0;font-size:17px;font-weight:700;color:#1a1a1a;line-height:1.2;">Categories</h3>
+            </div>
+            <a href="{{ url('/categories') }}"
+               style="font-size:12px;font-weight:600;color:#bb976d;text-decoration:none;
+                      display:flex;align-items:center;gap:4px;white-space:nowrap;
+                      padding:6px 12px;border:1.5px solid #bb976d;border-radius:20px;transition:all .2s;"
+               onmouseover="this.style.background='#bb976d';this.style.color='#fff'"
+               onmouseout="this.style.background='transparent';this.style.color='#bb976d'">
+                View All
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </a>
+        </div>
+
+        {{-- Search Bar --}}
+        <div style="padding:14px 20px;background:#fafafa;border-bottom:1px solid #f0f0f0;flex-shrink:0;">
+            <div style="position:relative;">
+                <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;"
+                     width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text"
+                       id="mob-cat-search"
+                       placeholder="Search categories…"
+                       autocomplete="off"
+                       style="width:100%;padding:10px 12px 10px 36px;border:1.5px solid #e8e8e8;
+                              border-radius:10px;font-size:14px;color:#333;background:#fff;
+                              outline:none;box-sizing:border-box;transition:border-color .2s;"
+                       onfocus="this.style.borderColor='#bb976d'"
+                       onblur="this.style.borderColor='#e8e8e8'">
+            </div>
+        </div>
+
+        {{-- Category Grid (scrollable) --}}
+        <div style="flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;">
+            <div id="mob-cat-grid"
+                 style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                @foreach($navCategories as $i => $navCat)
+                @php
+                    $p = $catPalette[$i % count($catPalette)];
+                    // Generate a nice 2-letter abbreviation
+                    $words = explode(' ', $navCat->name);
+                    $abbr  = strtoupper(substr($words[0],0,1) . (isset($words[1]) ? substr($words[1],0,1) : substr($words[0],1,1)));
+                @endphp
+                <a href="{{ url('/shop-v1') }}?category={{ $navCat->slug }}"
+                   class="mob-cat-item"
+                   data-name="{{ strtolower($navCat->name) }}"
+                   style="display:flex;flex-direction:column;align-items:center;gap:10px;
+                          padding:16px 10px;border-radius:14px;text-decoration:none;
+                          background:#fff;border:1.5px solid #f0f0f0;
+                          transition:all .2s ease;cursor:pointer;"
+                   onmouseover="this.style.borderColor='{{ $p['icon'] }}';this.style.background='{{ $p['bg'] }}';this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 16px rgba(0,0,0,.08)'"
+                   onmouseout="this.style.borderColor='#f0f0f0';this.style.background='#fff';this.style.transform='none';this.style.boxShadow='none'">
+                    {{-- Icon Circle --}}
+                    <div style="width:52px;height:52px;border-radius:14px;display:flex;align-items:center;
+                                justify-content:center;background:{{ $p['bg'] }};flex-shrink:0;
+                                position:relative;overflow:hidden;">
+                        <span style="font-size:22px;line-height:1;">{{ $p['emoji'] }}</span>
+                    </div>
+                    {{-- Name --}}
+                    <span style="font-size:12px;font-weight:600;color:#1a1a1a;text-align:center;
+                                 line-height:1.3;word-break:break-word;">{{ $navCat->name }}</span>
+                    {{-- Abbr badge --}}
+                    <span style="font-size:10px;font-weight:700;color:{{ $p['icon'] }};
+                                 background:{{ $p['bg'] }};padding:2px 8px;border-radius:20px;letter-spacing:.5px;">
+                        {{ $abbr }}
+                    </span>
+                </a>
+                @endforeach
+            </div>
+
+            {{-- Empty state --}}
+            <div id="mob-cat-empty"
+                 style="display:none;text-align:center;padding:40px 20px;">
+                <svg style="margin:0 auto 12px;" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="1.5">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <p style="font-size:14px;color:#bbb;margin:0;">No categories found</p>
+            </div>
+        </div>
+
+        {{-- Footer CTA --}}
+        <div style="padding:16px 20px;border-top:1px solid #f0f0f0;background:#fff;flex-shrink:0;">
+            <a href="{{ url('/shop-v1') }}"
+               style="display:block;width:100%;padding:13px;background:linear-gradient(135deg,#bb976d,#a8845a);
+                      color:#fff;text-align:center;font-size:14px;font-weight:700;
+                      border-radius:12px;text-decoration:none;letter-spacing:.3px;
+                      transition:opacity .2s;"
+               onmouseover="this.style.opacity='.88'"
+               onmouseout="this.style.opacity='1'">
+                Browse All Products
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ── Only override the mobile menu categories item ── */
+@media (max-width: 1024px) {
+    #nav-categories-trigger {
+        cursor: pointer;
+    }
+    /* Hide the desktop mega-menu on mobile completely */
+    #mob-cat-overlay * { box-sizing: border-box; }
+    /* Scrollbar styling */
+    #mob-cat-panel ::-webkit-scrollbar { width: 4px; }
+    #mob-cat-panel ::-webkit-scrollbar-track { background: transparent; }
+    #mob-cat-panel ::-webkit-scrollbar-thumb { background: #e0d5ca; border-radius: 4px; }
+    /* Bounce tap feedback on touch */
+    .mob-cat-item:active { transform: scale(.96) !important; }
+}
+/* Prevent body scroll when drawer open */
+body.mob-cat-open { overflow: hidden; }
+</style>
+
+<script>
+(function () {
+    'use strict';
+
+    const overlay  = document.getElementById('mob-cat-overlay');
+    const backdrop = document.getElementById('mob-cat-backdrop');
+    const panel    = document.getElementById('mob-cat-panel');
+    const trigger  = document.getElementById('nav-categories-trigger');
+    const closeBtn = document.getElementById('mob-cat-close');
+    const searchInput = document.getElementById('mob-cat-search');
+    const grid     = document.getElementById('mob-cat-grid');
+    const empty    = document.getElementById('mob-cat-empty');
+
+    if (!overlay || !trigger) return;
+
+    function isDesktop() {
+        return window.innerWidth >= 1024;
+    }
+
+    // ── Open ──
+    function openDrawer(e) {
+        if (isDesktop()) return; // let desktop mega-menu work normally
+        e.preventDefault();
+        e.stopPropagation();
+
+        overlay.style.display = 'block';
+        document.body.classList.add('mob-cat-open');
+
+        // Animate in
+        requestAnimationFrame(function () {
+            backdrop.style.opacity = '1';
+            panel.style.transform  = 'translateX(0)';
+        });
+
+        // Focus search after transition
+        setTimeout(function () { searchInput && searchInput.focus(); }, 350);
+    }
+
+    // ── Close ──
+    function closeDrawer() {
+        backdrop.style.opacity = '0';
+        panel.style.transform  = 'translateX(100%)';
+        document.body.classList.remove('mob-cat-open');
+
+        setTimeout(function () {
+            overlay.style.display = 'none';
+            if (searchInput) { searchInput.value = ''; filterCats(''); }
+        }, 320);
+    }
+
+    // ── Search / filter ──
+    function filterCats(query) {
+        const q = query.toLowerCase().trim();
+        const items = grid.querySelectorAll('.mob-cat-item');
+        let visible = 0;
+        items.forEach(function (item) {
+            const name = item.getAttribute('data-name') || '';
+            if (!q || name.includes(q)) {
+                item.style.display = '';
+                visible++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        empty.style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    // ── Event listeners ──
+    trigger.addEventListener('click', openDrawer);
+    trigger.addEventListener('touchend', openDrawer, { passive: false });
+
+    closeBtn.addEventListener('click', closeDrawer);
+
+    backdrop.addEventListener('click', closeDrawer);
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            filterCats(this.value);
+        });
+    }
+
+    // Close on Escape
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && overlay.style.display !== 'none') {
+            closeDrawer();
+        }
+    });
+
+    // Swipe right to close
+    var touchStartX = 0;
+    panel.addEventListener('touchstart', function (e) {
+        touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    panel.addEventListener('touchend', function (e) {
+        if (e.changedTouches[0].clientX - touchStartX > 70) {
+            closeDrawer();
+        }
+    }, { passive: true });
+
+    // Re-check on resize
+    window.addEventListener('resize', function () {
+        if (isDesktop() && overlay.style.display !== 'none') {
+            closeDrawer();
+        }
+    });
+}());
+</script>
+
 <!-- Header End -->
 
 <script>

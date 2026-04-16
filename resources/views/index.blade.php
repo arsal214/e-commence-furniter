@@ -94,41 +94,69 @@
 <!-- Product Category Area Start -->
 <div class="s-py-100-50 overflow-hidden">
     <div class="container-fluid">
+
         <!-- Section Title -->
-        <div class="flex items-end justify-between gap-4 mb-6 md:mb-8 max-w-[1720px] mx-auto" data-aos="fade-up">
+        <div class="flex items-end justify-between gap-4 mb-8 md:mb-10 max-w-[1720px] mx-auto" data-aos="fade-up">
             <div>
                 <span class="text-xs uppercase tracking-widest text-primary font-semibold">Browse by</span>
                 <h3 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Shop by Category</h3>
+                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">Find exactly what you're looking for</p>
             </div>
-            <a href="{{ url('/shop-v1') }}" class="hidden sm:flex items-center gap-2 text-sm font-medium text-title dark:text-white hover:text-primary duration-300 whitespace-nowrap">
-                View All
-                <svg width="16" height="10" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <a href="{{ url('/categories') }}"
+               class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-title dark:text-white
+                      border border-current px-5 py-2.5 rounded-full hover:text-primary hover:border-primary
+                      duration-300 whitespace-nowrap">
+                All Categories
+                <svg width="14" height="10" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M23.8198 6.61958L18.3757 1.17541C18.1801 0.947054 17.8364 0.920433 17.608 1.11604C17.3797 1.31161 17.3531 1.65529 17.5487 1.88366C17.5669 1.90494 17.5868 1.92483 17.608 1.94303L22.1212 6.46168L0.567835 6.46168C0.267191 6.46168 0.0234375 6.70543 0.0234375 7.00612C0.0234375 7.30681 0.267191 7.55052 0.567835 7.55052L22.1212 7.55052L17.608 12.0637C17.3797 12.2593 17.3531 12.6029 17.5487 12.8313C17.7443 13.0597 18.0879 13.0863 18.3163 12.8907C18.3376 12.8724 18.3575 12.8526 18.3757 12.8313L23.8198 7.38714C24.0309 7.17488 24.0309 6.83194 23.8198 6.61958Z" fill="currentColor"/>
                 </svg>
             </a>
         </div>
-        <!-- Products Wrapper -->
-        <div class="max-w-[1720px] mx-auto relative group" data-aos="fade-up" data-aos-delay="100">
-            <div class="owl-carousel hv1-pdct-ctgry-slider" data-carousel-items="3" data-carousel-xl="3" data-carousel-lg="2" data-carousel-md="2" data-carousel-sm="2" data-carousel-xs="1" data-carousel-margin="10" data-carousel-loop="true" data-carousel-autoplay="true"> 
-                
-                <!-- includes/Home/product-category.blade.php -->
-                @include('includes.Home.product-category')
 
+        <!-- Slider Wrapper -->
+        <div class="max-w-[1720px] mx-auto relative" data-aos="fade-up" data-aos-delay="100">
+            <div class="owl-carousel hv1-pdct-ctgry-slider"
+                 data-carousel-items="4"
+                 data-carousel-xl="4"
+                 data-carousel-lg="3"
+                 data-carousel-md="3"
+                 data-carousel-sm="2"
+                 data-carousel-xs="1"
+                 data-carousel-margin="16"
+                 data-carousel-loop="false"
+                 data-carousel-autoplay="false">
+                @include('includes.Home.product-category')
             </div>
-            
-            <!-- Slider Navigation -->
-            <button class="icon hv1pdct_prev w-9 h-9 md:w-14 md:h-14 flex items-center justify-center text-title duration-300 bg-white hover:bg-primary transform p-2 absolute [top:57%]  -translate-y-1/2 left-0 z-[999]" aria-label="Prev Navigation">
-                <svg class="fill-current" width="24" height="14" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0.180223 7.38726L5.62434 12.8314C5.8199 13.0598 6.16359 13.0864 6.39195 12.8908C6.62031 12.6952 6.64693 12.3515 6.45132 12.1232C6.43307 12.1019 6.41324 12.082 6.39195 12.0638L1.87877 7.54516L23.4322 7.54516C23.7328 7.54516 23.9766 7.30141 23.9766 7.00072C23.9766 6.70003 23.7328 6.45632 23.4322 6.45632L1.87877 6.45632L6.39195 1.94314C6.62031 1.74758 6.64693 1.40389 6.45132 1.17553C6.25571 0.947171 5.91207 0.920551 5.68371 1.11616C5.66242 1.13441 5.64254 1.15424 5.62434 1.17553L0.180175 6.6197C-0.0308748 6.83196 -0.0308748 7.1749 0.180223 7.38726Z"/>
+
+            <!-- Prev Button -->
+            <button class="hv1pdct_prev
+                           absolute top-1/2 -translate-y-1/2 -left-3 sm:-left-5 z-[99]
+                           w-10 h-10 md:w-12 md:h-12 rounded-full
+                           bg-white dark:bg-title shadow-lg border border-gray-100 dark:border-gray-700
+                           flex items-center justify-center
+                           text-title dark:text-white hover:bg-primary hover:text-white hover:border-primary
+                           duration-300"
+                    aria-label="Previous">
+                <svg width="14" height="12" viewBox="0 0 24 14" fill="none">
+                    <path d="M0.18 7.39L5.62 12.83C5.82 13.06 6.16 13.09 6.39 12.89C6.62 12.70 6.65 12.35 6.45 12.12L1.88 7.55L23.43 7.55C23.73 7.55 23.98 7.30 23.98 7.00C23.98 6.70 23.73 6.46 23.43 6.46L1.88 6.46L6.39 1.94C6.62 1.75 6.65 1.40 6.45 1.18C6.26.95 5.91.92 5.68 1.12L0.18 6.62C-0.03 6.83-0.03 7.17 0.18 7.39Z" fill="currentColor"/>
                 </svg>
             </button>
-            <button class="icon hv1pdct_next w-9 h-9 md:w-14 md:h-14 flex items-center justify-center text-title duration-300 bg-white hover:bg-primary transform p-2 absolute [top:57%] -translate-y-1/2 right-0 z-[999]" aria-label="Next Navigation">
-                <svg class="fill-current" width="24" height="14" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M23.8198 6.61958L18.3757 1.17541C18.1801 0.947054 17.8364 0.920433 17.608 1.11604C17.3797 1.31161 17.3531 1.65529 17.5487 1.88366C17.5669 1.90494 17.5868 1.92483 17.608 1.94303L22.1212 6.46168L0.567835 6.46168C0.267191 6.46168 0.0234375 6.70543 0.0234375 7.00612C0.0234375 7.30681 0.267191 7.55052 0.567835 7.55052L22.1212 7.55052L17.608 12.0637C17.3797 12.2593 17.3531 12.6029 17.5487 12.8313C17.7443 13.0597 18.0879 13.0863 18.3163 12.8907C18.3376 12.8724 18.3575 12.8526 18.3757 12.8313L23.8198 7.38714C24.0309 7.17488 24.0309 6.83194 23.8198 6.61958Z"/>
+
+            <!-- Next Button -->
+            <button class="hv1pdct_next
+                           absolute top-1/2 -translate-y-1/2 -right-3 sm:-right-5 z-[99]
+                           w-10 h-10 md:w-12 md:h-12 rounded-full
+                           bg-white dark:bg-title shadow-lg border border-gray-100 dark:border-gray-700
+                           flex items-center justify-center
+                           text-title dark:text-white hover:bg-primary hover:text-white hover:border-primary
+                           duration-300"
+                    aria-label="Next">
+                <svg width="14" height="12" viewBox="0 0 24 14" fill="none">
+                    <path d="M23.82 6.62L18.38 1.18C18.18.95 17.84.92 17.61 1.12C17.38 1.31 17.35 1.66 17.55 1.88L22.12 6.46L.57 6.46C.27 6.46.02 6.71.02 7.01C.02 7.31.27 7.55.57 7.55L22.12 7.55L17.61 12.06C17.38 12.26 17.35 12.60 17.55 12.83C17.74 13.06 18.09 13.09 18.32 12.89L23.82 7.39C24.03 7.17 24.03 6.83 23.82 6.62Z" fill="currentColor"/>
                 </svg>
             </button>
-            
         </div>
+
     </div>
 </div>
 <!-- Product Category Area End -->
@@ -357,6 +385,43 @@
             reviewsSlider.trigger('prev.owl.carousel', [300]);
         });
     });
+</script>
+
+@push('scripts')
+<script>
+$(document).ready(function () {
+    var $cat = $('.hv1-pdct-ctgry-slider');
+    if (!$cat.length) return;
+
+    // Destroy the generic init so we can reinitialize with rewind
+    $cat.trigger('destroy.owl.carousel').removeClass('owl-loaded owl-drag');
+    $cat.find('.owl-stage-outer').children().unwrap();
+
+    $cat.owlCarousel({
+        items       : 4,
+        margin      : 16,
+        loop        : false,
+        rewind      : true,
+        autoplay    : false,
+        smartSpeed  : 500,
+        mouseDrag   : true,
+        touchDrag   : true,
+        responsive  : {
+            0   : { items: 1 },
+            576 : { items: 2 },
+            768 : { items: 3 },
+            1024: { items: 4 },
+        }
+    });
+
+    // Wire nav buttons
+    $('.hv1pdct_next').off('click').on('click', function () {
+        $cat.trigger('next.owl.carousel');
+    });
+    $('.hv1pdct_prev').off('click').on('click', function () {
+        $cat.trigger('prev.owl.carousel');
+    });
+});
 </script>
 @endpush
 

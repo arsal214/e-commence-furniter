@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderConfirmationMail;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\CartService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 
@@ -60,22 +63,23 @@ class CheckoutController extends Controller
 
         // Create the order
         $order = Order::create([
-            'user_id'        => auth()->id(),
-            'name'           => $data['name'],
-            'email'          => $data['email'],
-            'phone'          => $data['phone'],
-            'city'           => $data['city'] ?? null,
-            'zip'            => $data['zip'] ?? null,
-            'address'        => $data['address'],
-            'address2'       => $data['address2'] ?? null,
-            'notes'          => $data['notes'] ?? null,
-            'payment_method' => $data['payment_method'],
-            'payment_status' => 'pending',
-            'shipping'       => $data['shipping'],
-            'subtotal'       => $subtotal,
-            'shipping_cost'  => $shippingCost,
-            'total'          => $total,
-            'status'         => 'pending',
+            'user_id'         => auth()->id(),
+            'name'            => $data['name'],
+            'email'           => $data['email'],
+            'phone'           => $data['phone'],
+            'city'            => $data['city'] ?? null,
+            'zip'             => $data['zip'] ?? null,
+            'address'         => $data['address'],
+            'address2'        => $data['address2'] ?? null,
+            'notes'           => $data['notes'] ?? null,
+            'payment_method'  => $data['payment_method'],
+            'payment_status'  => 'pending',
+            'shipping'        => $data['shipping'],
+            'subtotal'        => $subtotal,
+            'shipping_cost'   => $shippingCost,
+            'total'           => $total,
+            'status'          => 'pending',
+            'tracking_number' => 'FRN-' . date('Y') . '-' . strtoupper(Str::random(8)),
         ]);
 
         // Save order items
@@ -92,7 +96,9 @@ class CheckoutController extends Controller
 
         if ($data['payment_method'] === 'cod') {
             $this->cart->clear();
-            return redirect()->route('thank-you')->with('success', 'Order placed successfully! We will contact you soon.');
+            $order->load('items');
+            Mail::to($order->email)->send(new OrderConfirmationMail($order));
+            return redirect()->route('thank-you')->with('success', 'Order placed! Your tracking number is <strong>' . $order->tracking_number . '</strong>. Check your email for details.');
         }
 
         // Stripe payment
@@ -121,12 +127,13 @@ class CheckoutController extends Controller
         $intent = PaymentIntent::retrieve($request->payment_intent);
 
         if ($intent->status === 'succeeded') {
-            $order = Order::where('stripe_payment_intent', $intent->id)->first();
+            $order = Order::with('items')->where('stripe_payment_intent', $intent->id)->first();
             if ($order) {
                 $order->update(['payment_status' => 'paid', 'status' => 'processing']);
+                Mail::to($order->email)->send(new OrderConfirmationMail($order));
             }
             $this->cart->clear();
-            return redirect()->route('thank-you')->with('success', 'Payment successful! Your order is confirmed.');
+            return redirect()->route('thank-you')->with('success', 'Payment successful! Your tracking number is <strong>' . ($order?->tracking_number ?? '') . '</strong>. Check your email.');
         }
 
         return redirect()->route('checkout')->with('error', 'Payment was not completed. Please try again.');

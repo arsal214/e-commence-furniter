@@ -183,6 +183,65 @@ $paymentColors = [
             </form>
         </div>
 
+        {{-- Supplier / Fulfillment Info (internal only) --}}
+        <div class="bg-white rounded-xl shadow-sm border border-amber-200 p-5">
+            <div class="flex items-center gap-2 mb-1">
+                <h2 class="text-base font-semibold text-gray-800">Supplier Fulfillment</h2>
+                <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Internal Only</span>
+            </div>
+            <p class="text-xs text-gray-400 mb-4">This info is never shown to the customer. Fill in once you place the order on the supplier site. Setting status to <strong>Shipped</strong> automatically emails the customer.</p>
+
+            @if($order->tracking_number)
+            <div class="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-100 text-sm">
+                <p class="text-xs text-gray-400 mb-0.5">Customer Tracking #</p>
+                <p class="font-bold text-[#bb976d] tracking-widest text-base">{{ $order->tracking_number }}</p>
+            </div>
+            @endif
+
+            <form action="{{ route('admin.orders.update', $order) }}" method="POST" class="space-y-3">
+                @csrf @method('PUT')
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Supplier Name</label>
+                    <select name="supplier_name"
+                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d] bg-white text-gray-800">
+                        <option value="">-- Select Supplier --</option>
+                        @foreach(['Amazon','Walmart','eBay','AliExpress','Other'] as $sup)
+                        <option value="{{ $sup }}" {{ $order->supplier_name === $sup ? 'selected' : '' }}>{{ $sup }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Supplier Order ID</label>
+                    <input type="text" name="supplier_order_id" value="{{ old('supplier_order_id', $order->supplier_order_id) }}"
+                           placeholder="e.g. AMZ-123-4567890"
+                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Supplier Tracking #</label>
+                    <input type="text" name="supplier_tracking" value="{{ old('supplier_tracking', $order->supplier_tracking) }}"
+                           placeholder="e.g. 1Z999AA10123456784"
+                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Carrier</label>
+                    <select name="carrier"
+                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d] bg-white text-gray-800">
+                        <option value="">-- Select Carrier --</option>
+                        @foreach(['UPS','FedEx','USPS','DHL','Other'] as $carrier)
+                        <option value="{{ strtolower($carrier) }}" {{ $order->carrier === strtolower($carrier) ? 'selected' : '' }}>{{ $carrier }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @if($order->shipped_at)
+                <p class="text-xs text-gray-400">Shipped on: {{ \Carbon\Carbon::parse($order->shipped_at)->format('d M Y, H:i') }}</p>
+                @endif
+                <button type="submit"
+                        class="w-full px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors">
+                    Save Supplier Info
+                </button>
+            </form>
+        </div>
+
     </div>
 </div>
 @endsection

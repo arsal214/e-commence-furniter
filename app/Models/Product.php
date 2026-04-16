@@ -11,6 +11,7 @@ class Product extends Model
         'category_id', 'name', 'slug', 'description', 'review_content', 'shipping_info',
         'price', 'sale_price', 'image', 'tag', 'is_featured', 'is_active', 'stock', 'sku',
         'colors', 'sizes', 'size_chart',
+        'supplier_name', 'supplier_url', 'supplier_sku',
     ];
 
     protected $casts = [

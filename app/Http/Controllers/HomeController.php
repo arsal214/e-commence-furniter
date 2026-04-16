@@ -189,7 +189,20 @@ class HomeController extends Controller
 
     public function thankYou()
     {
-        return view('thank-you');  
+        return view('thank-you');
+    }
+
+    public function trackOrder(Request $request)
+    {
+        $order = null;
+
+        if ($request->filled('tracking')) {
+            $order = Order::with('items')
+                ->where('tracking_number', strtoupper(trim($request->tracking)))
+                ->first();
+        }
+
+        return view('track-order', compact('order'));
     }
 
     public function shippingMethod()
