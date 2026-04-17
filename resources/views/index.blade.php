@@ -50,8 +50,46 @@
                     @if($slide->description)
                         <p class="dark:text-white-light mt-3 md:mt-4 sm:max-w-[450px] xl:max-w-full">{{ $slide->description }}</p>
                     @endif
-                    <div class="button mt-4 md:mt-6">
-                        <a class="btn btn-outline" href="{{ $slide->button_url }}" data-text="{{ $slide->button_text }}"><span>{{ $slide->button_text }}</span></a>
+                    <div class="mt-6 md:mt-8 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
+                        {{-- Primary CTA --}}
+                        <a href="{{ $slide->button_url }}"
+                           class="group inline-flex items-center justify-center gap-3 px-7 sm:px-8 py-4
+                                  bg-[#bb976d] text-white text-sm sm:text-base font-bold tracking-widest uppercase
+                                  hover:bg-[#a8845a] transition-all duration-300
+                                  shadow-[0_4px_20px_rgba(187,151,109,0.4)] hover:shadow-[0_6px_28px_rgba(187,151,109,0.55)]
+                                  hover:-translate-y-0.5 w-full sm:w-auto">
+                            {{ $slide->button_text }}
+                            <svg class="flex-none transition-transform duration-300 group-hover:translate-x-1" width="16" height="12" viewBox="0 0 16 12" fill="none">
+                                <path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+
+                        {{-- Track Order --}}
+                        <a href="{{ route('track-order') }}"
+                           class="group inline-flex items-center justify-center gap-3 px-7 sm:px-8 py-4
+                                  bg-white dark:bg-white/10 border-2 border-[#bb976d]/40 dark:border-white/20
+                                  text-title dark:text-white text-sm sm:text-base font-semibold
+                                  hover:border-[#bb976d] hover:bg-[#fdf6ee] dark:hover:bg-white/15
+                                  transition-all duration-300 hover:-translate-y-0.5
+                                  shadow-[0_2px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_20px_rgba(187,151,109,0.2)]
+                                  w-full sm:w-auto">
+                            {{-- Package / tracking icon --}}
+                            <span class="flex-none w-9 h-9 rounded-full bg-[#bb976d]/10 group-hover:bg-[#bb976d]/20
+                                         flex items-center justify-center transition-colors duration-300">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/>
+                                    <polyline points="16.5 9.4 7.55 4.24"/>
+                                    <polyline points="3.29 7 12 12 20.71 7"/>
+                                    <line x1="12" y1="22" x2="12" y2="12"/>
+                                    <circle cx="18.5" cy="15.5" r="2.5"/>
+                                    <path d="M20.27 17.27 22 19"/>
+                                </svg>
+                            </span>
+                            <span>
+                                <span class="block text-xs text-gray-400 dark:text-white/50 font-normal leading-none mb-0.5">Where's my package?</span>
+                                <span class="block font-bold text-title dark:text-white group-hover:text-[#bb976d] transition-colors duration-300">Track Your Order</span>
+                            </span>
+                        </a>
                     </div>
                 </div>
                 <div class="sm:max-w-[750px] w-full">
@@ -76,8 +114,46 @@
                     </div>
                     <h2 class="mt-[10px] font-normal text-3xl sm:text-4xl xl:text-5xl !leading-[1.3] dark:text-white">Brand-New Arrival Alert Your Next Favorite is Here!</h2>
                     <p class="dark:text-white-light mt-3 md:mt-4 sm:max-w-[450px] xl:max-w-full">Discover the latest must-have arrivals! Elevate your style with our newest collection of trendsetting items.</p>
-                    <div class="button mt-4 md:mt-6">
-                        <a class="btn btn-outline" href="{{ url('/shop-v1') }}" data-text="Shop Now"><span>Shop Now</span></a>
+                    <div class="mt-6 md:mt-8 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
+                        {{-- Primary CTA --}}
+                        <a href="{{ url('/shop-v1') }}"
+                           class="group inline-flex items-center justify-center gap-3 px-7 sm:px-8 py-4
+                                  bg-[#bb976d] text-white text-sm sm:text-base font-bold tracking-widest uppercase
+                                  hover:bg-[#a8845a] transition-all duration-300
+                                  shadow-[0_4px_20px_rgba(187,151,109,0.4)] hover:shadow-[0_6px_28px_rgba(187,151,109,0.55)]
+                                  hover:-translate-y-0.5 w-full sm:w-auto">
+                            Shop Now
+                            <svg class="flex-none transition-transform duration-300 group-hover:translate-x-1" width="16" height="12" viewBox="0 0 16 12" fill="none">
+                                <path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+
+                        {{-- Track Order --}}
+                        <a href="{{ route('track-order') }}"
+                           class="group inline-flex items-center justify-center gap-3 px-7 sm:px-8 py-4
+                                  bg-white dark:bg-white/10 border-2 border-[#bb976d]/40 dark:border-white/20
+                                  text-title dark:text-white text-sm sm:text-base font-semibold
+                                  hover:border-[#bb976d] hover:bg-[#fdf6ee] dark:hover:bg-white/15
+                                  transition-all duration-300 hover:-translate-y-0.5
+                                  shadow-[0_2px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_20px_rgba(187,151,109,0.2)]
+                                  w-full sm:w-auto">
+                            {{-- Package / tracking icon --}}
+                            <span class="flex-none w-9 h-9 rounded-full bg-[#bb976d]/10 group-hover:bg-[#bb976d]/20
+                                         flex items-center justify-center transition-colors duration-300">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/>
+                                    <polyline points="16.5 9.4 7.55 4.24"/>
+                                    <polyline points="3.29 7 12 12 20.71 7"/>
+                                    <line x1="12" y1="22" x2="12" y2="12"/>
+                                    <circle cx="18.5" cy="15.5" r="2.5"/>
+                                    <path d="M20.27 17.27 22 19"/>
+                                </svg>
+                            </span>
+                            <span>
+                                <span class="block text-xs text-gray-400 dark:text-white/50 font-normal leading-none mb-0.5">Where's my package?</span>
+                                <span class="block font-bold text-title dark:text-white group-hover:text-[#bb976d] transition-colors duration-300">Track Your Order</span>
+                            </span>
+                        </a>
                     </div>
                 </div>
                 <div class="sm:max-w-[750px] w-full">

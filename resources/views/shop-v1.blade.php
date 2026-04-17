@@ -34,33 +34,6 @@
                     @endforeach
                 </div>
             </div>
-            <div class="max-w-[562px] w-full grid sm:grid-cols-2 gap-8 md:gap-12">
-                <div>
-                    <h4 class="font-medium leading-none text-xl sm:text-2xl mb-5 sm:mb-6">Price Range</h4>
-                    <form method="GET" action="{{ url('/shop-v1') }}" class="flex flex-col gap-3">
-                        @if($activeCategory)
-                            <input type="hidden" name="category" value="{{ $activeCategory }}">
-                        @endif
-                        <div class="grid grid-cols-2 gap-[15px]">
-                            <div class="py-[10px] px-5 border border-title dark:border-white-light flex items-center justify-center gap-[5px]">
-                                <span class="text-title dark:text-white font-medium leading-none">Min:</span>
-                                <div class="relative">
-                                    <span class="text-title dark:text-white font-medium leading-none absolute left-0 top-[82%] block transform -translate-y-1/2">$</span>
-                                    <input class="pl-[10px] w-full appearance-none bg-transparent text-title dark:text-white font-medium leading-none placeholder:text-title dark:placeholder:text-white placeholder placeholder:font-medium placeholder:leading-none outline-none" type="number" name="min_price" placeholder="0" value="{{ $minPrice > 0 ? $minPrice : '' }}" min="0">
-                                </div>
-                            </div>
-                            <div class="py-[10px] px-5 border border-title dark:border-white-light flex items-center justify-center gap-[5px]">
-                                <span class="text-title dark:text-white font-medium leading-none">Max:</span>
-                                <div class="relative">
-                                    <span class="text-title dark:text-white font-medium leading-none absolute left-0 top-[82%] block transform -translate-y-1/2">$</span>
-                                    <input class="pl-[10px] w-full appearance-none bg-transparent text-title dark:text-white font-medium leading-none placeholder:text-title dark:placeholder:text-white placeholder:font-medium placeholder:leading-none outline-none" type="number" name="max_price" placeholder="9999" value="{{ $maxPrice < 9999 ? $maxPrice : '' }}" min="0">
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-sm btn-theme-solid w-full !text-white" data-text="Apply Filter"><span>Apply Filter</span></button>
-                    </form>
-                </div>
-            </div>
         </div>
 
         <div class="max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-8 pt-8 md:pt-[50px]" data-aos="fade-up" data-aos-delay="200">

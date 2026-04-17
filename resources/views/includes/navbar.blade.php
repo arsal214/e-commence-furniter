@@ -84,11 +84,65 @@
                             <a href="{{ url('/login') }}">Login</a>
                         @endauth
                     </li>
+
+                    {{-- Mobile Track Order button --}}
+                    <li class="lg:hidden" style="padding:12px 0 4px;list-style:none;">
+                        <a href="{{ route('track-order') }}"
+                           style="display:flex !important;flex-direction:row !important;align-items:center !important;
+                                  gap:12px;padding:12px 16px;background:#fdf6ee;border:1.5px solid #e8c99a;
+                                  text-decoration:none;box-sizing:border-box;width:100%;height:auto !important;">
+                            <div style="flex-shrink:0;width:40px;height:40px;min-width:40px;border-radius:50%;
+                                        background:#bb976d;display:flex;align-items:center;justify-content:center;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/>
+                                    <polyline points="16.5 9.4 7.55 4.24"/>
+                                    <polyline points="3.29 7 12 12 20.71 7"/>
+                                    <line x1="12" y1="22" x2="12" y2="12"/>
+                                    <circle cx="18.5" cy="15.5" r="2.5"/>
+                                    <path d="M20.27 17.27 22 19"/>
+                                </svg>
+                            </div>
+                            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;">
+                                <div style="font-size:11px;color:#999;font-weight:400;line-height:1.3;white-space:nowrap;">Where's my package?</div>
+                                <div style="font-size:14px;font-weight:700;color:#1a1a1a;line-height:1.3;white-space:nowrap;">Track Your Order</div>
+                            </div>
+                            <svg style="flex-shrink:0;" width="14" height="10" viewBox="0 0 16 12" fill="none">
+                                <path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="#bb976d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </li>
                 </ul>
             </div>
 
             <!-- Header Right -->
             <div class="flex items-center gap-4 sm:gap-6">
+
+                <!-- Track Order — Desktop (before Login) -->
+                <div class="hidden lg:block">
+                    <a href="{{ route('track-order') }}"
+                       style="display:flex;align-items:center;gap:10px;padding:7px 16px 7px 7px;
+                              background:#fdf6ee;border:1.5px solid #e8c99a;
+                              text-decoration:none;white-space:nowrap;transition:all .2s;"
+                       onmouseover="this.style.background='#f7ead8';this.style.borderColor='#bb976d'"
+                       onmouseout="this.style.background='#fdf6ee';this.style.borderColor='#e8c99a'">
+                        <div style="flex-shrink:0;width:32px;height:32px;min-width:32px;border-radius:50%;
+                                    background:#bb976d;display:flex;align-items:center;justify-content:center;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/>
+                                <polyline points="16.5 9.4 7.55 4.24"/>
+                                <polyline points="3.29 7 12 12 20.71 7"/>
+                                <line x1="12" y1="22" x2="12" y2="12"/>
+                                <circle cx="18.5" cy="15.5" r="2.5"/>
+                                <path d="M20.27 17.27 22 19"/>
+                            </svg>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:3px;">
+                            <div style="font-size:10px;color:#999;font-weight:400;line-height:1.3;">Where's my package?</div>
+                            <div style="font-size:13px;font-weight:700;color:#1a1a1a;line-height:1.3;">Track Order</div>
+                        </div>
+                    </a>
+                </div>
+
                 @auth
                     <div class="relative group hidden lg:block">
                         <button class="flex items-center gap-2 text-lg leading-none text-title dark:text-white transition-all duration-300 hover:text-primary">
@@ -113,6 +167,7 @@
                 @else
                     <a href="{{ url('/login') }}" class="text-lg leading-none text-title dark:text-white transition-all duration-300 hover:text-primary hidden lg:block">Login</a>
                 @endauth
+
                 <!-- Search -->
                 <button class="hdr_search_btn" aria-label="search">
                     <svg class="fill-current text-title dark:text-white w-[18px] sm:w-[20px]" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -397,33 +452,19 @@
                 @foreach($navCategories as $i => $navCat)
                 @php
                     $p = $catPalette[$i % count($catPalette)];
-                    // Generate a nice 2-letter abbreviation
-                    $words = explode(' ', $navCat->name);
-                    $abbr  = strtoupper(substr($words[0],0,1) . (isset($words[1]) ? substr($words[1],0,1) : substr($words[0],1,1)));
                 @endphp
                 <a href="{{ url('/shop-v1') }}?category={{ $navCat->slug }}"
                    class="mob-cat-item"
                    data-name="{{ strtolower($navCat->name) }}"
-                   style="display:flex;flex-direction:column;align-items:center;gap:10px;
-                          padding:16px 10px;border-radius:14px;text-decoration:none;
+                   style="display:flex;align-items:center;justify-content:center;
+                          padding:14px 10px;border-radius:14px;text-decoration:none;
                           background:#fff;border:1.5px solid #f0f0f0;
                           transition:all .2s ease;cursor:pointer;"
                    onmouseover="this.style.borderColor='{{ $p['icon'] }}';this.style.background='{{ $p['bg'] }}';this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 16px rgba(0,0,0,.08)'"
                    onmouseout="this.style.borderColor='#f0f0f0';this.style.background='#fff';this.style.transform='none';this.style.boxShadow='none'">
-                    {{-- Icon Circle --}}
-                    <div style="width:52px;height:52px;border-radius:14px;display:flex;align-items:center;
-                                justify-content:center;background:{{ $p['bg'] }};flex-shrink:0;
-                                position:relative;overflow:hidden;">
-                        <span style="font-size:22px;line-height:1;">{{ $p['emoji'] }}</span>
-                    </div>
-                    {{-- Name --}}
-                    <span style="font-size:12px;font-weight:600;color:#1a1a1a;text-align:center;
+                    {{-- Name only --}}
+                    <span style="font-size:13px;font-weight:600;color:#1a1a1a;text-align:center;
                                  line-height:1.3;word-break:break-word;">{{ $navCat->name }}</span>
-                    {{-- Abbr badge --}}
-                    <span style="font-size:10px;font-weight:700;color:{{ $p['icon'] }};
-                                 background:{{ $p['bg'] }};padding:2px 8px;border-radius:20px;letter-spacing:.5px;">
-                        {{ $abbr }}
-                    </span>
                 </a>
                 @endforeach
             </div>
