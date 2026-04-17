@@ -58,18 +58,17 @@ $rightProducts = $featuredProducts->skip(4)->take(2);
                     </form>
                 </div>
             </div>
-            <div class="lg:pt-6 pt-5 flex gap-3 md:gap-4 flex-col">
-                <h4 class="font-medium leading-none dark:text-white text-lg">
-                    {{ $item->display_price }}
+            <div class="pt-4 px-1">
+                <p class="text-xs text-[#bb976d] font-semibold uppercase tracking-widest mb-1">{{ $item->category->name ?? '' }}</p>
+                <h5 class="text-sm font-semibold text-title dark:text-white leading-snug mb-2 line-clamp-2">
+                    <a href="{{ route('product-details', $item->slug) }}" class="hover:text-[#bb976d] transition-colors duration-200">{{ $item->name }}</a>
+                </h5>
+                @include('includes.Home._stars')
+                <div class="flex items-center gap-2 mt-2">
+                    <span class="text-base font-bold text-title dark:text-white">{{ $item->display_price }}</span>
                     @if ($item->sale_price)
-                        <span class="text-title/50 line-through pl-2 inline-block">${{ number_format($item->price, 2) }}</span>
+                        <span class="text-xs text-gray-400 line-through">${{ number_format($item->price, 2) }}</span>
                     @endif
-                </h4>
-                <div>
-                    <h5 class="font-normal dark:text-white text-xl leading-[1.5]">
-                        <a href="{{ route('product-details', $item->slug) }}" class="text-underline">{{ $item->name }}</a>
-                    </h5>
-                    @include('includes.Home._stars')
                 </div>
             </div>
         </div>
@@ -125,18 +124,17 @@ $rightProducts = $featuredProducts->skip(4)->take(2);
                     </form>
                 </div>
             </div>
-            <div class="lg:pt-6 pt-5 flex gap-3 md:gap-4 flex-col">
-                <h4 class="font-medium leading-none dark:text-white text-lg">
-                    {{ $item->display_price }}
+            <div class="pt-4 px-1">
+                <p class="text-xs text-[#bb976d] font-semibold uppercase tracking-widest mb-1">{{ $item->category->name ?? '' }}</p>
+                <h5 class="text-sm font-semibold text-title dark:text-white leading-snug mb-2 line-clamp-2">
+                    <a href="{{ route('product-details', $item->slug) }}" class="hover:text-[#bb976d] transition-colors duration-200">{{ $item->name }}</a>
+                </h5>
+                @include('includes.Home._stars')
+                <div class="flex items-center gap-2 mt-2">
+                    <span class="text-base font-bold text-title dark:text-white">{{ $item->display_price }}</span>
                     @if ($item->sale_price)
-                        <span class="text-title/50 line-through pl-2 inline-block">${{ number_format($item->price, 2) }}</span>
+                        <span class="text-xs text-gray-400 line-through">${{ number_format($item->price, 2) }}</span>
                     @endif
-                </h4>
-                <div>
-                    <h5 class="font-normal dark:text-white text-xl leading-[1.5]">
-                        <a href="{{ route('product-details', $item->slug) }}" class="text-underline">{{ $item->name }}</a>
-                    </h5>
-                    @include('includes.Home._stars')
                 </div>
             </div>
         </div>

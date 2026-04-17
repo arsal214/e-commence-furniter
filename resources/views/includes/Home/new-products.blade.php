@@ -45,18 +45,17 @@
                 </button>
             </div>
         </div>
-        <div class="md:px-2 lg:px-4 xl:px-6 lg:pt-6 pt-5 flex gap-4 md:gap-5 flex-col">
-            <h4 class="font-medium leading-none dark:text-white text-lg">
-                {{ $product->display_price }}
+        <div class="pt-4 px-1">
+            <p class="text-xs text-[#bb976d] font-semibold uppercase tracking-widest mb-1">{{ $product->category->name ?? '' }}</p>
+            <h5 class="text-sm font-semibold text-title dark:text-white leading-snug mb-2 line-clamp-2">
+                <a href="{{ route('product-details', $product->slug) }}" class="hover:text-[#bb976d] transition-colors duration-200">{{ $product->name }}</a>
+            </h5>
+            @include('includes.Home._stars')
+            <div class="flex items-center gap-2 mt-2">
+                <span class="text-base font-bold text-title dark:text-white">{{ $product->display_price }}</span>
                 @if ($product->sale_price)
-                    <span class="text-title/50 line-through pl-2 inline-block">${{ number_format($product->price, 2) }}</span>
+                    <span class="text-xs text-gray-400 line-through">${{ number_format($product->price, 2) }}</span>
                 @endif
-            </h4>
-            <div>
-                <h5 class="font-normal dark:text-white text-xl leading-[1.5]">
-                    <a href="{{ route('product-details', $product->slug) }}" class="text-underline">{{ $product->name }}</a>
-                </h5>
-                @include('includes.Home._stars')
             </div>
         </div>
     </div>

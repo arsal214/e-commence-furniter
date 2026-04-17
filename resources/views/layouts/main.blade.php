@@ -6,16 +6,18 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <!-- Anti-FOUC: hide until CSS is injected, then reveal -->
+        <!-- Anti-FOUC: Vite dev mode loads CSS via <script type="module"> which runs
+             AFTER DOMContentLoaded. We wait for window.load which fires after all
+             modules have executed and CSS is injected, then reveal in the next frame. -->
         <script>
         (function(){
             function show(){document.documentElement.style.visibility='';}
-            // DOMContentLoaded + two rAF frames ensures Vite CSS has been injected
-            document.addEventListener('DOMContentLoaded',function(){
-                requestAnimationFrame(function(){requestAnimationFrame(show);});
+            // window.load fires after Vite module scripts have run and CSS is applied
+            window.addEventListener('load', function(){
+                requestAnimationFrame(show);
             });
-            // Hard fallback: never stay hidden past 400ms
-            setTimeout(show, 400);
+            // Hard fallback: never stay hidden past 700ms
+            setTimeout(show, 700);
         })();
         </script>
         <title>@yield('title', 'PeytonGhalib') | PeytonGhalib</title>
