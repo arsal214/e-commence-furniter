@@ -181,15 +181,15 @@
                 <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up" data-aos-delay="300">
                     <div class="flex gap-x-12 gap-y-3 flex-wrap">
                         @if($item->sku)
-                        <h6 class="leading-none font-medium text-lg">SKU : <span class="font-normal">{{ $item->sku }}</span></h6>
+                        <h6 class="leading-none font-medium text-sm">SKU : <span class="font-normal text-gray-500 dark:text-white/60">{{ $item->sku }}</span></h6>
                         @endif
                         @if($item->category)
-                        <h6 class="leading-none font-medium text-lg">Category :
-                            <a href="{{ url('/shop-v1?category=' . $item->category->slug) }}" class="font-normal hover:text-primary duration-200">{{ $item->category->name }}</a>
+                        <h6 class="leading-none font-medium text-sm">Category :
+                            <a href="{{ url('/shop-v1?category=' . $item->category->slug) }}" class="font-normal text-gray-500 dark:text-white/60 hover:text-primary duration-200">{{ $item->category->name }}</a>
                         </h6>
                         @endif
                         @if($item->tag)
-                        <h6 class="leading-none font-medium text-lg">Badge :
+                        <h6 class="leading-none font-medium text-sm">Badge :
                             @php
                                 $bdBg    = match($item->tag) { 'Sale' => 'bg-[#1CB28E]', 'NEW' => 'bg-[#9739E1]', default => 'bg-[#E13939]' };
                                 $bdLabel = match($item->tag) { 'Sale' => 'Hot Sale', 'NEW' => 'NEW', 'OFF' => '10% OFF', 'OFF1' => '15% OFF', default => $item->tag };
@@ -205,7 +205,7 @@
                         {{-- Sizes --}}
                         @if(!empty($item->sizes) && count($item->sizes))
                         <div class="flex gap-[10px] items-center flex-wrap">
-                            <h6 class="leading-none font-medium text-lg shrink-0">Size :</h6>
+                            <h6 class="leading-none font-medium text-sm shrink-0">Size :</h6>
                             <div class="flex gap-[10px] flex-wrap" id="size-options">
                                 @foreach($item->sizes as $i => $sz)
                                 <label class="product-size cursor-pointer">
@@ -227,7 +227,7 @@
                         {{-- Colors --}}
                         @if(!empty($item->colors) && count($item->colors))
                         <div class="flex gap-[10px] items-center flex-wrap">
-                            <h6 class="leading-none font-medium text-lg shrink-0">Color :</h6>
+                            <h6 class="leading-none font-medium text-sm shrink-0">Color :</h6>
                             <div class="flex gap-[10px] flex-wrap items-center" id="color-options">
                                 @foreach($item->colors as $i => $clr)
                                 <label class="product-color cursor-pointer">
@@ -244,7 +244,7 @@
                 </div>
                 @if($item->category || $item->colors || $item->sizes)
                 <div class="py-4 sm:py-6 border-b border-bdr-clr dark:border-bdr-clr-drk" data-aos="fade-up" data-aos-delay="400">
-                    <h4 class="font-medium leading-none text-2xl">Tags :</h4>
+                    <h4 class="font-medium leading-none text-sm">Tags :</h4>
                     <div class="flex flex-wrap gap-[10px] md:gap-[15px] mt-5 md:mt-6">
                         @if($item->category)
                             <a class="btn btn-theme-outline btn-xs"
@@ -264,7 +264,7 @@
                 @endif
                 <div class="pt-4 sm:pt-6" data-aos="fade-up" data-aos-delay="500">
                     <div class="flex items-center gap-6">
-                        <h6 class="font-normal text-lg">Share : </h6>
+                        <h6 class="font-normal text-sm text-gray-500 dark:text-white/60">Share : </h6>
                         <div class="flex gap-6">
                             <a href="#" class="text-paragraph duration-300 dark:text-white hover:text-primary dark:hover:text-primary">
                                 <svg class="fill-current" width="9" height="17" viewBox="0 0 9 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -368,7 +368,7 @@ function switchTab(panelId, btn) {
 <div class="s-py-50-100">
     <div class="container-fluid">
         <div class="max-w-[547px] mx-auto text-center">
-            <h6 class="text-2xl sm:text-3xl md:text-4xl leading-none font-bold">Related Products</h6>
+            <h6 class="text-xl sm:text-2xl leading-none font-bold dark:text-white">Related Products</h6>
             <p class="mt-3">Explore complementary options that enhance your experience. Discover related products curated just for you. </p>
         </div>
         <div class="max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-8 pt-8 md:pt-[50px]">
