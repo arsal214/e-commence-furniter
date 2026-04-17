@@ -128,19 +128,19 @@
             </div>
             <div class="lg:max-w-[635px] w-full">
                 <div class="pb-4 sm:pb-6 border-b border-bdr-clr dark:border-bdr-clr-drk">
-                    <h2 class="font-semibold leading-none md:text-4xl">{{ $item->name ?? 'Classic Relaxable Chair' }}</h2>
-                    <div class="flex gap-4 items-center mt-[15px]">
+                    <p class="text-xs text-[#bb976d] font-semibold uppercase tracking-widest mb-2">{{ $item->category->name ?? '' }}</p>
+                    <h2 class="font-semibold leading-snug text-xl sm:text-2xl dark:text-white">{{ $item->name ?? 'Classic Relaxable Chair' }}</h2>
+                    <div class="flex gap-3 items-center mt-3">
                         @if($item->sale_price)
-                            <span class="text-lg sm:text-xl leading-none pb-[5px] text-title line-through pl-2 inline-block dark:text-white">${{ number_format($item->price, 2) }}</span>
-                            <span class="text-2xl sm:text-3xl text-primary leading-none block">${{ number_format($item->sale_price, 2) }}</span>
+                            <span class="text-base text-gray-400 line-through">${{ number_format($item->price, 2) }}</span>
+                            <span class="text-xl sm:text-2xl font-bold text-primary leading-none">${{ number_format($item->sale_price, 2) }}</span>
                         @else
-                            <span class="text-2xl sm:text-3xl text-primary leading-none block">${{ number_format($item->price, 2) }}</span>
+                            <span class="text-xl sm:text-2xl font-bold text-primary leading-none">${{ number_format($item->price, 2) }}</span>
                         @endif
                     </div>
 
-
                     @if($item->description)
-                    <div class="sm:text-lg mt-5 md:mt-7 rich-content leading-relaxed text-paragraph dark:text-white/80">
+                    <div class="text-sm mt-4 md:mt-5 rich-content leading-relaxed text-paragraph dark:text-white/80">
                         {!! $item->description !!}
                     </div>
                     @endif
