@@ -1,25 +1,11 @@
 <!-- resources/views/layouts/main.blade.php -->
 
 <!DOCTYPE html>
-<html lang="en" style="visibility:hidden">
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <!-- Anti-FOUC: Vite dev mode loads CSS via <script type="module"> which runs
-             AFTER DOMContentLoaded. We wait for window.load which fires after all
-             modules have executed and CSS is injected, then reveal in the next frame. -->
-        <script>
-        (function(){
-            function show(){document.documentElement.style.visibility='';}
-            // window.load fires after Vite module scripts have run and CSS is applied
-            window.addEventListener('load', function(){
-                requestAnimationFrame(show);
-            });
-            // Hard fallback: never stay hidden past 700ms
-            setTimeout(show, 700);
-        })();
-        </script>
         <title>@yield('title', 'PeytonGhalib') | PeytonGhalib</title>
         <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/gif" sizes="18x18">
 
