@@ -24,8 +24,8 @@ class CheckoutController extends Controller
 
         $shippingOptions = [
             'free'  => ['label' => 'Free Shipping',  'cost' => 0],
-            'fast'  => ['label' => 'Fast Shipping',   'cost' => 10],
-            'local' => ['label' => 'Local Pickup',    'cost' => 15],
+            // 'fast'  => ['label' => 'Fast Shipping',   'cost' => 10],
+            // 'local' => ['label' => 'Local Pickup',    'cost' => 15],
         ];
 
         return view('checkout', [

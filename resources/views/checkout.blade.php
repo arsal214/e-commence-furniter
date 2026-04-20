@@ -156,7 +156,7 @@
             <div class="mt-7 md:mt-12">
                 <h4 class="font-semibold leading-none text-xl md:text-2xl mb-6 md:mb-10 dark:text-white">Payment Method</h4>
                 <div class="flex gap-5 sm:gap-8 md:gap-12 flex-wrap">
-                    <div>
+                    {{-- <div>
                         <label class="flex items-center gap-[10px] categoryies-iteem cursor-pointer">
                             <input class="appearance-none hidden" type="radio" name="payment_method" value="cod" {{ old('payment_method', 'cod') === 'cod' ? 'checked' : '' }}>
                             <span class="w-4 h-4 rounded-full border border-title dark:border-white flex items-center justify-center duration-300">
@@ -167,7 +167,7 @@
                             <span class="sm:text-lg text-title dark:text-white block sm:leading-none transform translate-y-[3px] select-none">Cash On Delivery</span>
                         </label>
                         <p class="ml-6 text-[15px] leading-none mt-2 text-gray-500">Delivered in 7–10 days</p>
-                    </div>
+                    </div> --}}
                     <div>
                         <label class="flex items-center gap-[10px] categoryies-iteem cursor-pointer">
                             <input class="appearance-none hidden" type="radio" name="payment_method" value="stripe" {{ old('payment_method') === 'stripe' ? 'checked' : '' }}>
