@@ -12,6 +12,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Admin;
 
 // ──────────────────────────────────────────────
@@ -41,6 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout',         [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout',        [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/checkout/success', [CheckoutController::class, 'stripeSuccess'])->name('checkout.stripe-success');
+
+    Route::post('/product/{slug}/review', [ReviewController::class, 'store'])->name('product.review.store');
 });
 
 // ──────────────────────────────────────────────

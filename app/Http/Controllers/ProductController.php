@@ -8,7 +8,9 @@ class ProductController extends Controller
 {
     public function show(string $slug)
     {
-        $item = Product::with(['category', 'productImages'])
+        $item = Product::with(['category', 'productImages', 'reviews.user'])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();

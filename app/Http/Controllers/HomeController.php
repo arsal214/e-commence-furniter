@@ -242,6 +242,8 @@ class HomeController extends Controller
         $maxPrice       = (float) $request->get('max_price', 9999);
 
         $products = Product::with('category')
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->where('is_active', true)
             ->when($activeCategory, fn($q) => $q->whereHas('category', fn($q2) => $q2->where('slug', $activeCategory)))
             ->when($minPrice > 0, fn($q) => $q->where(function ($q2) use ($minPrice) {

@@ -130,6 +130,17 @@
                 <div class="pb-4 sm:pb-6 border-b border-bdr-clr dark:border-bdr-clr-drk">
                     <p class="text-xs text-[#bb976d] font-semibold uppercase tracking-widest mb-2">{{ $item->category->name ?? '' }}</p>
                     <h2 class="font-semibold leading-snug text-xl sm:text-2xl dark:text-white">{{ $item->name ?? 'Classic Relaxable Chair' }}</h2>
+                    {{-- Rating summary --}}
+                    <div class="flex items-center gap-2 mt-2">
+                        @include('includes.Home._stars', ['rating' => $item->avgRating()])
+                        <span class="text-sm text-gray-500 dark:text-gray-400">
+                            @if ($item->reviewCount() > 0)
+                                {{ number_format($item->avgRating(), 1) }} ({{ $item->reviewCount() }} {{ Str::plural('review', $item->reviewCount()) }})
+                            @else
+                                No reviews yet
+                            @endif
+                        </span>
+                    </div>
                     <div class="flex gap-3 items-center mt-3">
                         @if($item->sale_price)
                             <span class="text-base text-gray-400 line-through">${{ number_format($item->price, 2) }}</span>
@@ -304,12 +315,10 @@
                         data-active="true">
                     Description
                 </button>
-                @if($item->review_content)
                 <button onclick="switchTab('tab-review', this)"
                         class="pdtab-btn px-5 py-3 text-sm sm:text-base font-medium leading-none whitespace-nowrap border-b-2 border-transparent text-paragraph dark:text-white/60 hover:text-primary duration-200">
-                    Reviews
+                    Reviews ({{ $item->reviewCount() }})
                 </button>
-                @endif
                 @if($item->shipping_info)
                 <button onclick="switchTab('tab-shipping', this)"
                         class="pdtab-btn px-5 py-3 text-sm sm:text-base font-medium leading-none whitespace-nowrap border-b-2 border-transparent text-paragraph dark:text-white/60 hover:text-primary duration-200">
@@ -330,13 +339,121 @@
             </div>
 
             {{-- Reviews Panel --}}
-            @if($item->review_content)
             <div id="tab-review" class="pdtab-panel hidden">
-                <div class="rich-content leading-relaxed">
-                    {!! $item->review_content !!}
+
+                {{-- Average rating summary --}}
+                @if ($item->reviewCount() > 0)
+                <div class="flex items-center gap-4 mb-8 p-5 bg-[#F8F5F0] dark:bg-dark-secondary rounded-sm">
+                    <div class="text-center">
+                        <div class="text-5xl font-bold text-title dark:text-white leading-none">{{ number_format($item->avgRating(), 1) }}</div>
+                        <div class="mt-1">@include('includes.Home._stars', ['rating' => $item->avgRating()])</div>
+                        <div class="text-xs text-gray-400 mt-1">{{ $item->reviewCount() }} {{ Str::plural('review', $item->reviewCount()) }}</div>
+                    </div>
+                </div>
+                @endif
+
+                {{-- Existing reviews --}}
+                @forelse ($item->reviews as $review)
+                <div class="border-b border-bdr-clr dark:border-bdr-clr-drk pb-6 mb-6">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                @include('includes.Home._stars', ['rating' => $review->rating])
+                                <span class="text-xs text-gray-400 dark:text-gray-500">{{ $review->created_at->diffForHumans() }}</span>
+                            </div>
+                            <h6 class="font-semibold text-sm text-title dark:text-white">{{ $review->user->name ?? 'Customer' }}</h6>
+                        </div>
+                    </div>
+                    @if ($review->comment)
+                    <p class="mt-2 text-sm text-paragraph dark:text-white/70 leading-relaxed">{{ $review->comment }}</p>
+                    @endif
+                </div>
+                @empty
+                <p class="text-gray-400 italic text-sm mb-8">No reviews yet. Be the first to review this product!</p>
+                @endforelse
+
+                {{-- Submit a review --}}
+                <div class="mt-6 border-t border-bdr-clr dark:border-bdr-clr-drk pt-8">
+                    <h5 class="text-lg font-semibold text-title dark:text-white mb-5">
+                        @auth
+                            @if ($item->reviews->where('user_id', auth()->id())->isNotEmpty())
+                                Update Your Review
+                            @else
+                                Write a Review
+                            @endif
+                        @else
+                            Write a Review
+                        @endauth
+                    </h5>
+
+                    @auth
+                    @php
+                        $myReview = $item->reviews->firstWhere('user_id', auth()->id());
+                    @endphp
+                    <form action="{{ route('product.review.store', $item->slug) }}" method="POST" class="space-y-4">
+                        @csrf
+                        {{-- Star picker --}}
+                        <div>
+                            <label class="block text-sm font-medium text-title dark:text-white mb-2">Your Rating <span class="text-red-500">*</span></label>
+                            <div class="flex items-center gap-1" id="star-picker">
+                                @for ($s = 1; $s <= 5; $s++)
+                                <button type="button"
+                                        data-value="{{ $s }}"
+                                        class="star-pick-btn w-8 h-8 text-gray-300 hover:text-[#EE9818] transition-colors duration-150"
+                                        onclick="setRating({{ $s }})">
+                                    <svg viewBox="0 0 15 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M11.1622 13.6923L7.181 11.201L3.19978 13.6922C3.05515 13.7839 2.86858 13.7769 2.72931 13.6758C2.59043 13.5751 2.52673 13.4001 2.56864 13.2337L3.70764 8.67717L0.150459 5.6612C0.0189569 5.55107 -0.0324041 5.37191 0.0206119 5.2088C0.0736279 5.04526 0.220726 4.93062 0.391668 4.9187L5.03447 4.59449L6.79065 0.23853C6.91968 -0.07951 7.44233 -0.07951 7.57136 0.23853L9.32754 4.59449L13.9703 4.9187C14.1413 4.93062 14.2884 5.04526 14.3414 5.2088C14.3944 5.37191 14.3431 5.55107 14.2115 5.6612L10.6543 8.67723L11.7933 13.2337C11.8353 13.4001 11.7716 13.5752 11.6327 13.6759C11.4905 13.7791 11.3045 13.7814 11.1622 13.6923Z"/>
+                                    </svg>
+                                </button>
+                                @endfor
+                            </div>
+                            <input type="hidden" name="rating" id="rating-input" value="{{ $myReview->rating ?? '' }}">
+                            @error('rating') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Comment --}}
+                        <div>
+                            <label class="block text-sm font-medium text-title dark:text-white mb-2">Your Review</label>
+                            <textarea name="comment" rows="4"
+                                      placeholder="Share your experience with this product..."
+                                      class="w-full border border-[#E3E5E6] dark:border-bdr-clr-drk bg-transparent text-title dark:text-white px-4 py-3 text-sm outline-none focus:border-primary duration-200 placeholder:text-gray-400 resize-none">{{ $myReview->comment ?? '' }}</textarea>
+                            @error('comment') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <button type="submit" class="btn btn-solid" data-text="Submit Review">
+                            <span>Submit Review</span>
+                        </button>
+                    </form>
+
+                    <script>
+                    (function () {
+                        var current = {{ $myReview->rating ?? 0 }};
+                        function paint(n) {
+                            document.querySelectorAll('.star-pick-btn').forEach(function (btn) {
+                                btn.style.color = parseInt(btn.dataset.value) <= n ? '#EE9818' : '#D1D5DB';
+                            });
+                        }
+                        paint(current);
+                        window.setRating = function (n) {
+                            current = n;
+                            document.getElementById('rating-input').value = n;
+                            paint(n);
+                        };
+                        document.querySelectorAll('.star-pick-btn').forEach(function (btn) {
+                            btn.addEventListener('mouseover', function () { paint(parseInt(btn.dataset.value)); });
+                            btn.addEventListener('mouseout',  function () { paint(current); });
+                        });
+                    })();
+                    </script>
+
+                    @else
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        <a href="{{ route('login') }}" class="text-primary font-semibold hover:underline">Log in</a>
+                        to leave a review.
+                    </p>
+                    @endauth
                 </div>
             </div>
-            @endif
 
             {{-- Shipping Panel --}}
             @if($item->shipping_info)

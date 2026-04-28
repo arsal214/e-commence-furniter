@@ -48,6 +48,22 @@ class Product extends Model
         return $this->hasMany(ProductImage::class)->orderBy('sort_order');
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class)->latest();
+    }
+
+    public function avgRating(): float
+    {
+        // Use pre-loaded aggregate if available (set via withAvg), otherwise query
+        return round((float) ($this->reviews_avg_rating ?? $this->reviews()->avg('rating') ?? 0), 1);
+    }
+
+    public function reviewCount(): int
+    {
+        return (int) ($this->reviews_count ?? $this->reviews()->count());
+    }
+
     /**
      * Returns a display-friendly price string (e.g. "$122.75" or "$122.75 - $140.99")
      */
