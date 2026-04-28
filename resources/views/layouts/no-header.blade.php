@@ -8,6 +8,13 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>PeytonGhalib</title>
         <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/gif" sizes="18x18">
+        <script>
+            (function () {
+                var scheme = localStorage.getItem('colorScheme');
+                document.documentElement.className = scheme === 'dark' ? 'dark' : 'light';
+            })();
+        </script>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
         <!-- Meta tags for SEO -->
         <meta content="	ceramics, decoration, ecommerce, ecommerce template, elementor, furniture, furniture store, furniture template, interior design, interior design template, shopping, simple ecommerce, store, store template" name="keywords">

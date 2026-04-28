@@ -8,6 +8,16 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>@yield('title', 'PeytonGhalib') | PeytonGhalib</title>
         <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/gif" sizes="18x18">
+        {{-- Inline dark-mode detection: runs synchronously before any CSS is parsed,
+             so the correct class is on <html> when styles are applied. --}}
+        <script>
+            (function () {
+                var scheme = localStorage.getItem('colorScheme');
+                document.documentElement.className = scheme === 'dark' ? 'dark' : 'light';
+            })();
+        </script>
+        {{-- Warm up CDN connection so the icon font doesn't add a DNS round-trip --}}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
         <!-- Meta tags for SEO -->
         <meta content="	ceramics,furniture,PeytonGhalib, furniture store, interior design" name="keywords">
@@ -29,6 +39,16 @@
         @vite('resources/css/app.css')
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
         <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+        {{-- AOS FOUC fix: style.css hides [data-aos] elements (opacity:0) as soon as it loads,
+             but AOS.init() in scripts.js runs much later. Keep elements visible until AOS sets
+             its data-aos-easing attribute on <body> (the exact moment AOS.init() fires). --}}
+        <style>
+            body:not([data-aos-easing]) [data-aos] {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+        </style>
         @stack('styles')
     </head>
 
