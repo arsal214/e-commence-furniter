@@ -13,6 +13,13 @@ class CartService
         return session($this->sessionKey, []);
     }
 
+    public function getQty(int $productId, ?string $color, ?string $size): int
+    {
+        $key  = $this->makeKey($productId, $color, $size);
+        $cart = $this->items();
+        return $cart[$key]['qty'] ?? 0;
+    }
+
     public function add(Product $product, int $qty = 1, ?string $color = null, ?string $size = null): void
     {
         $cart = $this->items();
