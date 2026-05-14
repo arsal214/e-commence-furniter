@@ -263,28 +263,13 @@ class HomeController extends Controller
             ->withQueryString();
 
         $categories = Category::where('is_active', true)->orderBy('name')->get();
-        return view('shop-v1', compact('products', 'categories', 'activeCategory', 'minPrice', 'maxPrice'));
+        return view('shop', compact('products', 'categories', 'activeCategory', 'minPrice', 'maxPrice'));
     }
 
     public function categories()
     {
         $categories = Category::where('is_active', true)->withCount('products')->orderBy('name')->get();
         return view('categories', compact('categories'));
-    }
-
-    public function shopV2()
-    {
-        return view('shop-v2');  
-    }
-
-    public function shopV3()
-    {
-        return view('shop-v3');  
-    }
-
-    public function shopV4()
-    {
-        return view('shop-v4');  
     }
 
     public function productCategory()

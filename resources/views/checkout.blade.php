@@ -224,6 +224,6 @@ document.querySelectorAll('input[name="shipping"]').forEach(function(radio) {
 });
 </script>
 
-@include('includes.footer6')
+@include('includes.footer')
 
 @endsection

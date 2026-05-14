@@ -1,4 +1,4 @@
-<!-- resources/views/order-history.blade.php -->
+﻿<!-- resources/views/order-history.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Order History')
@@ -58,7 +58,7 @@
                         <div class="text-center py-12">
                             <svg class="w-16 h-16 fill-current text-gray-300 dark:text-gray-600 mx-auto mb-4" viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>
                             <p class="text-gray-500 dark:text-gray-400 text-lg">No orders yet.</p>
-                            <a href="{{ url('/shop-v1') }}" class="btn btn-solid mt-6 inline-block" data-text="Start Shopping">
+                            <a href="{{ url('/shop') }}" class="btn btn-solid mt-6 inline-block" data-text="Start Shopping">
                                 <span>Start Shopping</span>
                             </a>
                         </div>
@@ -124,6 +124,6 @@
 </div>
 <!-- Order History End -->
 
-@include('includes.footer6')
+@include('includes.footer')
 
 @endsection

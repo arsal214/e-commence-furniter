@@ -85,6 +85,6 @@
 </div>
 <!-- Coming Soom Area End -->
 
-@include('includes.footer7')
+@include('includes.footer')
   
 @endsection

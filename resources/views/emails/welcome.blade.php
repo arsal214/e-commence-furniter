@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -69,7 +69,7 @@
         </div>
 
         <div class="cta-wrap">
-            <a href="{{ url('/shop-v1') }}" class="cta-btn">Start Shopping</a>
+            <a href="{{ url('/shop') }}" class="cta-btn">Start Shopping</a>
         </div>
 
         <p class="sign-off">

@@ -1,4 +1,4 @@
-<!-- resources/views/payment-success.blade.php -->
+﻿<!-- resources/views/payment-success.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Payment-Success Page')
@@ -35,7 +35,7 @@
             <p class="mt-3 text-base sm:text-lg text-paragraph dark:text-white">
                 Hey there. We tried to charge your card but, something went wrong. Please update your payment method below to continue
             </p>
-            <a href="/{{ url('/shop-v1') }}" class="btn btn-solid mt-4 md:mt-6" data-text="Back to Shop">
+            <a href="/{{ url('/shop') }}" class="btn btn-solid mt-4 md:mt-6" data-text="Back to Shop">
                 <span>Back to Shop</span>
             </a>
         </div>
@@ -43,6 +43,6 @@
 </div>
 <!--  Payment Completed Area End -->
 
-@include('includes.footer6')
+@include('includes.footer')
   
 @endsection

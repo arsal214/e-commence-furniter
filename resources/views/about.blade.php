@@ -1,7 +1,8 @@
 <!-- resources/views/about.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'About Page')
+@section('title', 'About Us | PeytonGhalib')
+@section('meta_description', 'Learn about PeytonGhalib — our story, mission, and commitment to delivering quality furniture and home decor at unbeatable prices with exceptional service.')
 
 @section('content')
 
@@ -217,7 +218,7 @@
 </div>
 <!-- Customer Reviews End -->
 
-@include('includes.footer6')
+@include('includes.footer')
 
 @push('scripts')
 <script>

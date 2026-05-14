@@ -116,6 +116,6 @@
 </div>
 <!-- Edit Account End -->
 
-@include('includes.footer6')
+@include('includes.footer')
 
 @endsection

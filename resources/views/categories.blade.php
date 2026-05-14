@@ -1,4 +1,4 @@
-<!-- resources/views/categories.blade.php -->
+﻿<!-- resources/views/categories.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'All Categories')
@@ -54,7 +54,7 @@
                     @endphp
 
                     <a class="relative block overflow-hidden group h-[260px] sm:h-[280px]"
-                       href="{{ url('/shop-v1?category=' . $category->slug) }}">
+                       href="{{ url('/shop?category=' . $category->slug) }}">
 
                         <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                              src="{{ $imgSrc }}"
@@ -87,7 +87,7 @@
 
             <!-- Browse All Products CTA -->
             <div class="mt-10 md:mt-14 text-center" data-aos="fade-up">
-                <a href="{{ url('/shop-v1') }}" class="btn btn-theme-solid" data-text="Browse All Products">
+                <a href="{{ url('/shop') }}" class="btn btn-theme-solid" data-text="Browse All Products">
                     <span>Browse All Products</span>
                 </a>
             </div>

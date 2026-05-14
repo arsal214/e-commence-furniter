@@ -1,4 +1,4 @@
-<!-- resources/views/index-v4.blade.php -->
+﻿<!-- resources/views/index-v4.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Index-V4 Page')
@@ -13,7 +13,7 @@
         <div class="max-w-[751px] mx-auto">
             <h2 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-snug sm:leading-snug md:leading-snug lg:leading-snug font-bold" data-aos="fade-up">A Collection of World Top Class <span class="font-secondary text-secondary font-normal">Furniture</span></h2>
             <div data-aos="fade-up" data-aos-delay="100">
-                <a href="{{ url('/shop-v1') }}" class="group md:text-lg font-medium leading-none text-title dark:text-white flex items-center gap-3 mt-3">
+                <a href="{{ url('/shop') }}" class="group md:text-lg font-medium leading-none text-title dark:text-white flex items-center gap-3 mt-3">
                     <span class="text-underline leading-none">Go to Shop </span>
                     <svg class="fill-current text-title dark:text-white w-5 md:w-7" viewBox="0 0 31 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M30.2303 6.58892C30.5232 6.29603 30.5232 5.82116 30.2303 5.52826L25.4574 0.755293C25.1645 0.462399 24.6896 0.462399 24.3967 0.755293C24.1038 1.04819 24.1038 1.52306 24.3967 1.81595L28.6393 6.05859L24.3967 10.3012C24.1038 10.5941 24.1038 11.069 24.3967 11.3619C24.6896 11.6548 25.1645 11.6548 25.4574 11.3619L30.2303 6.58892ZM0 6.80859L29.7 6.80859V5.30859L0 5.30859L0 6.80859Z"/>

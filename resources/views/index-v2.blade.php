@@ -1,4 +1,4 @@
-<!-- resources/views/index-v2.blade.php -->
+﻿<!-- resources/views/index-v2.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Index-V2 Page')
@@ -135,7 +135,7 @@
 
         </div>
         <div class="text-center mt-7 md:mt-12">
-            <a href="{{ url('/shop-v1') }}" class="btn btn-outline" data-text="Go to shop">
+            <a href="{{ url('/shop') }}" class="btn btn-outline" data-text="Go to shop">
                 <span>Go to shop</span>
             </a>
         </div>

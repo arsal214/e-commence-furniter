@@ -1,4 +1,4 @@
-<!-- resources/views/wishlist.blade.php -->
+﻿<!-- resources/views/wishlist.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'My Wishlist')
@@ -65,7 +65,7 @@
                         </svg>
                         <h4 class="text-xl font-semibold text-title dark:text-white mb-2">Your wishlist is empty</h4>
                         <p class="text-gray-500 dark:text-gray-400 mb-6">Save items you love and find them here anytime.</p>
-                        <a href="{{ url('/shop-v1') }}" class="btn btn-solid" data-text="Browse Products">
+                        <a href="{{ url('/shop') }}" class="btn btn-solid" data-text="Browse Products">
                             <span>Browse Products</span>
                         </a>
                     </div>
@@ -147,6 +147,6 @@
 </div>
 <!-- Wishlist End -->
 
-@include('includes.footer6')
+@include('includes.footer')
 
 @endsection

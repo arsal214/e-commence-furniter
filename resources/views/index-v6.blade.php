@@ -1,4 +1,4 @@
-<!-- resources/views/index-v6.blade.php -->
+﻿<!-- resources/views/index-v6.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Index-V6 Page')
@@ -17,7 +17,7 @@
                 <h2 class="text-4xl sm:text-5xl lg:text-7xl sm:leading-tight leading-tight lg:leading-tight max-w-[300px] sm:max-w-[400px] lg:max-w-[602px] mt-5 font-bold" data-aos="fade-up" data-aos-delay="100">Premium Lounge Sofa Chair</h2>
                 <p class="max-w-[450px] lg:max-w-[550px] mt-3 sm:mt-0" data-aos="fade-up" data-aos-delay="200">We offer you an extremely comfortable lounge sofa chair. Taking the time to relax at home or the office will be more appealing than ever when you choose a modern lounge sofa chair.</p>
                 <div data-aos="fade-up" data-aos-delay="300">
-                    <a href="{{ url('/shop-v1') }}" class="btn btn-outline mt-6" data-text="Let's Shop Now">
+                    <a href="{{ url('/shop') }}" class="btn btn-outline mt-6" data-text="Let's Shop Now">
                         <span>Let's Shop Now</span>
                     </a>
                 </div>
@@ -172,6 +172,6 @@
     
 </div>
 
-@include('includes.footer5')
+@include('includes.footer')
   
 @endsection

@@ -1,4 +1,4 @@
-<!-- resources/views/index-v3.blade.php -->
+﻿<!-- resources/views/index-v3.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Index-V3 Page')
@@ -20,7 +20,7 @@
                 <h2 class="leading-none text-4xl sm:text-5xl xl:text-6xl 2xl:text-7xl font-bold mt-6 dark:text-white">Get <span class="text-secondary">25%</span> Off</h2>
                 <p class="mt-4 md:mt-5 dark:text-white-light">Create a home that reflects your unique style with our premium furniture collection. Each piece is thoughtfully designed for elegance, functionality, and lasting comfort, making your space truly unforgettable.</p>
                 <div class="button">
-                    <a class="btn btn-outline mt-4 md:mt-6" href="{{ url('/shop-v1') }}" data-text="Let's Shop Now"><span>Let's Shop Now</span></a>
+                    <a class="btn btn-outline mt-4 md:mt-6" href="{{ url('/shop') }}" data-text="Let's Shop Now"><span>Let's Shop Now</span></a>
                 </div>
             </div>
         </div>
@@ -36,7 +36,7 @@
                 <h2 class="leading-none text-4xl sm:text-5xl xl:text-6xl 2xl:text-7xl font-bold mt-6 dark:text-white">Get <span class="text-secondary">35%</span> Off</h2>
                 <p class="mt-4 md:mt-5 dark:text-white-light">Discover sleek and modern designs that redefine sophistication and functionality. From minimalist styles to bold statement pieces, our collection is crafted to elevate your living space effortlessly.</p>
                 <div class="button">
-                    <a class="btn btn-outline mt-4 md:mt-6" href="{{ url('/shop-v1') }}" data-text="Let's Shop Now"><span>Let's Shop Now</span></a>
+                    <a class="btn btn-outline mt-4 md:mt-6" href="{{ url('/shop') }}" data-text="Let's Shop Now"><span>Let's Shop Now</span></a>
                 </div>
             </div>
         </div>
@@ -52,7 +52,7 @@
                 <h2 class="leading-none text-4xl sm:text-5xl xl:text-6xl 2xl:text-7xl font-bold mt-6 dark:text-white">Get <span class="text-secondary">55%</span> Off</h2>
                 <p class="mt-4 md:mt-5 dark:text-white-light">  From cozy sofas and luxurious beds to chic dining sets, our furniture blends unmatched comfort with sophisticated design. Transform every corner of your home into a haven of style and relaxation.</p>
                 <div class="button">
-                    <a class="btn btn-outline mt-4 md:mt-6" href="{{ url('/shop-v1') }}" data-text="Let's Shop Now"><span>Let's Shop Now</span></a>
+                    <a class="btn btn-outline mt-4 md:mt-6" href="{{ url('/shop') }}" data-text="Let's Shop Now"><span>Let's Shop Now</span></a>
                 </div>
             </div>
         </div>
@@ -93,7 +93,7 @@
 
         </div>
         <div class="text-center mt-7 md:mt-12" data-aos="fade-up" data-aos-delay="200">
-            <a href="{{ url('/shop-v1') }}" class="btn btn-outline" data-text="See all Product">
+            <a href="{{ url('/shop') }}" class="btn btn-outline" data-text="See all Product">
                 <span>See all Product</span>
             </a>
         </div>
@@ -125,7 +125,7 @@
                     <div class="bg-white dark:bg-title bg-opacity-90 dark:bg-opacity-90 p-5 sm:p-8 xl:p-12 flex items-start flex-col">
                         <h4 class="font-normal leading-none text-2xl">Up to <span class="text-secondary">35% off</span> all Interior Items</h4>
                         <h2 class="text-3xl md:text-4xl xl:text-5xl leading-none mt-[15px] font-bold">Interior Setup</h2>
-                        <a href="{{ url('/shop-v1') }}" class="btn btn-outline btn-sm mt-4 sm:mt-6" data-text="Shop Now">
+                        <a href="{{ url('/shop') }}" class="btn btn-outline btn-sm mt-4 sm:mt-6" data-text="Shop Now">
                             <span>Shop Now</span>
                         </a>
                     </div>

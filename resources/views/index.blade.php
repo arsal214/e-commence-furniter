@@ -1,7 +1,8 @@
-<!-- resources/views/index.blade.php -->
+﻿<!-- resources/views/index.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'Home')
+@section('title', 'PeytonGhalib - Quality Furniture & Home Decor')
+@section('meta_description', 'Shop quality furniture, home decor, ceramics and more at PeytonGhalib. Thousands of products at unbeatable prices with fast, reliable delivery nationwide.')
 
 @section('content')
 
@@ -116,7 +117,7 @@
                     <p class="dark:text-white-light mt-3 md:mt-4 sm:max-w-[450px] xl:max-w-full">Discover the latest must-have arrivals! Elevate your style with our newest collection of trendsetting items.</p>
                     <div class="mt-6 md:mt-8 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
                         {{-- Primary CTA --}}
-                        <a href="{{ url('/shop-v1') }}"
+                        <a href="{{ url('/shop') }}"
                            class="group inline-flex items-center justify-center gap-3 px-7 sm:px-8 py-4
                                   bg-[#bb976d] text-white text-sm sm:text-base font-bold tracking-widest uppercase
                                   hover:bg-[#a8845a] transition-all duration-300
@@ -257,7 +258,7 @@
 
         </div>
         <div class="text-center mt-7 md:mt-12">
-            <a href="{{ url('/shop-v1') }}" class="btn btn-outline" data-text="All Products">
+            <a href="{{ url('/shop') }}" class="btn btn-outline" data-text="All Products">
                 <span>All Products</span>
             </a>
         </div>
@@ -380,8 +381,8 @@
                     ['name' => 'Sarah M.',       'rating' => 5, 'review' => 'Absolutely love my purchase! The quality exceeded my expectations and delivery was super fast. PeytonGhalib is now my go-to store for everything.'],
                     ['name' => 'James R.',       'rating' => 5, 'review' => 'Great selection and amazing prices. The checkout process was smooth and my order arrived well-packaged. Highly recommend!'],
                     ['name' => 'Aisha K.',       'rating' => 4, 'review' => 'Really impressed with the customer service. They resolved my query within hours. The product itself is top-notch quality.'],
-                    ['name' => 'Daniel T.',      'rating' => 5, 'review' => 'I\'ve been shopping here for months and every single order has been perfect. Fast shipping, great products — 10/10!'],
-                    ['name' => 'Priya S.',       'rating' => 5, 'review' => 'The product photos are exactly what you get in real life. No surprises — just great quality. I\'ll definitely be ordering again soon.'],
+                    ['name' => 'Daniel T.',      'rating' => 5, 'review' => 'I\'ve been shopping here for months and every single order has been perfect. Fast shipping, great products â€” 10/10!'],
+                    ['name' => 'Priya S.',       'rating' => 5, 'review' => 'The product photos are exactly what you get in real life. No surprises â€” just great quality. I\'ll definitely be ordering again soon.'],
                     ['name' => 'Michael B.',     'rating' => 4, 'review' => 'PeytonGhalib has an incredible range of products. Found exactly what I was looking for at a fair price. Very satisfied with my order.'],
                     ['name' => 'Fatima A.',      'rating' => 5, 'review' => 'Exceptional shopping experience from start to finish. The packaging was beautiful and the product quality is outstanding. Love it!'],
                     ['name' => 'Chris L.',       'rating' => 5, 'review' => 'Fast delivery and the items were exactly as described. This store genuinely cares about customer satisfaction. Will shop again!'],
@@ -503,3 +504,36 @@ $(document).ready(function () {
 @endpush
 
 @endsection
+
+@push('scripts')
+<script type=application/ld+json>
+{
+  @context: https://schema.org,
+  @type: Organization,
+  name: PeytonGhalib,
+  url: https://peytonghalib.com,
+  logo: https://peytonghalib.com/assets/img/logo.svg,
+  email: support@peytonghalib.com,
+  description: PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.,
+  sameAs: [
+    https://www.facebook.com/peytonghalib,
+    https://twitter.com/peytonghalib,
+    https://www.instagram.com/peytonghalib,
+    https://www.linkedin.com/company/peytonghalib
+  ]
+}
+</script>
+<script type=application/ld+json>
+{
+  @context: https://schema.org,
+  @type: WebSite,
+  name: PeytonGhalib,
+  url: https://peytonghalib.com,
+  potentialAction: {
+    @type: SearchAction,
+    target: https://peytonghalib.com/shop?search={search_term_string},
+    query-input: required name=search_term_string
+  }
+}
+</script>
+@endpush

@@ -1,7 +1,8 @@
 <!-- resources/views/terms-and-conditions.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'Terms-And-Conditions Page')
+@section('title', 'Terms & Conditions | PeytonGhalib')
+@section('meta_description', 'Read the Terms and Conditions for using PeytonGhalib. Understand our policies on purchases, returns, privacy, and your rights as a customer.')
 
 @section('content')
 
@@ -65,6 +66,6 @@
 </div>
 <!-- Condition Area End -->
 
-@include('includes.footer6')
+@include('includes.footer')
   
 @endsection

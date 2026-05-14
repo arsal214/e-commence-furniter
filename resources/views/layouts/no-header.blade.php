@@ -5,9 +5,10 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>PeytonGhalib</title>
-        <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/gif" sizes="18x18">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>@yield('title', 'PeytonGhalib')</title>
+        <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/png" sizes="32x32">
+        <link rel="apple-touch-icon" href="{{ asset('assets/img/favicon.png') }}">
         <script>
             (function () {
                 var scheme = localStorage.getItem('colorScheme');
@@ -16,13 +17,9 @@
         </script>
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
-        <!-- Meta tags for SEO -->
-        <meta content="	ceramics, decoration, ecommerce, ecommerce template, elementor, furniture, furniture store, furniture template, interior design, interior design template, shopping, simple ecommerce, store, store template" name="keywords">
-        <meta name="author" content="Shreethemes">
-        <meta name="website" content="https://shreethemes.in">
-        <meta name="email" content="support@shreethemes.in">
-        <meta name="version" content="1.0.0">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- Do not index auth/utility pages -->
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="author" content="PeytonGhalib">
 
         <!-- Main Stylesheet -->
         @vite('resources/css/app.css')

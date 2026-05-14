@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+﻿@extends('admin.layouts.app')
 
 @section('title', 'Add Slide')
 @section('page-title', 'Add Slide')
@@ -40,9 +40,9 @@
             </div>
             <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">Button URL <span class="text-red-500">*</span></label>
-                <input type="text" name="button_url" value="{{ old('button_url', '/shop-v1') }}" required
+                <input type="text" name="button_url" value="{{ old('button_url', '/shop') }}" required
                        class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]"
-                       placeholder="/shop-v1">
+                       placeholder="/shop">
             </div>
 
             <div>

@@ -60,6 +60,6 @@ document.getElementById('pay-btn').addEventListener('click', async () => {
 });
 </script>
 
-@include('includes.footer6')
+@include('includes.footer')
 
 @endsection

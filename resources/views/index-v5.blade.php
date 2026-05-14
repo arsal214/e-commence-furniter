@@ -1,4 +1,4 @@
-<!-- resources/views/index-v5.blade.php -->
+﻿<!-- resources/views/index-v5.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Index-V5 Page')
@@ -100,7 +100,7 @@
                                 </div>
                             </div>
                             <div class="text-center mt-6 md:mt-9 xl:mt-12 group">
-                                <a href="{{ url('/shop-v1') }}" class="text-lg leading-tight text-underline text-title dark:text-white inline-block">Buy Now</a>
+                                <a href="{{ url('/shop') }}" class="text-lg leading-tight text-underline text-title dark:text-white inline-block">Buy Now</a>
                             </div>
                         </div>
                         <!-- Single -->
@@ -129,7 +129,7 @@
                         <h2 class="leading-none text-4xl sm:text-5xl xl:text-6xl 2xl:text-7xl font-bold mt-6 dark:text-white">Get <span class="text-primary">25%</span> Off</h2>
                         <p class="mt-4 dark:text-white-light">Unlock unbeatable savings on every purchase. Enjoy a generous 25% off on all in-store products today. </p>
                         <div class="button">
-                            <a class="btn btn-outline mt-6" href="{{ url('/shop-v1') }}" data-text="Let's Shop Now"><span>Let's Shop Now</span></a>
+                            <a class="btn btn-outline mt-6" href="{{ url('/shop') }}" data-text="Let's Shop Now"><span>Let's Shop Now</span></a>
                         </div>
                     </div>
                 </div>
@@ -160,7 +160,7 @@
                                     <h2 class="leading-none text-4xl sm:text-5xl xl:text-6xl 2xl:text-7xl font-bold mt-6 dark:text-white">Get <span class="text-primary">25%</span> Off</h2>
                                     <p class="mt-4 md:mt-5 dark:text-white-light">Unlock unbeatable savings on every purchase. Enjoy a generous 25% off on all in-store products today. </p>
                                     <div class="button">
-                                        <a class="btn btn-outline mt-6" href="{{ url('/shop-v1') }}" data-text="Let's Shop Now"><span>Let's Shop Now</span></a>
+                                        <a class="btn btn-outline mt-6" href="{{ url('/shop') }}" data-text="Let's Shop Now"><span>Let's Shop Now</span></a>
                                     </div>
                                 </div>
                             </div>
@@ -179,7 +179,7 @@
                                         </div>
                                     </div>
                                     <div class="mt-6 md:mt-9 xl:mt-12 pl-14 group">
-                                        <a href="{{ url('/shop-v1') }}" class="text-lg leading-tight text-underline text-title dark:text-white inline-block">Buy Now</a>
+                                        <a href="{{ url('/shop') }}" class="text-lg leading-tight text-underline text-title dark:text-white inline-block">Buy Now</a>
                                     </div>
                                 </div>
                                 <div class="xl:flex-1 max-w-[400px] sm:max-w-xl xl:pb-16 2xl:pb-24 crsl-slider-one-content text-center sm:text-left">
@@ -272,7 +272,7 @@
 
             </div>
             <div class="text-center mt-7 md:mt-12" data-aos="fade-up" data-aos-delay="200">
-                <a href="{{ url('/shop-v1') }}" class="btn btn-outline" data-text="See all Products">
+                <a href="{{ url('/shop') }}" class="btn btn-outline" data-text="See all Products">
                     <span>See all Products</span>
                 </a>
             </div>

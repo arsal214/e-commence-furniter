@@ -1,4 +1,4 @@
-<!-- resources/views/product-category.blade.php -->
+﻿<!-- resources/views/product-category.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Product-Category Page')
@@ -14,7 +14,7 @@
         <ul class="flex items-center justify-center gap-[10px] text-base md:text-lg leading-none font-normal text-white mt-3 md:mt-4">
             <li><a href="{{ url('/') }}">Home</a></li>
             <li>/</li>
-            <li><a href="{{ url('/shop-v1') }}">Shop</a></li>
+            <li><a href="{{ url('/shop') }}">Shop</a></li>
             <li>/</li>
             <li class="text-primary">Room Interior</li>
         </ul>
@@ -52,6 +52,6 @@
 <!-- includes/Home/popup.blade.php -->
 @include('includes.Home.popup')
 
-@include('includes.footer6')
+@include('includes.footer')
   
 @endsection

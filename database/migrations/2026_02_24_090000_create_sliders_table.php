@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('subtitle')->nullable();
             $table->text('description')->nullable();
             $table->string('button_text')->default('Shop Now');
-            $table->string('button_url')->default('/shop-v1');
+            $table->string('button_url')->default('/shop');
             $table->string('image')->nullable();           // banner image (right side)
             $table->string('badge_price')->nullable();     // e.g. "$140"
             $table->string('badge_label')->nullable();     // e.g. "Aurora Flexible Sofa"

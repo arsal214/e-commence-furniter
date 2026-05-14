@@ -1,4 +1,4 @@
-<!-- resources/views/cart.blade.php -->
+﻿<!-- resources/views/cart.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Cart Page')
@@ -110,7 +110,7 @@
                         <tr>
                             <td colspan="5" class="text-center py-12">
                                 <p class="text-lg text-title dark:text-white">Your cart is empty.</p>
-                                <a href="{{ url('/shop-v1') }}" class="btn btn-sm btn-theme-solid mt-4 inline-block !text-white">Continue Shopping</a>
+                                <a href="{{ url('/shop') }}" class="btn btn-sm btn-theme-solid mt-4 inline-block !text-white">Continue Shopping</a>
                             </td>
                         </tr>
                         @endforelse
@@ -189,7 +189,7 @@
                     </div>
                 </div>
                 <div class="sm:mt-[10px] py-5 flex items-end gap-3 flex-wrap justify-end">
-                    <a href="{{ url('/shop-v1') }}" class="btn btn-sm btn-outline" data-text="Continue Shopping">
+                    <a href="{{ url('/shop') }}" class="btn btn-sm btn-outline" data-text="Continue Shopping">
                         Continue Shopping
                     </a>
                     @auth
@@ -242,7 +242,7 @@
     </div>
 </div>
 
-@include('includes.footer6')
+@include('includes.footer')
 
 @push('scripts')
 <script>

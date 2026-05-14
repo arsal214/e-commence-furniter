@@ -57,6 +57,6 @@
 </div>
 <!-- Portfolio v2 Area End -->
 
-@include('includes.footer6')
+@include('includes.footer')
   
 @endsection

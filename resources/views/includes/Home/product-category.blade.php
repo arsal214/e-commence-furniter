@@ -1,4 +1,4 @@
-<style>
+﻿<style>
 .pgcat-card {
     position: relative;
     overflow: hidden;
@@ -126,7 +126,7 @@
 @endphp
 
 <a class="pgcat-card"
-   href="{{ url('/shop-v1?category=' . $category->slug) }}">
+   href="{{ url('/shop?category=' . $category->slug) }}">
 
     {{-- Image or fallback color --}}
     @if($imgSrc)

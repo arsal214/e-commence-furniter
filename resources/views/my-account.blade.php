@@ -1,4 +1,4 @@
-<!-- resources/views/my-account.blade.php -->
+﻿<!-- resources/views/my-account.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'My Account')
@@ -89,7 +89,7 @@
                 <div class="bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-8 lg:p-[50px] order-history-table">
                     <h4 class="font-semibold text-xl md:text-2xl leading-none mb-5 dark:text-white">Order History</h4>
                     @if($orders->isEmpty())
-                        <p class="text-gray-500 dark:text-gray-400 text-base">You haven't placed any orders yet. <a href="{{ url('/shop-v1') }}" class="text-primary hover:underline">Start shopping</a>.</p>
+                        <p class="text-gray-500 dark:text-gray-400 text-base">You haven't placed any orders yet. <a href="{{ url('/shop') }}" class="text-primary hover:underline">Start shopping</a>.</p>
                     @else
                     <ul class="order-history">
                         <!-- Table Heading -->
@@ -143,6 +143,6 @@
 </div>
 <!-- My Account End -->
 
-@include('includes.footer6')
+@include('includes.footer')
 
 @endsection

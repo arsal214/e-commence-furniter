@@ -1,7 +1,8 @@
-<!-- resources/views/shop-v1.blade.php -->
+﻿<!-- resources/views/shop.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'Shop-V1 Page')
+@section('title', 'Shop | PeytonGhalib')
+@section('meta_description', 'Browse our full collection of furniture, home decor, ceramics and lifestyle products. Filter by category and find exactly what you need at PeytonGhalib.')
 
 @section('content')
 
@@ -28,9 +29,9 @@
             <div>
                 <h4 class="font-medium leading-none text-xl sm:text-2xl mb-5 sm:mb-6">Choose Category</h4>
                 <div class="flex flex-wrap gap-[10px] md:gap-[15px]">
-                    <a class="btn btn-sm shop1-button {{ !$activeCategory ? 'btn-theme-solid' : 'btn-theme-outline' }}" href="{{ url('/shop-v1') }}" data-text="All"><span>All</span></a>
+                    <a class="btn btn-sm shop1-button {{ !$activeCategory ? 'btn-theme-solid' : 'btn-theme-outline' }}" href="{{ url('/shop') }}" data-text="All"><span>All</span></a>
                     @foreach ($categories as $cat)
-                    <a class="btn btn-sm shop1-button {{ $activeCategory === $cat->slug ? 'btn-theme-solid' : 'btn-theme-outline' }}" href="{{ url('/shop-v1') }}?category={{ $cat->slug }}" data-text="{{ $cat->name }}"><span>{{ $cat->name }}</span></a>
+                    <a class="btn btn-sm shop1-button {{ $activeCategory === $cat->slug ? 'btn-theme-solid' : 'btn-theme-outline' }}" href="{{ url('/shop') }}?category={{ $cat->slug }}" data-text="{{ $cat->name }}"><span>{{ $cat->name }}</span></a>
                     @endforeach
                 </div>
             </div>

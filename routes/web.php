@@ -14,6 +14,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Admin;
+use App\Http\Controllers\SitemapController;
 
 // ──────────────────────────────────────────────
 //  Auth routes
@@ -24,7 +25,8 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register',[AuthController::class, 'register']);
 Route::post('/logout',  [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/forger-password', [HomeController::class, 'forgerPassword']);
+Route::get('/forgot-password', [HomeController::class, 'forgerPassword'])->name('password.request');
+Route::get('/forger-password', fn() => redirect('/forgot-password', 301));
 
 // ──────────────────────────────────────────────
 //  Protected customer routes
@@ -60,6 +62,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 // ──────────────────────────────────────────────
 //  Public frontend routes
 // ──────────────────────────────────────────────
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+
 Route::get('/', [HomeController::class, 'index']);
 
 Route::get('/about',                [HomeController::class, 'about']);
@@ -79,7 +83,8 @@ Route::get('/payment-confirmation',  [HomeController::class, 'paymentConfirmatio
 Route::get('/payment-success',       [HomeController::class, 'paymentSuccess']);
 Route::get('/payment-failure',       [HomeController::class, 'paymentFailure']);
 
-Route::get('/shop-v1',          [HomeController::class, 'shopV1']);
+Route::get('/shop',             [HomeController::class, 'shopV1'])->name('shop');
+Route::get('/shop-v1',          fn() => redirect('/shop', 301));
 Route::get('/categories',       [HomeController::class, 'categories']);
 Route::get('/product-category', [HomeController::class, 'productCategory']);
 

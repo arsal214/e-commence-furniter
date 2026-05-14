@@ -72,6 +72,6 @@
 </div>
 <!-- Payment confirmation End -->
 
-@include('includes.footer6')
+@include('includes.footer')
   
 @endsection

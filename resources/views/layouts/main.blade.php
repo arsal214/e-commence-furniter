@@ -1,13 +1,14 @@
-<!-- resources/views/layouts/main.blade.php -->
+﻿<!-- resources/views/layouts/main.blade.php -->
 
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>@yield('title', 'PeytonGhalib') | PeytonGhalib</title>
-        <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/gif" sizes="18x18">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>@yield('title', 'PeytonGhalib - Quality Furniture & Home Decor')</title>
+        <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/png" sizes="32x32">
+        <link rel="apple-touch-icon" href="{{ asset('assets/img/favicon.png') }}">
         {{-- Inline dark-mode detection: runs synchronously before any CSS is parsed,
              so the correct class is on <html> when styles are applied. --}}
         <script>
@@ -19,14 +20,29 @@
         {{-- Warm up CDN connection so the icon font doesn't add a DNS round-trip --}}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
-        <!-- Meta tags for SEO -->
-        <meta content="	ceramics,furniture,PeytonGhalib, furniture store, interior design" name="keywords">
+        <!-- Primary Meta Tags -->
+        <meta name="description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
+        <meta name="keywords" content="ceramics, furniture, PeytonGhalib, furniture store, interior design, home decor">
         <meta name="author" content="PeytonGhalib">
-        <meta name="website" content="https://peytonghalib.com">
-        <meta name="email" content="support@peytonghalib.com">
-        <meta name="version" content="1.0.0">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="robots" content="index, follow">
+        <link rel="canonical" href="{{ url()->current() }}">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="@yield('og_type', 'website')">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:title" content="@yield('title', 'PeytonGhalib - Quality Furniture & Home Decor')">
+        <meta property="og:description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
+        <meta property="og:image" content="@yield('og_image', asset('assets/img/logo.svg'))">
+        <meta property="og:site_name" content="PeytonGhalib">
+
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:url" content="{{ url()->current() }}">
+        <meta name="twitter:title" content="@yield('title', 'PeytonGhalib - Quality Furniture & Home Decor')">
+        <meta name="twitter:description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
+        <meta name="twitter:image" content="@yield('og_image', asset('assets/img/logo.svg'))">
+
         @auth
         <meta name="wishlist-ids" content="{{ json_encode(\App\Models\Wishlist::where('user_id', auth()->id())->pluck('product_id')) }}">
         @else
@@ -50,12 +66,8 @@
             }
         </style>
 
-
-
-
-<!-- Ahrefs Analytics -->
-<script src="https://analytics.ahrefs.com/analytics.js" data-key="QlGio/G4Sr1krD5aawauYg" async></script>
- 
+        <!-- Ahrefs Analytics -->
+        <script src="https://analytics.ahrefs.com/analytics.js" data-key="QlGio/G4Sr1krD5aawauYg" async></script>
 
         @stack('styles')
     </head>
@@ -138,7 +150,7 @@
                     </div>
 
                     <div class="mt-6 pt-5 border-t border-[#E3E5E6] dark:border-bdr-clr-drk flex items-center justify-between gap-4 flex-wrap">
-                        <a href="{{ url('/shop-v1') }}"
+                        <a href="{{ url('/shop') }}"
                            class="text-sm font-semibold text-title dark:text-white hover:text-primary duration-200 flex items-center gap-1">
                             Browse All Products
                             <svg width="12" height="8" viewBox="0 0 24 14" fill="none" class="fill-current"><path d="M23.82 6.62L18.38 1.18C18.18 0.95 17.84 0.92 17.61 1.12C17.38 1.31 17.35 1.66 17.55 1.88L22.12 6.46H0.57C0.27 6.46 0.02 6.71 0.02 7.01C0.02 7.31 0.27 7.55 0.57 7.55H22.12L17.61 12.06C17.38 12.26 17.35 12.60 17.55 12.83C17.74 13.06 18.09 13.09 18.32 12.89L23.82 7.39C24.03 7.17 24.03 6.83 23.82 6.62Z"/></svg>

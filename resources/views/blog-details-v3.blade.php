@@ -1,4 +1,4 @@
-<!-- resources/views/blog-details-v3.blade.php -->
+﻿<!-- resources/views/blog-details-v3.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Blog-Details-V3 Page')
@@ -201,13 +201,13 @@
                 <div class="bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-[30px]">
                     <h4 class="font-medium leading-none text-xl sm:text-2xl mb-5 sm:mb-6">Categoryies</h4>
                     <ul class="grid gap-3 sm:gap-[15px] text-base sm:text-lg text-title dark:text-white list-disc pl-5">
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Electronics</a></li>
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Fashion</a></li>
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Home & Living</a></li>
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Sports & Fitness</a></li>
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Beauty & Care</a></li>
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Kids & Baby</a></li>
-                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop-v1') }}">Shopping Tips</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop') }}">Electronics</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop') }}">Fashion</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop') }}">Home & Living</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop') }}">Sports & Fitness</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop') }}">Beauty & Care</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop') }}">Kids & Baby</a></li>
+                        <li class="group duration-100 hover:text-primary"><a class="text-underline-primary" href="{{ url('/shop') }}">Shopping Tips</a></li>
                     </ul>
                 </div>
                 <!-- Recent Posts -->

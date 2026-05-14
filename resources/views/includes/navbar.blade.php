@@ -1,4 +1,4 @@
-<!-- Header Start -->
+﻿<!-- Header Start -->
 <div class="header-area default-header relative z-50 bg-white dark:bg-title">
     <div class="container-fluid">
         <div class="flex items-center justify-between gap-x-6 max-w-[1720px] mx-auto relative py-[10px] sm:py-4 lg:py-0">
@@ -23,7 +23,7 @@
                         </ul>
                     </li>
                     <li class="relative parent-parent-menu-item">
-                        <a href="{{ url('/shop-v1') }}" class="home-link">Shop</a>
+                        <a href="{{ url('/shop') }}" class="home-link">Shop</a>
                     </li>
                     @php
                         $navCategories = \App\Models\Category::where('is_active', true)->orderBy('name')->get();
@@ -64,7 +64,7 @@
                             </div>
                             <div class="grid grid-cols-3 gap-x-4 gap-y-1">
                                 @foreach($navCategories as $navCat)
-                                <a href="{{ url('/shop-v1') }}?category={{ $navCat->slug }}"
+                                <a href="{{ url('/shop') }}?category={{ $navCat->slug }}"
                                    class="flex items-center gap-2 px-2 py-2 text-sm text-title dark:text-white
                                           hover:text-primary hover:bg-[#F8F8F9] dark:hover:bg-white/5
                                           duration-150 rounded-sm group/item sub-menu-item">
@@ -363,11 +363,11 @@
                 <div class="mt-10 md:mt-12">
                     <h4 class="font-medium leading-none text-2xl">Popular Tags</h4>
                     <div class="flex flex-wrap gap-[10px] md:gap-[15px] mt-5 md:mt-6">
-                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop-v1') }}?search=electronics" data-text="Electronics"><span>Electronics</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop-v1') }}?search=fashion" data-text="Fashion"><span>Fashion</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop-v1') }}?search=home" data-text="Home & Living"><span>Home & Living</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop-v1') }}?search=sports" data-text="Sports"><span>Sports</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop-v1') }}?search=beauty" data-text="Beauty"><span>Beauty</span></a>
+                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop') }}?search=electronics" data-text="Electronics"><span>Electronics</span></a>
+                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop') }}?search=fashion" data-text="Fashion"><span>Fashion</span></a>
+                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop') }}?search=home" data-text="Home & Living"><span>Home & Living</span></a>
+                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop') }}?search=sports" data-text="Sports"><span>Sports</span></a>
+                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop') }}?search=beauty" data-text="Beauty"><span>Beauty</span></a>
                     </div>
                 </div>
             </div>
@@ -453,7 +453,7 @@
                 @php
                     $p = $catPalette[$i % count($catPalette)];
                 @endphp
-                <a href="{{ url('/shop-v1') }}?category={{ $navCat->slug }}"
+                <a href="{{ url('/shop') }}?category={{ $navCat->slug }}"
                    class="mob-cat-item"
                    data-name="{{ strtolower($navCat->name) }}"
                    style="display:flex;align-items:center;justify-content:center;
@@ -481,7 +481,7 @@
 
         {{-- Footer CTA --}}
         <div style="padding:16px 20px;border-top:1px solid #f0f0f0;background:#fff;flex-shrink:0;">
-            <a href="{{ url('/shop-v1') }}"
+            <a href="{{ url('/shop') }}"
                style="display:block;width:100%;padding:13px;background:linear-gradient(135deg,#bb976d,#a8845a);
                       color:#fff;text-align:center;font-size:14px;font-weight:700;
                       border-radius:12px;text-decoration:none;letter-spacing:.3px;

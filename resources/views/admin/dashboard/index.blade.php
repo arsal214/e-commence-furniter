@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+﻿@extends('admin.layouts.app')
 
 @section('title', 'Dashboard')
 @section('page-title', 'Dashboard')
@@ -76,7 +76,7 @@
                 <i class="mdi mdi-plus-circle text-purple-600 text-xl"></i>
                 <span class="text-sm font-medium text-gray-700">Add New Category</span>
             </a>
-            <a href="{{ url('/shop-v1') }}" target="_blank"
+            <a href="{{ url('/shop') }}" target="_blank"
                class="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
                 <i class="mdi mdi-store text-gray-500 text-xl"></i>
                 <span class="text-sm font-medium text-gray-700">View Shop Page</span>

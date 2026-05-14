@@ -1,2 +1,25 @@
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /my-account
+Disallow: /my-profile
+Disallow: /edit-account
+Disallow: /order-history
+Disallow: /checkout
+Disallow: /wishlist
+Disallow: /cart
+Disallow: /invoice
+Disallow: /payment-confirmation
+Disallow: /payment-success
+Disallow: /payment-failure
+Disallow: /track-order
+Disallow: /coming-soon
+Disallow: /short-code
+Disallow: /error
+Disallow: /forgot-password
+Disallow: /forger-password
+Allow: /
+
+Sitemap: https://peytonghalib.com/sitemap.xml
