@@ -506,33 +506,33 @@ $(document).ready(function () {
 @endsection
 
 @push('scripts')
-<script type=application/ld+json>
+<script type="application/ld+json">
 {
-  @context: https://schema.org,
-  @type: Organization,
-  name: PeytonGhalib,
-  url: https://peytonghalib.com,
-  logo: https://peytonghalib.com/assets/img/logo.svg,
-  email: support@peytonghalib.com,
-  description: PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.,
-  sameAs: [
-    https://www.facebook.com/peytonghalib,
-    https://twitter.com/peytonghalib,
-    https://www.instagram.com/peytonghalib,
-    https://www.linkedin.com/company/peytonghalib
+  "@@context": "https://schema.org",
+  "@@type": "Organization",
+  "name": "PeytonGhalib",
+  "url": "https://peytonghalib.com",
+  "logo": "https://peytonghalib.com/assets/img/logo.svg",
+  "email": "support@@peytonghalib.com",
+  "description": "PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.",
+  "sameAs": [
+    "https://www.facebook.com/peytonghalib",
+    "https://twitter.com/peytonghalib",
+    "https://www.instagram.com/peytonghalib",
+    "https://www.linkedin.com/company/peytonghalib"
   ]
 }
 </script>
-<script type=application/ld+json>
+<script type="application/ld+json">
 {
-  @context: https://schema.org,
-  @type: WebSite,
-  name: PeytonGhalib,
-  url: https://peytonghalib.com,
-  potentialAction: {
-    @type: SearchAction,
-    target: https://peytonghalib.com/shop?search={search_term_string},
-    query-input: required name=search_term_string
+  "@@context": "https://schema.org",
+  "@@type": "WebSite",
+  "name": "PeytonGhalib",
+  "url": "https://peytonghalib.com",
+  "potentialAction": {
+    "@@type": "SearchAction",
+    "target": "https://peytonghalib.com/shop?search={search_term_string}",
+    "query-input": "required name=search_term_string"
   }
 }
 </script>

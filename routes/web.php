@@ -3,10 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\BlogController;
-use App\Http\Controllers\BlogV2Controller;
-use App\Http\Controllers\PortfolioController;
-use App\Http\Controllers\PortfolioV2Controller;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;

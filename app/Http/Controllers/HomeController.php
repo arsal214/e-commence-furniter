@@ -22,49 +22,9 @@ class HomeController extends Controller
         return view('index', compact('sliders', 'featuredProducts', 'newProducts', 'categories'));
     }
 
-    public function indexV2()
-    {
-        return view('index-v2');  
-    }
-
-    public function indexV3()
-    {
-        return view('index-v3');  
-    }
-
-    public function indexV4()
-    {
-        return view('index-v4');  
-    }
-
-    public function indexV5()
-    {
-        return view('index-v5');  
-    }
-
-    public function indexV6()
-    {
-        return view('index-v6');  
-    }
-
     public function about()
     {
         return view('about');  
-    }
-
-    public function pricing()
-    {
-        return view('pricing');  
-    }
-
-    public function team()
-    {
-        return view('team');  
-    }
-
-    public function ourClients()
-    {
-        return view('our-clients');  
     }
 
     public function faq()
@@ -75,31 +35,6 @@ class HomeController extends Controller
     public function termsAndConditions()
     {
         return view('terms-and-conditions');  
-    }
-
-    public function portfolioV1()
-    {
-        return view('portfolio-v1');  
-    }
-
-    public function portfolioV2()
-    {
-        return view('portfolio-v2');  
-    }
-
-    public function portfolioV3()
-    {
-        return view('portfolio-v3');  
-    }
-
-    public function portfolioDetailsV1()
-    {
-        return view('portfolio-details-v1');  
-    }
-
-    public function portfolioDetailsV2()
-    {
-        return view('portfolio-details-v2');  
     }
 
     public function error()
@@ -167,16 +102,6 @@ class HomeController extends Controller
         return view('wishlist', compact('wishlistItems'));
     }
     
-    public function login()
-    {
-        return view('login');  
-    }
-
-    public function register()
-    {
-        return view('register');  
-    }
-
     public function forgerPassword()
     {
         return view('forger-password');  
@@ -279,51 +204,6 @@ class HomeController extends Controller
         return view('product-category', compact('products', 'categories'));
     }
     
-    public function productDetails()
-    {
-        return view('product-details');  
-    }
-
-    public function cart()
-    {
-        return view('cart');  
-    }
-
-    public function checkout()
-    {
-        return view('checkout');  
-    }
-
-    public function blogV1()
-    {
-        return view('blog-v1');  
-    }
-
-    public function blogV2()
-    {
-        return view('blog-v2');  
-    }
-
-    public function blogDetailsV1()
-    {
-        return view('blog-details-v1');  
-    }
-
-    public function blogDetailsV2()
-    {
-        return view('blog-details-v2');  
-    }
-
-    public function blogDetailsV3()
-    {
-        return view('blog-details-v3');  
-    }
-
-    public function blogTag()
-    {
-        return view('blog-tag');  
-    }
-
     public function shortCode()
     {
         return view('short-code');  
