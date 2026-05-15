@@ -17,6 +17,38 @@ class ProductController extends Controller
         return view('admin.products.index', compact('products'));
     }
 
+    public function export()
+    {
+        $products = Product::orderBy('name')->get(['name', 'price', 'sale_price']);
+
+        $filename = 'products-' . now()->format('Y-m-d') . '.csv';
+
+        $headers = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Pragma'              => 'no-cache',
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires'             => '0',
+        ];
+
+        $callback = function () use ($products) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['Name', 'Price', 'Sale Price']);
+
+            foreach ($products as $product) {
+                fputcsv($handle, [
+                    $product->name,
+                    number_format($product->price, 2),
+                    $product->sale_price ? number_format($product->sale_price, 2) : '',
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function create()
     {
         $categories = Category::where('is_active', true)->orderBy('name')->get();

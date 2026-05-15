@@ -6,10 +6,16 @@
 @section('content')
 <div class="flex items-center justify-between mb-5">
     <p class="text-sm text-gray-500">{{ $products->total() }} products total</p>
-    <a href="{{ route('admin.products.create') }}"
-       class="inline-flex items-center gap-2 px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
-        <i class="mdi mdi-plus"></i> Add Product
-    </a>
+    <div class="flex items-center gap-2">
+        <a href="{{ route('admin.products.export') }}"
+           class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+            <i class="mdi mdi-download"></i> Export CSV
+        </a>
+        <a href="{{ route('admin.products.create') }}"
+           class="inline-flex items-center gap-2 px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
+            <i class="mdi mdi-plus"></i> Add Product
+        </a>
+    </div>
 </div>
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
