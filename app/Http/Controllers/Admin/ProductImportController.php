@@ -28,6 +28,12 @@ class ProductImportController extends Controller
             return back()->withErrors(['csv_file' => 'The CSV file appears to be empty.']);
         }
 
+        // Strip UTF-8 BOM from first header cell if present (Excel sometimes adds it)
+        $rawHeaders[0] = ltrim($rawHeaders[0], "\xEF\xBB\xBF");
+
+        // Convert header row encoding (Excel on Windows saves as Windows-1252)
+        $rawHeaders = $this->toUtf8($rawHeaders);
+
         // Normalize headers for flexible matching
         $map = [];
         foreach ($rawHeaders as $i => $h) {
@@ -55,6 +61,7 @@ class ProductImportController extends Controller
 
         while (($row = fgetcsv($handle)) !== false) {
             $rowNum++;
+            $row = $this->toUtf8($row);
             $originalTitle = trim($row[$colOriginal] ?? '');
             if ($originalTitle === '') continue;
 
@@ -117,5 +124,16 @@ class ProductImportController extends Controller
             if (isset($map[$key])) return $map[$key];
         }
         return null;
+    }
+
+    private function toUtf8(array $row): array
+    {
+        return array_map(function ($value) {
+            if ($value === null) return null;
+            // Already valid UTF-8 — return as-is
+            if (mb_check_encoding($value, 'UTF-8')) return $value;
+            // Convert from Windows-1252 (common Excel encoding on Windows)
+            return mb_convert_encoding($value, 'UTF-8', 'Windows-1252');
+        }, $row);
     }
 }
