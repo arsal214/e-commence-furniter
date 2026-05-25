@@ -91,7 +91,7 @@ class ProductImportController extends Controller
                     $slug = Str::slug($rawSlug);
                     $conflict = Product::where('slug', $slug)->where('id', '!=', $product->id)->exists();
                     if ($conflict) {
-                        $skipped[] = "Row {$rowNum} "{$originalTitle}": slug "{$slug}" already used by another product — slug not changed.";
+                        $skipped[] = "Row {$rowNum} \"{$originalTitle}\": slug \"{$slug}\" already used by another product - slug not changed.";
                     } else {
                         $data['slug'] = $slug;
                     }
