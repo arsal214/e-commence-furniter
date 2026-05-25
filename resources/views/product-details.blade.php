@@ -624,7 +624,7 @@ document.addEventListener('keydown', function(e) {
 @endphp
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org/",
+  "@@context": "https://schema.org/",
   "@type": "Product",
   "name": {{ json_encode($item->name) }},
   "image": [{{ json_encode($jsonLdImage) }}],
