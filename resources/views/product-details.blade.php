@@ -1,5 +1,4 @@
 ﻿@extends('layouts.main')
-
 @section('title', ($item->meta_title ?? $item->name ?? 'Product Details') . ' | PeytonGhalib')
 @section('meta_description', $item->meta_description ?? \Illuminate\Support\Str::limit(strip_tags($item->description ?? 'Shop ' . ($item->name ?? 'this product') . ' at PeytonGhalib. Quality furniture and home decor at unbeatable prices with fast delivery.'), 155))
 @section('og_type', 'product')
@@ -9,7 +8,6 @@
         : asset('assets/img/logo.svg');
 @endphp
 @section('og_image', $ogImg)
-
 @push('styles')
 <style>
 /* Rich content (TinyMCE output) styles */

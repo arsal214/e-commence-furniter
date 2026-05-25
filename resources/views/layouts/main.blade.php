@@ -17,7 +17,6 @@
         </script>
         {{-- Warm up CDN connection so the icon font doesn't add a DNS round-trip --}}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-
         <!-- Primary Meta Tags -->
         <meta name="description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
         <meta name="keywords" content="ceramics, furniture, PeytonGhalib, furniture store, interior design, home decor">
@@ -25,7 +24,6 @@
         <meta name="robots" content="index, follow">
         <link rel="canonical" href="{{ url()->current() }}">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="@yield('og_type', 'website')">
         <meta property="og:url" content="{{ url()->current() }}">
@@ -33,14 +31,12 @@
         <meta property="og:description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
         <meta property="og:image" content="@yield('og_image', asset('assets/img/logo.svg'))">
         <meta property="og:site_name" content="PeytonGhalib">
-
         <!-- Twitter Card -->
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:url" content="{{ url()->current() }}">
         <meta name="twitter:title" content="@yield('title', 'PeytonGhalib - Quality Furniture & Home Decor')">
         <meta name="twitter:description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
         <meta name="twitter:image" content="@yield('og_image', asset('assets/img/logo.svg'))">
-
         @auth
         <meta name="wishlist-ids" content="{{ json_encode(\App\Models\Wishlist::where('user_id', auth()->id())->pluck('product_id')) }}">
         @else
@@ -48,7 +44,6 @@
         @endauth
         <meta name="is-logged-in" content="{{ auth()->check() ? 'true' : 'false' }}">
         <meta name="wishlist-toggle-url" content="{{ auth()->check() ? route('wishlist.toggle') : url('/login') }}">
-
         <!-- Main Stylesheet -->
         @vite('resources/css/app.css')
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
@@ -69,10 +64,7 @@
 
         @stack('styles')
     </head>
-
     <body class="dark:bg-title">
-
-
         <!-- Flash Messages -->
         @if(session('success'))
         <div id="flash-success" class="fixed top-5 right-5 z-[99999] bg-green-600 text-white px-5 py-3 rounded shadow-lg text-sm max-w-sm">
