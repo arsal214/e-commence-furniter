@@ -78,18 +78,15 @@
         <div class="content">
             @yield('content')
         </div>
-
         <!-- Back to top -->
         <a href="#" onclick="topFunction()" id="back-to-top" class="back-to-top fixed hidden text-lg rectangle-full z-10 bottom-5 end-5 h-9 w-9 text-center bg-[#bb976d] text-white leading-9"><i class="mdi mdi-arrow-up"></i></a>
         <!-- Back to top -->
-
         <!-- Welcome Sales Popup -->
         <div id="welcome-popup" class="fixed inset-0 z-[99999] flex items-center justify-center px-4 hidden">
             <!-- Backdrop -->
             <div id="welcome-popup-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
             <!-- Popup Card -->
             <div class="relative z-10 bg-white dark:bg-title w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col sm:flex-row">
-
                 <!-- Left image panel -->
                 <div class="sm:w-5/12 hidden sm:block relative min-h-[320px]">
                     <img src="{{ asset('assets/img/home-v1/pdct-cgry-01.jpg') }}"
@@ -102,7 +99,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Right content panel -->
                 <div class="sm:w-7/12 p-8 sm:p-10 flex flex-col justify-between">
                     <!-- Close button -->
