@@ -8,7 +8,8 @@ use Illuminate\Support\Str;
 class Product extends Model
 {
     protected $fillable = [
-        'category_id', 'name', 'slug', 'description', 'review_content', 'shipping_info',
+        'category_id', 'name', 'slug', 'meta_title', 'meta_description',
+        'description', 'review_content', 'shipping_info',
         'price', 'sale_price', 'image', 'tag', 'is_featured', 'is_active', 'stock', 'sku',
         'colors', 'sizes', 'size_chart',
         'supplier_name', 'supplier_url', 'supplier_sku',
@@ -32,7 +33,8 @@ class Product extends Model
             }
         });
         static::updating(function ($product) {
-            if ($product->isDirty('name') && !$product->isDirty('slug')) {
+            // Only auto-regenerate slug when name changes AND slug was not explicitly set
+            if ($product->isDirty('name') && !$product->isDirty('slug') && empty($product->slug)) {
                 $product->slug = Str::slug($product->name);
             }
         });

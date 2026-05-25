@@ -126,6 +126,9 @@ class ProductController extends Controller
         $data = $request->validate([
             'category_id'        => ['required', 'exists:categories,id'],
             'name'               => ['required', 'string', 'max:255', 'unique:products,name,' . $product->id],
+            'slug'               => ['nullable', 'string', 'max:255', 'unique:products,slug,' . $product->id, 'regex:/^[a-z0-9\-]+$/'],
+            'meta_title'         => ['nullable', 'string', 'max:160'],
+            'meta_description'   => ['nullable', 'string', 'max:320'],
             'description'        => ['nullable', 'string'],
             'review_content'     => ['nullable', 'string'],
             'shipping_info'      => ['nullable', 'string'],
@@ -148,6 +151,9 @@ class ProductController extends Controller
             'supplier_url'  => ['nullable', 'url', 'max:500'],
             'supplier_sku'  => ['nullable', 'string', 'max:100'],
         ]);
+
+        // Use provided slug or keep existing; never auto-overwrite with name-derived slug here
+        $data['slug'] = !empty($data['slug']) ? $data['slug'] : $product->slug;
 
         $data['is_featured'] = $request->boolean('is_featured');
         $data['is_active']   = $request->boolean('is_active', true);

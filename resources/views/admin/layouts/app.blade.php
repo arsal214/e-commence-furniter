@@ -41,9 +41,15 @@
             </a>
             <a href="{{ route('admin.products.index') }}"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                      {{ request()->routeIs('admin.products.*') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                      {{ request()->routeIs('admin.products.*') && !request()->routeIs('admin.products.import') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                 <i class="mdi mdi-package-variant text-lg"></i>
                 Products
+            </a>
+            <a href="{{ route('admin.products.import') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                      {{ request()->routeIs('admin.products.import') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                <i class="mdi mdi-upload text-lg"></i>
+                Import CSV
             </a>
             <a href="{{ route('admin.orders.index') }}"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
