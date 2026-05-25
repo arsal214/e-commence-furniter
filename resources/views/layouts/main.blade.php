@@ -58,10 +58,8 @@
                 transition: none !important;
             }
         </style>
-
         <!-- Ahrefs Analytics -->
         <script src="https://analytics.ahrefs.com/analytics.js" data-key="QlGio/G4Sr1krD5aawauYg" async></script>
-
         @stack('styles')
     </head>
     <body class="dark:bg-title">
@@ -76,7 +74,6 @@
             {{ session('error') }}
         </div>
         @endif
-
         <!-- Main Content -->
         <div class="content">
             @yield('content')

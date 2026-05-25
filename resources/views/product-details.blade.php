@@ -29,11 +29,8 @@
 .rich-content hr{border:none;border-top:1px solid #e5e7eb;margin:1.5em 0}
 </style>
 @endpush
-
 @section('content')
-
 @include('includes.navbar')
-
 <!-- Search -->
 <div class="search_popup fixed top-0 left-0 bg-red dark:bg-[#39434D] bg-opacity-90 dark:bg-opacity-80 backdrop-blur-[3px] dark:backdrop-blur-[7.5px] w-full h-screen z-[999] px-[15px] md:px-[30px] py-12 md:py-[70px] overflow-y-auto transform scale-90 opacity-0 invisible transition-all duration-300 flex items-center justify-center">
     <div class="container">
