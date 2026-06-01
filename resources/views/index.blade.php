@@ -1,13 +1,8 @@
-﻿<!-- resources/views/index.blade.php -->
-@extends('layouts.main')
-
+﻿@extends('layouts.main')
 @section('title', 'PeytonGhalib - Quality Furniture & Home Decor')
 @section('meta_description', 'Shop quality furniture, home decor, ceramics and more at PeytonGhalib. Thousands of products at unbeatable prices with fast, reliable delivery nationwide.')
-
 @section('content')
-
 @include('includes.navbar')
-
 <!-- Banner Start -->
 <div class="carousel-slider-four owl-carousel" data-carousel-dots="true">
 
