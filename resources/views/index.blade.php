@@ -5,7 +5,6 @@
 @include('includes.navbar')
 <!-- Banner Start -->
 <div class="carousel-slider-four owl-carousel" data-carousel-dots="true">
-
     @forelse ($sliders as $slide)
     <div class="relative pt-12 md:pt-20 xl:pt-[100px] pb-12 sm:pb-20 xl:pb-24 px-[15px] sm:px-12 bg-[#F5F5F5] dark:bg-title">
         <div class="max-w-[1720px] mx-auto">
