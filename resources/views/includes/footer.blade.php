@@ -1,4 +1,4 @@
-﻿<!-- Footer Start -->
+<!-- Footer Start -->
 <div class="relative bg-overlay before:bg-title before:bg-opacity-95" style="background-image: url('{{ asset('assets/img/bg/footer.jpg') }}');" >
     <div class="s-pt-100">
         <div class="container-fluid">

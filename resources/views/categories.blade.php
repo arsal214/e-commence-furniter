@@ -1,4 +1,4 @@
-﻿<!-- resources/views/categories.blade.php -->
+<!-- resources/views/categories.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'All Categories')

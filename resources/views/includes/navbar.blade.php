@@ -1,4 +1,4 @@
-﻿<!-- Header Start -->
+<!-- Header Start -->
 <div class="header-area default-header relative z-50 bg-white dark:bg-title">
     <div class="container-fluid">
         <div class="flex items-center justify-between gap-x-6 max-w-[1720px] mx-auto relative py-[10px] sm:py-4 lg:py-0">

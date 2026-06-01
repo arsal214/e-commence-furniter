@@ -1,4 +1,4 @@
-﻿<!-- resources/views/product-category.blade.php -->
+<!-- resources/views/product-category.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Product-Category Page')

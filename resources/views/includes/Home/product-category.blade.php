@@ -1,4 +1,4 @@
-﻿<style>
+<style>
 .pgcat-card {
     position: relative;
     overflow: hidden;

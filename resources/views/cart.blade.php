@@ -1,4 +1,4 @@
-﻿<!-- resources/views/cart.blade.php -->
+<!-- resources/views/cart.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Cart Page')

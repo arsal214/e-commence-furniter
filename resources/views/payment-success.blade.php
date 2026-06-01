@@ -1,4 +1,4 @@
-﻿<!-- resources/views/payment-success.blade.php -->
+<!-- resources/views/payment-success.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Payment-Success Page')

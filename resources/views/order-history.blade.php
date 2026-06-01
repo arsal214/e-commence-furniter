@@ -1,4 +1,4 @@
-﻿<!-- resources/views/order-history.blade.php -->
+<!-- resources/views/order-history.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Order History')

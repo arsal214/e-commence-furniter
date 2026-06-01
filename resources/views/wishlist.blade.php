@@ -1,4 +1,4 @@
-﻿<!-- resources/views/wishlist.blade.php -->
+<!-- resources/views/wishlist.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'My Wishlist')

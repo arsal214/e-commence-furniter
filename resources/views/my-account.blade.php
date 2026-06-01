@@ -1,4 +1,4 @@
-﻿<!-- resources/views/my-account.blade.php -->
+<!-- resources/views/my-account.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'My Account')

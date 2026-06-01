@@ -1,4 +1,4 @@
-﻿<!-- resources/views/shop.blade.php -->
+<!-- resources/views/shop.blade.php -->
 @extends('layouts.main')
 
 @section('title', 'Shop | PeytonGhalib')
