@@ -61,6 +61,9 @@ class ProductController extends Controller
             'category_id'    => ['required', 'exists:categories,id'],
             'name'           => ['required', 'string', 'max:255', 'unique:products,name'],
             'description'    => ['nullable', 'string'],
+            'key_feature_1'  => ['nullable', 'string', 'max:255'],
+            'key_feature_2'  => ['nullable', 'string', 'max:255'],
+            'key_feature_3'  => ['nullable', 'string', 'max:255'],
             'review_content' => ['nullable', 'string'],
             'shipping_info'  => ['nullable', 'string'],
             'price'          => ['required', 'numeric', 'min:0'],
@@ -88,8 +91,10 @@ class ProductController extends Controller
         $data['sale_price']  = $data['sale_price'] ?: null;
         $data['colors']      = $this->parseVariants($request->input('colors_raw'));
         $data['sizes']       = $this->parseVariants($request->input('sizes_raw'));
+        $data['key_features'] = $this->buildKeyFeatures($request);
 
-        unset($data['colors_raw'], $data['sizes_raw'], $data['images']);
+        unset($data['colors_raw'], $data['sizes_raw'], $data['images'],
+              $data['key_feature_1'], $data['key_feature_2'], $data['key_feature_3']);
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
@@ -132,6 +137,9 @@ class ProductController extends Controller
             'meta_title'         => ['nullable', 'string', 'max:160'],
             'meta_description'   => ['nullable', 'string', 'max:320'],
             'description'        => ['nullable', 'string'],
+            'key_feature_1'      => ['nullable', 'string', 'max:255'],
+            'key_feature_2'      => ['nullable', 'string', 'max:255'],
+            'key_feature_3'      => ['nullable', 'string', 'max:255'],
             'review_content'     => ['nullable', 'string'],
             'shipping_info'      => ['nullable', 'string'],
             'price'              => ['required', 'numeric', 'min:0'],
@@ -162,10 +170,12 @@ class ProductController extends Controller
         $data['is_best_seller'] = $request->boolean('is_best_seller');
         $data['is_active']      = $request->boolean('is_active', true);
         $data['sale_price']  = $data['sale_price'] ?: null;
-        $data['colors']      = $this->parseVariants($request->input('colors_raw'));
-        $data['sizes']       = $this->parseVariants($request->input('sizes_raw'));
+        $data['colors']       = $this->parseVariants($request->input('colors_raw'));
+        $data['sizes']        = $this->parseVariants($request->input('sizes_raw'));
+        $data['key_features'] = $this->buildKeyFeatures($request);
 
-        unset($data['colors_raw'], $data['sizes_raw'], $data['remove_size_chart'], $data['remove_images'], $data['images']);
+        unset($data['colors_raw'], $data['sizes_raw'], $data['remove_size_chart'], $data['remove_images'], $data['images'],
+              $data['key_feature_1'], $data['key_feature_2'], $data['key_feature_3']);
 
         if ($request->hasFile('image')) {
             if ($product->image && \Storage::disk('public')->exists($product->image)) {
@@ -236,6 +246,17 @@ class ProductController extends Controller
 
         return redirect()->route('admin.products.index')
                          ->with('success', 'Product deleted successfully.');
+    }
+
+    private function buildKeyFeatures(Request $request): ?string
+    {
+        $features = array_values(array_filter([
+            trim($request->input('key_feature_1', '')),
+            trim($request->input('key_feature_2', '')),
+            trim($request->input('key_feature_3', '')),
+        ], fn($v) => $v !== ''));
+
+        return !empty($features) ? json_encode($features) : null;
     }
 
     private function parseVariants(?string $raw): ?array

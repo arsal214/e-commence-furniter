@@ -1,5 +1,5 @@
 <!-- Footer Start -->
-<footer class="relative bg-overlay before:bg-title before:bg-opacity-95" style="background-image: url('{{ asset('assets/img/bg/footer.jpg') }}');">
+<footer style="background:#0F1E2E;">
     @php $footerCategories = \App\Models\Category::where('is_active', true)->orderBy('name')->get(); @endphp
 
     <div class="container-fluid">

@@ -660,14 +660,6 @@
                 <span class="pg-badge" id="pg-cart-badge">{{ $cart->count() }}</span>
             </button>
 
-            <div class="pg-hdr-vdiv"></div>
-
-            {{-- Dark mode --}}
-            <label class="switcher cursor-pointer" style="display:flex;align-items:center;">
-                <input class="hidden" type="checkbox">
-                <img class="moon" style="width:22px;" src="{{ asset('assets/img/icon/simple-sun.svg') }}" alt="Light mode">
-                <img class="sun"  style="width:22px;" src="{{ asset('assets/img/icon/simple-light.svg') }}" alt="Dark mode">
-            </label>
 
         </div>
     </div>
@@ -758,11 +750,6 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
             <span class="pg-badge" style="width:15px;height:15px;font-size:8px;top:2px;right:1px;">{{ $cart->count() }}</span>
         </button>
-        <label class="switcher cursor-pointer" style="display:flex;align-items:center;margin-left:4px;">
-            <input class="hidden" type="checkbox">
-            <img class="moon" style="width:20px;" src="{{ asset('assets/img/icon/simple-sun.svg') }}" alt="">
-            <img class="sun"  style="width:20px;" src="{{ asset('assets/img/icon/simple-light.svg') }}" alt="">
-        </label>
     </div>
 </div>
 

@@ -15,6 +15,14 @@
                 document.documentElement.className = scheme === 'dark' ? 'dark' : 'light';
             })();
         </script>
+        <!-- Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-X57MYCJ0B8"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-X57MYCJ0B8');
+        </script>
         {{-- Warm up CDN connection so the icon font doesn't add a DNS round-trip --}}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
         <!-- Primary Meta Tags -->
@@ -166,12 +174,21 @@
                 localStorage.setItem(POPUP_KEY, Date.now().toString());
             }
 
+            function showPopup() {
+                var popup = document.getElementById('welcome-popup');
+                if (!popup.classList.contains('hidden')) return;
+                popup.classList.remove('hidden');
+                document.removeEventListener('mouseleave', onExitIntent);
+            }
+
+            function onExitIntent(e) {
+                if (e.clientY <= 0 && shouldShow()) {
+                    showPopup();
+                }
+            }
+
             if (shouldShow()) {
-                // Show after 1.5s delay
-                setTimeout(function () {
-                    var popup = document.getElementById('welcome-popup');
-                    popup.classList.remove('hidden');
-                }, 1500);
+                document.addEventListener('mouseleave', onExitIntent);
             }
 
             document.getElementById('welcome-popup-close').addEventListener('click', closePopup);
@@ -190,6 +207,14 @@
         <!-- Welcome Sales Popup End -->
 
         <script src="{{ asset('assets/js/scripts.js') }}"></script>
+        <!-- Force light mode — dark mode toggle removed, scripts.js dark-mode code nulled out -->
+        <script>
+        (function(){
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+            localStorage.removeItem('colorScheme');
+        })();
+        </script>
         <script src="{{ asset('assets/js/base.js') }}"></script>
         <script>
             ['flash-success','flash-error'].forEach(function(id){

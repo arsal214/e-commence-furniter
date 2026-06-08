@@ -82,6 +82,26 @@
                         <textarea name="description" id="description" class="tinymce-editor">{{ old('description', $product->description) }}</textarea>
                     </div>
 
+                    {{-- Key Features / Bullet Points --}}
+                    <div class="sm:col-span-2 border-t border-gray-100 pt-5">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Key Features <span class="text-gray-400 font-normal text-xs">(3 bullet points shown on product page)</span></label>
+                        <p class="text-xs text-gray-400 mb-3">These appear as checkmark bullet points near the "Add to Cart" button. Keep them short and benefit-focused.</p>
+                        @php
+                            $existingFeatures = $product->key_features ? json_decode($product->key_features, true) : [];
+                            $existingFeatures = array_pad((array)$existingFeatures, 3, '');
+                        @endphp
+                        <div class="space-y-2">
+                            @foreach([0,1,2] as $i)
+                            <div class="flex items-center gap-2">
+                                <span class="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">✓</span>
+                                <input type="text" name="key_feature_{{ $i+1 }}" value="{{ old('key_feature_'.($i+1), $existingFeatures[$i] ?? '') }}"
+                                       placeholder="e.g. Premium solid wood frame built to last"
+                                       class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
                     {{-- Review Content --}}
                     <div class="sm:col-span-2 border-t border-gray-100 pt-5">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Customer Reviews / Testimonials</label>
