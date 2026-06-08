@@ -1,0 +1,71 @@
+@forelse ($bestSellers as $product)
+    <div class="group">
+        <div class="relative overflow-hidden">
+            <a href="{{ route('product-details', $product->slug) }}">
+                @if ($product->image)
+                    @if (str_starts_with($product->image, 'assets/'))
+                        <img class="w-full h-56 object-cover transform group-hover:scale-110 duration-300" src="{{ asset($product->image) }}" alt="{{ $product->name }}">
+                    @else
+                        <img class="w-full h-56 object-cover transform group-hover:scale-110 duration-300" src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}">
+                    @endif
+                @else
+                    <div class="w-full h-56 bg-gray-100 flex items-center justify-center">
+                        <i class="mdi mdi-image-off text-gray-300 text-5xl"></i>
+                    </div>
+                @endif
+            </a>
+
+            {{-- Best Seller badge --}}
+            <div class="absolute z-10 top-3 left-3 px-3 py-1 bg-[#bb976d] text-white text-xs font-bold rounded-full tracking-wide">
+                Best Seller
+            </div>
+
+            @if ($product->tag)
+                @php
+                    $tagClasses = match($product->tag) { 'Sale' => 'bg-[#1CB28E]', 'NEW' => 'bg-[#9739E1]', default => 'bg-[#E13939]' };
+                    $tagLabel   = match($product->tag) { 'Sale' => 'Hot Sale', 'NEW' => 'NEW', default => '15% OFF' };
+                @endphp
+                <div class="absolute z-10 top-3 right-3 pt-[10px] pb-2 px-3 {{ $tagClasses }} rounded-[30px] text-[13px] text-white font-semibold leading-none">
+                    {{ $tagLabel }}
+                </div>
+            @endif
+
+            <div class="absolute z-10 top-[76%] right-3 transform -translate-y-[40%] opacity-0 duration-300 transition-all group-hover:-translate-y-1/2 group-hover:opacity-100 flex flex-col items-end gap-3">
+                <button type="button"
+                    class="wishlist-toggle-btn bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon"
+                    data-product-id="{{ $product->id }}">
+                    <svg class="fill-current wishlist-icon-outline" width="20" height="22" viewBox="0 0 24 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.3927 0.0917969C15.4463 0.0917969 13.7401 0.959692 12.4584 2.60171C12.2875 2.8207 12.1351 3.03979 12.0001 3.25198C11.865 3.03974 11.7127 2.8207 11.5417 2.60171C10.2601 0.959692 8.55381 0.0917969 6.60743 0.0917969C2.93056 0.0917969 0.300781 3.17049 0.300781 6.86477C0.300781 11.089 3.7629 15.0701 11.5265 19.7733C11.672 19.8614 11.8361 19.9055 12.0001 19.9055C12.1641 19.9055 12.3281 19.8615 12.4737 19.7733C20.2372 15.0702 23.6994 11.089 23.6994 6.86482C23.6994 3.17246 21.0717 0.0917969 17.3927 0.0917969Z"/></svg>
+                    <span class="mt-1 wishlist-btn-text">Add to wishlist</span>
+                </button>
+                <form action="{{ route('cart.add') }}" method="POST" class="contents">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <input type="hidden" name="qty" value="1">
+                    <button type="submit" class="bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon">
+                        <svg class="dark:text-white fill-current" width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.3167 5.28826H15.7291C15.3918 2.42331 12.9491 0.193359 9.99503 0.193359C7.04097 0.193359 4.59831 2.42331 4.26098 5.28826H1.67337C1.20438 5.28826 0.824219 5.66842 0.824219 6.1374V21.0824C0.824219 21.5514 1.20438 21.9316 1.67337 21.9316H18.3167C18.7857 21.9316 19.1658 21.5514 19.1658 21.0824V6.1374C19.1658 5.66842 18.7857 5.28826 18.3167 5.28826ZM9.99503 1.89166C12.0111 1.89166 13.6896 3.36302 14.014 5.28826H5.97605C6.30043 3.36302 7.97898 1.89166 9.99503 1.89166ZM17.4675 20.2333H2.52252V6.98655H4.22082V9.534C4.22082 10.003 4.60098 10.3832 5.06997 10.3832C5.53895 10.3832 5.91912 10.003 5.91912 9.534V6.98655H14.0709V9.534C14.0709 10.003 14.4511 10.3832 14.9201 10.3832C15.3891 10.3832 15.7692 10.003 15.7692 9.534V6.98655H17.4675V20.2333Z"/></svg>
+                        <span class="mt-1">Add to Cart</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="pt-4 px-1">
+            <p class="text-xs text-[#bb976d] font-semibold uppercase tracking-widest mb-1">{{ $product->category->name ?? '' }}</p>
+            <h5 class="text-sm font-semibold text-title dark:text-white leading-snug mb-2 line-clamp-2">
+                <a href="{{ route('product-details', $product->slug) }}" class="hover:text-[#bb976d] transition-colors duration-200">{{ $product->name }}</a>
+            </h5>
+            @php $rating = $product->avgRating(); @endphp
+            @include('includes.Home._stars', ['rating' => $rating])
+            <div class="flex items-center gap-2 mt-2">
+                <span class="text-base font-bold text-title dark:text-white">{{ $product->display_price }}</span>
+                @if ($product->sale_price)
+                    <span class="text-xs text-gray-400 line-through">${{ number_format($product->price, 2) }}</span>
+                @endif
+            </div>
+        </div>
+    </div>
+@empty
+    <div class="col-span-4 py-12 text-center">
+        <p class="text-gray-400 mb-3">No best sellers flagged yet.</p>
+        <a href="{{ url('/shop') }}" class="text-sm text-[#bb976d] font-semibold hover:underline">Browse all products →</a>
+    </div>
+@endforelse

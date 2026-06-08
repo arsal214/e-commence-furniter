@@ -126,7 +126,7 @@
 @endphp
 
 <a class="pgcat-card"
-   href="{{ url('/shop?category=' . $category->slug) }}">
+   href="{{ route('category.landing', $category->slug) }}">
 
     {{-- Image or fallback color --}}
     @if($imgSrc)

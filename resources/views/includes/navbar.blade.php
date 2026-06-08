@@ -1,673 +1,1024 @@
-<!-- Header Start -->
-<div class="header-area default-header relative z-50 bg-white dark:bg-title">
-    <div class="container-fluid">
-        <div class="flex items-center justify-between gap-x-6 max-w-[1720px] mx-auto relative py-[10px] sm:py-4 lg:py-0">
-            <!-- Logo -->
-            <a class="cursor-pointer block" href="{{ url('/') }}" aria-label="PeytonGhalib">
-            <img src="{{ asset('assets/img/logo.svg') }}" alt="Logo" width="240" height="240">
+<!-- Topbar Start -->
+<style>
+#pg-topbar{background:#0F1E2E;height:46px;width:100%;overflow:hidden;position:relative;z-index:60}
+.pg-tb-wrap{max-width:1720px;margin:0 auto;padding:0 24px;height:46px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:0}
+/* Left */
+.pg-tb-left{display:flex;align-items:center;gap:8px}
+.pg-tb-left a{display:flex;align-items:center;gap:9px;text-decoration:none;color:rgba(255,255,255,.88);font-size:13.5px;font-weight:500;letter-spacing:.05em;white-space:nowrap;transition:color .2s}
+.pg-tb-left a:hover{color:#bb976d}
+/* Center */
+.pg-tb-center{height:46px;overflow:hidden;position:relative;min-width:260px}
+.pg-tb-track{display:flex;flex-direction:column;will-change:transform}
+.pg-tb-slide{height:46px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.88);font-size:16px;font-weight:500;letter-spacing:.05em;white-space:nowrap;flex-shrink:0;gap:6px}
+/* Right */
+.pg-tb-right{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.pg-tb-right a{display:flex;align-items:center;gap:9px;text-decoration:none;color:rgba(255,255,255,.88);font-size:13.5px;font-weight:500;letter-spacing:.05em;white-space:nowrap;transition:color .2s}
+.pg-tb-right a:hover{color:#bb976d}
+/* Dividers */
+.pg-tb-div{width:1px;height:16px;background:rgba(255,255,255,.14);flex-shrink:0;margin:0 20px}
+/* Responsive */
+@media(max-width:900px){.pg-tb-div{margin:0 12px}.pg-tb-left a span,.pg-tb-right a span{font-size:13px}}
+@media(max-width:640px){
+  .pg-tb-left,.pg-tb-right,.pg-tb-div{display:none}
+  .pg-tb-wrap{grid-template-columns:1fr;justify-items:center}
+}
+</style>
+
+<div id="pg-topbar">
+    <div class="pg-tb-wrap">
+
+        {{-- ── Left: Free Shipping ── --}}
+        <div class="pg-tb-left">
+            <a href="{{ route('shipping-policy') }}">
+                <svg width="24" height="17" viewBox="0 0 22 15" fill="none" stroke="rgba(255,255,255,.88)" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+                    <rect x=".75" y=".75" width="13.5" height="10.5" rx="1.4"/>
+                    <path d="M14.25 4H18.6L21.25 8v3.25H14.25V4z"/>
+                    <circle cx="4.75" cy="13.25" r="1.65"/>
+                    <circle cx="17.5" cy="13.25" r="1.65"/>
+                </svg>
+                <span>Free Shipping</span>
             </a>
+        </div>
 
-            <!-- Menu -->
-            <div class="main-menu absolute z-50 w-full lg:w-auto top-full left-0 lg:static bg-white dark:bg-title lg:bg-transparent lg:dark:bg-transparent px-5 sm:px-[30px] py-[10px] sm:py-5 lg:px-0 lg:py-0">
-                <ul class="text-lg leading-none text-title dark:text-white lg:flex lg:gap-[30px]">
-                    <li class="relative parent-parent-menu-item">
-                        <a href="{{url('/')}}" class="home-link">Home</a>
-                       
-                    </li>
-                    <li class="relative parent-parent-menu-item">
-                        <a href="#"  class="home-link">Pages</a>
-                        <ul class="sub-menu lg:absolute z-50 lg:top-full lg:left-0 lg:min-w-[220px] lg:invisible lg:transition-all lg:bg-white lg:dark:bg-title lg:py-[15px] lg:pr-[30px]">
-                            <li><a href="{{ url('/about') }}" class="sub-menu-item">About Us</a></li>
-                            <li><a href="{{ url('/faq') }}" class="sub-menu-item">FAQs</a></li>
-                            <li><a href="{{ url('/terms-and-conditions') }}" class="sub-menu-item">Terms & conditions</a></li>
-                        </ul>
-                    </li>
-                    <li class="relative parent-parent-menu-item">
-                        <a href="{{ url('/shop') }}" class="home-link">Shop</a>
-                    </li>
-                    @php
-                        $navCategories = \App\Models\Category::where('is_active', true)->orderBy('name')->get();
-                        $catPalette = [
-                            ['bg'=>'#FFF3E8','icon'=>'#E8924A','emoji'=>'🛋️'],
-                            ['bg'=>'#EAF4EA','icon'=>'#4A9E4A','emoji'=>'🪑'],
-                            ['bg'=>'#EAF0FB','icon'=>'#4A6BBF','emoji'=>'🛏️'],
-                            ['bg'=>'#FBF0EA','icon'=>'#BF6B4A','emoji'=>'🚪'],
-                            ['bg'=>'#F3EAFB','icon'=>'#8A4ABF','emoji'=>'💡'],
-                            ['bg'=>'#EAFBF8','icon'=>'#4ABFB0','emoji'=>'🪞'],
-                            ['bg'=>'#FBFBEA','icon'=>'#BFBA4A','emoji'=>'🖼️'],
-                            ['bg'=>'#FBEAEA','icon'=>'#BF4A4A','emoji'=>'🏺'],
-                        ];
-                    @endphp
-                    <li class="relative parent-parent-menu-item group/cat">
-                        {{-- Mobile: button opens drawer | Desktop: link to /categories --}}
-                        <a href="{{ url('/categories') }}"
-                           class="home-link"
-                           id="nav-categories-trigger">Categories</a>
-
-                        {{-- ── Desktop Mega Menu (hover, lg+ only) ── --}}
-                        <div class="hidden lg:block lg:absolute lg:top-full lg:left-1/2 lg:-translate-x-1/2 z-50
-                                    lg:invisible lg:opacity-0 lg:translate-y-2
-                                    group-hover/cat:lg:visible group-hover/cat:lg:opacity-100 group-hover/cat:lg:translate-y-0
-                                    lg:transition-all lg:duration-200
-                                    bg-white dark:bg-title border-t-2 border-primary
-                                    lg:shadow-xl lg:min-w-[480px] lg:max-w-[680px]
-                                    pt-3 pb-4 px-4 lg:p-5">
-                            <div class="flex items-center justify-between mb-3 pb-3 border-b border-[#E3E5E6] dark:border-bdr-clr-drk">
-                                <span class="text-xs uppercase tracking-widest text-gray-400 dark:text-white-light font-medium">Browse Categories</span>
-                                <a href="{{ url('/categories') }}"
-                                   class="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
-                                    View All
-                                    <svg width="10" height="8" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M23.8198 6.61958L18.3757 1.17541C18.3531 1.65529 17.5487 1.88366 17.608 1.94303L22.1212 6.46168L0.567835 6.46168C0.267191 6.46168 0.0234375 6.70543 0.0234375 7.00612C0.0234375 7.30681 0.267191 7.55052 0.567835 7.55052L22.1212 7.55052L17.608 12.0637C17.3797 12.2593 17.3531 12.6029 17.5487 12.8313C17.7443 13.0597 18.0879 13.0863 18.3163 12.8907L23.8198 7.38714C24.0309 7.17488 24.0309 6.83194 23.8198 6.61958Z" fill="currentColor"/>
-                                    </svg>
-                                </a>
-                            </div>
-                            <div class="grid grid-cols-3 gap-x-4 gap-y-1">
-                                @foreach($navCategories as $navCat)
-                                <a href="{{ url('/shop') }}?category={{ $navCat->slug }}"
-                                   class="flex items-center gap-2 px-2 py-2 text-sm text-title dark:text-white
-                                          hover:text-primary hover:bg-[#F8F8F9] dark:hover:bg-white/5
-                                          duration-150 rounded-sm group/item sub-menu-item">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover/item:bg-primary flex-none duration-150"></span>
-                                    {{ $navCat->name }}
-                                </a>
-                                @endforeach
-                            </div>
-                        </div>
-                    </li>
-
-                    <li><a href="{{ url('/contact') }}" class="sub-menu-item">Contact</a></li>
-                    <li class="lg:hidden">
-                        @auth
-                            <a href="{{ url('/my-account') }}" class="sub-menu-item">My Account</a>
-                        @else
-                            <a href="{{ url('/login') }}">Login</a>
-                        @endauth
-                    </li>
-
-                    {{-- Mobile Track Order button --}}
-                    <li class="lg:hidden" style="padding:12px 0 4px;list-style:none;">
-                        <a href="{{ route('track-order') }}"
-                           style="display:flex !important;flex-direction:row !important;align-items:center !important;
-                                  gap:12px;padding:12px 16px;background:#fdf6ee;border:1.5px solid #e8c99a;
-                                  text-decoration:none;box-sizing:border-box;width:100%;height:auto !important;">
-                            <div style="flex-shrink:0;width:40px;height:40px;min-width:40px;border-radius:50%;
-                                        background:#bb976d;display:flex;align-items:center;justify-content:center;">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/>
-                                    <polyline points="16.5 9.4 7.55 4.24"/>
-                                    <polyline points="3.29 7 12 12 20.71 7"/>
-                                    <line x1="12" y1="22" x2="12" y2="12"/>
-                                    <circle cx="18.5" cy="15.5" r="2.5"/>
-                                    <path d="M20.27 17.27 22 19"/>
-                                </svg>
-                            </div>
-                            <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;">
-                                <div style="font-size:11px;color:#999;font-weight:400;line-height:1.3;white-space:nowrap;">Where's my package?</div>
-                                <div style="font-size:14px;font-weight:700;color:#1a1a1a;line-height:1.3;white-space:nowrap;">Track Your Order</div>
-                            </div>
-                            <svg style="flex-shrink:0;" width="14" height="10" viewBox="0 0 16 12" fill="none">
-                                <path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="#bb976d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Header Right -->
-            <div class="flex items-center gap-4 sm:gap-6">
-
-                <!-- Track Order — Desktop (before Login) -->
-                <div class="hidden lg:block">
-                    <a href="{{ route('track-order') }}"
-                       style="display:flex;align-items:center;gap:10px;padding:7px 16px 7px 7px;
-                              background:#fdf6ee;border:1.5px solid #e8c99a;
-                              text-decoration:none;white-space:nowrap;transition:all .2s;"
-                       onmouseover="this.style.background='#f7ead8';this.style.borderColor='#bb976d'"
-                       onmouseout="this.style.background='#fdf6ee';this.style.borderColor='#e8c99a'">
-                        <div style="flex-shrink:0;width:32px;height:32px;min-width:32px;border-radius:50%;
-                                    background:#bb976d;display:flex;align-items:center;justify-content:center;">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/>
-                                <polyline points="16.5 9.4 7.55 4.24"/>
-                                <polyline points="3.29 7 12 12 20.71 7"/>
-                                <line x1="12" y1="22" x2="12" y2="12"/>
-                                <circle cx="18.5" cy="15.5" r="2.5"/>
-                                <path d="M20.27 17.27 22 19"/>
-                            </svg>
-                        </div>
-                        <div style="display:flex;flex-direction:column;gap:3px;">
-                            <div style="font-size:10px;color:#999;font-weight:400;line-height:1.3;">Where's my package?</div>
-                            <div style="font-size:13px;font-weight:700;color:#1a1a1a;line-height:1.3;">Track Order</div>
-                        </div>
-                    </a>
-                </div>
-
-                @auth
-                    <div class="relative group hidden lg:block">
-                        <button class="flex items-center gap-2 text-lg leading-none text-title dark:text-white transition-all duration-300 hover:text-primary">
-                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-                            </svg>
-                            <span>{{ Auth::user()->name }}</span>
-                            <svg class="w-3 h-3 fill-current" viewBox="0 0 10 6"><path d="M0 0l5 6 5-6z"/></svg>
-                        </button>
-                        <ul class="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-title shadow-lg border border-gray-100 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                            <li><a href="{{ url('/my-account') }}" class="block px-5 py-3 text-base text-title dark:text-white hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700">My Account</a></li>
-                            <li><a href="{{ url('/edit-account') }}" class="block px-5 py-3 text-base text-title dark:text-white hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700">Edit Account</a></li>
-                            <li><a href="{{ url('/order-history') }}" class="block px-5 py-3 text-base text-title dark:text-white hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700">Order History</a></li>
-                            <li>
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="w-full text-left px-5 py-3 text-base text-title dark:text-white hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800">Logout</button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                @else
-                    <a href="{{ url('/login') }}" class="text-lg leading-none text-title dark:text-white transition-all duration-300 hover:text-primary hidden lg:block">Login</a>
-                @endauth
-
-                <!-- Search -->
-                <button class="hdr_search_btn" aria-label="search">
-                    <svg class="fill-current text-title dark:text-white w-[18px] sm:w-[20px]" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M0.0703125 9.24982C0.0703125 4.18191 4.19363 0.0585938 9.26154 0.0585938C14.3297 0.0585938 18.4528 4.18191 18.4528 9.24982C18.4528 11.4791 17.655 13.5255 16.3301 15.1187L20.6993 19.4879C21.0307 19.819 21.0307 20.3564 20.6993 20.6876C20.5335 20.8533 20.3163 20.9361 20.0994 20.9361C19.8822 20.9361 19.6653 20.8533 19.4996 20.6876L15.1304 16.3183C13.5373 17.6433 11.4908 18.441 9.26154 18.441C4.19363 18.441 0.0703125 14.318 0.0703125 9.24982ZM1.76716 9.24986C1.76716 13.3822 5.12917 16.7442 9.26154 16.7442C13.3939 16.7442 16.7559 13.3822 16.7559 9.24982C16.7559 5.11745 13.3939 1.75544 9.26154 1.75544C5.12917 1.75544 1.76716 5.11749 1.76716 9.24986Z"/>
-                    </svg>
-                </button>
-                @php
-                    $navWishlistItems = [];
-                    $navWishlistCount = 0;
-                    if (auth()->check()) {
-                        $navWishlistItems = \App\Models\Wishlist::where('user_id', auth()->id())
-                                            ->with('product')
-                                            ->latest()
-                                            ->take(3)
-                                            ->get();
-                        $navWishlistCount = \App\Models\Wishlist::where('user_id', auth()->id())->count();
-                    }
-                @endphp
-                <!-- WishList -->
-                <button class="relative hdr_wishList_btn">
-                    <span id="nav-wishlist-count" class="absolute w-[22px] h-[22px] bg-secondary -top-[10px] -right-[11px] rounded-full flex items-center justify-center text-xs leading-none text-white">{{ $navWishlistCount }}</span>
-                    <svg class="fill-current text-title dark:text-white w-[22px] sm:w-[25px]" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17.9005 0.591797C15.9541 0.591797 14.2479 1.45969 12.9662 3.10171C12.7953 3.3207 12.6429 3.53979 12.5079 3.75198C12.3728 3.53974 12.2205 3.3207 12.0496 3.10171C10.7679 1.45969 9.06162 0.591797 7.11524 0.591797C3.43837 0.591797 0.808594 3.67049 0.808594 7.36477C0.808594 11.589 4.27071 15.5701 12.0343 20.2733C12.1798 20.3614 12.3439 20.4055 12.5079 20.4055C12.6719 20.4055 12.8359 20.3615 12.9815 20.2733C20.7451 15.5702 24.2072 11.589 24.2072 7.36482C24.2072 3.67246 21.5795 0.591797 17.9005 0.591797ZM19.9642 12.6247C18.3479 14.4281 15.9055 16.327 12.5079 18.4205C9.11029 16.327 6.66784 14.4281 5.05155 12.6247C3.42654 10.8115 2.63661 9.09096 2.63661 7.36482C2.63661 4.70487 4.43419 2.41981 7.11524 2.41981C8.48059 2.41981 9.64476 3.01346 10.5754 4.1843C11.3196 5.12066 11.6332 6.08754 11.6354 6.09444C11.7544 6.47626 12.108 6.73634 12.5079 6.73634C12.9079 6.73634 13.2614 6.47631 13.3805 6.09444C13.3834 6.08521 13.6875 5.14849 14.4072 4.22644C15.3429 3.02762 16.5183 2.41976 17.9005 2.41976C20.5844 2.41976 22.3792 4.70702 22.3792 7.36477C22.3792 9.09092 21.5892 10.8114 19.9642 12.6247Z"/>
-                    </svg>
-                </button>
-                <div class="wishlist_popup w-80 md:w-96 absolute z-50 top-full right-0 sm:right-20 xl:right-11 bg-white dark:bg-title py-5 md:py-[30px] pl-5 md:pl-[30px] pr-[10px] md:pr-[15px] border border-primary">
-                    <h4 class="font-medium leading-none dark:text-white mb-4 text-xl md:text-2xl">Wishlist</h4>
-                    <div>
-                        <div class="pr-4 md:pr-5 wishlist-item">
-                            @if(auth()->check() && $navWishlistItems->count())
-                                @foreach($navWishlistItems as $wItem)
-                                    @if($wItem->product)
-                                    <div class="flex items-center gap-[15px] relative pb-[15px] mb-[15px] border-b border-bdr-clr dark:border-bdr-clr-drk">
-                                        @if($wItem->product->image)
-                                            @if(str_starts_with($wItem->product->image, 'assets/'))
-                                                <img class="w-[70px] flex-none object-cover" src="{{ asset($wItem->product->image) }}" alt="{{ $wItem->product->name }}">
-                                            @else
-                                                <img class="w-[70px] flex-none object-cover" src="{{ Storage::url($wItem->product->image) }}" alt="{{ $wItem->product->name }}">
-                                            @endif
-                                        @else
-                                            <img class="w-[70px] flex-none" src="{{ asset('assets/img/gallery/wishList-01.jpg') }}" alt="{{ $wItem->product->name }}">
-                                        @endif
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-[14px] leading-none block">{{ $wItem->product->category->name ?? '' }}</span>
-                                                <span class="w-[6px] h-[6px] rounded-full bg-primary flex-none"></span>
-                                                <span class="text-[14px] leading-none block">${{ number_format($wItem->product->price, 2) }}</span>
-                                            </div>
-                                            <h6 class="text-base font-semibold leading-none mt-3 truncate dark:text-white">
-                                                <a href="{{ route('product-details', $wItem->product->slug) }}">{{ $wItem->product->name }}</a>
-                                            </h6>
-                                        </div>
-                                        <form action="{{ route('wishlist.remove') }}" method="POST" class="absolute top-0 right-0">
-                                            @csrf
-                                            <input type="hidden" name="product_id" value="{{ $wItem->product->id }}">
-                                            <button type="submit" class="wishList_item_close w-6 h-6 flex items-center justify-center bg-title dark:bg-white bg-opacity-10 dark:bg-opacity-10 hover:bg-primary dark:hover:bg-primary group duration-300">
-                                                <svg class="fill-current text-title dark:text-white group-hover:text-white duration-300" width="10" height="10" viewBox="0 0 10 10">
-                                                    <path d="M0.636719 1.56306L1.56306 0.636719L4.98839 4.06204L8.41371 0.636719L9.31851 1.54152L5.89319 4.96685L9.3616 8.43526L8.43526 9.3616L4.96685 5.89319L1.54152 9.31851L0.636719 8.41371L4.06204 4.98839L0.636719 1.56306Z"/>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                    @endif
-                                @endforeach
-                            @else
-                                <p class="text-sm text-gray-400 dark:text-gray-500 py-2">
-                                    @auth No items in your wishlist yet. @else <a href="{{ url('/login') }}" class="text-primary hover:underline">Login</a> to view wishlist. @endauth
-                                </p>
-                            @endif
-                        </div>
-                        <div class="mt-6 md:mt-10">
-                            <a href="{{ url('/wishlist') }}" class="btn btn-outline btn-sm w-full" data-text="View All Wishlist">
-                                <span>View All Wishlist</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Cart -->
-                @php $cart = app(\App\Services\CartService::class); @endphp
-                <button class="relative hdr_cart_btn">
-                    <span class="absolute w-[22px] h-[22px] bg-secondary -top-[10px] -right-[11px] rounded-full flex items-center justify-center text-xs leading-none text-white">{{ $cart->count() }}</span>
-                    <svg class="fill-current text-title dark:text-white w-[18px] sm:w-[19px]" viewBox="0 0 19 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17.8284 5.7238H15.2408C14.9035 2.85886 12.4608 0.628906 9.50675 0.628906C6.55269 0.628906 4.11002 2.85886 3.7727 5.7238H1.18509C0.716102 5.7238 0.335938 6.10397 0.335938 6.57295V21.518C0.335938 21.987 0.716102 22.3671 1.18509 22.3671H17.8284C18.2974 22.3671 18.6776 21.987 18.6776 21.518V6.57295C18.6776 6.10397 18.2974 5.7238 17.8284 5.7238ZM9.50675 2.3272C11.5228 2.3272 13.2014 3.79857 13.5257 5.7238H5.48777C5.81214 3.79857 7.4907 2.3272 9.50675 2.3272ZM16.9793 20.6688H2.03424V7.4221H3.73253V9.96955C3.73253 10.4385 4.1127 10.8187 4.58168 10.8187C5.05067 10.8187 5.43083 10.4385 5.43083 9.96955V7.4221H13.5827V9.96955C13.5827 10.4385 13.9628 10.8187 14.4318 10.8187C14.9008 10.8187 15.281 10.4385 15.281 9.96955V7.4221H16.9793V20.6688Z"/>
-                    </svg>
-                </button>
-                <div class="hdr_cart_popup w-80 md:w-96 absolute z-50 top-full right-0 sm:right-10 xl:right-0 bg-white dark:bg-title p-5 md:p-[30px] border border-primary">
-                    <h4 class="font-medium leading-none mb-4 text-xl md:text-2xl">Cart List</h4>
-                    <div>
-                        <div class="hdr-cart-item">
-                            @forelse ($cart->items() as $cartItem)
-                            <div class="flex gap-[15px] relative pb-[15px] mb-[15px] border-b border-bdr-clr dark:border-bdr-clr-drk group">
-                                <a href="{{ route('product-details', $cartItem['slug']) }}" class="block flex-none">
-                                    @if($cartItem['image'] && str_starts_with($cartItem['image'], 'assets/'))
-                                        <img class="w-[70px] h-full object-cover" src="{{ asset($cartItem['image']) }}" alt="{{ $cartItem['name'] }}">
-                                    @elseif($cartItem['image'])
-                                        <img class="w-[70px] h-full object-cover" src="{{ Storage::url($cartItem['image']) }}" alt="{{ $cartItem['name'] }}">
-                                    @else
-                                        <img class="w-[70px] h-full object-cover" src="{{ asset('assets/img/gallery/wishList-01.jpg') }}" alt="{{ $cartItem['name'] }}">
-                                    @endif
-                                </a>
-                                <div class="flex-1">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-[14px] md:text-[15px] leading-none block">${{ number_format($cartItem['price'], 2) }}</span>
-                                        <span class="text-[13px] text-gray-400">× {{ $cartItem['qty'] }}</span>
-                                    </div>
-                                    <h6 class="text-base font-semibold !leading-none mt-[10px] dark:text-white">
-                                        <a href="{{ route('product-details', $cartItem['slug']) }}">{{ $cartItem['name'] }}</a>
-                                    </h6>
-                                    @if(!empty($cartItem['color']) || !empty($cartItem['size']))
-                                    <div class="flex flex-wrap gap-x-2 mt-1">
-                                        @if(!empty($cartItem['color']))
-                                        <span class="text-[11px] text-gray-400"><span class="text-title dark:text-white font-medium">Color:</span> {{ $cartItem['color'] }}</span>
-                                        @endif
-                                        @if(!empty($cartItem['size']))
-                                        <span class="text-[11px] text-gray-400"><span class="text-title dark:text-white font-medium">Size:</span> {{ $cartItem['size'] }}</span>
-                                        @endif
-                                    </div>
-                                    @endif
-                                </div>
-                                <form action="{{ route('cart.remove') }}" method="POST" class="absolute top-0 right-0">
-                                    @csrf
-                                    <input type="hidden" name="cart_key" value="{{ $cartItem['key'] }}">
-                                    <button type="submit" class="w-6 h-6 flex items-center justify-center bg-title dark:bg-white bg-opacity-10 dark:bg-opacity-10 hover:bg-primary dark:hover:bg-primary text-title dark:text-white duration-300 hover:text-white">
-                                        <svg class="fill-current" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M0.636719 1.56306L1.56306 0.636719L4.98839 4.06204L8.41371 0.636719L9.31851 1.54152L5.89319 4.96685L9.3616 8.43526L8.43526 9.3616L4.96685 5.89319L1.54152 9.31851L0.636719 8.41371L4.06204 4.98839L0.636719 1.56306Z"/>
-                                        </svg>
-                                    </button>
-                                </form>
-                            </div>
-                            @empty
-                            <p class="text-sm text-center py-4 dark:text-white">Your cart is empty.</p>
-                            @endforelse
-                        </div>
-                        <div class="pt-5 md:pt-[30px] mt-5 md:mt-[30px] border-t border-bdr-clr dark:border-bdr-clr-drk">
-                            <h4 class="mb-5 md:mb-[30px] font-medium !leading-none text-lg md:text-xl text-right">Subtotal : ${{ number_format($cart->total(), 2) }}</h4>
-                            <div class="grid grid-cols-2 gap-4">
-                                <a href="{{ route('cart') }}" class="btn btn-outline btn-sm" data-text="View Cart">
-                                    <span>View Cart</span>
-                                </a>
-                                @auth
-                                    <a href="{{ url('/checkout') }}" class="btn btn-theme-solid btn-sm" data-text="Checkout">
-                                        <span>Checkout</span>
-                                    </a>
-                                @else
-                                    <a href="{{ url('/login') }}?redirect={{ url('/checkout') }}" class="btn btn-theme-solid btn-sm" data-text="Checkout">
-                                        <span>Checkout</span>
-                                    </a>
-                                @endauth
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Hamburger -->
-                <button class="hamburger">
-                    <svg class="stroke-current text-title dark:text-white" width="40" viewBox="0 0 100 100">
-                        <path class="line line1" d="M 20,29.000046 H 80.000231 C 80.000231,29.000046 94.498839,28.817352 94.532987,66.711331 94.543142,77.980673 90.966081,81.670246 85.259173,81.668997 79.552261,81.667751 75.000211,74.999942 75.000211,74.999942 L 25.000021,25.000058" />
-                        <path class="line line2" d="M 20,50 H 80" />
-                        <path class="line line3" d="M 20,70.999954 H 80.000231 C 80.000231,70.999954 94.498839,71.182648 94.532987,33.288669 94.543142,22.019327 90.966081,18.329754 85.259173,18.331003 79.552261,18.332249 75.000211,25.000058 75.000211,25.000058 L 25.000021,74.999942" />
-                    </svg>
-                </button>
-                <!-- Dark Light -->
-                <div class="w-[1px] bg-title/20 dark:bg-white/20 h-7 hidden sm:block"></div>
-                <label class="switcher cursor-pointer order-first sm:order-last">
-                    <input class="hidden" type="checkbox">
-                    <img class="moon w-[22px] sm:w-7" src="{{ asset('assets/img/icon/simple-sun.svg') }}" alt="moon">
-                    <img class="sun w-[22px] sm:w-7" src="{{ asset('assets/img/icon/simple-light.svg') }}" alt="sun">
-                </label>
+        {{-- ── Center: Vertical Slider ── --}}
+        <div class="pg-tb-center" id="pgTopCenter">
+            <div class="pg-tb-track" id="pgTopTrack">
+                <div class="pg-tb-slide">👥&nbsp; 2,000+ Happy Customers</div>
+                <div class="pg-tb-slide">💬&nbsp; 24/7 Live Chat</div>
+                <div class="pg-tb-slide">⭐&nbsp; Trusted by Thousands</div>
+                {{-- clone of first for seamless loop --}}
+                <div class="pg-tb-slide">👥&nbsp; 2,000+ Happy Customers</div>
             </div>
         </div>
+
+        {{-- ── Right: Secure Payments ── --}}
+        <div class="pg-tb-right">
+            <a href="{{ route('return-policy') }}">
+                <svg width="16" height="18" viewBox="0 0 24 27" fill="rgba(255,255,255,.88)" style="flex-shrink:0">
+                    <path d="M12 .6 1.2 5.4v6C1.2 17.7 5.9 23.5 12 26c6.1-2.5 10.8-8.3 10.8-14.6v-6L12 .6Zm-1.8 17 -4.2-4.2 1.8-1.8 2.4 2.4 5.4-5.4 1.8 1.8-7.2 7.2Z"/>
+                </svg>
+                <span>Secure Payments</span>
+            </a>
+        </div>
+
     </div>
 </div>
-<!-- Search -->
-<div class="search_popup fixed top-0 left-0 bg-red dark:bg-[#39434D] bg-opacity-90 dark:bg-opacity-80 backdrop-blur-[3px] dark:backdrop-blur-[7.5px] w-full h-screen z-[999] px-[15px] md:px-[30px] py-12 md:py-[70px] overflow-y-auto transform scale-90 opacity-0 invisible transition-all duration-300 flex items-center justify-center">
-    <div class="container">
-        <div class="relative max-w-4xl mx-auto hdr-search-wrapper">
-            <button class="hdr_search_close w-[36px] h-[36px] absolute bottom-full md:top-0 right-0 flex items-center justify-center bg-title dark:bg-white text-white dark:text-title">
-                <svg class="fill-current" width="15" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.742 12.0717C11.6006 12.2131 11.445 12.2838 11.2753 12.2838C11.1056 12.2838 10.9501 12.2131 10.8086 12.0717L6.16295 7.42598L1.55968 12.0292C1.41826 12.1707 1.2627 12.2414 1.09299 12.2414C0.923289 12.2414 0.767726 12.1707 0.626304 12.0292L0.32932 11.7323C0.187898 11.5908 0.117187 11.4353 0.117188 11.2656C0.117187 11.0959 0.187898 10.9403 0.329319 10.7989L4.93258 6.19561L0.414172 1.6772C0.272751 1.53578 0.20204 1.38021 0.20204 1.21051C0.20204 1.0408 0.272751 0.885239 0.414172 0.743817L0.73237 0.42562C0.873792 0.284198 1.02935 0.213487 1.19906 0.213487C1.36877 0.213488 1.52433 0.284198 1.66575 0.42562L6.18416 4.94403L10.8086 0.319553C10.9501 0.178132 11.1056 0.107421 11.2753 0.107422C11.445 0.107422 11.6006 0.178133 11.742 0.319554L12.039 0.616539C12.1804 0.75796 12.2511 0.913524 12.2511 1.08323C12.2511 1.25293 12.1804 1.4085 12.039 1.54992L7.41453 6.1744L12.0602 10.8201C12.2016 10.9615 12.2724 11.1171 12.2724 11.2868C12.2724 11.4565 12.2016 11.612 12.0602 11.7535L11.742 12.0717Z"/>
-                </svg>
-            </button>
 
-            <div class="bg-white dark:bg-title py-8 sm:py-10 md:py-[60px] px-5 sm:px-8">
-                <!-- Input -->
-                <div class="relative">
-                    <input class="outline-none border-b border-bdr-clr dark:border-bdr-clr-drk pb-4 md:pb-[22px] text-title w-full pr-7 md:pr-10 leading-none font-lg placeholder:text-title bg-transparent dark:bg-transparent dark:text-white dark:placeholder:text-white" type="text" placeholder="Type your keyword">
-                    <button class="absolute right-0 top-0">
-                        <svg class="fill-current text-title dark:text-white w-5 md:w-[30px]" viewBox="0 0 30 31" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M29.5439 28.2361L22.1484 20.5625C24.0499 18.3074 25.0917 15.4701 25.0917 12.5162C25.0917 5.61489 19.4635 0 12.5459 0C5.62818 0 0 5.61489 0 12.5162C0 19.4176 5.62818 25.0325 12.5459 25.0325C15.1429 25.0325 17.6177 24.251 19.7335 22.7676L27.1852 30.4994C27.4967 30.8221 27.9156 31 28.3646 31C28.7895 31 29.1926 30.8384 29.4986 30.5445C30.1488 29.9203 30.1695 28.8853 29.5439 28.2361ZM12.5459 3.26511C17.6591 3.26511 21.8189 7.41506 21.8189 12.5162C21.8189 17.6174 17.6591 21.7674 12.5459 21.7674C7.43261 21.7674 3.27283 17.6174 3.27283 12.5162C3.27283 7.41506 7.43261 3.26511 12.5459 3.26511Z"/>
+<script>
+(function () {
+    var track  = document.getElementById('pgTopTrack');
+    var center = document.getElementById('pgTopCenter');
+    if (!track || !center) return;
+
+    var H      = 46;
+    var REAL   = 3;
+    var idx    = 0;
+    var busy   = false;
+    var paused = false;
+
+    function tick() {
+        if (busy || paused) return;
+        busy = true;
+        idx++;
+        track.style.transition = 'transform .52s cubic-bezier(.4,0,.2,1)';
+        track.style.transform  = 'translateY(-' + (idx * H) + 'px)';
+    }
+
+    track.addEventListener('transitionend', function () {
+        if (idx >= REAL) {
+            track.style.transition = 'none'; idx = 0;
+            track.style.transform  = 'translateY(0)';
+            void track.offsetWidth;
+        }
+        busy = false;
+    });
+
+    center.addEventListener('mouseenter', function () { paused = true;  });
+    center.addEventListener('mouseleave', function () { paused = false; });
+
+    setInterval(tick, 3000);
+}());
+</script>
+<!-- Topbar End -->
+
+@php
+    $navCategories = \App\Models\Category::where('is_active', true)->orderBy('name')->get();
+    $cart          = app(\App\Services\CartService::class);
+    $navWishlistCount = auth()->check()
+        ? \App\Models\Wishlist::where('user_id', auth()->id())->count()
+        : 0;
+@endphp
+
+<!-- ═══════════════════════════════════════════════
+     PREMIUM HEADER
+═══════════════════════════════════════════════ -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* ── Base ── */
+#pg-hdr {
+    position: sticky; top: 0; z-index: 200;
+    width: 100%; background: #fff;
+    border-bottom: 1px solid transparent;
+    transition: border-color .3s, box-shadow .3s;
+    font-family: 'Poppins', sans-serif;
+}
+#pg-hdr.scrolled {
+    border-color: #ede8e1;
+    box-shadow: 0 2px 28px rgba(23,36,48,.07);
+}
+.dark #pg-hdr { background: #172430; }
+.dark #pg-hdr.scrolled { border-color: rgba(255,255,255,.08); }
+
+/* ── Inner layout ── */
+.pg-hdr-inner {
+    max-width: 1440px; margin: 0 auto; padding: 0 40px;
+    height: 76px;
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    align-items: center;
+}
+
+/* ── Logo ── */
+.pg-hdr-logo { display: flex; align-items: center; text-decoration: none; }
+.pg-hdr-logo img { height: 42px; width: auto; }
+
+/* ── Nav ── */
+.pg-hdr-nav { display: flex; align-items: center; justify-content: center; list-style: none; margin: 0; padding: 0; gap: 0; }
+.pg-hdr-nav > li { position: relative; }
+.pg-hdr-nav > li > a {
+    display: flex; align-items: center; gap: 5px;
+    height: 76px; padding: 0 16px;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: .09em; text-transform: uppercase;
+    color: #172430; text-decoration: none;
+    position: relative; transition: color .2s; white-space: nowrap;
+}
+.dark .pg-hdr-nav > li > a { color: rgba(255,255,255,.88); }
+.pg-hdr-nav > li > a::after {
+    content: ''; position: absolute;
+    bottom: 14px; left: 16px; right: 16px;
+    height: 1.5px; background: #bb976d;
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .26s cubic-bezier(.4,0,.2,1);
+}
+.pg-hdr-nav > li > a:hover,
+.pg-hdr-nav > li > a.pg-active { color: #bb976d; }
+.pg-hdr-nav > li > a:hover::after,
+.pg-hdr-nav > li > a.pg-active::after { transform: scaleX(1); }
+.pg-chevron { flex-shrink: 0; transition: transform .24s; }
+.pg-has-mega.mega-open > a .pg-chevron { transform: rotate(180deg); }
+
+/* ── Mega Menu ── */
+.pg-mega {
+    position: fixed; left: 0; width: 100%;
+    background: #fff;
+    border-top: 2px solid #bb976d;
+    box-shadow: 0 24px 64px rgba(23,36,48,.11);
+    z-index: 190;
+    opacity: 0; visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity .22s, visibility .22s, transform .22s cubic-bezier(.4,0,.2,1);
+    pointer-events: none;
+}
+.dark .pg-mega { background: #1c2d3e; }
+.pg-mega.mega-open { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
+.pg-mega-wrap { max-width: 1440px; margin: 0 auto; padding: 36px 40px 44px; display: grid; gap: 40px; }
+.pg-mega-col-label {
+    font-size: 9.5px; font-weight: 700; letter-spacing: .15em;
+    text-transform: uppercase; color: #bb976d; margin-bottom: 16px;
+}
+.pg-mega-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 6px; }
+.pg-mega-link {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 13px; border: 1px solid #f0ebe3;
+    font-size: 12.5px; font-weight: 500; color: #172430;
+    text-decoration: none; background: #fdfaf6;
+    transition: all .18s;
+}
+.dark .pg-mega-link { color: #ddd; background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.07); }
+.pg-mega-link:hover { background: #bb976d; color: #fff; border-color: #bb976d; transform: translateY(-2px); box-shadow: 0 4px 14px rgba(187,151,109,.22); }
+.pg-mega-dot { width: 5px; height: 5px; border-radius: 50%; background: #bb976d; flex-shrink: 0; transition: background .18s; }
+.pg-mega-link:hover .pg-mega-dot { background: rgba(255,255,255,.6); }
+.pg-mega-feat { border-left: 1px solid #ede8e1; padding-left: 36px; }
+.dark .pg-mega-feat { border-color: rgba(255,255,255,.08); }
+.pg-mega-feat-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; margin-bottom: 14px; }
+.pg-mega-feat-title { font-size: 14px; font-weight: 700; color: #172430; margin-bottom: 5px; }
+.dark .pg-mega-feat-title { color: #fff; }
+.pg-mega-feat-desc { font-size: 12px; color: #888; line-height: 1.55; margin-bottom: 14px; }
+.pg-mega-feat-cta {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: #bb976d; text-decoration: none;
+    border-bottom: 1.5px solid #bb976d; padding-bottom: 2px;
+    transition: gap .2s, color .2s;
+}
+.pg-mega-feat-cta:hover { gap: 12px; }
+
+/* Backdrop */
+#pg-mega-bd {
+    position: fixed; inset: 0; z-index: 185;
+    background: rgba(23,36,48,.38); backdrop-filter: blur(2px);
+    opacity: 0; visibility: hidden;
+    transition: opacity .22s, visibility .22s;
+}
+#pg-mega-bd.mega-open { opacity: 1; visibility: visible; }
+
+/* ── Right actions ── */
+.pg-hdr-actions { display: flex; align-items: center; gap: 2px; }
+.pg-act-btn {
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none; cursor: pointer;
+    color: #172430; position: relative;
+    transition: background .18s, color .18s;
+    font-family: 'Poppins', sans-serif;
+}
+.dark .pg-act-btn { color: rgba(255,255,255,.85); }
+.pg-act-btn:hover { background: #f5f0e8; color: #bb976d; }
+.dark .pg-act-btn:hover { background: rgba(255,255,255,.08); color: #bb976d; }
+.pg-act-btn svg { width: 19px; height: 19px; flex-shrink: 0; }
+.pg-badge {
+    position: absolute; top: 3px; right: 2px;
+    min-width: 17px; height: 17px; padding: 0 3px;
+    background: #bb976d; border-radius: 20px;
+    font-size: 9px; font-weight: 700; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1; pointer-events: none; box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+.pg-hdr-vdiv { width: 1px; height: 22px; background: #e8e2da; margin: 0 8px; flex-shrink: 0; }
+.dark .pg-hdr-vdiv { background: rgba(255,255,255,.12); }
+
+/* Account dropdown */
+.pg-acct-wrap { position: relative; display: flex; align-items: center; }
+.pg-acct-dd {
+    position: absolute; top: calc(100% + 8px); right: -8px;
+    min-width: 192px; background: #fff;
+    border: 1px solid #ede8e1;
+    box-shadow: 0 16px 48px rgba(23,36,48,.10);
+    padding: 6px 0;
+    opacity: 0; visibility: hidden;
+    transform: translateY(6px);
+    transition: all .2s cubic-bezier(.4,0,.2,1);
+    z-index: 210; font-family: 'Poppins', sans-serif;
+}
+.dark .pg-acct-dd { background: #1c2d3e; border-color: rgba(255,255,255,.08); }
+.pg-acct-wrap:hover .pg-acct-dd { opacity: 1; visibility: visible; transform: translateY(0); }
+.pg-acct-dd-top { padding: 12px 18px 10px; border-bottom: 1px solid #f0ebe3; margin-bottom: 4px; }
+.dark .pg-acct-dd-top { border-color: rgba(255,255,255,.07); }
+.pg-acct-dd-greeting { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #bb976d; margin: 0 0 3px; }
+.pg-acct-dd-name { font-size: 13px; font-weight: 600; color: #172430; margin: 0; }
+.dark .pg-acct-dd-name { color: #fff; }
+.pg-acct-dd a, .pg-acct-dd button {
+    display: block; width: 100%; padding: 10px 18px;
+    font-size: 12.5px; font-weight: 500; color: #555;
+    text-decoration: none; background: transparent; border: none;
+    text-align: left; cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: color .15s, background .15s; box-sizing: border-box;
+}
+.dark .pg-acct-dd a, .dark .pg-acct-dd button { color: rgba(255,255,255,.7); }
+.pg-acct-dd a:hover, .pg-acct-dd button:hover { color: #bb976d; background: #fdf8f2; }
+.dark .pg-acct-dd a:hover, .dark .pg-acct-dd button:hover { background: rgba(255,255,255,.05); }
+.pg-acct-dd-sep { height: 1px; background: #f0ebe3; margin: 4px 0; }
+.dark .pg-acct-dd-sep { background: rgba(255,255,255,.07); }
+.pg-acct-dd .logout-btn { color: #d94f4f; }
+.pg-acct-dd .logout-btn:hover { color: #c03a3a; background: #fff5f5; }
+
+/* ── Cart Drawer ── */
+#pg-cart-drw {
+    position: fixed; top: 0; right: 0;
+    width: min(420px, 100vw); height: 100%;
+    background: #fff; z-index: 300;
+    display: flex; flex-direction: column;
+    transform: translateX(100%);
+    transition: transform .34s cubic-bezier(.4,0,.2,1);
+    box-shadow: -8px 0 52px rgba(23,36,48,.13);
+    font-family: 'Poppins', sans-serif;
+}
+.dark #pg-cart-drw { background: #172430; }
+#pg-cart-drw.drw-open { transform: translateX(0); }
+#pg-cart-ovl {
+    position: fixed; inset: 0; z-index: 295;
+    background: rgba(23,36,48,.52); backdrop-filter: blur(3px);
+    opacity: 0; visibility: hidden;
+    transition: opacity .34s, visibility .34s;
+}
+#pg-cart-ovl.drw-open { opacity: 1; visibility: visible; }
+.pg-drw-hd {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 26px; border-bottom: 1px solid #f0ebe3; flex-shrink: 0;
+}
+.dark .pg-drw-hd { border-color: rgba(255,255,255,.08); }
+.pg-drw-title { font-size: 15px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #172430; margin: 0; }
+.dark .pg-drw-title { color: #fff; }
+.pg-drw-title span { font-size: 11.5px; font-weight: 400; color: #bb976d; text-transform: none; letter-spacing: 0; margin-left: 5px; }
+.pg-drw-close-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid #e8e2da; background: transparent; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #555; transition: all .18s;
+}
+.dark .pg-drw-close-btn { border-color: rgba(255,255,255,.15); color: #aaa; }
+.pg-drw-close-btn:hover { background: #bb976d; border-color: #bb976d; color: #fff; }
+.pg-drw-body { flex: 1; overflow-y: auto; padding: 8px 26px 16px; }
+.pg-drw-body::-webkit-scrollbar { width: 3px; }
+.pg-drw-body::-webkit-scrollbar-thumb { background: #ddd3c5; border-radius: 3px; }
+.pg-ci {
+    display: flex; gap: 14px; padding: 18px 0;
+    border-bottom: 1px solid #f5f0e8; position: relative;
+}
+.dark .pg-ci { border-color: rgba(255,255,255,.06); }
+.pg-ci-img { width: 74px; height: 74px; object-fit: cover; flex-shrink: 0; background: #f5f0e8; display: block; text-decoration: none; }
+.pg-ci-body { flex: 1; min-width: 0; }
+.pg-ci-cat { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #bb976d; margin-bottom: 5px; }
+.pg-ci-name { font-size: 13px; font-weight: 600; color: #172430; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-decoration: none; display: block; margin-bottom: 6px; }
+.dark .pg-ci-name { color: #fff; }
+.pg-ci-price { font-size: 13px; font-weight: 700; color: #172430; }
+.dark .pg-ci-price { color: #fff; }
+.pg-ci-qty { font-size: 11.5px; color: #aaa; margin-left: 4px; }
+.pg-ci-rm {
+    position: absolute; top: 18px; right: 0;
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 1px solid #e8e2da; background: transparent; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #aaa; transition: all .18s;
+}
+.pg-ci-rm:hover { background: #E13939; border-color: #E13939; color: #fff; }
+.pg-drw-empty {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100%; text-align: center; padding: 40px 20px;
+}
+.pg-drw-empty svg { color: #ddd3c5; margin-bottom: 14px; }
+.pg-drw-empty p { font-size: 14px; color: #bbb; margin: 0; }
+.pg-drw-ft {
+    padding: 20px 26px; border-top: 1px solid #f0ebe3;
+    background: #fdfaf6; flex-shrink: 0;
+}
+.dark .pg-drw-ft { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.08); }
+.pg-drw-subtotal { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.pg-drw-sub-lbl { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #aaa; }
+.pg-drw-sub-val { font-size: 20px; font-weight: 700; color: #172430; }
+.dark .pg-drw-sub-val { color: #fff; }
+.pg-drw-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pg-drw-btn {
+    height: 48px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    text-decoration: none; border: none; cursor: pointer; transition: all .2s;
+}
+.pg-drw-btn-outline { background: transparent; border: 1.5px solid #172430; color: #172430; }
+.dark .pg-drw-btn-outline { border-color: rgba(255,255,255,.3); color: #fff; }
+.pg-drw-btn-outline:hover { background: #172430; color: #fff; }
+.dark .pg-drw-btn-outline:hover { background: rgba(255,255,255,.12); }
+.pg-drw-btn-fill { background: #bb976d; color: #fff; }
+.pg-drw-btn-fill:hover { background: #a8845a; }
+
+/* ── Search Modal ── */
+#pg-srch-modal {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(23,36,48,.75); backdrop-filter: blur(8px);
+    display: flex; align-items: flex-start; padding-top: 80px;
+    opacity: 0; visibility: hidden;
+    transition: opacity .24s, visibility .24s;
+    font-family: 'Poppins', sans-serif;
+}
+#pg-srch-modal.srch-open { opacity: 1; visibility: visible; }
+.pg-srch-box {
+    width: min(680px, calc(100% - 48px)); margin: 0 auto;
+    background: #fff; padding: 32px 36px 36px;
+    transform: translateY(-14px);
+    transition: transform .28s cubic-bezier(.4,0,.2,1);
+    position: relative;
+}
+.dark .pg-srch-box { background: #1c2d3e; }
+#pg-srch-modal.srch-open .pg-srch-box { transform: translateY(0); }
+.pg-srch-label { font-size: 9.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #bb976d; margin-bottom: 14px; }
+.pg-srch-row { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #172430; padding-bottom: 10px; }
+.dark .pg-srch-row { border-color: rgba(255,255,255,.3); }
+.pg-srch-input {
+    flex: 1; background: transparent; border: none; outline: none;
+    font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 300;
+    color: #172430; caret-color: #bb976d;
+}
+.dark .pg-srch-input { color: #fff; }
+.pg-srch-input::placeholder { color: #ccc; }
+.pg-srch-submit { background: transparent; border: none; cursor: pointer; color: #172430; transition: color .2s; flex-shrink: 0; }
+.dark .pg-srch-submit { color: #fff; }
+.pg-srch-submit:hover { color: #bb976d; }
+.pg-srch-close {
+    position: absolute; top: -52px; right: 0;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,.12); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; transition: background .2s;
+}
+.pg-srch-close:hover { background: rgba(255,255,255,.22); }
+.pg-srch-tags { margin-top: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.pg-srch-tag-lbl { font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #bbb; white-space: nowrap; }
+.pg-srch-tag {
+    padding: 6px 13px; font-size: 11.5px; font-weight: 500; color: #666;
+    background: #f5f0e8; text-decoration: none;
+    border: 1px solid transparent; transition: all .17s;
+}
+.dark .pg-srch-tag { background: rgba(255,255,255,.07); color: #ccc; }
+.pg-srch-tag:hover { background: #bb976d; color: #fff; }
+
+/* ── Mobile header ── */
+#pg-mob-hdr {
+    display: none; position: sticky; top: 0; z-index: 200;
+    width: 100%; height: 62px; background: #fff;
+    border-bottom: 1px solid #ede8e1;
+    box-shadow: 0 2px 14px rgba(23,36,48,.06);
+    align-items: center; padding: 0 18px; gap: 10px;
+    box-sizing: border-box; font-family: 'Poppins', sans-serif;
+}
+.dark #pg-mob-hdr { background: #172430; border-color: rgba(255,255,255,.08); }
+
+/* ── Mobile nav drawer ── */
+#pg-mob-ovl {
+    position: fixed; inset: 0; z-index: 305;
+    background: rgba(23,36,48,.52); backdrop-filter: blur(3px);
+    opacity: 0; visibility: hidden;
+    transition: opacity .32s, visibility .32s;
+}
+#pg-mob-ovl.drw-open { opacity: 1; visibility: visible; }
+#pg-mob-drw {
+    position: fixed; top: 0; left: 0;
+    width: min(330px, 100vw); height: 100%;
+    background: #fff; z-index: 310;
+    display: flex; flex-direction: column; overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform .32s cubic-bezier(.4,0,.2,1);
+    box-shadow: 8px 0 52px rgba(23,36,48,.13);
+    font-family: 'Poppins', sans-serif;
+}
+.dark #pg-mob-drw { background: #172430; }
+#pg-mob-drw.drw-open { transform: translateX(0); }
+.pg-mob-drw-hd {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 22px; border-bottom: 1px solid #f0ebe3; flex-shrink: 0;
+}
+.dark .pg-mob-drw-hd { border-color: rgba(255,255,255,.08); }
+.pg-mob-nav-link, .pg-mob-acc-btn {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding: 14px 22px;
+    font-size: 12px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase;
+    color: #172430; text-decoration: none;
+    background: transparent; border: none; border-bottom: 1px solid #f7f3ee;
+    cursor: pointer; box-sizing: border-box;
+    font-family: 'Poppins', sans-serif; transition: color .18s, background .18s;
+}
+.dark .pg-mob-nav-link, .dark .pg-mob-acc-btn { color: rgba(255,255,255,.85); border-color: rgba(255,255,255,.06); }
+.pg-mob-nav-link:hover, .pg-mob-acc-btn:hover { color: #bb976d; background: #fdf8f2; }
+.dark .pg-mob-nav-link:hover, .dark .pg-mob-acc-btn:hover { background: rgba(255,255,255,.04); }
+.pg-mob-sub {
+    max-height: 0; overflow: hidden; background: #fdfaf6;
+    transition: max-height .3s cubic-bezier(.4,0,.2,1);
+}
+.dark .pg-mob-sub { background: rgba(0,0,0,.12); }
+.pg-mob-sub.sub-open { max-height: 480px; }
+.pg-mob-sub a {
+    display: block; padding: 11px 22px 11px 34px;
+    font-size: 12.5px; font-weight: 500; color: #666;
+    text-decoration: none; border-bottom: 1px solid #f0ebe3;
+    letter-spacing: .02em; transition: color .18s;
+}
+.dark .pg-mob-sub a { color: rgba(255,255,255,.6); border-color: rgba(255,255,255,.05); }
+.pg-mob-sub a:hover { color: #bb976d; }
+.pg-mob-acc-icon { flex-shrink: 0; transition: transform .24s; }
+
+/* ── Responsive breakpoints ── */
+@media (max-width: 1024px) {
+    #pg-hdr { display: none !important; }
+    #pg-mob-hdr { display: flex; }
+}
+@media (min-width: 1025px) {
+    #pg-mob-hdr, #pg-mob-drw, #pg-mob-ovl { display: none !important; }
+}
+@media (max-width: 1200px) {
+    .pg-hdr-inner { padding: 0 24px; }
+    .pg-hdr-nav > li > a { padding: 0 12px; font-size: 11.5px; }
+}
+</style>
+
+<!-- Mega backdrop -->
+<div id="pg-mega-bd"></div>
+
+<!-- ════════ DESKTOP HEADER ════════ -->
+<header id="pg-hdr" role="banner">
+    <div class="pg-hdr-inner">
+
+        {{-- Logo --}}
+        <a href="{{ url('/') }}" class="pg-hdr-logo" aria-label="PeytonGhalib">
+            <img src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" width="180" height="42">
+        </a>
+
+        {{-- Navigation --}}
+        <nav aria-label="Main navigation">
+            <ul class="pg-hdr-nav">
+
+                <li><a href="{{ url('/') }}" class="pg-nav-home">Home</a></li>
+
+                <li class="pg-has-mega" data-mega="pg-mega-shop">
+                    <a href="{{ url('/shop') }}">
+                        Shop
+                        <svg class="pg-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none">
+                            <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                    </button>
-                </div>
-                <!-- Tags -->
-                <div class="mt-10 md:mt-12">
-                    <h4 class="font-medium leading-none text-2xl">Popular Tags</h4>
-                    <div class="flex flex-wrap gap-[10px] md:gap-[15px] mt-5 md:mt-6">
-                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop') }}?search=electronics" data-text="Electronics"><span>Electronics</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop') }}?search=fashion" data-text="Fashion"><span>Fashion</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop') }}?search=home" data-text="Home & Living"><span>Home & Living</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop') }}?search=sports" data-text="Sports"><span>Sports</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop') }}?search=beauty" data-text="Beauty"><span>Beauty</span></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- ══════════════════════════════════════════════
-     Mobile Category Drawer  (hidden on lg+)
-══════════════════════════════════════════════ -->
-<div id="mob-cat-overlay"
-     aria-modal="true"
-     role="dialog"
-     aria-label="Browse Categories"
-     style="display:none; position:fixed; inset:0; z-index:99999;">
+                    </a>
+                </li>
 
-    {{-- Backdrop --}}
-    <div id="mob-cat-backdrop"
-         style="position:absolute;inset:0;background:rgba(0,0,0,.45);
-                backdrop-filter:blur(3px);opacity:0;transition:opacity .3s ease;"></div>
+                <li class="pg-has-mega" data-mega="pg-mega-cols">
+                    <a href="{{ url('/categories') }}">
+                        Collections
+                        <svg class="pg-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none">
+                            <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </li>
 
-    {{-- Slide-in Panel --}}
-    <div id="mob-cat-panel"
-         style="position:absolute;top:0;right:0;height:100%;width:min(100vw, 360px);
-                background:#fff;display:flex;flex-direction:column;
-                transform:translateX(100%);transition:transform .32s cubic-bezier(.22,.68,0,1.2);
-                box-shadow:-8px 0 40px rgba(0,0,0,.14);">
+                <li><a href="{{ url('/about') }}">About Us</a></li>
+                <li><a href="{{ url('/contact') }}">Contact</a></li>
+                <li style="margin-left:8px;">
+                    <a href="{{ route('track-order') }}"
+                       style="display:inline-flex;align-items:center;gap:7px;
+                              height:36px;padding:0 16px;
+                              background:#bb976d;border:1.5px solid #bb976d;
+                              font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+                              color:#fff;text-decoration:none;white-space:nowrap;
+                              transition:background .2s,border-color .2s;line-height:1;"
+                       onmouseover="this.style.background='#a8845a';this.style.borderColor='#a8845a'"
+                       onmouseout="this.style.background='#bb976d';this.style.borderColor='#bb976d'">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                            <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/>
+                            <polyline points="16.5 9.4 7.55 4.24"/>
+                            <polyline points="3.29 7 12 12 20.71 7"/>
+                            <line x1="12" y1="22" x2="12" y2="12"/>
+                            <circle cx="18.5" cy="15.5" r="2.5"/>
+                            <path d="M20.27 17.27 22 19"/>
+                        </svg>
+                        Track Order
+                    </a>
+                </li>
 
-        {{-- Panel Header --}}
-        <div style="display:flex;align-items:center;gap:10px;padding:18px 20px 16px;
-                    border-bottom:1px solid #f0f0f0;background:#fff;flex-shrink:0;">
-            <button id="mob-cat-close"
-                    aria-label="Back to menu"
-                    style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;
-                           border-radius:50%;border:1.5px solid #e8e8e8;background:transparent;cursor:pointer;
-                           transition:background .2s,border-color .2s;flex-shrink:0;"
-                    onmouseover="this.style.background='#f5f5f5'"
-                    onmouseout="this.style.background='transparent'">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="15 18 9 12 15 6"/>
+            </ul>
+        </nav>
+
+        {{-- Right actions --}}
+        <div class="pg-hdr-actions">
+
+            {{-- Search --}}
+            <button class="pg-act-btn" id="pg-srch-open-btn" aria-label="Search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                 </svg>
             </button>
-            <div style="flex:1">
-                <p style="margin:0;font-size:11px;color:#aaa;font-weight:500;text-transform:uppercase;letter-spacing:.8px;line-height:1;">Menu</p>
-                <h3 style="margin:2px 0 0;font-size:17px;font-weight:700;color:#1a1a1a;line-height:1.2;">Categories</h3>
+
+            {{-- Account --}}
+            @auth
+            <div class="pg-acct-wrap">
+                <button class="pg-act-btn" aria-label="My Account">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </button>
+                <div class="pg-acct-dd">
+                    <div class="pg-acct-dd-top">
+                        <p class="pg-acct-dd-greeting">Welcome back</p>
+                        <p class="pg-acct-dd-name">{{ Auth::user()->name }}</p>
+                    </div>
+                    <a href="{{ url('/my-account') }}">My Account</a>
+                    <a href="{{ url('/order-history') }}">Order History</a>
+                    <a href="{{ url('/wishlist') }}">Wishlist</a>
+                    <div class="pg-acct-dd-sep"></div>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="logout-btn">Logout</button>
+                    </form>
+                </div>
             </div>
-            <a href="{{ url('/categories') }}"
-               style="font-size:12px;font-weight:600;color:#bb976d;text-decoration:none;
-                      display:flex;align-items:center;gap:4px;white-space:nowrap;
-                      padding:6px 12px;border:1.5px solid #bb976d;border-radius:20px;transition:all .2s;"
-               onmouseover="this.style.background='#bb976d';this.style.color='#fff'"
-               onmouseout="this.style.background='transparent';this.style.color='#bb976d'">
-                View All
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"/>
+            @else
+            <a href="{{ url('/login') }}" class="pg-act-btn" aria-label="Login">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                 </svg>
             </a>
-        </div>
+            @endauth
 
-        {{-- Search Bar --}}
-        <div style="padding:14px 20px;background:#fafafa;border-bottom:1px solid #f0f0f0;flex-shrink:0;">
-            <div style="position:relative;">
-                <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;"
-                     width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            {{-- Wishlist --}}
+            <a href="{{ url('/wishlist') }}" class="pg-act-btn" aria-label="Wishlist">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
-                <input type="text"
-                       id="mob-cat-search"
-                       placeholder="Search categories…"
-                       autocomplete="off"
-                       style="width:100%;padding:10px 12px 10px 36px;border:1.5px solid #e8e8e8;
-                              border-radius:10px;font-size:14px;color:#333;background:#fff;
-                              outline:none;box-sizing:border-box;transition:border-color .2s;"
-                       onfocus="this.style.borderColor='#bb976d'"
-                       onblur="this.style.borderColor='#e8e8e8'">
-            </div>
-        </div>
+                <span class="pg-badge" id="nav-wishlist-count" @if($navWishlistCount < 1) style="display:none" @endif>{{ $navWishlistCount }}</span>
+            </a>
 
-        {{-- Category Grid (scrollable) --}}
-        <div style="flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;">
-            <div id="mob-cat-grid"
-                 style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                @foreach($navCategories as $i => $navCat)
-                @php
-                    $p = $catPalette[$i % count($catPalette)];
-                @endphp
-                <a href="{{ url('/shop') }}?category={{ $navCat->slug }}"
-                   class="mob-cat-item"
-                   data-name="{{ strtolower($navCat->name) }}"
-                   style="display:flex;align-items:center;justify-content:center;
-                          padding:14px 10px;border-radius:14px;text-decoration:none;
-                          background:#fff;border:1.5px solid #f0f0f0;
-                          transition:all .2s ease;cursor:pointer;"
-                   onmouseover="this.style.borderColor='{{ $p['icon'] }}';this.style.background='{{ $p['bg'] }}';this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 16px rgba(0,0,0,.08)'"
-                   onmouseout="this.style.borderColor='#f0f0f0';this.style.background='#fff';this.style.transform='none';this.style.boxShadow='none'">
-                    {{-- Name only --}}
-                    <span style="font-size:13px;font-weight:600;color:#1a1a1a;text-align:center;
-                                 line-height:1.3;word-break:break-word;">{{ $navCat->name }}</span>
+            {{-- Cart --}}
+            <button class="pg-act-btn" id="pg-cart-open-btn" aria-label="Shopping cart">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+                </svg>
+                <span class="pg-badge" id="pg-cart-badge">{{ $cart->count() }}</span>
+            </button>
+
+            <div class="pg-hdr-vdiv"></div>
+
+            {{-- Dark mode --}}
+            <label class="switcher cursor-pointer" style="display:flex;align-items:center;">
+                <input class="hidden" type="checkbox">
+                <img class="moon" style="width:22px;" src="{{ asset('assets/img/icon/simple-sun.svg') }}" alt="Light mode">
+                <img class="sun"  style="width:22px;" src="{{ asset('assets/img/icon/simple-light.svg') }}" alt="Dark mode">
+            </label>
+
+        </div>
+    </div>
+</header>
+
+<!-- ════════ MEGA: Shop ════════ -->
+<div id="pg-mega-shop" class="pg-mega" role="region" aria-label="Shop categories">
+    <div class="pg-mega-wrap" style="grid-template-columns: 1fr 220px;">
+        <div>
+            <p class="pg-mega-col-label">Browse by Category</p>
+            <div class="pg-mega-links">
+                @foreach($navCategories as $nCat)
+                <a href="{{ route('category.landing', $nCat->slug) }}" class="pg-mega-link">
+                    <span class="pg-mega-dot"></span>{{ $nCat->name }}
                 </a>
                 @endforeach
-            </div>
-
-            {{-- Empty state --}}
-            <div id="mob-cat-empty"
-                 style="display:none;text-align:center;padding:40px 20px;">
-                <svg style="margin:0 auto 12px;" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="1.5">
-                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-                <p style="font-size:14px;color:#bbb;margin:0;">No categories found</p>
+                <a href="{{ url('/shop') }}" class="pg-mega-link" style="background:#172430;color:#fff;border-color:#172430;">
+                    <span class="pg-mega-dot" style="background:rgba(255,255,255,.5);"></span>All Products
+                </a>
             </div>
         </div>
-
-        {{-- Footer CTA --}}
-        <div style="padding:16px 20px;border-top:1px solid #f0f0f0;background:#fff;flex-shrink:0;">
-            <a href="{{ url('/shop') }}"
-               style="display:block;width:100%;padding:13px;background:linear-gradient(135deg,#bb976d,#a8845a);
-                      color:#fff;text-align:center;font-size:14px;font-weight:700;
-                      border-radius:12px;text-decoration:none;letter-spacing:.3px;
-                      transition:opacity .2s;"
-               onmouseover="this.style.opacity='.88'"
-               onmouseout="this.style.opacity='1'">
-                Browse All Products
+        <div class="pg-mega-feat">
+            <p class="pg-mega-col-label">Featured</p>
+            <img src="{{ asset('assets/img/home-v1/pdct-cgry-01.jpg') }}" alt="New Arrivals" class="pg-mega-feat-img">
+            <p class="pg-mega-feat-title">New Arrivals</p>
+            <p class="pg-mega-feat-desc">Discover the latest pieces crafted for modern living spaces.</p>
+            <a href="{{ url('/shop') }}?sort=newest" class="pg-mega-feat-cta">
+                Shop Now
+                <svg width="12" height="8" viewBox="0 0 16 10" fill="none"><path d="M1 5H15M15 5L11 1M15 5L11 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
         </div>
     </div>
 </div>
 
-<style>
-/* ── Only override the mobile menu categories item ── */
-@media (max-width: 1024px) {
-    #nav-categories-trigger {
-        cursor: pointer;
-    }
-    /* Hide the desktop mega-menu on mobile completely */
-    #mob-cat-overlay * { box-sizing: border-box; }
-    /* Scrollbar styling */
-    #mob-cat-panel ::-webkit-scrollbar { width: 4px; }
-    #mob-cat-panel ::-webkit-scrollbar-track { background: transparent; }
-    #mob-cat-panel ::-webkit-scrollbar-thumb { background: #e0d5ca; border-radius: 4px; }
-    /* Bounce tap feedback on touch */
-    .mob-cat-item:active { transform: scale(.96) !important; }
-}
-/* Prevent body scroll when drawer open */
-body.mob-cat-open { overflow: hidden; }
-</style>
+<!-- ════════ MEGA: Collections ════════ -->
+<div id="pg-mega-cols" class="pg-mega" role="region" aria-label="Collections">
+    <div class="pg-mega-wrap" style="grid-template-columns: 1fr 1fr 220px;">
+        <div>
+            <p class="pg-mega-col-label">Shop by Room</p>
+            <div class="pg-mega-links">
+                <a href="{{ url('/shop') }}?room=living-room"  class="pg-mega-link"><span class="pg-mega-dot"></span>Living Room</a>
+                <a href="{{ url('/shop') }}?room=bedroom"      class="pg-mega-link"><span class="pg-mega-dot"></span>Bedroom</a>
+                <a href="{{ url('/shop') }}?room=dining"       class="pg-mega-link"><span class="pg-mega-dot"></span>Dining Room</a>
+                <a href="{{ url('/shop') }}?room=office"       class="pg-mega-link"><span class="pg-mega-dot"></span>Home Office</a>
+                <a href="{{ url('/shop') }}?room=outdoor"      class="pg-mega-link"><span class="pg-mega-dot"></span>Outdoor</a>
+                <a href="{{ url('/shop') }}?room=bathroom"     class="pg-mega-link"><span class="pg-mega-dot"></span>Bathroom</a>
+            </div>
+        </div>
+        <div>
+            <p class="pg-mega-col-label">Curated Collections</p>
+            <div class="pg-mega-links">
+                <a href="{{ url('/shop') }}?collection=modern"        class="pg-mega-link"><span class="pg-mega-dot"></span>Modern Luxury</a>
+                <a href="{{ url('/shop') }}?collection=scandinavian"  class="pg-mega-link"><span class="pg-mega-dot"></span>Scandinavian</a>
+                <a href="{{ url('/shop') }}?collection=industrial"    class="pg-mega-link"><span class="pg-mega-dot"></span>Industrial</a>
+                <a href="{{ url('/shop') }}?collection=bohemian"      class="pg-mega-link"><span class="pg-mega-dot"></span>Bohemian</a>
+                <a href="{{ url('/shop') }}?collection=minimalist"    class="pg-mega-link"><span class="pg-mega-dot"></span>Minimalist</a>
+                <a href="{{ url('/shop') }}?collection=classic"       class="pg-mega-link"><span class="pg-mega-dot"></span>Classic</a>
+            </div>
+        </div>
+        <div class="pg-mega-feat">
+            <p class="pg-mega-col-label">Spotlight</p>
+            <img src="{{ asset('assets/img/home-v1/pdct-cgry-02.jpg') }}" alt="Modern Luxury" class="pg-mega-feat-img">
+            <p class="pg-mega-feat-title">Modern Luxury</p>
+            <p class="pg-mega-feat-desc">Timeless pieces that define contemporary elegance.</p>
+            <a href="{{ url('/shop') }}?collection=modern" class="pg-mega-feat-cta">
+                Explore
+                <svg width="12" height="8" viewBox="0 0 16 10" fill="none"><path d="M1 5H15M15 5L11 1M15 5L11 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ════════ MOBILE HEADER ════════ -->
+<div id="pg-mob-hdr" role="banner">
+    <button id="pg-mob-menu-btn" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;cursor:pointer;color:#172430;flex-shrink:0;" aria-label="Open menu" class="dark:text-white">
+        <svg width="22" height="15" viewBox="0 0 22 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="0" y1="1.5" x2="22" y2="1.5"/><line x1="0" y1="7.5" x2="22" y2="7.5"/><line x1="0" y1="13.5" x2="22" y2="13.5"/>
+        </svg>
+    </button>
+    <a href="{{ url('/') }}" style="flex:1;display:flex;justify-content:center;" aria-label="PeytonGhalib">
+        <img src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" height="34">
+    </a>
+    <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
+        <button class="pg-act-btn" id="pg-mob-srch-btn" aria-label="Search" style="width:38px;height:38px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <button class="pg-act-btn" id="pg-mob-cart-btn" aria-label="Cart" style="width:38px;height:38px;position:relative;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="pg-badge" style="width:15px;height:15px;font-size:8px;top:2px;right:1px;">{{ $cart->count() }}</span>
+        </button>
+        <label class="switcher cursor-pointer" style="display:flex;align-items:center;margin-left:4px;">
+            <input class="hidden" type="checkbox">
+            <img class="moon" style="width:20px;" src="{{ asset('assets/img/icon/simple-sun.svg') }}" alt="">
+            <img class="sun"  style="width:20px;" src="{{ asset('assets/img/icon/simple-light.svg') }}" alt="">
+        </label>
+    </div>
+</div>
+
+<!-- Mobile nav overlay + drawer -->
+<div id="pg-mob-ovl"></div>
+<div id="pg-mob-drw" role="dialog" aria-modal="true" aria-label="Navigation">
+    <div class="pg-mob-drw-hd">
+        <a href="{{ url('/') }}"><img src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" height="30"></a>
+        <button id="pg-mob-drw-close" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1.5px solid #e8e2da;background:transparent;cursor:pointer;color:#555;transition:all .18s;" onmouseover="this.style.background='#bb976d';this.style.borderColor='#bb976d';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.borderColor='#e8e2da';this.style.color='#555'" aria-label="Close">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="1" y1="1" x2="12" y2="12"/><line x1="12" y1="1" x2="1" y2="12"/></svg>
+        </button>
+    </div>
+    <nav style="flex:1;">
+        <a href="{{ url('/') }}" class="pg-mob-nav-link">Home</a>
+
+        <button class="pg-mob-acc-btn" data-target="pg-mob-sub-shop">
+            Shop
+            <svg class="pg-mob-acc-icon" width="11" height="7" viewBox="0 0 11 7" fill="none" stroke="#172430" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1L5.5 6L10 1"/></svg>
+        </button>
+        <div id="pg-mob-sub-shop" class="pg-mob-sub">
+            @foreach($navCategories as $nCat)
+            <a href="{{ route('category.landing', $nCat->slug) }}">{{ $nCat->name }}</a>
+            @endforeach
+            <a href="{{ url('/shop') }}" style="font-weight:700;color:#bb976d;">View All Products →</a>
+        </div>
+
+        <button class="pg-mob-acc-btn" data-target="pg-mob-sub-cols">
+            Collections
+            <svg class="pg-mob-acc-icon" width="11" height="7" viewBox="0 0 11 7" fill="none" stroke="#172430" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1L5.5 6L10 1"/></svg>
+        </button>
+        <div id="pg-mob-sub-cols" class="pg-mob-sub">
+            <a href="{{ url('/shop') }}?room=living-room">Living Room</a>
+            <a href="{{ url('/shop') }}?room=bedroom">Bedroom</a>
+            <a href="{{ url('/shop') }}?room=dining">Dining Room</a>
+            <a href="{{ url('/shop') }}?collection=modern">Modern Luxury</a>
+            <a href="{{ url('/shop') }}?collection=scandinavian">Scandinavian</a>
+            <a href="{{ url('/categories') }}" style="font-weight:700;color:#bb976d;">View All Collections →</a>
+        </div>
+
+        <a href="{{ url('/about') }}"   class="pg-mob-nav-link">About Us</a>
+        <a href="{{ url('/contact') }}" class="pg-mob-nav-link">Contact</a>
+
+        @auth
+        <a href="{{ url('/my-account') }}"  class="pg-mob-nav-link">My Account</a>
+        <a href="{{ url('/order-history') }}" class="pg-mob-nav-link">Orders</a>
+        @else
+        <a href="{{ url('/login') }}" class="pg-mob-nav-link">Login / Register</a>
+        @endauth
+        <div style="padding:16px 22px 4px;">
+            <a href="{{ route('track-order') }}"
+               style="display:flex;align-items:center;justify-content:center;gap:8px;
+                      height:44px;background:#bb976d;border:1.5px solid #bb976d;
+                      font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;
+                      letter-spacing:.09em;text-transform:uppercase;
+                      color:#fff;text-decoration:none;
+                      transition:background .2s;"
+               onmouseover="this.style.background='#a8845a'"
+               onmouseout="this.style.background='#bb976d'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                    <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/>
+                    <polyline points="16.5 9.4 7.55 4.24"/>
+                    <polyline points="3.29 7 12 12 20.71 7"/>
+                    <line x1="12" y1="22" x2="12" y2="12"/>
+                    <circle cx="18.5" cy="15.5" r="2.5"/>
+                    <path d="M20.27 17.27 22 19"/>
+                </svg>
+                Track Order
+            </a>
+        </div>
+    </nav>
+    <div style="padding:18px 22px;border-top:1px solid #f0ebe3;">
+        <a href="{{ route('track-order') }}" style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:#fdf6ee;border:1.5px solid #e8c99a;text-decoration:none;">
+            <div style="width:34px;height:34px;border-radius:50%;background:#bb976d;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><polyline points="16.5 9.4 7.55 4.24"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/><circle cx="18.5" cy="15.5" r="2.5"/><path d="M20.27 17.27 22 19"/></svg>
+            </div>
+            <div>
+                <div style="font-size:10px;color:#aaa;font-family:'Poppins',sans-serif;">Where's my package?</div>
+                <div style="font-size:13px;font-weight:700;color:#172430;font-family:'Poppins',sans-serif;">Track Your Order</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- ════════ CART DRAWER ════════ -->
+<div id="pg-cart-ovl"></div>
+<div id="pg-cart-drw" role="dialog" aria-modal="true" aria-label="Shopping cart">
+    <div class="pg-drw-hd">
+        <h2 class="pg-drw-title">Your Cart <span>({{ $cart->count() }} {{ $cart->count() === 1 ? 'item' : 'items' }})</span></h2>
+        <button id="pg-cart-close-btn" class="pg-drw-close-btn" aria-label="Close cart">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="1" y1="1" x2="12" y2="12"/><line x1="12" y1="1" x2="1" y2="12"/></svg>
+        </button>
+    </div>
+    <div class="pg-drw-body">
+        @forelse($cart->items() as $ci)
+        <div class="pg-ci">
+            <a href="{{ route('product-details', $ci['slug']) }}">
+                @if(!empty($ci['image']) && str_starts_with($ci['image'], 'assets/'))
+                    <img class="pg-ci-img" src="{{ asset($ci['image']) }}" alt="{{ $ci['name'] }}">
+                @elseif(!empty($ci['image']))
+                    <img class="pg-ci-img" src="{{ Storage::url($ci['image']) }}" alt="{{ $ci['name'] }}">
+                @else
+                    <img class="pg-ci-img" src="{{ asset('assets/img/gallery/wishList-01.jpg') }}" alt="{{ $ci['name'] }}">
+                @endif
+            </a>
+            <div class="pg-ci-body">
+                <div class="pg-ci-cat">{{ $ci['category'] ?? 'Furniture' }}</div>
+                <a href="{{ route('product-details', $ci['slug']) }}" class="pg-ci-name">{{ $ci['name'] }}</a>
+                <div class="pg-ci-price">${{ number_format($ci['price'], 2) }}<span class="pg-ci-qty">× {{ $ci['qty'] }}</span></div>
+            </div>
+            <form action="{{ route('cart.remove') }}" method="POST" style="margin:0;">
+                @csrf
+                <input type="hidden" name="cart_key" value="{{ $ci['key'] }}">
+                <button type="submit" class="pg-ci-rm" aria-label="Remove">
+                    <svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg>
+                </button>
+            </form>
+        </div>
+        @empty
+        <div class="pg-drw-empty">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <p>Your cart is empty</p>
+        </div>
+        @endforelse
+    </div>
+    @if($cart->count() > 0)
+    <div class="pg-drw-ft">
+        <div class="pg-drw-subtotal">
+            <span class="pg-drw-sub-lbl">Subtotal</span>
+            <span class="pg-drw-sub-val">${{ number_format($cart->total(), 2) }}</span>
+        </div>
+        <div class="pg-drw-btns">
+            <a href="{{ route('cart') }}" class="pg-drw-btn pg-drw-btn-outline">View Cart</a>
+            @auth
+                <a href="{{ url('/checkout') }}" class="pg-drw-btn pg-drw-btn-fill">Checkout</a>
+            @else
+                <a href="{{ url('/login') }}?redirect={{ url('/checkout') }}" class="pg-drw-btn pg-drw-btn-fill">Checkout</a>
+            @endauth
+        </div>
+    </div>
+    @endif
+</div>
+
+<!-- ════════ SEARCH MODAL ════════ -->
+<div id="pg-srch-modal" role="dialog" aria-modal="true" aria-label="Search">
+    <div class="pg-srch-box">
+        <button id="pg-srch-close-btn" class="pg-srch-close" aria-label="Close search">
+            <svg width="15" height="15" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="1" y1="1" x2="12" y2="12"/><line x1="12" y1="1" x2="1" y2="12"/></svg>
+        </button>
+        <p class="pg-srch-label">What are you looking for?</p>
+        <form action="{{ url('/shop') }}" method="GET">
+            <div class="pg-srch-row">
+                <input type="text" name="search" id="pg-srch-input" class="pg-srch-input" placeholder="Search products, styles, rooms…" autocomplete="off">
+                <button type="submit" class="pg-srch-submit" aria-label="Search">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                </button>
+            </div>
+        </form>
+        <div class="pg-srch-tags">
+            <span class="pg-srch-tag-lbl">Popular:</span>
+            <a href="{{ url('/shop') }}?search=sofa"         class="pg-srch-tag">Sofa</a>
+            <a href="{{ url('/shop') }}?search=dining+table" class="pg-srch-tag">Dining Table</a>
+            <a href="{{ url('/shop') }}?search=bed+frame"    class="pg-srch-tag">Bed Frame</a>
+            <a href="{{ url('/shop') }}?search=armchair"     class="pg-srch-tag">Armchair</a>
+            <a href="{{ url('/shop') }}?search=lamp"         class="pg-srch-tag">Lighting</a>
+        </div>
+    </div>
+</div>
 
 <script>
 (function () {
     'use strict';
 
-    const overlay  = document.getElementById('mob-cat-overlay');
-    const backdrop = document.getElementById('mob-cat-backdrop');
-    const panel    = document.getElementById('mob-cat-panel');
-    const trigger  = document.getElementById('nav-categories-trigger');
-    const closeBtn = document.getElementById('mob-cat-close');
-    const searchInput = document.getElementById('mob-cat-search');
-    const grid     = document.getElementById('mob-cat-grid');
-    const empty    = document.getElementById('mob-cat-empty');
-
-    if (!overlay || !trigger) return;
-
-    function isDesktop() {
-        return window.innerWidth >= 1024;
+    /* ── Sticky scroll shadow ── */
+    var hdr = document.getElementById('pg-hdr');
+    if (hdr) {
+        window.addEventListener('scroll', function () {
+            hdr.classList.toggle('scrolled', window.scrollY > 8);
+        }, { passive: true });
     }
 
-    // ── Open ──
-    function openDrawer(e) {
-        if (isDesktop()) return; // let desktop mega-menu work normally
-        e.preventDefault();
-        e.stopPropagation();
+    /* ── Mega menus ── */
+    var megaBd  = document.getElementById('pg-mega-bd');
+    var megaTimer;
 
-        overlay.style.display = 'block';
-        document.body.classList.add('mob-cat-open');
+    function closeMegas() {
+        document.querySelectorAll('.pg-mega.mega-open').forEach(function (m) { m.classList.remove('mega-open'); });
+        document.querySelectorAll('.pg-has-mega.mega-open').forEach(function (l) { l.classList.remove('mega-open'); });
+        megaBd.classList.remove('mega-open');
+    }
 
-        // Animate in
-        requestAnimationFrame(function () {
-            backdrop.style.opacity = '1';
-            panel.style.transform  = 'translateX(0)';
+    document.querySelectorAll('.pg-has-mega').forEach(function (li) {
+        var mega = document.getElementById(li.getAttribute('data-mega'));
+        if (!mega || !hdr) return;
+
+        function openIt() {
+            clearTimeout(megaTimer);
+            mega.style.top = hdr.getBoundingClientRect().bottom + 'px';
+            document.querySelectorAll('.pg-mega.mega-open').forEach(function (m) { if (m !== mega) m.classList.remove('mega-open'); });
+            document.querySelectorAll('.pg-has-mega.mega-open').forEach(function (l) { if (l !== li) l.classList.remove('mega-open'); });
+            mega.classList.add('mega-open');
+            megaBd.classList.add('mega-open');
+            li.classList.add('mega-open');
+        }
+        function schedClose() {
+            megaTimer = setTimeout(closeMegas, 110);
+        }
+
+        li.addEventListener('mouseenter', openIt);
+        li.addEventListener('mouseleave', schedClose);
+        mega.addEventListener('mouseenter', function () { clearTimeout(megaTimer); });
+        mega.addEventListener('mouseleave', schedClose);
+    });
+
+    megaBd.addEventListener('click', closeMegas);
+
+    /* ── Cart Drawer ── */
+    var cartDrw  = document.getElementById('pg-cart-drw');
+    var cartOvl  = document.getElementById('pg-cart-ovl');
+
+    function openCart()  { cartDrw.classList.add('drw-open'); cartOvl.classList.add('drw-open'); document.body.style.overflow = 'hidden'; }
+    function closeCart() { cartDrw.classList.remove('drw-open'); cartOvl.classList.remove('drw-open'); document.body.style.overflow = ''; }
+
+    ['pg-cart-open-btn','pg-mob-cart-btn'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('click', openCart);
+    });
+    var cartClose = document.getElementById('pg-cart-close-btn');
+    if (cartClose) cartClose.addEventListener('click', closeCart);
+    if (cartOvl)   cartOvl.addEventListener('click', closeCart);
+    if (cartDrw) {
+        var cTx = 0;
+        cartDrw.addEventListener('touchstart', function (e) { cTx = e.changedTouches[0].clientX; }, { passive: true });
+        cartDrw.addEventListener('touchend',   function (e) { if (e.changedTouches[0].clientX - cTx > 60) closeCart(); }, { passive: true });
+    }
+
+    /* ── Search Modal ── */
+    var srchModal = document.getElementById('pg-srch-modal');
+    var srchInput = document.getElementById('pg-srch-input');
+
+    function openSearch()  { srchModal.classList.add('srch-open'); document.body.style.overflow = 'hidden'; setTimeout(function () { srchInput && srchInput.focus(); }, 200); }
+    function closeSearch() { srchModal.classList.remove('srch-open'); document.body.style.overflow = ''; }
+
+    ['pg-srch-open-btn','pg-mob-srch-btn'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('click', openSearch);
+    });
+    var srchClose = document.getElementById('pg-srch-close-btn');
+    if (srchClose) srchClose.addEventListener('click', closeSearch);
+    srchModal.addEventListener('click', function (e) { if (e.target === srchModal) closeSearch(); });
+
+    /* ── Mobile Nav Drawer ── */
+    var mobDrw  = document.getElementById('pg-mob-drw');
+    var mobOvl  = document.getElementById('pg-mob-ovl');
+
+    function openMobNav()  { mobDrw.classList.add('drw-open'); mobOvl.classList.add('drw-open'); document.body.style.overflow = 'hidden'; }
+    function closeMobNav() { mobDrw.classList.remove('drw-open'); mobOvl.classList.remove('drw-open'); document.body.style.overflow = ''; }
+
+    var mobMenuBtn  = document.getElementById('pg-mob-menu-btn');
+    var mobDrwClose = document.getElementById('pg-mob-drw-close');
+    if (mobMenuBtn)  mobMenuBtn.addEventListener('click', openMobNav);
+    if (mobDrwClose) mobDrwClose.addEventListener('click', closeMobNav);
+    if (mobOvl)      mobOvl.addEventListener('click', closeMobNav);
+    if (mobDrw) {
+        var nTx = 0;
+        mobDrw.addEventListener('touchstart', function (e) { nTx = e.changedTouches[0].clientX; }, { passive: true });
+        mobDrw.addEventListener('touchend',   function (e) { if (nTx - e.changedTouches[0].clientX > 60) closeMobNav(); }, { passive: true });
+    }
+
+    /* ── Mobile accordions ── */
+    document.querySelectorAll('.pg-mob-acc-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var sub  = document.getElementById(btn.getAttribute('data-target'));
+            var icon = btn.querySelector('.pg-mob-acc-icon');
+            if (!sub) return;
+            var open = sub.classList.toggle('sub-open');
+            if (icon) icon.style.transform = open ? 'rotate(180deg)' : '';
         });
+    });
 
-        // Focus search after transition
-        setTimeout(function () { searchInput && searchInput.focus(); }, 350);
-    }
-
-    // ── Close ──
-    function closeDrawer() {
-        backdrop.style.opacity = '0';
-        panel.style.transform  = 'translateX(100%)';
-        document.body.classList.remove('mob-cat-open');
-
-        setTimeout(function () {
-            overlay.style.display = 'none';
-            if (searchInput) { searchInput.value = ''; filterCats(''); }
-        }, 320);
-    }
-
-    // ── Search / filter ──
-    function filterCats(query) {
-        const q = query.toLowerCase().trim();
-        const items = grid.querySelectorAll('.mob-cat-item');
-        let visible = 0;
-        items.forEach(function (item) {
-            const name = item.getAttribute('data-name') || '';
-            if (!q || name.includes(q)) {
-                item.style.display = '';
-                visible++;
-            } else {
-                item.style.display = 'none';
-            }
-        });
-        empty.style.display = visible === 0 ? 'block' : 'none';
-    }
-
-    // ── Event listeners ──
-    trigger.addEventListener('click', openDrawer);
-    trigger.addEventListener('touchend', openDrawer, { passive: false });
-
-    closeBtn.addEventListener('click', closeDrawer);
-
-    backdrop.addEventListener('click', closeDrawer);
-
-    if (searchInput) {
-        searchInput.addEventListener('input', function () {
-            filterCats(this.value);
-        });
-    }
-
-    // Close on Escape
+    /* ── Escape key ── */
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && overlay.style.display !== 'none') {
-            closeDrawer();
-        }
+        if (e.key !== 'Escape') return;
+        closeCart(); closeSearch(); closeMobNav(); closeMegas();
     });
 
-    // Swipe right to close
-    var touchStartX = 0;
-    panel.addEventListener('touchstart', function (e) {
-        touchStartX = e.changedTouches[0].clientX;
-    }, { passive: true });
-    panel.addEventListener('touchend', function (e) {
-        if (e.changedTouches[0].clientX - touchStartX > 70) {
-            closeDrawer();
-        }
-    }, { passive: true });
-
-    // Re-check on resize
-    window.addEventListener('resize', function () {
-        if (isDesktop() && overlay.style.display !== 'none') {
-            closeDrawer();
-        }
+    /* ── Active nav link ── */
+    var cp = window.location.pathname.replace(/\/$/, '');
+    document.querySelectorAll('.pg-hdr-nav > li > a').forEach(function (a) {
+        try {
+            var lp = new URL(a.href).pathname.replace(/\/$/, '');
+            if (lp && lp === cp) a.classList.add('pg-active');
+        } catch (e) {}
     });
+
 }());
-</script>
-
-<!-- Header End -->
-
-<script>
-    const currentPath = window.location.pathname.replace(/\/$/, '');
-    const currentSearch = window.location.search;
-    const currentFull = currentPath + currentSearch;
-
-    // Match sub-menu items by full URL (pathname + query string)
-    // so /shop-v1?category=foo does NOT match when on /shop-v1
-    const subMenuItems = document.querySelectorAll('.sub-menu-item');
-    subMenuItems.forEach((item) => {
-        try {
-            const itemUrl = new URL(item.href);
-            const itemFull = itemUrl.pathname.replace(/\/$/, '') + itemUrl.search;
-
-            if (itemFull === currentFull) {
-                item.classList.add('active');
-
-                // Highlight all parent menus recursively
-                let parentMenu = item.closest('.parent-menu-item');
-                while (parentMenu && !parentMenu.classList.contains('processed')) {
-                    const parentLink = parentMenu.querySelector('a');
-                    if (parentLink) parentLink.classList.add('active');
-                    parentMenu.classList.add('processed');
-                    parentMenu = parentMenu.closest('.parent-parent-menu-item');
-                }
-
-                // Highlight the top-level parent menu
-                const topLevelMenu = item.closest('.parent-parent-menu-item');
-                if (topLevelMenu) {
-                    const topLevelLink = topLevelMenu.querySelector('.home-link');
-                    if (topLevelLink) topLevelLink.classList.add('active');
-                }
-            }
-        } catch(e) {}
-    });
-
-    // Also highlight top-level direct links (Shop, Categories, Home)
-    // which are home-link anchors that are direct children of parent-parent-menu-item
-    // Skip href="#" links (e.g. Pages dropdown trigger) — they resolve to the current path
-    document.querySelectorAll('.parent-parent-menu-item > a.home-link').forEach((link) => {
-        if (link.getAttribute('href') === '#') return;
-        try {
-            const linkPath = new URL(link.href).pathname.replace(/\/$/, '');
-            if (linkPath && linkPath === currentPath) {
-                link.classList.add('active');
-            }
-        } catch(e) {}
-    });
 </script>

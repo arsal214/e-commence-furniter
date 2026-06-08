@@ -23,10 +23,12 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'        => ['required', 'string', 'max:255', 'unique:categories,name'],
-            'description' => ['nullable', 'string'],
-            'image'       => ['nullable', 'image', 'max:2048'],
-            'is_active'   => ['nullable', 'boolean'],
+            'name'             => ['required', 'string', 'max:255', 'unique:categories,name'],
+            'description'      => ['nullable', 'string'],
+            'meta_title'       => ['nullable', 'string', 'max:160'],
+            'meta_description' => ['nullable', 'string', 'max:320'],
+            'image'            => ['nullable', 'image', 'max:2048'],
+            'is_active'        => ['nullable', 'boolean'],
         ]);
 
         $data['slug']      = Str::slug($data['name']);
@@ -50,10 +52,12 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $data = $request->validate([
-            'name'        => ['required', 'string', 'max:255', 'unique:categories,name,' . $category->id],
-            'description' => ['nullable', 'string'],
-            'image'       => ['nullable', 'image', 'max:2048'],
-            'is_active'   => ['nullable', 'boolean'],
+            'name'             => ['required', 'string', 'max:255', 'unique:categories,name,' . $category->id],
+            'description'      => ['nullable', 'string'],
+            'meta_title'       => ['nullable', 'string', 'max:160'],
+            'meta_description' => ['nullable', 'string', 'max:320'],
+            'image'            => ['nullable', 'image', 'max:2048'],
+            'is_active'        => ['nullable', 'boolean'],
         ]);
 
         $data['is_active'] = $request->boolean('is_active', true);

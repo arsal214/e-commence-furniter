@@ -15,11 +15,30 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $sliders          = Slider::active()->get();
-        $featuredProducts = Product::where('is_active', true)->where('is_featured', true)->latest()->take(6)->get();
-        $newProducts      = Product::where('is_active', true)->latest()->take(4)->get();
-        $categories       = Category::where('is_active', true)->withCount('products')->get();
-        return view('index', compact('sliders', 'featuredProducts', 'newProducts', 'categories'));
+        $sliders     = Slider::active()->get();
+        $categories  = Category::where('is_active', true)->withCount('products')->get();
+        $newProducts = Product::where('is_active', true)
+                              ->with('category')
+                              ->withAvg('reviews', 'rating')
+                              ->withCount('reviews')
+                              ->latest()
+                              ->take(8)
+                              ->get();
+        $bestSellers = Product::where('is_active', true)
+                              ->where('is_best_seller', true)
+                              ->with('category')
+                              ->withAvg('reviews', 'rating')
+                              ->withCount('reviews')
+                              ->latest()
+                              ->take(8)
+                              ->get();
+        $featuredProducts = Product::where('is_active', true)
+                                   ->where('is_featured', true)
+                                   ->with('category')
+                                   ->latest()
+                                   ->take(6)
+                                   ->get();
+        return view('index', compact('sliders', 'featuredProducts', 'newProducts', 'bestSellers', 'categories'));
     }
 
     public function about()
@@ -196,6 +215,31 @@ class HomeController extends Controller
         $categories = Category::where('is_active', true)->withCount('products')->orderBy('name')->get();
         return view('categories', compact('categories'));
     }
+
+    public function categoryLanding($slug)
+    {
+        $category = Category::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $products = Product::where('category_id', $category->id)
+                           ->where('is_active', true)
+                           ->with('category')
+                           ->withAvg('reviews', 'rating')
+                           ->withCount('reviews')
+                           ->latest()
+                           ->take(8)
+                           ->get();
+        $relatedCategories = Category::where('is_active', true)
+                                     ->where('id', '!=', $category->id)
+                                     ->withCount('products')
+                                     ->inRandomOrder()
+                                     ->take(4)
+                                     ->get();
+        return view('category-landing', compact('category', 'products', 'relatedCategories'));
+    }
+
+    public function returnPolicy()   { return view('return-policy'); }
+    public function refundPolicy()   { return view('refund-policy'); }
+    public function shippingPolicy() { return view('shipping-policy'); }
+    public function privacyPolicy()  { return view('privacy-policy'); }
 
     public function productCategory()
     {

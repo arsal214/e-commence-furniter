@@ -206,12 +206,18 @@
             </div>
 
             {{-- ── Toggles ── --}}
-            <div class="flex items-center gap-6 border-t border-gray-100 pt-5">
+            <div class="flex flex-wrap items-center gap-6 border-t border-gray-100 pt-5">
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" name="is_featured" value="1"
                            {{ old('is_featured') ? 'checked' : '' }}
                            class="w-4 h-4 rounded border-gray-300 accent-[#bb976d]">
                     <span class="text-sm font-medium text-gray-700">Featured product</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="is_best_seller" value="1"
+                           {{ old('is_best_seller') ? 'checked' : '' }}
+                           class="w-4 h-4 rounded border-gray-300 accent-[#bb976d]">
+                    <span class="text-sm font-medium text-gray-700">Best seller</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" name="is_active" value="1" checked

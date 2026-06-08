@@ -26,9 +26,26 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Description <span class="text-gray-400 font-normal">(shown on category landing page)</span></label>
                 <textarea name="description" rows="3"
                           class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors resize-none">{{ old('description', $category->description) }}</textarea>
+            </div>
+
+            <div class="border-t border-gray-100 pt-5">
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">SEO</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Meta Title <span class="text-gray-400 font-normal">max 160 chars</span></label>
+                        <input type="text" name="meta_title" value="{{ old('meta_title', $category->meta_title) }}" maxlength="160"
+                               placeholder="Buy {{ $category->name }} Online | PeytonGhalib"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Meta Description <span class="text-gray-400 font-normal">max 320 chars</span></label>
+                        <textarea name="meta_description" rows="2" maxlength="320"
+                                  class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors resize-none">{{ old('meta_description', $category->meta_description) }}</textarea>
+                    </div>
+                </div>
             </div>
 
             <div>

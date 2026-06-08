@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -19,8 +19,7 @@
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
         <!-- Primary Meta Tags -->
         <meta name="description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
-        <meta name="keywords" content="ceramics, furniture, PeytonGhalib, furniture store, interior design, home decor">
-        <meta name="author" content="PeytonGhalib">
+<meta name="author" content="PeytonGhalib">
         <meta name="robots" content="index, follow">
         <link rel="canonical" href="{{ url()->current() }}">
         <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -47,7 +46,7 @@
         <!-- Main Stylesheet -->
         @vite('resources/css/app.css')
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
-        <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/=materialdesignicons.min.css" rel="stylesheet">
         {{-- AOS FOUC fix: style.css hides [data-aos] elements (opacity:0) as soon as it loads,
              but AOS.init() in scripts.js runs much later. Keep elements visible until AOS sets
              its data-aos-easing attribute on <body> (the exact moment AOS.init() fires). --}}
@@ -199,6 +198,134 @@
             });
         </script>
         @stack('scripts')
+
+        <!-- ── Social Proof Notifications ── -->
+        @php
+            $spItems = \App\Models\Product::where('is_active', true)
+                ->inRandomOrder()->take(10)->get()
+                ->map(function ($p) {
+                    return [
+                        'name'  => $p->name,
+                        'image' => $p->image
+                            ? (str_starts_with($p->image, 'assets/') ? asset($p->image) : \Storage::url($p->image))
+                            : asset('assets/img/gallery/wishList-01.jpg'),
+                        'url'   => route('product-details', $p->slug),
+                    ];
+                })->values();
+        @endphp
+        @if($spItems->count())
+        <style>
+        #pg-sp {
+            position: fixed; bottom: 28px; right: 24px; z-index: 9990;
+            width: 310px; background: #fff;
+            box-shadow: 0 8px 40px rgba(23,36,48,.14), 0 2px 8px rgba(23,36,48,.06);
+            display: flex; align-items: center; gap: 13px;
+            padding: 12px 14px 12px 12px;
+            transform: translateY(20px); opacity: 0;
+            transition: transform .4s cubic-bezier(.34,1.3,.64,1), opacity .35s ease;
+            pointer-events: none;
+            border-left: 3px solid #bb976d;
+            font-family: 'Poppins', -apple-system, sans-serif;
+        }
+        .dark #pg-sp { background: #1c2d3e; box-shadow: 0 8px 40px rgba(0,0,0,.35); }
+        #pg-sp.sp-show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+        #pg-sp-img { width: 56px; height: 56px; object-fit: cover; flex-shrink: 0; background: #f5f0e8; display: block; }
+        #pg-sp-body { flex: 1; min-width: 0; }
+        #pg-sp-line1 { font-size: 11.5px; color: #666; line-height: 1.45; margin: 0 0 3px; }
+        .dark #pg-sp-line1 { color: #aaa; }
+        #pg-sp-line1 strong { color: #172430; font-weight: 700; }
+        .dark #pg-sp-line1 strong { color: #fff; }
+        #pg-sp-product { font-size: 12px; font-weight: 600; color: #bb976d; text-decoration: none; line-height: 1.35; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #pg-sp-product:hover { text-decoration: underline; }
+        #pg-sp-meta { font-size: 10.5px; color: #bbb; margin: 3px 0 0; display: flex; align-items: center; gap: 5px; }
+        #pg-sp-meta::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #4CAF50; flex-shrink: 0; }
+        #pg-sp-close {
+            position: absolute; top: 7px; right: 7px;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #f0ebe3; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: #999; font-size: 12px; line-height: 1;
+            transition: background .18s, color .18s; flex-shrink: 0; padding: 0;
+        }
+        .dark #pg-sp-close { background: rgba(255,255,255,.1); color: #aaa; }
+        #pg-sp-close:hover { background: #E13939; color: #fff; }
+        </style>
+
+        <div id="pg-sp" role="status" aria-live="polite" style="position:fixed;">
+            <img id="pg-sp-img" src="" alt="">
+            <div id="pg-sp-body">
+                <p id="pg-sp-line1"></p>
+                <a id="pg-sp-product" href=""></a>
+                <p id="pg-sp-meta">Just now</p>
+            </div>
+            <button id="pg-sp-close" aria-label="Dismiss">
+                <svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                    <line x1="1" y1="1" x2="9" y2="9"/><line x1="9" y1="1" x2="1" y2="9"/>
+                </svg>
+            </button>
+        </div>
+
+        <script>
+        (function () {
+            var products = @json($spItems);
+            var cities   = [
+                'New York, NY','Los Angeles, CA','Chicago, IL','Houston, TX',
+                'Miami, FL','Dallas, TX','Phoenix, AZ','Seattle, WA',
+                'London, UK','Toronto, CA','Sydney, AU','Dubai, UAE',
+                'Boston, MA','Atlanta, GA','Denver, CO','San Diego, CA',
+                'Austin, TX','Portland, OR','Nashville, TN','Las Vegas, NV'
+            ];
+            var actions  = ['just purchased','started buying','just ordered','just bought'];
+            var times    = ['Just now','1 min ago','2 mins ago','3 mins ago','5 mins ago'];
+
+            var el      = document.getElementById('pg-sp');
+            var imgEl   = document.getElementById('pg-sp-img');
+            var line1   = document.getElementById('pg-sp-line1');
+            var prodEl  = document.getElementById('pg-sp-product');
+            var metaEl  = document.getElementById('pg-sp-meta');
+            var closeEl = document.getElementById('pg-sp-close');
+            if (!el) return;
+
+            var dismissed = false;
+            var pIdx = 0;
+            var SHOW_MS  = 5000;
+            var PAUSE_MS = 9000;
+
+            function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+            function showNext() {
+                if (dismissed) return;
+                var p    = products[pIdx % products.length];
+                var city = rnd(cities);
+                var act  = rnd(actions);
+                var t    = rnd(times);
+                pIdx++;
+
+                imgEl.src          = p.image;
+                imgEl.alt          = p.name;
+                line1.innerHTML    = 'Someone from <strong>' + city + '</strong> ' + act;
+                prodEl.textContent = p.name;
+                prodEl.href        = p.url;
+                metaEl.textContent = t;
+
+                el.classList.add('sp-show');
+                setTimeout(function () {
+                    el.classList.remove('sp-show');
+                    setTimeout(showNext, PAUSE_MS);
+                }, SHOW_MS);
+            }
+
+            closeEl.addEventListener('click', function () {
+                el.classList.remove('sp-show');
+                dismissed = true;
+                setTimeout(function () { dismissed = false; setTimeout(showNext, PAUSE_MS * 2); }, 0);
+            });
+
+            // Initial delay before first appearance
+            setTimeout(showNext, 4000);
+        }());
+        </script>
+        @endif
 
         <!-- Wishlist Toggle JS -->
         <script>

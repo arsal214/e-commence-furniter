@@ -71,8 +71,9 @@ class ProductController extends Controller
             'tag'            => ['nullable', 'in:Sale,NEW,OFF,OFF1'],
             'sku'           => ['nullable', 'string', 'max:100'],
             'stock'         => ['required', 'integer', 'min:0'],
-            'is_featured'   => ['nullable', 'boolean'],
-            'is_active'     => ['nullable', 'boolean'],
+            'is_featured'    => ['nullable', 'boolean'],
+            'is_best_seller' => ['nullable', 'boolean'],
+            'is_active'      => ['nullable', 'boolean'],
             'colors_raw'    => ['nullable', 'string'],
             'sizes_raw'     => ['nullable', 'string'],
             'supplier_name' => ['nullable', 'string', 'max:100'],
@@ -80,9 +81,10 @@ class ProductController extends Controller
             'supplier_sku'  => ['nullable', 'string', 'max:100'],
         ]);
 
-        $data['slug']        = Str::slug($data['name']);
-        $data['is_featured'] = $request->boolean('is_featured');
-        $data['is_active']   = $request->boolean('is_active', true);
+        $data['slug']           = Str::slug($data['name']);
+        $data['is_featured']    = $request->boolean('is_featured');
+        $data['is_best_seller'] = $request->boolean('is_best_seller');
+        $data['is_active']      = $request->boolean('is_active', true);
         $data['sale_price']  = $data['sale_price'] ?: null;
         $data['colors']      = $this->parseVariants($request->input('colors_raw'));
         $data['sizes']       = $this->parseVariants($request->input('sizes_raw'));
@@ -143,8 +145,9 @@ class ProductController extends Controller
             'tag'                => ['nullable', 'in:Sale,NEW,OFF,OFF1'],
             'sku'           => ['nullable', 'string', 'max:100'],
             'stock'         => ['required', 'integer', 'min:0'],
-            'is_featured'   => ['nullable', 'boolean'],
-            'is_active'     => ['nullable', 'boolean'],
+            'is_featured'    => ['nullable', 'boolean'],
+            'is_best_seller' => ['nullable', 'boolean'],
+            'is_active'      => ['nullable', 'boolean'],
             'colors_raw'    => ['nullable', 'string'],
             'sizes_raw'     => ['nullable', 'string'],
             'supplier_name' => ['nullable', 'string', 'max:100'],
@@ -155,8 +158,9 @@ class ProductController extends Controller
         // Use provided slug or keep existing; never auto-overwrite with name-derived slug here
         $data['slug'] = !empty($data['slug']) ? $data['slug'] : $product->slug;
 
-        $data['is_featured'] = $request->boolean('is_featured');
-        $data['is_active']   = $request->boolean('is_active', true);
+        $data['is_featured']    = $request->boolean('is_featured');
+        $data['is_best_seller'] = $request->boolean('is_best_seller');
+        $data['is_active']      = $request->boolean('is_active', true);
         $data['sale_price']  = $data['sale_price'] ?: null;
         $data['colors']      = $this->parseVariants($request->input('colors_raw'));
         $data['sizes']       = $this->parseVariants($request->input('sizes_raw'));

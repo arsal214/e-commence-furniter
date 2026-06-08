@@ -85,7 +85,13 @@ Route::get('/payment-failure',       [HomeController::class, 'paymentFailure']);
 Route::get('/shop',             [HomeController::class, 'shopV1'])->name('shop');
 Route::get('/shop-v1',          fn() => redirect('/shop', 301));
 Route::get('/categories',       [HomeController::class, 'categories']);
+Route::get('/category/{slug}',  [HomeController::class, 'categoryLanding'])->name('category.landing');
 Route::get('/product-category', [HomeController::class, 'productCategory']);
+
+Route::get('/return-policy',   [HomeController::class, 'returnPolicy'])->name('return-policy');
+Route::get('/refund-policy',   [HomeController::class, 'refundPolicy'])->name('refund-policy');
+Route::get('/shipping-policy', [HomeController::class, 'shippingPolicy'])->name('shipping-policy');
+Route::get('/privacy-policy',  [HomeController::class, 'privacyPolicy'])->name('privacy-policy');
 
 Route::get('/product-details',         [HomeController::class, 'productDetails']);
 Route::get('/product-details/{slug}',  [ProductController::class, 'show'])->name('product-details');

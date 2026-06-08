@@ -10,7 +10,7 @@ class Product extends Model
     protected $fillable = [
         'category_id', 'name', 'slug', 'meta_title', 'meta_description',
         'description', 'review_content', 'shipping_info',
-        'price', 'sale_price', 'image', 'tag', 'is_featured', 'is_active', 'stock', 'sku',
+        'price', 'sale_price', 'image', 'tag', 'is_featured', 'is_best_seller', 'is_active', 'stock', 'sku',
         'colors', 'sizes', 'size_chart',
         'supplier_name', 'supplier_url', 'supplier_sku',
     ];
@@ -18,8 +18,9 @@ class Product extends Model
     protected $casts = [
         'price'       => 'decimal:2',
         'sale_price'  => 'decimal:2',
-        'is_featured' => 'boolean',
-        'is_active'   => 'boolean',
+        'is_featured'    => 'boolean',
+        'is_best_seller' => 'boolean',
+        'is_active'      => 'boolean',
         'colors'      => 'array',
         'sizes'       => 'array',
     ];
