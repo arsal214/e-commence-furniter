@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\FlashDeal;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Slider;
@@ -38,7 +39,8 @@ class HomeController extends Controller
                                    ->latest()
                                    ->take(6)
                                    ->get();
-        return view('index', compact('sliders', 'featuredProducts', 'newProducts', 'bestSellers', 'categories'));
+        $flashDeal = FlashDeal::current();
+        return view('index', compact('sliders', 'featuredProducts', 'newProducts', 'bestSellers', 'categories', 'flashDeal'));
     }
 
     public function about()

@@ -67,6 +67,12 @@
                 <i class="mdi mdi-image-multiple text-lg"></i>
                 Sliders
             </a>
+            <a href="{{ route('admin.flash-deal.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                      {{ request()->routeIs('admin.flash-deal*') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                <i class="mdi mdi-lightning-bolt text-lg"></i>
+                Flash Deal
+            </a>
         </nav>
 
         <div class="px-4 py-4 border-t border-white/10">

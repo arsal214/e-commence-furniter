@@ -3,9 +3,45 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    public function suggestions(Request $request)
+    {
+        $q = trim($request->get('q', ''));
+
+        if (mb_strlen($q) < 2) {
+            return response()->json([]);
+        }
+
+        $results = Product::where('is_active', true)
+            ->where(function ($query) use ($q) {
+                $query->where('name', 'like', "%{$q}%")
+                      ->orWhere('description', 'like', "%{$q}%");
+            })
+            ->with('category:id,name')
+            ->select('id', 'name', 'slug', 'price', 'sale_price', 'category_id', 'image')
+            ->latest()
+            ->limit(7)
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'name'       => $p->name,
+                    'slug'       => $p->slug,
+                    'price'      => number_format($p->price, 2),
+                    'sale_price' => $p->sale_price ? number_format($p->sale_price, 2) : null,
+                    'image'      => $p->image
+                        ? asset('storage/' . $p->image)
+                        : asset('assets/imgs/theme/no-image.png'),
+                    'category'   => optional($p->category)->name,
+                    'url'        => route('product-details', $p->slug),
+                ];
+            });
+
+        return response()->json($results);
+    }
+
     public function show(string $slug)
     {
         $item = Product::with(['category', 'productImages', 'reviews.user'])

@@ -425,6 +425,43 @@
 .dark .pg-srch-tag { background: rgba(255,255,255,.07); color: #ccc; }
 .pg-srch-tag:hover { background: #bb976d; color: #fff; }
 
+/* ── Search Suggestions ── */
+#pg-srch-results {
+    display: none; margin-top: 0;
+    border: 1px solid #e8e0d4; border-top: none;
+    background: #fff; overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,.09);
+}
+#pg-srch-results.pg-srch-results-open { display: block; }
+.pg-srch-ri {
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 14px; text-decoration: none; color: inherit;
+    transition: background .15s; cursor: pointer;
+    border-bottom: 1px solid #f5f0e8;
+}
+.pg-srch-ri:last-of-type { border-bottom: none; }
+.pg-srch-ri:hover, .pg-srch-ri.pg-sri-active { background: #faf7f2; }
+.pg-srch-ri-img { width: 46px; height: 46px; object-fit: cover; flex-shrink: 0; border: 1px solid #e8e0d4; }
+.pg-srch-ri-body { flex: 1; min-width: 0; }
+.pg-srch-ri-name { font-size: 13px; font-weight: 500; color: #172430; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.pg-srch-ri-cat  { font-size: 10px; color: #aaa; margin-top: 2px; text-transform: uppercase; letter-spacing: .08em; display: block; }
+.pg-srch-ri-price { font-size: 13px; font-weight: 600; color: #bb976d; white-space: nowrap; flex-shrink: 0; }
+.pg-srch-ri-price s { color: #ccc; font-weight: 400; font-size: 11px; margin-right: 3px; text-decoration: line-through; }
+.pg-srch-view-all {
+    display: block; padding: 9px 14px; text-align: center;
+    font-size: 11px; font-weight: 700; color: #bb976d;
+    letter-spacing: .08em; text-transform: uppercase; text-decoration: none;
+    background: #faf7f2; border-top: 1px solid #e8e0d4;
+    transition: background .15s;
+}
+.pg-srch-view-all:hover { background: #f0e8d8; color: #8a6d4a; }
+.pg-srch-spinner {
+    display: flex; align-items: center; justify-content: center; padding: 18px; color: #bb976d;
+}
+.pg-srch-spinner svg { animation: srch-spin .7s linear infinite; }
+@keyframes srch-spin { to { transform: rotate(360deg); } }
+.pg-srch-empty { padding: 18px 14px; text-align: center; font-size: 13px; color: #aaa; }
+
 /* ── Mobile header ── */
 #pg-mob-hdr {
     display: none; position: sticky; top: 0; z-index: 200;
@@ -883,13 +920,12 @@
                 </button>
             </div>
         </form>
-        <div class="pg-srch-tags">
+        <div id="pg-srch-results" role="listbox" aria-label="Search suggestions"></div>
+        <div class="pg-srch-tags" id="pg-srch-tags">
             <span class="pg-srch-tag-lbl">Popular:</span>
-            <a href="{{ url('/shop') }}?search=sofa"         class="pg-srch-tag">Sofa</a>
-            <a href="{{ url('/shop') }}?search=dining+table" class="pg-srch-tag">Dining Table</a>
-            <a href="{{ url('/shop') }}?search=bed+frame"    class="pg-srch-tag">Bed Frame</a>
-            <a href="{{ url('/shop') }}?search=armchair"     class="pg-srch-tag">Armchair</a>
-            <a href="{{ url('/shop') }}?search=lamp"         class="pg-srch-tag">Lighting</a>
+            @foreach($navCategories->take(5) as $popularCat)
+            <a href="{{ url('/shop') }}?search={{ urlencode($popularCat->name) }}" class="pg-srch-tag">{{ $popularCat->name }}</a>
+            @endforeach
         </div>
     </div>
 </div>
@@ -962,11 +998,19 @@
     }
 
     /* ── Search Modal ── */
-    var srchModal = document.getElementById('pg-srch-modal');
-    var srchInput = document.getElementById('pg-srch-input');
+    var srchModal   = document.getElementById('pg-srch-modal');
+    var srchInput   = document.getElementById('pg-srch-input');
+    var srchResults = document.getElementById('pg-srch-results');
+    var srchTagsEl  = document.getElementById('pg-srch-tags');
+
+    function hideSuggestions() {
+        srchResults.classList.remove('pg-srch-results-open');
+        srchResults.innerHTML = '';
+        if (srchTagsEl) srchTagsEl.style.display = '';
+    }
 
     function openSearch()  { srchModal.classList.add('srch-open'); document.body.style.overflow = 'hidden'; setTimeout(function () { srchInput && srchInput.focus(); }, 200); }
-    function closeSearch() { srchModal.classList.remove('srch-open'); document.body.style.overflow = ''; }
+    function closeSearch() { srchModal.classList.remove('srch-open'); document.body.style.overflow = ''; hideSuggestions(); }
 
     ['pg-srch-open-btn','pg-mob-srch-btn'].forEach(function (id) {
         var el = document.getElementById(id);
@@ -975,6 +1019,82 @@
     var srchClose = document.getElementById('pg-srch-close-btn');
     if (srchClose) srchClose.addEventListener('click', closeSearch);
     srchModal.addEventListener('click', function (e) { if (e.target === srchModal) closeSearch(); });
+
+    /* ── Live Search Suggestions ── */
+    var srchDebounce, srchAbort, srchCursor = -1;
+    var suggestUrl = '{{ route("search.suggestions") }}';
+
+    function escHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function renderSpinner() {
+        srchResults.innerHTML = '<div class="pg-srch-spinner"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>';
+        srchResults.classList.add('pg-srch-results-open');
+        if (srchTagsEl) srchTagsEl.style.display = 'none';
+    }
+
+    function renderResults(items, q) {
+        if (!items.length) {
+            srchResults.innerHTML = '<p class="pg-srch-empty">No results for &ldquo;' + escHtml(q) + '&rdquo;</p>';
+            return;
+        }
+        var html = '';
+        items.forEach(function (p, i) {
+            var priceHtml = p.sale_price
+                ? '<s>$' + escHtml(p.price) + '</s>$' + escHtml(p.sale_price)
+                : '$' + escHtml(p.price);
+            html += '<a href="' + escHtml(p.url) + '" class="pg-srch-ri" role="option" data-idx="' + i + '">'
+                  + '<img class="pg-srch-ri-img" src="' + escHtml(p.image) + '" alt="" loading="lazy">'
+                  + '<span class="pg-srch-ri-body">'
+                  +   '<span class="pg-srch-ri-name">' + escHtml(p.name) + '</span>'
+                  +   (p.category ? '<span class="pg-srch-ri-cat">' + escHtml(p.category) + '</span>' : '')
+                  + '</span>'
+                  + '<span class="pg-srch-ri-price">' + priceHtml + '</span>'
+                  + '</a>';
+        });
+        html += '<a href="/shop?search=' + encodeURIComponent(q) + '" class="pg-srch-view-all">View all results &rarr;</a>';
+        srchResults.innerHTML = html;
+    }
+
+    function fetchSuggestions(q) {
+        if (srchAbort) { try { srchAbort.abort(); } catch(e){} }
+        srchAbort = new AbortController();
+        renderSpinner();
+        fetch(suggestUrl + '?q=' + encodeURIComponent(q), { signal: srchAbort.signal })
+            .then(function (r) { return r.ok ? r.json() : []; })
+            .then(function (data) { renderResults(data, q); })
+            .catch(function () {});
+    }
+
+    if (srchInput) {
+        srchInput.addEventListener('input', function () {
+            clearTimeout(srchDebounce);
+            srchCursor = -1;
+            var q = srchInput.value.trim();
+            if (q.length < 2) { hideSuggestions(); return; }
+            srchDebounce = setTimeout(function () { fetchSuggestions(q); }, 300);
+        });
+
+        srchInput.addEventListener('keydown', function (e) {
+            if (!srchResults.classList.contains('pg-srch-results-open')) return;
+            var items = srchResults.querySelectorAll('.pg-srch-ri');
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                srchCursor = Math.min(srchCursor + 1, items.length - 1);
+                items.forEach(function (el, i) { el.classList.toggle('pg-sri-active', i === srchCursor); });
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                srchCursor = Math.max(srchCursor - 1, -1);
+                items.forEach(function (el, i) { el.classList.toggle('pg-sri-active', i === srchCursor); });
+            } else if (e.key === 'Enter' && srchCursor >= 0 && items[srchCursor]) {
+                e.preventDefault();
+                window.location.href = items[srchCursor].href;
+            } else if (e.key === 'Escape') {
+                hideSuggestions();
+            }
+        });
+    }
 
     /* ── Mobile Nav Drawer ── */
     var mobDrw  = document.getElementById('pg-mob-drw');
@@ -1008,7 +1128,7 @@
     /* ── Escape key ── */
     document.addEventListener('keydown', function (e) {
         if (e.key !== 'Escape') return;
-        closeCart(); closeSearch(); closeMobNav(); closeMegas();
+        hideSuggestions(); closeCart(); closeSearch(); closeMobNav(); closeMegas();
     });
 
     /* ── Active nav link ── */

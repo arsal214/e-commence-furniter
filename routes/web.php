@@ -56,6 +56,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::resource('products',   Admin\ProductController::class)->names('admin.products');
     Route::resource('orders',     Admin\OrderController::class)->names('admin.orders')->only(['index', 'show', 'update']);
     Route::resource('sliders',    Admin\SliderController::class)->names('admin.sliders')->except(['show']);
+    Route::get('flash-deal',     [Admin\FlashDealController::class, 'index'])->name('admin.flash-deal.index');
+    Route::put('flash-deal',     [Admin\FlashDealController::class, 'update'])->name('admin.flash-deal.update');
 });
 
 // ──────────────────────────────────────────────
@@ -93,6 +95,7 @@ Route::get('/refund-policy',   [HomeController::class, 'refundPolicy'])->name('r
 Route::get('/shipping-policy', [HomeController::class, 'shippingPolicy'])->name('shipping-policy');
 Route::get('/privacy-policy',  [HomeController::class, 'privacyPolicy'])->name('privacy-policy');
 
+Route::get('/search/suggestions',      [ProductController::class, 'suggestions'])->name('search.suggestions');
 Route::get('/product-details',         [HomeController::class, 'productDetails']);
 Route::get('/product-details/{slug}',  [ProductController::class, 'show'])->name('product-details');
 

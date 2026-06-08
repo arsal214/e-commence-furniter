@@ -286,7 +286,7 @@
             <div class="owl-carousel hv1-pdct-ctgry-slider"
                  data-carousel-items="4"
                  data-carousel-xl="4"
-                 data-carousel-lg="3"
+                 data-carousel-lg="4"
                  data-carousel-md="3"
                  data-carousel-sm="2"
                  data-carousel-xs="1"
@@ -438,6 +438,167 @@
 <!-- Blog End -->
 
 
+<!-- Flash Deal Start -->
+@if($flashDeal->is_active)
+<section id="fd-section" style="background:{{ $flashDeal->bg_color }};" class="relative overflow-hidden">
+
+    {{-- Gold gradient top border --}}
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#bb976d 30%,#e4c28a 50%,#bb976d 70%,transparent);"></div>
+
+    {{-- Ambient glows --}}
+    <div style="position:absolute;top:-120px;left:-80px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(187,151,109,.08) 0%,transparent 70%);pointer-events:none;"></div>
+    <div style="position:absolute;bottom:-100px;right:-60px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(187,151,109,.06) 0%,transparent 70%);pointer-events:none;"></div>
+
+    {{-- Fine grid texture --}}
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;"></div>
+
+    <div style="max-width:1440px;margin:0 auto;padding:0 40px;position:relative;z-index:10;">
+        <div style="padding:56px 0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:40px;">
+
+            {{-- LEFT: text --}}
+            <div>
+                {{-- Badge --}}
+                <div style="display:inline-flex;align-items:center;gap:7px;
+                            border:1px solid rgba(187,151,109,.45);
+                            padding:5px 14px 5px 10px;margin-bottom:20px;">
+                    <span style="width:6px;height:6px;border-radius:50%;background:#bb976d;display:inline-block;
+                                 box-shadow:0 0 0 3px rgba(187,151,109,.25);animation:fd-pulse 2s infinite;"></span>
+                    <span style="font-family:'Poppins',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.18em;
+                                 text-transform:uppercase;color:#bb976d;">{{ $flashDeal->badge_text }}</span>
+                </div>
+
+                {{-- Discount --}}
+                <div style="font-family:'Poppins',sans-serif;font-size:clamp(2.6rem,4.5vw,4.2rem);font-weight:800;
+                            line-height:1;letter-spacing:-.02em;color:#fff;margin-bottom:10px;">
+                    {{ $flashDeal->discount_label }}
+                </div>
+
+                {{-- Title --}}
+                <div style="font-family:'Poppins',sans-serif;font-size:clamp(1rem,1.6vw,1.25rem);font-weight:500;
+                            color:rgba(255,255,255,.75);letter-spacing:.01em;margin-bottom:8px;">
+                    {{ $flashDeal->title }}
+                </div>
+
+                @if($flashDeal->subtitle)
+                <p style="font-family:'Poppins',sans-serif;font-size:13px;color:rgba(255,255,255,.4);
+                          line-height:1.6;max-width:380px;margin:0;">{{ $flashDeal->subtitle }}</p>
+                @endif
+
+                {{-- Gold rule --}}
+                <div style="width:52px;height:1.5px;background:linear-gradient(90deg,#bb976d,transparent);margin-top:20px;"></div>
+            </div>
+
+            {{-- CENTER: countdown --}}
+            @if($flashDeal->ends_at && $flashDeal->ends_at->isFuture())
+            @php $labels = ['D'=>'Days','H'=>'Hrs','M'=>'Min','S'=>'Sec']; @endphp
+            <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+                <span style="font-family:'Poppins',sans-serif;font-size:9px;font-weight:700;letter-spacing:.2em;
+                             text-transform:uppercase;color:rgba(255,255,255,.35);">Offer Ends In</span>
+
+                <div id="fd-countdown" data-ends="{{ $flashDeal->ends_at->timestamp }}"
+                     style="display:flex;align-items:flex-start;gap:6px;">
+                    @foreach(['D','H','M','S'] as $unit)
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                        <div class="fd-unit" data-unit="{{ strtolower($unit) }}"
+                             style="min-width:70px;height:72px;
+                                    display:flex;align-items:center;justify-content:center;
+                                    background:rgba(255,255,255,.06);
+                                    border:1px solid rgba(187,151,109,.2);
+                                    font-family:'Poppins',sans-serif;
+                                    font-size:2rem;font-weight:800;color:#fff;
+                                    letter-spacing:-.02em;position:relative;overflow:hidden;">
+                            <span style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.04) 0%,transparent 60%);pointer-events:none;"></span>
+                            00
+                        </div>
+                        <span style="font-family:'Poppins',sans-serif;font-size:8.5px;font-weight:600;
+                                     letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);">
+                            {{ $labels[$unit] }}
+                        </span>
+                    </div>
+                    @if($unit !== 'S')
+                    <span style="font-family:'Poppins',sans-serif;font-size:1.8rem;font-weight:300;
+                                 color:rgba(187,151,109,.5);margin-top:16px;line-height:1;">:</span>
+                    @endif
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            {{-- RIGHT: CTA --}}
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:16px;">
+
+                <a href="{{ $flashDeal->cta_url }}"
+                   id="fd-cta"
+                   style="display:inline-flex;align-items:center;gap:12px;
+                          background:linear-gradient(135deg,#bb976d 0%,#d4aa80 50%,#bb976d 100%);
+                          background-size:200% auto;
+                          color:#fff;padding:16px 36px;
+                          font-family:'Poppins',sans-serif;
+                          font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+                          text-decoration:none;
+                          box-shadow:0 8px 32px rgba(187,151,109,.3);
+                          transition:background-position .4s ease,box-shadow .3s,transform .2s;">
+                    {{ $flashDeal->cta_text }}
+                    <svg width="14" height="10" viewBox="0 0 16 10" fill="none">
+                        <path d="M1 5H15M15 5L11 1M15 5L11 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.6" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <span style="font-family:'Poppins',sans-serif;font-size:10.5px;color:rgba(255,255,255,.3);letter-spacing:.04em;">Secure checkout · Free returns</span>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    {{-- Gold bottom border --}}
+    <div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(187,151,109,.3) 50%,transparent);"></div>
+</section>
+
+<style>
+@keyframes fd-pulse {
+    0%,100% { box-shadow: 0 0 0 3px rgba(187,151,109,.25); }
+    50%      { box-shadow: 0 0 0 6px rgba(187,151,109,.08); }
+}
+#fd-cta:hover {
+    background-position: right center !important;
+    box-shadow: 0 12px 40px rgba(187,151,109,.45) !important;
+    transform: translateY(-2px);
+}
+@media (max-width: 900px) {
+    #fd-section > div > div {
+        grid-template-columns: 1fr !important;
+        text-align: center;
+        padding: 40px 0 !important;
+    }
+    #fd-section > div > div > div:first-child { align-items: center; display: flex; flex-direction: column; }
+    #fd-section > div > div > div:last-child { align-items: center !important; }
+}
+</style>
+
+<script>
+(function () {
+    var el = document.getElementById('fd-countdown');
+    if (!el) return;
+    var ends = parseInt(el.getAttribute('data-ends'), 10) * 1000;
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+    function tick() {
+        var diff = Math.max(0, ends - Date.now());
+        el.querySelector('[data-unit="d"]').firstChild.textContent = pad(Math.floor(diff / 86400000));
+        el.querySelector('[data-unit="h"]').firstChild.textContent = pad(Math.floor((diff % 86400000) / 3600000));
+        el.querySelector('[data-unit="m"]').firstChild.textContent = pad(Math.floor((diff % 3600000) / 60000));
+        el.querySelector('[data-unit="s"]').firstChild.textContent = pad(Math.floor((diff % 60000) / 1000));
+        if (diff > 0) setTimeout(tick, 1000);
+    }
+    tick();
+}());
+</script>
+@endif
+<!-- Flash Deal End -->
+
 <!-- Customer Reviews Start -->
 <div class="s-py-50-100 bg-[#F8F6F3] dark:bg-title">
     <div class="container-fluid">
@@ -569,9 +730,6 @@
                    class="flex items-center justify-between py-3 border-b border-[#F0EDE8] dark:border-white/5 group">
                     <span class="text-sm font-medium text-paragraph dark:text-white-light group-hover:text-primary transition-colors duration-200">
                         {{ $verbs[$idx % 12] }} {{ $category->name }} Online
-                        @if($category->products_count > 0)
-                            <span class="text-xs text-gray-400 font-normal ml-1">({{ $category->products_count }})</span>
-                        @endif
                     </span>
                     <svg class="w-3.5 h-3.5 text-gray-300 group-hover:text-primary flex-none transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
