@@ -28,7 +28,7 @@
         <!-- Primary Meta Tags -->
         <meta name="description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
 <meta name="author" content="PeytonGhalib">
-        <meta name="robots" content="index, follow">
+        <meta name="robots" content="@yield('robots', 'index, follow')">
         <link rel="canonical" href="{{ url()->current() }}">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <!-- Open Graph / Facebook -->
@@ -68,6 +68,32 @@
         <!-- Ahrefs Analytics -->
         <script src="https://analytics.ahrefs.com/analytics.js" data-key="QlGio/G4Sr1krD5aawauYg" async></script>
         @stack('styles')
+        {{-- Organization schema: present on every page --}}
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "PeytonGhalib",
+            "url": "{{ url('/') }}",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "{{ asset('assets/img/favicon.png') }}"
+            },
+            "description": "PeytonGhalib offers quality furniture, home decor, ceramics, and everyday essentials with fast delivery.",
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "contactType": "customer service",
+                "url": "{{ url('/contact') }}"
+            },
+            "sameAs": [
+                "https://www.facebook.com/peytonghalib",
+                "https://www.instagram.com/peytonghalib",
+                "https://twitter.com/peytonghalib"
+            ]
+        }
+        </script>
+        {{-- Page-specific schemas pushed from each template --}}
+        @stack('schema')
     </head>
     <body class="dark:bg-title">
         <!-- Flash Messages -->

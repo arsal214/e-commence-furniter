@@ -1,6 +1,27 @@
 @extends('layouts.main')
 @section('title', 'PeytonGhalib - Quality Furniture & Home Decor')
 @section('meta_description', 'Shop quality furniture, home decor, ceramics and more at PeytonGhalib. Thousands of products at unbeatable prices with fast, reliable delivery nationwide.')
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "PeytonGhalib",
+    "url": "{{ url('/') }}",
+    "description": "Shop quality furniture, home decor, ceramics and more at PeytonGhalib. Thousands of products at unbeatable prices with fast, reliable delivery nationwide.",
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "{{ url('/shop') }}?search={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+    }
+}
+</script>
+@endpush
+
 @section('content')
 @include('includes.navbar')
 
@@ -148,12 +169,13 @@
 .pgh-proof { animation: pgh-up .65s .42s ease both; }
 .pgh-avatar-stack { display: flex; }
 .pgh-avatar {
-    width: 34px; height: 34px; border-radius: 50%;
+    width: 36px; height: 36px; border-radius: 50%;
     border: 2.5px solid #fff; margin-left: -10px;
     background: linear-gradient(135deg, #d4a96a, #bb976d);
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700; color: #fff;
+    font-size: 9px; font-weight: 700; color: #fff;
     flex-shrink: 0;
+    overflow: hidden;
 }
 .pgh-avatar:first-child { margin-left: 0; }
 .pgh-stars { color: #f59e0b; font-size: 13px; letter-spacing: .5px; }
@@ -394,14 +416,24 @@
                     {{-- Social proof --}}
                     <div class="pgh-proof mt-8 flex items-center gap-4">
                         <div class="pgh-avatar-stack">
-                            <div class="pgh-avatar">A</div>
-                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#c4a070,#8b6510);">B</div>
-                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#d4b888,#bb976d);">C</div>
-                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#a07840,#6b4f20);font-size:9px;">+9K</div>
+                            {{-- Avatar 1 --}}
+                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#d4a96a,#bb976d);">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                            </div>
+                            {{-- Avatar 2 --}}
+                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#c4a070,#8b6510);">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                            </div>
+                            {{-- Avatar 3 --}}
+                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#e8c48a,#c4903c);">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                            </div>
+                            {{-- +count --}}
+                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#a07840,#6b4f20);font-size:9px;font-weight:700;">+9K</div>
                         </div>
                         <div>
                             <div class="pgh-stars">★★★★★</div>
-                            <div style="font-size:12px;color:#a09080;margin-top:2px;">4.9 from 2,400+ verified reviews</div>
+                            <div style="font-size:12px;color:#a09080;margin-top:2px;">4.9 from 2k+ reviews</div>
                         </div>
                     </div>
 
@@ -457,7 +489,7 @@
                             <div class="pgh-fi" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                             </div>
-                            <div><div class="pgh-fv">4.9 / 5.0</div><div class="pgh-fs">2,400+ Reviews</div></div>
+                            <div><div class="pgh-fv">4.9 / 5.0</div><div class="pgh-fs">2k+ Reviews</div></div>
                         </div>
                     </div>
 
@@ -467,7 +499,7 @@
                             <div class="pgh-fi" style="background:linear-gradient(135deg,#bb976d,#8b6510);">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
                             </div>
-                            <div><div class="pgh-fv">Free Delivery</div><div class="pgh-fs">On orders over $99</div></div>
+                            <div><div class="pgh-fv">Free Delivery</div><div class="pgh-fs">On all orders</div></div>
                         </div>
                     </div>
 
@@ -546,7 +578,7 @@
                     </div>
                     <div>
                         <div class="ts-label">Free Shipping</div>
-                        <div class="ts-sub">Orders over $99</div>
+                        <div class="ts-sub">On all orders</div>
                     </div>
                 </div>
 

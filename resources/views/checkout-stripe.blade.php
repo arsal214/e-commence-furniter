@@ -1,7 +1,8 @@
 <!-- resources/views/checkout-stripe.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'Complete Payment')
+@section('title', 'Complete Payment | PeytonGhalib')
+@section('robots', 'noindex, nofollow')
 
 @section('content')
 

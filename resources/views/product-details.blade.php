@@ -8,6 +8,63 @@
         : asset('assets/img/logo.svg');
 @endphp
 @section('og_image', $ogImg)
+@push('schema')
+@php
+    $schemaImg = !empty($item->image)
+        ? (str_starts_with($item->image, 'assets/') ? asset($item->image) : \Storage::url($item->image))
+        : asset('assets/img/logo.svg');
+    $schemaDesc = addslashes(strip_tags($item->description ?? ''));
+    $schemaInStock = ($item->stock ?? 0) > 0;
+    $schemaReviewCount = $item->reviewCount();
+    $schemaAvgRating = $item->avgRating();
+@endphp
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": "{{ addslashes($item->name) }}",
+    "image": ["{{ $schemaImg }}"],
+    "description": "{{ $schemaDesc }}",
+    "sku": "{{ $item->sku ?? '' }}",
+    "brand": {
+        "@type": "Brand",
+        "name": "PeytonGhalib"
+    },
+    "offers": {
+        "@type": "Offer",
+        "url": "{{ url()->current() }}",
+        "priceCurrency": "USD",
+        "price": "{{ number_format($item->sale_price ?? $item->price, 2, '.', '') }}",
+        "priceValidUntil": "{{ now()->addYear()->toDateString() }}",
+        "availability": "{{ $schemaInStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}",
+        "seller": {
+            "@type": "Organization",
+            "name": "PeytonGhalib",
+            "url": "{{ url('/') }}"
+        }
+    }@if($schemaReviewCount > 0),
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ $schemaAvgRating }}",
+        "reviewCount": "{{ $schemaReviewCount }}"
+    }@endif
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ url('/') }}" },
+        { "@type": "ListItem", "position": 2, "name": "Shop", "item": "{{ url('/shop') }}" }@if($item->category),
+        { "@type": "ListItem", "position": 3, "name": "{{ addslashes($item->category->name) }}", "item": "{{ url('/shop') }}?category={{ $item->category->slug }}" },
+        { "@type": "ListItem", "position": 4, "name": "{{ addslashes($item->name) }}", "item": "{{ url()->current() }}" }@else,
+        { "@type": "ListItem", "position": 3, "name": "{{ addslashes($item->name) }}", "item": "{{ url()->current() }}" }@endif
+    ]
+}
+</script>
+@endpush
+
 @push('styles')
 <style>
 /* Rich content (TinyMCE output) styles */

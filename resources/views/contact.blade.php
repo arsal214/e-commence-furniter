@@ -4,6 +4,25 @@
 @section('title', 'Contact Us | PeytonGhalib')
 @section('meta_description', 'Get in touch with PeytonGhalib. We\'re here to help with any questions about our products, orders, or services. Contact us today.')
 
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact PeytonGhalib",
+    "url": "{{ url('/contact') }}",
+    "description": "Get in touch with PeytonGhalib customer support for questions about orders, products, and shipping.",
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ url('/') }}" },
+            { "@type": "ListItem", "position": 2, "name": "Contact", "item": "{{ url('/contact') }}" }
+        ]
+    }
+}
+</script>
+@endpush
+
 @section('content')
 
 @include('includes.navbar')

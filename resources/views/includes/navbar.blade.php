@@ -567,15 +567,6 @@
                     </a>
                 </li>
 
-                <li class="pg-has-mega" data-mega="pg-mega-cols">
-                    <a href="{{ url('/categories') }}">
-                        Collections
-                        <svg class="pg-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none">
-                            <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </a>
-                </li>
-
                 <li><a href="{{ url('/about') }}">About Us</a></li>
                 <li><a href="{{ url('/contact') }}">Contact</a></li>
                 <li style="margin-left:8px;">
@@ -694,44 +685,6 @@
     </div>
 </div>
 
-<!-- ════════ MEGA: Collections ════════ -->
-<div id="pg-mega-cols" class="pg-mega" role="region" aria-label="Collections">
-    <div class="pg-mega-wrap" style="grid-template-columns: 1fr 1fr 220px;">
-        <div>
-            <p class="pg-mega-col-label">Shop by Room</p>
-            <div class="pg-mega-links">
-                <a href="{{ url('/shop') }}?room=living-room"  class="pg-mega-link"><span class="pg-mega-dot"></span>Living Room</a>
-                <a href="{{ url('/shop') }}?room=bedroom"      class="pg-mega-link"><span class="pg-mega-dot"></span>Bedroom</a>
-                <a href="{{ url('/shop') }}?room=dining"       class="pg-mega-link"><span class="pg-mega-dot"></span>Dining Room</a>
-                <a href="{{ url('/shop') }}?room=office"       class="pg-mega-link"><span class="pg-mega-dot"></span>Home Office</a>
-                <a href="{{ url('/shop') }}?room=outdoor"      class="pg-mega-link"><span class="pg-mega-dot"></span>Outdoor</a>
-                <a href="{{ url('/shop') }}?room=bathroom"     class="pg-mega-link"><span class="pg-mega-dot"></span>Bathroom</a>
-            </div>
-        </div>
-        <div>
-            <p class="pg-mega-col-label">Curated Collections</p>
-            <div class="pg-mega-links">
-                <a href="{{ url('/shop') }}?collection=modern"        class="pg-mega-link"><span class="pg-mega-dot"></span>Modern Luxury</a>
-                <a href="{{ url('/shop') }}?collection=scandinavian"  class="pg-mega-link"><span class="pg-mega-dot"></span>Scandinavian</a>
-                <a href="{{ url('/shop') }}?collection=industrial"    class="pg-mega-link"><span class="pg-mega-dot"></span>Industrial</a>
-                <a href="{{ url('/shop') }}?collection=bohemian"      class="pg-mega-link"><span class="pg-mega-dot"></span>Bohemian</a>
-                <a href="{{ url('/shop') }}?collection=minimalist"    class="pg-mega-link"><span class="pg-mega-dot"></span>Minimalist</a>
-                <a href="{{ url('/shop') }}?collection=classic"       class="pg-mega-link"><span class="pg-mega-dot"></span>Classic</a>
-            </div>
-        </div>
-        <div class="pg-mega-feat">
-            <p class="pg-mega-col-label">Spotlight</p>
-            <img src="{{ asset('assets/img/home-v1/pdct-cgry-02.jpg') }}" alt="Modern Luxury" class="pg-mega-feat-img">
-            <p class="pg-mega-feat-title">Modern Luxury</p>
-            <p class="pg-mega-feat-desc">Timeless pieces that define contemporary elegance.</p>
-            <a href="{{ url('/shop') }}?collection=modern" class="pg-mega-feat-cta">
-                Explore
-                <svg width="12" height="8" viewBox="0 0 16 10" fill="none"><path d="M1 5H15M15 5L11 1M15 5L11 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-        </div>
-    </div>
-</div>
-
 <!-- ════════ MOBILE HEADER ════════ -->
 <div id="pg-mob-hdr" role="banner">
     <button id="pg-mob-menu-btn" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;cursor:pointer;color:#172430;flex-shrink:0;" aria-label="Open menu" class="dark:text-white">
@@ -774,19 +727,6 @@
             <a href="{{ route('category.landing', $nCat->slug) }}">{{ $nCat->name }}</a>
             @endforeach
             <a href="{{ url('/shop') }}" style="font-weight:700;color:#bb976d;">View All Products →</a>
-        </div>
-
-        <button class="pg-mob-acc-btn" data-target="pg-mob-sub-cols">
-            Collections
-            <svg class="pg-mob-acc-icon" width="11" height="7" viewBox="0 0 11 7" fill="none" stroke="#172430" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1L5.5 6L10 1"/></svg>
-        </button>
-        <div id="pg-mob-sub-cols" class="pg-mob-sub">
-            <a href="{{ url('/shop') }}?room=living-room">Living Room</a>
-            <a href="{{ url('/shop') }}?room=bedroom">Bedroom</a>
-            <a href="{{ url('/shop') }}?room=dining">Dining Room</a>
-            <a href="{{ url('/shop') }}?collection=modern">Modern Luxury</a>
-            <a href="{{ url('/shop') }}?collection=scandinavian">Scandinavian</a>
-            <a href="{{ url('/categories') }}" style="font-weight:700;color:#bb976d;">View All Collections →</a>
         </div>
 
         <a href="{{ url('/about') }}"   class="pg-mob-nav-link">About Us</a>

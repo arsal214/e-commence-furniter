@@ -1,7 +1,8 @@
 <!-- resources/views/cart.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'Cart Page')
+@section('title', 'Cart | PeytonGhalib')
+@section('robots', 'noindex, nofollow')
 
 @section('content')
 

@@ -1,7 +1,8 @@
 <!-- resources/views/checkout.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'Checkout Page')
+@section('title', 'Checkout | PeytonGhalib')
+@section('robots', 'noindex, nofollow')
 
 @section('content')
 

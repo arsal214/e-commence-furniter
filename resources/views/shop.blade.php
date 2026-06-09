@@ -4,6 +4,195 @@
 @section('title', 'Shop | PeytonGhalib')
 @section('meta_description', 'Browse our full collection of furniture, home decor, ceramics and lifestyle products. Filter by category and find exactly what you need at PeytonGhalib.')
 
+@push('schema')
+@php
+    $shopCategoryObj = $activeCategory
+        ? $categories->firstWhere('slug', $activeCategory)
+        : null;
+    $shopPageName = $shopCategoryObj
+        ? $shopCategoryObj->name . ' - PeytonGhalib'
+        : 'Shop All Products - PeytonGhalib';
+    $shopPageDesc = $shopCategoryObj
+        ? 'Browse our ' . $shopCategoryObj->name . ' collection at PeytonGhalib.'
+        : 'Browse all furniture, home decor, and lifestyle products at PeytonGhalib.';
+@endphp
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "{{ addslashes($shopPageName) }}",
+    "description": "{{ addslashes($shopPageDesc) }}",
+    "url": "{{ url()->current() }}",
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ url('/') }}" },
+            { "@type": "ListItem", "position": 2, "name": "Shop", "item": "{{ url('/shop') }}" }@if($shopCategoryObj),
+            { "@type": "ListItem", "position": 3, "name": "{{ addslashes($shopCategoryObj->name) }}", "item": "{{ url()->current() }}" }@endif
+        ]
+    }
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "{{ addslashes($shopPageName) }}",
+    "itemListElement": [
+        @foreach($products as $index => $p)
+        @php
+            $pImg = !empty($p->image)
+                ? (str_starts_with($p->image, 'assets/') ? asset($p->image) : \Storage::url($p->image))
+                : asset('assets/img/logo.svg');
+        @endphp
+        {
+            "@type": "ListItem",
+            "position": {{ $products->firstItem() + $index }},
+            "name": "{{ addslashes($p->name) }}",
+            "url": "{{ route('product-details', $p->slug) }}",
+            "image": "{{ $pImg }}"
+        }{{ !$loop->last ? ',' : '' }}
+        @endforeach
+    ]
+}
+</script>
+@endpush
+
+@push('styles')
+<style>
+/* ── Category Filter Bar ─────────────────────────────────────── */
+.pgf-bar {
+    padding: 36px 0 0;
+}
+.pgf-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.pgf-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #bb976d;
+}
+.pgf-divider {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, #e8ddd1 0%, transparent 100%);
+}
+.pgf-title {
+    font-size: 22px;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin: 0;
+    line-height: 1;
+}
+.pgf-count {
+    font-size: 12px;
+    color: #9a9a9a;
+    margin-left: 4px;
+    font-weight: 400;
+}
+
+/* Scroll strip */
+.pgf-scroll-wrap {
+    position: relative;
+}
+.pgf-scroll-wrap::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    background: linear-gradient(90deg, transparent, #fff);
+    pointer-events: none;
+    z-index: 2;
+}
+.pgf-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 4px;
+}
+@media(max-width: 767px) {
+    .pgf-pills {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding-right: 60px;
+    }
+    .pgf-pills::-webkit-scrollbar { display: none; }
+}
+
+/* Pill base */
+.pgf-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1.5px solid #e5ddd4;
+    background: #fff;
+    color: #4a4a4a;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+.pgf-pill::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #bb976d, #d4a96a);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    border-radius: inherit;
+}
+.pgf-pill span { position: relative; z-index: 1; }
+.pgf-pill svg { position: relative; z-index: 1; flex-shrink: 0; }
+
+.pgf-pill:hover {
+    border-color: #bb976d;
+    color: #bb976d;
+    box-shadow: 0 2px 12px rgba(187,151,109,.18);
+    transform: translateY(-1px);
+}
+.pgf-pill.pgf-active {
+    border-color: transparent;
+    color: #fff;
+    background: linear-gradient(135deg, #bb976d, #c9a87c);
+    box-shadow: 0 4px 16px rgba(187,151,109,.35);
+}
+.pgf-pill.pgf-active::before { opacity: 0; }
+.pgf-pill.pgf-active:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(187,151,109,.4); }
+
+/* All pill special */
+.pgf-pill-all {
+    padding-left: 14px;
+    padding-right: 18px;
+    font-weight: 600;
+}
+.pgf-pill-all svg { margin-right: 1px; }
+
+/* Bottom border */
+.pgf-bottom {
+    margin-top: 28px;
+    height: 1px;
+    background: linear-gradient(90deg, #e8ddd1, transparent 80%);
+}
+</style>
+@endpush
+
 @section('content')
 
 @include('includes.navbar')
@@ -24,20 +213,44 @@
 <!-- Shop Start -->
 <div class="s-py-100">
     <div class="container-fluid">
-        <!-- Shop Header -->
-        <div class="flex items-start justify-between gap-8 max-w-[1720px] mx-auto flex-col lg:flex-row border-b border-bdr-clr dark:border-bdr-clr-drk pb-8 md:pb-[50px]" >
-            <div>
-                <h4 class="font-medium leading-none text-xl sm:text-2xl mb-5 sm:mb-6">Choose Category</h4>
-                <div class="flex flex-wrap gap-[10px] md:gap-[15px]">
-                    <a class="btn btn-sm shop1-button {{ !$activeCategory ? 'btn-theme-solid' : 'btn-theme-outline' }}" href="{{ url('/shop') }}" data-text="All"><span>All</span></a>
+        <!-- Category Filter Bar -->
+        <div class="pgf-bar max-w-[1720px] mx-auto">
+
+            <div class="pgf-header">
+                <span class="pgf-label">Collections</span>
+                <div class="pgf-divider"></div>
+                <h4 class="pgf-title">
+                    Choose Category
+                    <span class="pgf-count">{{ $categories->count() + 1 }} options</span>
+                </h4>
+            </div>
+
+            <div class="pgf-scroll-wrap">
+                <div class="pgf-pills">
+
+                    {{-- All --}}
+                    <a class="pgf-pill pgf-pill-all {{ !$activeCategory ? 'pgf-active' : '' }}"
+                       href="{{ url('/shop') }}">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="opacity:.85">
+                            <path d="M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 3h2v-2h2v2h2v2h-2v2h-2v-2h-2v-2z"/>
+                        </svg>
+                        <span>All</span>
+                    </a>
+
                     @foreach ($categories as $cat)
-                    <a class="btn btn-sm shop1-button {{ $activeCategory === $cat->slug ? 'btn-theme-solid' : 'btn-theme-outline' }}" href="{{ url('/shop') }}?category={{ $cat->slug }}" data-text="{{ $cat->name }}"><span>{{ $cat->name }}</span></a>
+                    <a class="pgf-pill {{ $activeCategory === $cat->slug ? 'pgf-active' : '' }}"
+                       href="{{ url('/shop') }}?category={{ $cat->slug }}">
+                        <span>{{ $cat->name }}</span>
+                    </a>
                     @endforeach
+
                 </div>
             </div>
+
+            <div class="pgf-bottom"></div>
         </div>
 
-        <div class="max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-8 pt-8 md:pt-[50px]" data-aos="fade-up" data-aos-delay="200">
+        <div class="max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-8 pt-10 md:pt-14" data-aos="fade-up" data-aos-delay="200">
 
             <!-- includes/Shop/shops-v1.blade.php -->
             @include('includes.Shop.shops-v1')

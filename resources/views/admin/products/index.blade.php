@@ -4,8 +4,12 @@
 @section('page-title', 'Products')
 
 @section('content')
-<div class="flex items-center justify-between mb-5">
-    <p class="text-sm text-gray-500">{{ $products->total() }} products total</p>
+{{-- Top bar --}}
+<div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+    <p class="text-sm text-gray-500">
+        {{ $products->total() }} product{{ $products->total() !== 1 ? 's' : '' }}
+        @if($search) &nbsp;matching <span class="font-medium text-gray-700">"{{ $search }}"</span> @endif
+    </p>
     <div class="flex items-center gap-2">
         <a href="{{ route('admin.products.export') }}"
            class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
@@ -21,6 +25,38 @@
         </a>
     </div>
 </div>
+
+{{-- Search bar --}}
+<form method="GET" action="{{ route('admin.products.index') }}" class="mb-4">
+    <div class="flex items-center gap-2">
+        <div class="relative flex-1 max-w-md">
+            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 pointer-events-none">
+                <i class="mdi mdi-magnify text-lg"></i>
+            </span>
+            <input
+                type="text"
+                name="search"
+                value="{{ $search }}"
+                placeholder="Search by name, SKU or category…"
+                class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg bg-white
+                       focus:outline-none focus:ring-2 focus:ring-[#bb976d]/40 focus:border-[#bb976d]
+                       placeholder-gray-400 transition-all"
+                autofocus="{{ $search ? 'autofocus' : false }}"
+            >
+            @if($search)
+            <a href="{{ route('admin.products.index') }}"
+               class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600">
+                <i class="mdi mdi-close-circle text-base"></i>
+            </a>
+            @endif
+        </div>
+        <button type="submit"
+                class="px-4 py-2.5 bg-[#bb976d] text-white text-sm font-medium rounded-lg
+                       hover:bg-[#a8845a] transition-colors">
+            Search
+        </button>
+    </div>
+</form>
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <table class="w-full text-sm">
@@ -107,7 +143,12 @@
             @empty
             <tr>
                 <td colspan="8" class="px-5 py-10 text-center text-gray-400">
-                    No products found. <a href="{{ route('admin.products.create') }}" class="text-[#bb976d] hover:underline">Add one?</a>
+                    @if($search)
+                        No products match <span class="font-medium text-gray-600">"{{ $search }}"</span>.
+                        <a href="{{ route('admin.products.index') }}" class="text-[#bb976d] hover:underline ml-1">Clear search</a>
+                    @else
+                        No products found. <a href="{{ route('admin.products.create') }}" class="text-[#bb976d] hover:underline">Add one?</a>
+                    @endif
                 </td>
             </tr>
             @endforelse
