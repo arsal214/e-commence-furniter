@@ -3,23 +3,21 @@
 @section('meta_description', 'Shop quality furniture, home decor, ceramics and more at PeytonGhalib. Thousands of products at unbeatable prices with fast, reliable delivery nationwide.')
 
 @push('schema')
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "PeytonGhalib",
-    "url": "{{ url('/') }}",
-    "description": "Shop quality furniture, home decor, ceramics and more at PeytonGhalib. Thousands of products at unbeatable prices with fast, reliable delivery nationwide.",
-    "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "{{ url('/shop') }}?search={search_term_string}"
-        },
-        "query-input": "required name=search_term_string"
-    }
-}
-</script>
+@php
+$schemaWebsite = [
+    '@context'        => 'https://schema.org',
+    '@type'           => 'WebSite',
+    'name'            => 'PeytonGhalib',
+    'url'             => url('/'),
+    'description'     => 'Shop quality furniture, home decor, ceramics and more at PeytonGhalib. Thousands of products at unbeatable prices with fast, reliable delivery nationwide.',
+    'potentialAction' => [
+        '@type'       => 'SearchAction',
+        'target'      => ['@type' => 'EntryPoint', 'urlTemplate' => url('/shop') . '?search={search_term_string}'],
+        'query-input' => 'required name=search_term_string',
+    ],
+];
+@endphp
+<script type="application/ld+json">{!! json_encode($schemaWebsite, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
 @endpush
 
 @section('content')

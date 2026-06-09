@@ -13,56 +13,50 @@
     $schemaImg = !empty($item->image)
         ? (str_starts_with($item->image, 'assets/') ? asset($item->image) : \Storage::url($item->image))
         : asset('assets/img/logo.svg');
-    $schemaDesc = addslashes(strip_tags($item->description ?? ''));
-    $schemaInStock = ($item->stock ?? 0) > 0;
+    $schemaInStock     = ($item->stock ?? 0) > 0;
     $schemaReviewCount = $item->reviewCount();
-    $schemaAvgRating = $item->avgRating();
+    $schemaAvgRating   = $item->avgRating();
+
+    $schemaProduct = [
+        '@context'   => 'https://schema.org/',
+        '@type'      => 'Product',
+        'name'       => $item->name,
+        'image'      => [$schemaImg],
+        'description'=> strip_tags($item->description ?? ''),
+        'sku'        => $item->sku ?? '',
+        'brand'      => ['@type' => 'Brand', 'name' => 'PeytonGhalib'],
+        'offers'     => [
+            '@type'          => 'Offer',
+            'url'            => url()->current(),
+            'priceCurrency'  => 'USD',
+            'price'          => number_format((float)($item->sale_price ?? $item->price), 2, '.', ''),
+            'priceValidUntil'=> now()->addYear()->toDateString(),
+            'availability'   => $schemaInStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            'seller'         => ['@type' => 'Organization', 'name' => 'PeytonGhalib', 'url' => url('/')],
+        ],
+    ];
+    if ($schemaReviewCount > 0) {
+        $schemaProduct['aggregateRating'] = [
+            '@type'       => 'AggregateRating',
+            'ratingValue' => (string) $schemaAvgRating,
+            'reviewCount' => (string) $schemaReviewCount,
+        ];
+    }
+
+    $breadcrumbItems = [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => url('/')],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Shop', 'item' => url('/shop')],
+    ];
+    if ($item->category) {
+        $breadcrumbItems[] = ['@type'=>'ListItem','position'=>3,'name'=>$item->category->name,'item'=>url('/shop').'?category='.$item->category->slug];
+        $breadcrumbItems[] = ['@type'=>'ListItem','position'=>4,'name'=>$item->name,'item'=>url()->current()];
+    } else {
+        $breadcrumbItems[] = ['@type'=>'ListItem','position'=>3,'name'=>$item->name,'item'=>url()->current()];
+    }
+    $schemaBreadcrumb = ['@context'=>'https://schema.org','@type'=>'BreadcrumbList','itemListElement'=>$breadcrumbItems];
 @endphp
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org/",
-    "@type": "Product",
-    "name": "{{ addslashes($item->name) }}",
-    "image": ["{{ $schemaImg }}"],
-    "description": "{{ $schemaDesc }}",
-    "sku": "{{ $item->sku ?? '' }}",
-    "brand": {
-        "@type": "Brand",
-        "name": "PeytonGhalib"
-    },
-    "offers": {
-        "@type": "Offer",
-        "url": "{{ url()->current() }}",
-        "priceCurrency": "USD",
-        "price": "{{ number_format($item->sale_price ?? $item->price, 2, '.', '') }}",
-        "priceValidUntil": "{{ now()->addYear()->toDateString() }}",
-        "availability": "{{ $schemaInStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}",
-        "seller": {
-            "@type": "Organization",
-            "name": "PeytonGhalib",
-            "url": "{{ url('/') }}"
-        }
-    }@if($schemaReviewCount > 0),
-    "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "{{ $schemaAvgRating }}",
-        "reviewCount": "{{ $schemaReviewCount }}"
-    }@endif
-}
-</script>
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ url('/') }}" },
-        { "@type": "ListItem", "position": 2, "name": "Shop", "item": "{{ url('/shop') }}" }@if($item->category),
-        { "@type": "ListItem", "position": 3, "name": "{{ addslashes($item->category->name) }}", "item": "{{ url('/shop') }}?category={{ $item->category->slug }}" },
-        { "@type": "ListItem", "position": 4, "name": "{{ addslashes($item->name) }}", "item": "{{ url()->current() }}" }@else,
-        { "@type": "ListItem", "position": 3, "name": "{{ addslashes($item->name) }}", "item": "{{ url()->current() }}" }@endif
-    ]
-}
-</script>
+<script type="application/ld+json">{!! json_encode($schemaProduct, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
+<script type="application/ld+json">{!! json_encode($schemaBreadcrumb, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
 @endpush
 
 @push('styles')

@@ -5,20 +5,12 @@
 @section('meta_description', 'Learn about PeytonGhalib — our story, mission, and commitment to delivering quality furniture and home decor at unbeatable prices with exceptional service.')
 
 @push('schema')
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "AboutPage",
-    "name": "About PeytonGhalib",
-    "url": "{{ url('/about') }}",
-    "description": "Learn about PeytonGhalib — our mission, our products, and our commitment to quality furniture and home decor.",
-    "about": {
-        "@type": "Organization",
-        "name": "PeytonGhalib",
-        "url": "{{ url('/') }}"
-    }
-}
-</script>
+@php
+$schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'About PeytonGhalib','url'=>url('/about'),
+    'description'=>'Learn about PeytonGhalib — our mission, our products, and our commitment to quality furniture and home decor.',
+    'about'=>['@type'=>'Organization','name'=>'PeytonGhalib','url'=>url('/')]];
+@endphp
+<script type="application/ld+json">{!! json_encode($schemaAbout, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
 @endpush
 
 @section('content')

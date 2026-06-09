@@ -6,56 +6,52 @@
 
 @push('schema')
 @php
-    $shopCategoryObj = $activeCategory
-        ? $categories->firstWhere('slug', $activeCategory)
-        : null;
-    $shopPageName = $shopCategoryObj
-        ? $shopCategoryObj->name . ' - PeytonGhalib'
-        : 'Shop All Products - PeytonGhalib';
-    $shopPageDesc = $shopCategoryObj
+    $shopCategoryObj = $activeCategory ? $categories->firstWhere('slug', $activeCategory) : null;
+    $shopPageName    = $shopCategoryObj ? $shopCategoryObj->name . ' - PeytonGhalib' : 'Shop All Products - PeytonGhalib';
+    $shopPageDesc    = $shopCategoryObj
         ? 'Browse our ' . $shopCategoryObj->name . ' collection at PeytonGhalib.'
         : 'Browse all furniture, home decor, and lifestyle products at PeytonGhalib.';
-@endphp
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "{{ addslashes($shopPageName) }}",
-    "description": "{{ addslashes($shopPageDesc) }}",
-    "url": "{{ url()->current() }}",
-    "breadcrumb": {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ url('/') }}" },
-            { "@type": "ListItem", "position": 2, "name": "Shop", "item": "{{ url('/shop') }}" }@if($shopCategoryObj),
-            { "@type": "ListItem", "position": 3, "name": "{{ addslashes($shopCategoryObj->name) }}", "item": "{{ url()->current() }}" }@endif
-        ]
+
+    $breadcrumbItems = [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => url('/')],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Shop', 'item' => url('/shop')],
+    ];
+    if ($shopCategoryObj) {
+        $breadcrumbItems[] = ['@type' => 'ListItem', 'position' => 3, 'name' => $shopCategoryObj->name, 'item' => url()->current()];
     }
-}
-</script>
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": "{{ addslashes($shopPageName) }}",
-    "itemListElement": [
-        @foreach($products as $index => $p)
-        @php
-            $pImg = !empty($p->image)
-                ? (str_starts_with($p->image, 'assets/') ? asset($p->image) : \Storage::url($p->image))
-                : asset('assets/img/logo.svg');
-        @endphp
-        {
-            "@type": "ListItem",
-            "position": {{ $products->firstItem() + $index }},
-            "name": "{{ addslashes($p->name) }}",
-            "url": "{{ route('product-details', $p->slug) }}",
-            "image": "{{ $pImg }}"
-        }{{ !$loop->last ? ',' : '' }}
-        @endforeach
-    ]
-}
-</script>
+
+    $listItems = [];
+    foreach ($products as $index => $p) {
+        $pImg = !empty($p->image)
+            ? (str_starts_with($p->image, 'assets/') ? asset($p->image) : \Storage::url($p->image))
+            : asset('assets/img/logo.svg');
+        $listItems[] = [
+            '@type'    => 'ListItem',
+            'position' => $products->firstItem() + $index,
+            'name'     => $p->name,
+            'url'      => route('product-details', $p->slug),
+            'image'    => $pImg,
+        ];
+    }
+
+    $schemaCollection = [
+        '@context'   => 'https://schema.org',
+        '@type'      => 'CollectionPage',
+        'name'       => $shopPageName,
+        'description'=> $shopPageDesc,
+        'url'        => url()->current(),
+        'breadcrumb' => ['@type' => 'BreadcrumbList', 'itemListElement' => $breadcrumbItems],
+    ];
+
+    $schemaItemList = [
+        '@context'        => 'https://schema.org',
+        '@type'           => 'ItemList',
+        'name'            => $shopPageName,
+        'itemListElement' => $listItems,
+    ];
+@endphp
+<script type="application/ld+json">{!! json_encode($schemaCollection, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
+<script type="application/ld+json">{!! json_encode($schemaItemList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
 @endpush
 
 @push('styles')

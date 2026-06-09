@@ -69,29 +69,14 @@
         <script src="https://analytics.ahrefs.com/analytics.js" data-key="QlGio/G4Sr1krD5aawauYg" async></script>
         @stack('styles')
         {{-- Organization schema: present on every page --}}
-        <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "PeytonGhalib",
-            "url": "{{ url('/') }}",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "{{ asset('assets/img/favicon.png') }}"
-            },
-            "description": "PeytonGhalib offers quality furniture, home decor, ceramics, and everyday essentials with fast delivery.",
-            "contactPoint": {
-                "@type": "ContactPoint",
-                "contactType": "customer service",
-                "url": "{{ url('/contact') }}"
-            },
-            "sameAs": [
-                "https://www.facebook.com/peytonghalib",
-                "https://www.instagram.com/peytonghalib",
-                "https://twitter.com/peytonghalib"
-            ]
-        }
-        </script>
+        @php
+        $schemaOrg = ['@context'=>'https://schema.org','@type'=>'Organization','name'=>'PeytonGhalib','url'=>url('/'),
+            'logo'=>['@type'=>'ImageObject','url'=>asset('assets/img/favicon.png')],
+            'description'=>'PeytonGhalib offers quality furniture, home decor, ceramics, and everyday essentials with fast delivery.',
+            'contactPoint'=>['@type'=>'ContactPoint','contactType'=>'customer service','url'=>url('/contact')],
+            'sameAs'=>['https://www.facebook.com/peytonghalib','https://www.instagram.com/peytonghalib','https://twitter.com/peytonghalib']];
+        @endphp
+        <script type="application/ld+json">{!! json_encode($schemaOrg, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
         {{-- Page-specific schemas pushed from each template --}}
         @stack('schema')
     </head>
