@@ -96,7 +96,7 @@ Route::get('/shipping-policy', [HomeController::class, 'shippingPolicy'])->name(
 Route::get('/privacy-policy',  [HomeController::class, 'privacyPolicy'])->name('privacy-policy');
 
 Route::get('/search/suggestions',      [ProductController::class, 'suggestions'])->name('search.suggestions');
-Route::get('/product-details',         [HomeController::class, 'productDetails']);
+Route::redirect('/product-details', '/', 301);
 Route::get('/product-details/{slug}',  [ProductController::class, 'show'])->name('product-details');
 
 Route::get('/cart',          [CartController::class, 'index'])->name('cart');
