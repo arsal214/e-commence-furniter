@@ -559,190 +559,239 @@ $schemaWebsite = [
 </section>
 <!-- Hero Section End -->
 
-<!-- Trust Strip Start -->
-<div class="ts-wrap">
-    <div class="container-fluid">
-        <div class="ts-strip" data-aos="fade-up">
-
-                {{-- Free Shipping --}}
-                <div class="ts-item">
-                    <div class="ts-icon" style="background:#FEF3E8;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9893A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="1" y="3" width="15" height="13" rx="1"/>
-                            <path d="M16 8h4l3 4v3h-7V8z"/>
-                            <circle cx="5.5" cy="18.5" r="2.5"/>
-                            <circle cx="18.5" cy="18.5" r="2.5"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="ts-label">Free Shipping</div>
-                        <div class="ts-sub">On all orders</div>
-                    </div>
-                </div>
-
-                <div class="ts-sep"></div>
-
-                {{-- Secure Payments --}}
-                <div class="ts-item">
-                    <div class="ts-icon" style="background:#EBF4FF;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="1" y="4" width="22" height="16" rx="2"/>
-                            <line x1="1" y1="10" x2="23" y2="10"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="ts-label">Secure Payments</div>
-                        <div class="ts-sub">SSL encrypted</div>
-                    </div>
-                </div>
-
-                <div class="ts-sep"></div>
-
-                {{-- Easy Returns --}}
-                <div class="ts-item">
-                    <div class="ts-icon" style="background:#E8FBF6;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="1 4 1 10 7 10"/>
-                            <path d="M3.51 15a9 9 0 1 0 .49-4.5"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="ts-label">Easy Returns</div>
-                        <div class="ts-sub">30-day policy</div>
-                    </div>
-                </div>
-
-                <div class="ts-sep"></div>
-
-                {{-- 24/7 Support --}}
-                <div class="ts-item">
-                    <div class="ts-icon" style="background:#F0EAFF;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.64A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="ts-label">24/7 Support</div>
-                        <div class="ts-sub">Always here for you</div>
-                    </div>
-                </div>
-
-                <div class="ts-sep"></div>
-
-                {{-- 10K+ Customers --}}
-                <div class="ts-item">
-                    <div class="ts-icon" style="background:#FFF3E8;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M23 21v-2a4 4 0 00-3-3.87"/>
-                            <path d="M16 3.13a4 4 0 010 7.75"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="ts-label">10K+ Customers</div>
-                        <div class="ts-sub">And counting</div>
-                    </div>
-                </div>
-
-        </div>
-    </div>
-</div>
-
+<!-- Why Choose Us Start -->
 @push('styles')
 <style>
-/* ── Trust Strip ───────────────────────────────────────────── */
-.ts-wrap {
-    padding: 10px 0 32px;
+/* ── Why Choose Us ─────────────────────────────────────────── */
+.wcu-section {
+    padding: 80px 0 90px;
     background: #FAF9F7;
-}
-.dark .ts-wrap { background: #16120e; }
-
-.ts-strip {
-    display: flex;
-    align-items: stretch;
-    width: 100%;
-    background: #ffffff;
-    border: 1px solid #EDE7DF;
-    border-radius: 18px;
-    box-shadow: 0 2px 20px rgba(0,0,0,.055);
+    position: relative;
     overflow: hidden;
 }
-.dark .ts-strip {
+.dark .wcu-section { background: #16120e; }
+
+/* subtle dot-grid background */
+.wcu-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, #d4b896 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: .13;
+    pointer-events: none;
+}
+
+.wcu-header {
+    text-align: center;
+    margin-bottom: 52px;
+}
+.wcu-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #bb976d;
+    background: rgba(187,151,109,.1);
+    border: 1px solid rgba(187,151,109,.25);
+    padding: 5px 16px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+}
+.wcu-title {
+    font-size: clamp(26px, 3.5vw, 38px);
+    font-weight: 600;
+    color: #1a1410;
+    line-height: 1.2;
+    margin: 0 0 12px;
+}
+.dark .wcu-title { color: #f5ede4; }
+.wcu-subtitle {
+    font-size: 15px;
+    color: #9a8878;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Grid */
+.wcu-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+}
+@media(max-width:1199px) { .wcu-grid { grid-template-columns: repeat(3, 1fr); } }
+@media(max-width:767px)  { .wcu-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
+@media(max-width:479px)  { .wcu-grid { grid-template-columns: 1fr; } }
+
+/* Card */
+.wcu-card {
+    background: #fff;
+    border: 1px solid #ede7df;
+    border-radius: 20px;
+    padding: 32px 24px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+}
+.dark .wcu-card {
     background: rgba(255,255,255,.04);
     border-color: rgba(255,255,255,.08);
 }
-
-.ts-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    padding: 24px 16px;
-    flex: 1 1 0%;
-    min-width: 0;
-    transition: background .25s ease;
+.wcu-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #bb976d, #d4a96a);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s ease;
+    border-radius: 0 0 20px 20px;
 }
-.ts-item:hover { background: #FDFAF7; }
-.dark .ts-item:hover { background: rgba(255,255,255,.03); }
+.wcu-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(187,151,109,.16);
+    border-color: rgba(187,151,109,.35);
+}
+.wcu-card:hover::after { transform: scaleX(1); }
 
-.ts-icon {
-    width: 46px; height: 46px;
-    border-radius: 13px;
+/* Icon bubble */
+.wcu-icon-wrap {
+    width: 68px; height: 68px;
+    border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    transition: transform .3s cubic-bezier(.22,.68,0,1.2);
+    margin: 0 auto 20px;
+    transition: transform .35s cubic-bezier(.22,.68,0,1.2);
+    position: relative;
 }
-.ts-item:hover .ts-icon { transform: scale(1.12) rotate(-6deg); }
+.wcu-card:hover .wcu-icon-wrap { transform: scale(1.1) rotate(-8deg); }
 
-.ts-label {
-    font-size: 15px;
+/* Number badge */
+.wcu-num {
+    position: absolute;
+    top: -4px; right: -4px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#bb976d,#d4a96a);
+    color: #fff;
+    font-size: 10px;
     font-weight: 700;
-    color: #1c1410;
-    line-height: 1.2;
-    white-space: nowrap;
-}
-.dark .ts-label { color: #f0e8de; }
-
-.ts-sub {
-    font-size: 12px;
-    color: #a09080;
-    margin-top: 3px;
-    white-space: nowrap;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(187,151,109,.45);
 }
 
-.ts-sep {
-    width: 1px;
-    align-self: stretch;
-    background: linear-gradient(to bottom, transparent 10%, #EDE7DF 40%, #EDE7DF 60%, transparent 90%);
-    flex-shrink: 0;
+.wcu-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1410;
+    margin-bottom: 8px;
+    line-height: 1.25;
 }
-.dark .ts-sep { background: linear-gradient(to bottom, transparent 10%, rgba(255,255,255,.1) 40%, rgba(255,255,255,.1) 60%, transparent 90%); }
+.dark .wcu-card-title { color: #f0e8de; }
 
-/* Responsive */
-@media (max-width: 1199px) {
-    .ts-item  { padding: 22px 12px; gap: 12px; }
-    .ts-icon  { width: 42px; height: 42px; border-radius: 12px; }
-    .ts-label { font-size: 14px; }
+.wcu-card-desc {
+    font-size: 13px;
+    color: #9a8878;
+    line-height: 1.65;
 }
-@media (max-width: 1023px) {
-    .ts-item  { padding: 20px 10px; gap: 10px; }
-    .ts-icon  { width: 38px; height: 38px; border-radius: 11px; }
-    .ts-label { font-size: 13px; }
-    .ts-sub   { font-size: 11px; }
-}
-@media (max-width: 767px) {
-    .ts-strip { flex-wrap: wrap; border-radius: 14px; }
-    .ts-item  { flex: 0 0 50%; justify-content: flex-start; padding: 18px 18px; }
-    .ts-sep   { display: none; }
-}
-@media (max-width: 479px) {
-    .ts-item  { flex: 0 0 100%; border-bottom: 1px solid #EDE7DF; }
-    .ts-item:last-child { border-bottom: none; }
+.dark .wcu-card-desc { color: #7a6e65; }
+
+/* Divider line under header */
+.wcu-divider {
+    width: 56px; height: 3px;
+    background: linear-gradient(90deg,#bb976d,#d4a96a);
+    border-radius: 2px;
+    margin: 0 auto 18px;
 }
 </style>
 @endpush
-<!-- Trust Strip End -->
+
+<section class="wcu-section">
+    <div class="container-fluid" style="position:relative;z-index:1;">
+
+        {{-- Section Header --}}
+        <div class="wcu-header" data-aos="fade-up">
+            <span class="wcu-label">Our Promise</span>
+            <h2 class="wcu-title">Why Choose PeytonGhalib?</h2>
+            <div class="wcu-divider"></div>
+            <p class="wcu-subtitle">Everything we do is designed to make your experience effortless, safe, and genuinely delightful.</p>
+        </div>
+
+        {{-- Cards Grid --}}
+        <div class="wcu-grid max-w-[1720px] mx-auto">
+
+            {{-- 1: Free Shipping --}}
+            <div class="wcu-card" data-aos="fade-up" data-aos-delay="0">
+                <div class="wcu-icon-wrap" style="background:#FEF3E8;">
+                    <span class="wcu-num">1</span>
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#C9893A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="1" y="3" width="15" height="13" rx="1"/>
+                        <path d="M16 8h4l3 4v3h-7V8z"/>
+                        <circle cx="5.5" cy="18.5" r="2.5"/>
+                        <circle cx="18.5" cy="18.5" r="2.5"/>
+                    </svg>
+                </div>
+                <div class="wcu-card-title">Free Shipping</div>
+                <p class="wcu-card-desc">Every order ships free — no minimum spend, no hidden delivery fees. Ever.</p>
+            </div>
+
+            {{-- 2: Secure Payments --}}
+            <div class="wcu-card" data-aos="fade-up" data-aos-delay="80">
+                <div class="wcu-icon-wrap" style="background:#EBF4FF;">
+                    <span class="wcu-num">2</span>
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <polyline points="9 12 11 14 15 10"/>
+                    </svg>
+                </div>
+                <div class="wcu-card-title">Secure Payments</div>
+                <p class="wcu-card-desc">Bank-grade SSL encryption on every transaction. Your card data stays private.</p>
+            </div>
+
+            {{-- 3: Easy Returns --}}
+            <div class="wcu-card" data-aos="fade-up" data-aos-delay="160">
+                <div class="wcu-icon-wrap" style="background:#E8FBF6;">
+                    <span class="wcu-num">3</span>
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="1 4 1 10 7 10"/>
+                        <path d="M3.51 15a9 9 0 1 0 .49-4.5"/>
+                    </svg>
+                </div>
+                <div class="wcu-card-title">30-Day Returns</div>
+                <p class="wcu-card-desc">Changed your mind? Return anything within 30 days, no questions asked.</p>
+            </div>
+
+            {{-- 4: 24/7 Support --}}
+            <div class="wcu-card" data-aos="fade-up" data-aos-delay="240">
+                <div class="wcu-icon-wrap" style="background:#F0EAFF;">
+                    <span class="wcu-num">4</span>
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                    </svg>
+                </div>
+                <div class="wcu-card-title">24/7 Support</div>
+                <p class="wcu-card-desc">Our experts are on call around the clock — chat, email, or phone, we're here.</p>
+            </div>
+
+            {{-- 5: Trusted by Thousands --}}
+            <div class="wcu-card" data-aos="fade-up" data-aos-delay="320">
+                <div class="wcu-icon-wrap" style="background:#FFF3E8;">
+                    <span class="wcu-num">5</span>
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                </div>
+                <div class="wcu-card-title">10K+ Happy Customers</div>
+                <p class="wcu-card-desc">Thousands of verified 5-star reviews from real customers who love their homes.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- Why Choose Us End -->
 
 <!-- Product Category Area Start -->
 <div class="s-py-100-50">
@@ -1340,117 +1389,3 @@ $(document).ready(function () {
 @endpush
 
 @endsection
-
-@push('scripts')
-<script type="application/ld+json">
-{
-  "@@context": "https://schema.org",
-  "@@type": "Organization",
-  "name": "PeytonGhalib",
-  "url": "https://peytonghalib.com",
-  "logo": "https://peytonghalib.com/assets/img/logo.svg",
-  "email": "support@@peytonghalib.com",
-  "description": "PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.",
-  "sameAs": [
-    "https://www.facebook.com/peytonghalib",
-    "https://twitter.com/peytonghalib",
-    "https://www.instagram.com/peytonghalib",
-    "https://www.linkedin.com/company/peytonghalib"
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@@context": "https://schema.org",
-  "@@type": "WebSite",
-  "name": "PeytonGhalib",
-  "url": "https://peytonghalib.com",
-  "potentialAction": {
-    "@@type": "SearchAction",
-    "target": "https://peytonghalib.com/shop?search={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
-}
-</script>
-<script type="application/ld+json">
-{
-  "@@context": "https://schema.org",
-  "@@type": "LocalBusiness",
-  "name": "PeytonGhalib",
-  "url": "https://peytonghalib.com",
-  "aggregateRating": {
-    "@@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "reviewCount": "2134",
-    "bestRating": "5",
-    "worstRating": "1"
-  },
-  "review": [
-    {
-      "@@type": "Review",
-      "author": {"@@type": "Person", "name": "Sarah Mitchell"},
-      "datePublished": "2026-05-10",
-      "name": "Stunning Nordic Oak Dining Table",
-      "reviewBody": "Our new dining table is absolutely stunning. The solid oak finish looks even better in person — rich, warm, and exactly as pictured. Assembly was straightforward and delivery arrived ahead of schedule.",
-      "reviewRating": {"@@type": "Rating", "ratingValue": "5", "bestRating": "5"}
-    },
-    {
-      "@@type": "Review",
-      "author": {"@@type": "Person", "name": "James Reynolds"},
-      "datePublished": "2026-04-22",
-      "name": "Premium quality Velvet Sofa Set",
-      "reviewBody": "The velvet sofa arrived beautifully packaged and looks incredible in our living room. Upholstery quality is premium and the frame feels very sturdy. The whole process was seamless from checkout to delivery.",
-      "reviewRating": {"@@type": "Rating", "ratingValue": "5", "bestRating": "5"}
-    },
-    {
-      "@@type": "Review",
-      "author": {"@@type": "Person", "name": "Aisha Karimi"},
-      "datePublished": "2026-05-03",
-      "name": "Beautiful Ceramic Vase Collection — perfect gift",
-      "reviewBody": "Ordered the ceramic vase collection as a housewarming gift and the recipient was thrilled. The craftsmanship is beautiful and the packaging was gift-worthy. Delivery took a day longer than expected, but well worth it.",
-      "reviewRating": {"@@type": "Rating", "ratingValue": "4", "bestRating": "5"}
-    },
-    {
-      "@@type": "Review",
-      "author": {"@@type": "Person", "name": "Daniel Thompson"},
-      "datePublished": "2026-03-15",
-      "name": "Spacious and beautifully finished Scandinavian Wardrobe",
-      "reviewBody": "I've been shopping here for months and every order has been perfect. The Scandinavian wardrobe is spacious, beautifully finished, and worth every penny. Fast shipping, incredible quality.",
-      "reviewRating": {"@@type": "Rating", "ratingValue": "5", "bestRating": "5"}
-    },
-    {
-      "@@type": "Review",
-      "author": {"@@type": "Person", "name": "Priya Sharma"},
-      "datePublished": "2026-04-18",
-      "name": "Abstract Wall Art Set transformed our hallway",
-      "reviewBody": "The wall art set transformed our hallway completely. Colours are vibrant, frames are solid, and they arrived perfectly protected. Exactly what the photos showed — no surprises, just great quality.",
-      "reviewRating": {"@@type": "Rating", "ratingValue": "5", "bestRating": "5"}
-    },
-    {
-      "@@type": "Review",
-      "author": {"@@type": "Person", "name": "Michael Barnes"},
-      "datePublished": "2026-05-07",
-      "name": "Great Bookshelf with Drawers at a fair price",
-      "reviewBody": "Great bookshelf at a very fair price. The drawers glide smoothly and the shelves are deeper than expected — loads of storage. Took about 45 minutes to assemble with clear instructions. Very satisfied overall.",
-      "reviewRating": {"@@type": "Rating", "ratingValue": "4", "bestRating": "5"}
-    },
-    {
-      "@@type": "Review",
-      "author": {"@@type": "Person", "name": "Fatima Al-Rashid"},
-      "datePublished": "2026-05-14",
-      "name": "Rattan Accent Chair — a showstopper",
-      "reviewBody": "This rattan chair is a showstopper — every guest asks where I got it! The natural woven finish is perfect, the cushion is comfortable, and it has held up beautifully. Exceptional experience from start to finish.",
-      "reviewRating": {"@@type": "Rating", "ratingValue": "5", "bestRating": "5"}
-    },
-    {
-      "@@type": "Review",
-      "author": {"@@type": "Person", "name": "Chris Lawrence"},
-      "datePublished": "2026-04-29",
-      "name": "Impressive Marble Coffee Table — worth every penny",
-      "reviewBody": "The marble coffee table is even more impressive in person. The surface is smooth and cool to the touch, and the brushed gold legs are a perfect contrast. Fast delivery, exactly as described.",
-      "reviewRating": {"@@type": "Rating", "ratingValue": "5", "bestRating": "5"}
-    }
-  ]
-}
-</script>
-@endpush

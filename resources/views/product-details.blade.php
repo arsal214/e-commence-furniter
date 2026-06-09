@@ -23,23 +23,27 @@
         'name'       => $item->name,
         'image'      => [$schemaImg],
         'description'=> strip_tags($item->description ?? ''),
-        'sku'        => $item->sku ?? '',
         'brand'      => ['@type' => 'Brand', 'name' => 'PeytonGhalib'],
         'offers'     => [
             '@type'          => 'Offer',
-            'url'            => url()->current(),
+            'url'            => route('product-details', $item->slug),
             'priceCurrency'  => 'USD',
             'price'          => number_format((float)($item->sale_price ?? $item->price), 2, '.', ''),
             'priceValidUntil'=> now()->addYear()->toDateString(),
+            'itemCondition'  => 'https://schema.org/NewCondition',
             'availability'   => $schemaInStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
             'seller'         => ['@type' => 'Organization', 'name' => 'PeytonGhalib', 'url' => url('/')],
         ],
     ];
+    if (!empty($item->sku))      { $schemaProduct['sku']      = $item->sku; }
+    if ($item->category)         { $schemaProduct['category'] = $item->category->name; }
     if ($schemaReviewCount > 0) {
         $schemaProduct['aggregateRating'] = [
             '@type'       => 'AggregateRating',
-            'ratingValue' => (string) $schemaAvgRating,
-            'reviewCount' => (string) $schemaReviewCount,
+            'ratingValue' => round($schemaAvgRating, 1),
+            'reviewCount' => (int) $schemaReviewCount,
+            'bestRating'  => 5,
+            'worstRating' => 1,
         ];
     }
 
@@ -887,53 +891,3 @@ document.addEventListener('keydown', function(e) {
 
 @endsection
 
-@push('scripts')
-@php
-    $ldImage = !empty($item->image)
-        ? (str_starts_with($item->image, 'assets/') ? asset($item->image) : \Storage::url($item->image))
-        : asset('assets/img/gallery/product-detls/product-01.jpg');
-
-    $ldPrice       = number_format($item->sale_price ?? $item->price, 2);
-    $ldReviewCount = $item->reviews_count ?? $item->reviews->count();
-    $ldAvgRating   = $item->reviews_avg_rating ?? ($ldReviewCount > 0 ? $item->reviews->avg('rating') : null);
-    $ldStock       = ($item->stock_quantity ?? 1) > 0
-                         ? 'https://schema.org/InStock'
-                         : 'https://schema.org/OutOfStock';
-
-    $ldSchema = [
-        '@context'    => 'https://schema.org/',
-        '@type'       => 'Product',
-        'name'        => $item->name,
-        'image'       => [$ldImage],
-        'description' => strip_tags($item->description ?? ''),
-        'brand'       => ['@type' => 'Brand', 'name' => 'PeytonGhalib'],
-        'offers'      => [
-            '@type'           => 'Offer',
-            'url'             => route('product-details', $item->slug),
-            'priceCurrency'   => 'USD',
-            'price'           => $ldPrice,
-            'priceValidUntil' => now()->addYear()->toDateString(),
-            'itemCondition'   => 'https://schema.org/NewCondition',
-            'availability'    => $ldStock,
-            'seller'          => ['@type' => 'Organization', 'name' => 'PeytonGhalib'],
-        ],
-    ];
-
-    if (!empty($item->sku)) {
-        $ldSchema['sku'] = $item->sku;
-    }
-    if ($item->category) {
-        $ldSchema['category'] = $item->category->name;
-    }
-    if ($ldReviewCount > 0 && $ldAvgRating) {
-        $ldSchema['aggregateRating'] = [
-            '@type'       => 'AggregateRating',
-            'ratingValue' => round($ldAvgRating, 1),
-            'reviewCount' => (int) $ldReviewCount,
-            'bestRating'  => 5,
-            'worstRating' => 1,
-        ];
-    }
-@endphp
-<script type="application/ld+json">{!! json_encode($ldSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}</script>
-@endpush
