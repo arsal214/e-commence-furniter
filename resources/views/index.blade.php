@@ -4,536 +4,715 @@
 @section('content')
 @include('includes.navbar')
 
-<!-- Business & Category Clarity Start -->
+<!-- Hero Section Start -->
 @push('styles')
 <style>
-/* ── PeytonGhalib Brand Section ─────────────────────────────── */
-.pgb-section {
+/* ═══════════════════════════════════════════════════════════════
+   PeytonGhalib — Premium Hero  (pgh- prefix)
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Keyframes ─────────────────────────────────────────────── */
+@keyframes pgh-up   { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pgh-left { from{opacity:0;transform:translateX(32px)} to{opacity:1;transform:translateX(0)} }
+@keyframes pgh-bob  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+@keyframes pgh-bob2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+@keyframes pgh-pulse{ 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.45;transform:scale(1.7)} }
+@keyframes pgh-shimmer {
+    0%   { background-position: -400% center }
+    100% { background-position:  400% center }
+}
+@keyframes pgh-spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+/* ── Section shell ─────────────────────────────────────────── */
+.pgh-hero {
     position: relative;
+    background: #FAF9F7;
     overflow: hidden;
-    background: #FAFAF8;
 }
-.dark .pgb-section { background: #1a1410; }
+.dark .pgh-hero { background: #16120e; }
 
-/* Ambient glow orbs */
-.pgb-section::before {
-    content: '';
-    position: absolute;
-    top: -120px; right: -120px;
-    width: 480px; height: 480px;
-    background: radial-gradient(circle, rgba(187,151,109,.09) 0%, transparent 70%);
-    pointer-events: none; z-index: 0;
+/* ── Hero two-column row ────────────────────────────────────── */
+.pgh-row {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 80px;
 }
-.pgb-section::after {
-    content: '';
-    position: absolute;
-    bottom: -120px; left: -100px;
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(187,151,109,.07) 0%, transparent 70%);
-    pointer-events: none; z-index: 0;
+@media (min-width: 768px) {
+    .pgh-row {
+        flex-direction: row;
+        gap: 48px;
+        margin-bottom: 112px;
+        align-items: center;
+    }
+    .pgh-row-left  { flex: 0 0 54%; max-width: 54%; }
+    .pgh-row-right { flex: 0 0 46%; max-width: 46%; }
+}
+.pgh-row-left  { width: 100%; }
+.pgh-row-right { width: 100%; }
+
+/* Mesh gradient orbs */
+.pgh-orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); pointer-events: none; z-index: 0;
+}
+.pgh-orb-1 {
+    width: 600px; height: 600px;
+    top: -200px; right: -100px;
+    background: radial-gradient(circle, rgba(187,151,109,.12) 0%, transparent 70%);
+}
+.pgh-orb-2 {
+    width: 500px; height: 500px;
+    bottom: -200px; left: -100px;
+    background: radial-gradient(circle, rgba(187,151,109,.08) 0%, transparent 70%);
+}
+.pgh-orb-3 {
+    width: 300px; height: 300px;
+    top: 40%; left: 38%;
+    background: radial-gradient(circle, rgba(212,169,106,.06) 0%, transparent 70%);
 }
 
-/* Trust pill */
-.pgb-pill {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: linear-gradient(135deg, rgba(187,151,109,.13), rgba(187,151,109,.06));
-    border: 1px solid rgba(187,151,109,.28);
-    color: #9a7040;
-    font-size: 12px; font-weight: 700; letter-spacing: .3px;
-    padding: 7px 16px; border-radius: 100px;
+/* ── Live trust badge ──────────────────────────────────────── */
+.pgh-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 18px; border-radius: 100px;
+    background: rgba(187,151,109,.1);
+    border: 1px solid rgba(187,151,109,.25);
+    font-size: 12px; font-weight: 700; letter-spacing: .35px; color: #8a6a30;
+    animation: pgh-up .6s ease both;
 }
-.dark .pgb-pill { color: #d4a96a; }
+.dark .pgh-badge { color: #d4a96a; background: rgba(187,151,109,.12); border-color: rgba(187,151,109,.22); }
+.pgh-badge-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #22c55e;
+    animation: pgh-pulse 1.8s ease-in-out infinite;
+}
 
-/* Gradient headline */
-.pgb-accent {
-    background: linear-gradient(135deg, #bb976d 0%, #d4a96a 45%, #8b6510 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+/* ── Headline ──────────────────────────────────────────────── */
+.pgh-h1 {
+    font-size: clamp(2.4rem, 4.5vw, 4rem);
+    font-weight: 800; line-height: 1.08;
+    letter-spacing: -.02em; color: #1c1410;
+    animation: pgh-up .65s .12s ease both;
+}
+.dark .pgh-h1 { color: #f5f0ea; }
+.pgh-h1-grad {
+    background: linear-gradient(135deg, #bb976d 0%, #e8c48a 40%, #8b6510 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
+    animation: pgh-shimmer 6s linear infinite;
 }
 
-/* Primary CTA */
-.pgb-btn-primary {
+/* ── Body copy ─────────────────────────────────────────────── */
+.pgh-body {
+    font-size: 17px; line-height: 1.72; color: #6b5d52;
+    animation: pgh-up .65s .22s ease both;
+}
+.dark .pgh-body { color: #a09080; }
+
+/* ── CTA buttons ───────────────────────────────────────────── */
+.pgh-cta-wrap { animation: pgh-up .65s .32s ease both; }
+.pgh-btn-a {
     display: inline-flex; align-items: center; gap: 10px;
-    background: #bb976d; color: #fff;
-    font-weight: 700; font-size: 14px; letter-spacing: .4px;
-    padding: 14px 28px; border-radius: 14px;
-    box-shadow: 0 4px 22px rgba(187,151,109,.38);
-    transition: all .3s cubic-bezier(.22,.68,0,1.1);
+    padding: 15px 30px; border-radius: 14px;
+    background: linear-gradient(135deg, #c4a070 0%, #bb976d 50%, #a07840 100%);
+    background-size: 200% auto;
+    color: #fff; font-size: 14px; font-weight: 700; letter-spacing: .4px;
+    box-shadow: 0 6px 28px rgba(187,151,109,.42), 0 1px 4px rgba(187,151,109,.2);
+    transition: all .35s cubic-bezier(.22,.68,0,1.15);
     text-decoration: none;
 }
-.pgb-btn-primary:hover {
-    background: #a8845a; color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(187,151,109,.48);
+.pgh-btn-a:hover {
+    background-position: right center; color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(187,151,109,.52);
 }
+.pgh-btn-a svg { transition: transform .3s ease; }
+.pgh-btn-a:hover svg { transform: translateX(4px); }
 
-/* Secondary CTA */
-.pgb-btn-secondary {
+.pgh-btn-b {
     display: inline-flex; align-items: center; gap: 10px;
-    background: #fff; color: #3d3433;
-    font-weight: 600; font-size: 14px;
-    padding: 13px 24px; border-radius: 14px;
-    border: 1.5px solid #e4dbd3;
-    transition: all .3s ease;
-    text-decoration: none;
+    padding: 14px 26px; border-radius: 14px;
+    background: #fff; color: #3d2e20;
+    font-size: 14px; font-weight: 600;
+    border: 1.5px solid #e8ddd4;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    transition: all .3s ease; text-decoration: none;
 }
-.dark .pgb-btn-secondary { background: rgba(255,255,255,.06); color: #fff; border-color: rgba(255,255,255,.12); }
-.pgb-btn-secondary:hover { border-color: #bb976d; color: #bb976d; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(187,151,109,.14); }
+.dark .pgh-btn-b { background: rgba(255,255,255,.07); color: #f0e8de; border-color: rgba(255,255,255,.13); }
+.pgh-btn-b:hover { border-color: #bb976d; color: #bb976d; transform: translateY(-2px); box-shadow: 0 6px 22px rgba(187,151,109,.16); }
 
-/* Stat numbers */
-.pgb-stat-val {
-    font-size: 26px; font-weight: 800; line-height: 1;
+/* ── Social proof row ──────────────────────────────────────── */
+.pgh-proof { animation: pgh-up .65s .42s ease both; }
+.pgh-avatar-stack { display: flex; }
+.pgh-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 2.5px solid #fff; margin-left: -10px;
+    background: linear-gradient(135deg, #d4a96a, #bb976d);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+}
+.pgh-avatar:first-child { margin-left: 0; }
+.pgh-stars { color: #f59e0b; font-size: 13px; letter-spacing: .5px; }
+
+/* ── Stats row ─────────────────────────────────────────────── */
+.pgh-stats { animation: pgh-up .65s .52s ease both; }
+.pgh-stat-n {
+    font-size: 28px; font-weight: 800; line-height: 1;
     background: linear-gradient(135deg, #bb976d, #8b6510);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.pgb-stat-div { width:1px; height:38px; background:linear-gradient(to bottom, transparent, #ddd4c8, transparent); }
-.dark .pgb-stat-div { background:linear-gradient(to bottom, transparent, rgba(255,255,255,.12), transparent); }
+.pgh-stat-sep { width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, rgba(187,151,109,.3), transparent); }
 
-/* Visual collage */
-.pgb-collage { position: relative; z-index: 1; }
-.pgb-cell {
-    border-radius: 22px; overflow: hidden;
-    background: #e8e0d8;
-    transition: box-shadow .4s ease;
+/* ── Hero image collage ────────────────────────────────────── */
+.pgh-collage {
+    position: relative; z-index: 1;
+    animation: pgh-left .75s .1s ease both;
+    padding: 24px 0 24px 0;
 }
-.pgb-cell img { width:100%; height:100%; object-fit:cover; transition:transform .6s ease; display:block; }
-.pgb-cell:hover img { transform: scale(1.06); }
-.pgb-cell:hover { box-shadow: 0 20px 50px rgba(0,0,0,.14); }
-
-/* Floating badge cards */
-.pgb-float {
+/* Decorative glow shape behind image */
+.pgh-collage-glow {
     position: absolute;
-    background: rgba(255,255,255,.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,.75);
+    inset: 0;
+    background: radial-gradient(ellipse at 60% 50%, rgba(187,151,109,.18) 0%, transparent 68%);
+    pointer-events: none; z-index: 0;
+}
+.pgh-img-wrap {
+    position: relative; z-index: 1;
+    border-radius: 28px; overflow: hidden;
+    height: 520px;
+    box-shadow: 0 32px 90px rgba(0,0,0,.22), 0 8px 24px rgba(0,0,0,.1);
+    transform: perspective(1200px) rotateY(-2deg) rotateX(1.5deg);
+    transition: transform .6s cubic-bezier(.22,.68,0,1.1), box-shadow .6s ease;
+}
+.pgh-img-wrap:hover {
+    transform: perspective(1200px) rotateY(0deg) rotateX(0deg) scale(1.01);
+    box-shadow: 0 40px 110px rgba(0,0,0,.26);
+}
+.pgh-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    display: block;
+    transition: transform .7s ease;
+}
+.pgh-img-wrap:hover img { transform: scale(1.04); }
+@media (max-width: 1279px) { .pgh-img-wrap { height: 440px; } }
+@media (max-width: 1023px) { .pgh-img-wrap { height: 380px; transform: none; border-radius: 22px; } }
+@media (max-width: 767px)  { .pgh-img-wrap { height: 280px; } }
+
+/* Top-right decorative corner dot grid */
+.pgh-dot-grid {
+    position: absolute; top: 0; right: -16px; z-index: 0;
+    width: 120px; height: 120px;
+    background-image: radial-gradient(rgba(187,151,109,.35) 1.5px, transparent 1.5px);
+    background-size: 16px 16px;
+    opacity: .7;
+    pointer-events: none;
+}
+/* Bottom-left accent line */
+.pgh-img-accent {
+    position: absolute; bottom: 12px; left: 0; z-index: 0;
+    width: 80px; height: 4px; border-radius: 2px;
+    background: linear-gradient(90deg, #bb976d, transparent);
+}
+/* "New Season" floating label on image */
+.pgh-new-badge {
+    position: absolute; top: 44px; left: 20px; z-index: 10;
+    background: linear-gradient(135deg, #bb976d, #d4a96a);
+    color: #fff; font-size: 10px; font-weight: 800;
+    letter-spacing: .8px; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(187,151,109,.5);
+    pointer-events: none;
+}
+
+/* ── Floating cards ────────────────────────────────────────── */
+.pgh-float {
+    position: absolute; z-index: 20;
+    background: rgba(255,255,255,.9);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,.8);
     border-radius: 18px;
-    box-shadow: 0 8px 36px rgba(0,0,0,.13), 0 2px 8px rgba(0,0,0,.06);
-    padding: 11px 15px;
-    z-index: 20;
-    white-space: nowrap;
+    box-shadow: 0 10px 40px rgba(0,0,0,.14), 0 2px 8px rgba(0,0,0,.06);
+    padding: 12px 16px; white-space: nowrap;
 }
-.dark .pgb-float { background:rgba(28,22,16,.88); border-color:rgba(255,255,255,.1); }
-.pgb-float-icon {
-    width: 34px; height: 34px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.pgb-float-val { font-size:13px; font-weight:700; color:#1c1410; line-height:1.1; }
-.dark .pgb-float-val { color:#f5f0eb; }
-.pgb-float-sub { font-size:10px; color:#a09080; margin-top:2px; }
-@keyframes pgbfloat {
-    0%,100% { transform:translateY(0); }
-    50% { transform:translateY(-7px); }
-}
-.pgb-float-a { animation:pgbfloat 4.2s ease-in-out infinite; }
-.pgb-float-b { animation:pgbfloat 3.8s ease-in-out infinite; animation-delay:-1.8s; }
-.pgb-float-c { animation:pgbfloat 4.6s ease-in-out infinite; animation-delay:-3.2s; }
+.dark .pgh-float { background:rgba(25,18,10,.88); border-color:rgba(255,255,255,.1); }
+.pgh-fi { width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.pgh-fv { font-size:13px;font-weight:700;color:#1c1208;line-height:1.15; }
+.dark .pgh-fv { color:#f5ede0; }
+.pgh-fs { font-size:10px;color:#a09080;margin-top:2px; }
+.pgh-float-1 { top:18px; right:18px; animation:pgh-bob 4.5s ease-in-out infinite; }
+.pgh-float-2 { bottom:26px; left:18px; animation:pgh-bob2 4s ease-in-out infinite; animation-delay:-2s; }
+.pgh-float-3 { top:42%; right:18px; animation:pgh-bob 5s ease-in-out infinite; animation-delay:-3.5s; }
 
-/* Collage gradient overlays (decorative) */
-.pgb-cell-overlay {
-    position:absolute; inset:0;
-    background:linear-gradient(160deg,rgba(187,151,109,.12) 0%,transparent 60%);
-    pointer-events:none;
+/* ── Category image cards ──────────────────────────────────── */
+.pgh-cats-scroll {
+    display: flex; gap: 14px;
+    overflow-x: auto; padding-bottom: 8px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
-
-/* ── Category Nav Cards ─────────────────────────────────────── */
-.pgb-catcard {
-    display:flex; flex-direction:column; align-items:center; gap:10px;
-    padding: 22px 14px 18px;
-    background: #fff;
-    border: 1.5px solid #f0ebe4;
-    border-radius: 22px;
-    text-align: center;
+.pgh-cats-scroll::-webkit-scrollbar { display: none; }
+@media(min-width:1024px) {
+    .pgh-cats-scroll { display: grid; grid-template-columns: repeat(6,1fr); overflow-x: visible; }
+}
+.pgh-catimg-card {
+    position: relative; overflow: hidden;
+    border-radius: 22px; flex-shrink: 0;
+    width: 160px; height: 200px;
+    background: #e4dbd0;
     text-decoration: none;
-    position: relative; overflow: hidden;
-    transition: all .32s cubic-bezier(.22,.68,0,1.1);
+    transition: transform .4s cubic-bezier(.22,.68,0,1.1), box-shadow .4s ease;
 }
-.dark .pgb-catcard { background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.08); }
-.pgb-catcard::before {
-    content:''; position:absolute; inset:0;
-    background:linear-gradient(145deg, rgba(187,151,109,.08), transparent 60%);
-    opacity:0; transition:opacity .3s;
+@media(min-width:1024px){ .pgh-catimg-card { width: auto; height: 210px; } }
+.pgh-catimg-card img { width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease; }
+.pgh-catimg-card:hover img { transform: scale(1.1); }
+.pgh-catimg-card:hover { transform: translateY(-5px); box-shadow: 0 18px 48px rgba(0,0,0,.2); }
+.pgh-cat-scrim {
+    position:absolute; inset:0;
+    background: linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.18) 55%, transparent 100%);
+    transition: opacity .3s;
 }
-.pgb-catcard:hover::before { opacity:1; }
-.pgb-catcard:hover {
-    border-color: #bb976d;
-    transform: translateY(-5px);
-    box-shadow: 0 14px 36px rgba(187,151,109,.2);
+.pgh-catimg-card:hover .pgh-cat-scrim { opacity: .85; }
+.pgh-cat-body { position:absolute; bottom:0; left:0; right:0; padding:14px 14px 16px; }
+.pgh-cat-count {
+    display: inline-block;
+    font-size: 10px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase;
+    color: rgba(255,255,255,.7); margin-bottom: 4px;
 }
-.pgb-caticon {
-    width:54px; height:54px; border-radius:16px;
-    background:linear-gradient(135deg,rgba(187,151,109,.13),rgba(187,151,109,.06));
-    display:flex; align-items:center; justify-content:center;
-    transition:all .3s ease; flex-shrink:0;
+.pgh-cat-name { font-size:14px; font-weight:700; color:#fff; line-height:1.25; }
+.pgh-cat-arrow {
+    position: absolute; top: 14px; right: 14px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(255,255,255,.15); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transform: translateY(6px);
+    transition: opacity .3s, transform .3s;
 }
-.pgb-catcard:hover .pgb-caticon {
-    background:linear-gradient(135deg,rgba(187,151,109,.26),rgba(187,151,109,.13));
-}
-.pgb-catname { font-size:13px; font-weight:700; color:#2c2420; line-height:1.3; }
-.dark .pgb-catname { color:#f0ebe4; }
-.pgb-catcount { font-size:11px; color:#a09080; margin-top:2px; font-weight:500; }
+.pgh-catimg-card:hover .pgh-cat-arrow { opacity: 1; transform: translateY(0); }
+/* Category fallback */
+.pgh-cat-fb { width:100%;height:100%;display:flex;align-items:center;justify-content:center; }
 
-/* ── Trust Strip ────────────────────────────────────────────── */
-.pgb-trust-strip {
-    background:linear-gradient(135deg,rgba(187,151,109,.07) 0%,rgba(253,246,238,.85) 50%,rgba(187,151,109,.07) 100%);
-    border: 1px solid rgba(187,151,109,.16);
-    border-radius: 26px;
-    position: relative; overflow: hidden;
-}
-.dark .pgb-trust-strip {
-    background:linear-gradient(135deg,rgba(187,151,109,.09) 0%,rgba(255,255,255,.03) 50%,rgba(187,151,109,.07) 100%);
-    border-color:rgba(187,151,109,.13);
-}
-.pgb-trust-strip::before {
-    content:''; position:absolute;
-    top:-60px; left:50%; transform:translateX(-50%);
-    width:300px; height:120px;
-    background:radial-gradient(ellipse,rgba(187,151,109,.12) 0%,transparent 70%);
-    pointer-events:none;
-}
-.pgb-trust-item { display:flex; align-items:center; gap:13px; padding:18px 20px; }
-.pgb-trust-icon {
-    width:42px; height:42px; border-radius:13px;
-    background:rgba(187,151,109,.13);
-    display:flex; align-items:center; justify-content:center; flex-shrink:0;
-}
-.pgb-trust-label { font-size:13px; font-weight:700; color:#2c2420; }
-.dark .pgb-trust-label { color:#f0ebe4; }
-.pgb-trust-sub { font-size:11px; color:#a09080; margin-top:2px; }
-.pgb-trust-divider { width:1px; height:36px; background:rgba(187,151,109,.18); flex-shrink:0; }
 
-/* Fallback color cells */
-.pgb-fallback {
-    width:100%; height:100%;
-    display:flex; align-items:center; justify-content:center;
-    flex-direction:column; gap:10px;
+/* ── Responsive misc ────────────────────────────────────────── */
+@media(max-width:1023px){
+    .pgh-collage  { padding: 8px 0; }
+    .pgh-dot-grid { width: 72px; height: 72px; right: -4px; }
+    .pgh-float    { padding:9px 13px; }
+    .pgh-fv       { font-size:12px; }
+    .pgh-fs       { font-size:9px; }
+    .pgh-fi       { width:28px;height:28px; }
+    .pgh-float-1  { top:12px !important; right:12px !important; }
+    .pgh-float-2  { bottom:16px !important; left:12px !important; }
+    .pgh-float-3  { display:none !important; }
 }
-
-/* ── Collage responsive heights ─────────────────────────────── */
-.pgb-cell-1 { height: 290px; }
-.pgb-cell-2 { height: 210px; margin-top: 32px; }
-.pgb-cell-3 { height: 210px; }
-.pgb-cell-4 { height: 265px; }
-@media (max-width: 1023px) {
-    .pgb-cell-1 { height: 155px; }
-    .pgb-cell-2 { height: 125px; margin-top: 18px; }
-    .pgb-cell-3 { height: 125px; }
-    .pgb-cell-4 { height: 145px; }
-    .pgb-collage .grid { padding: 12px 8px 40px 8px !important; }
-    .pgb-float { padding: 9px 13px; }
-    .pgb-float-val { font-size: 12px; }
-    .pgb-float-sub { font-size: 9px; }
-    .pgb-float-icon { width: 28px; height: 28px; }
-    .pgb-float-a { top: 8px !important; right: 8px !important; }
-    .pgb-float-b { bottom: 8px !important; left: 8px !important; }
-    .pgb-float-c { display: none; }
+@media(max-width:639px){
+    .pgh-h1     { font-size: 2.15rem; }
+    .pgh-body   { font-size: 15px; }
+    .pgh-stat-n { font-size: 22px; }
+    .pgh-ti     { padding: 16px 14px; }
+    .pgh-float-2{ display:none !important; }
 }
 </style>
 @endpush
 
-<section class="pgb-section pt-24 pb-16 md:pt-32 md:pb-24 xl:pt-36 xl:pb-28">
+{{-- ── PHP data prep ──────────────────────────────────────────── --}}
+@php
+    $catIconMap = [
+        'sofa'     => '<path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11a2 2 0 1 1 4 0v2h12v-2a2 2 0 1 1 4 0v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/><path d="M6 17v2"/><path d="M18 17v2"/>',
+        'chair'    => '<path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11a2 2 0 1 1 4 0v2h12v-2a2 2 0 1 1 4 0v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>',
+        'lamp'     => '<path d="M9 18h6"/><path d="M10 22h4"/><path d="m5 6 7-4 7 4"/><path d="M12 2v4"/><rect x="5" y="6" width="14" height="12" rx="2"/>',
+        'vase'     => '<path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 10v12"/><path d="M9 3h6l1 7H8z"/>',
+        'table'    => '<path d="M3 6h18"/><path d="M3 18h18"/><path d="M8 6v12"/><path d="M16 6v12"/>',
+        'wood'     => '<path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/>',
+        'interior' => '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+        'bedroom'  => '<path d="M2 4v16"/><path d="M2 8h18a2 2 0 012 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/>',
+        'outdoor'  => '<circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/>',
+    ];
+    if (!function_exists('pgbIcon')) {
+        function pgbIcon(string $slug, array $map): string {
+            $slug = strtolower($slug);
+            foreach ($map as $key => $path) {
+                if (str_contains($slug, $key)) return $path;
+            }
+            return '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>';
+        }
+    }
+@endphp
+
+<section class="pgh-hero pt-24 pb-16 md:pt-32 md:pb-24 xl:pt-36 xl:pb-28">
+
+    {{-- Background orbs --}}
+    <div class="pgh-orb pgh-orb-1"></div>
+    <div class="pgh-orb pgh-orb-2"></div>
+    <div class="pgh-orb pgh-orb-3"></div>
+
     <div class="container-fluid" style="position:relative;z-index:1;">
         <div class="max-w-[1720px] mx-auto">
 
-            {{-- ── ROW 1 : Copy + Visual Collage ─────────────────────────── --}}
-            <div class="grid lg:grid-cols-2 gap-10 xl:gap-20 items-center mb-16 md:mb-20">
+            {{-- ════════════════════════════════════════════════════════════
+                 ROW 1 — Hero copy + Bento collage
+            ════════════════════════════════════════════════════════════ --}}
+            <div class="pgh-row">
 
-                {{-- LEFT: Copy ------------------------------------------------ --}}
-                <div data-aos="fade-right">
+                {{-- LEFT: Copy -------------------------------------------- --}}
+                <div class="pgh-row-left">
 
-                    {{-- Trust pill --}}
-                    <span class="pgb-pill">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="#bb976d"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    {{-- Live trust badge --}}
+                    <div class="pgh-badge">
+                        <span class="pgh-badge-dot"></span>
                         Trusted by 10,000+ Customers
-                    </span>
+                    </div>
 
-                    {{-- Headline --}}
-                    <h2 class="mt-5 font-bold leading-[1.1] tracking-tight text-title dark:text-white"
-                        style="font-size:clamp(2rem,3.5vw,3.4rem);">
-                        Everything You Need,<br>
-                        <span class="pgb-accent">Delivered to Your Door</span>
-                    </h2>
+                    {{-- H1 --}}
+                    <h1 class="pgh-h1 mt-5">
+                        Premium Furniture<br>
+                        &amp; Home Decor,<br>
+                        <span class="pgh-h1-grad">Delivered to Your Door</span>
+                    </h1>
 
-                    {{-- Supporting text --}}
-                    <p class="mt-5 text-base md:text-[17px] text-paragraph dark:text-white-light leading-relaxed max-w-[480px]">
-                        Premium furniture &amp; home decor curated for modern living. From handcrafted sofas to artisan ceramics — transform your space with pieces you'll love forever.
+                    {{-- Body --}}
+                    <p class="pgh-body mt-5 max-w-[500px]">
+                        From handcrafted sofas and artisan ceramics to complete interior collections — curated for modern living, delivered with care.
                     </p>
 
                     {{-- CTAs --}}
-                    <div class="mt-8 flex flex-wrap gap-3 md:gap-4">
-                        <a href="{{ url('/shop') }}" class="pgb-btn-primary">
+                    <div class="pgh-cta-wrap mt-8 flex flex-wrap gap-3 md:gap-4">
+                        <a href="{{ url('/shop') }}" class="pgh-btn-a">
                             Shop Now
-                            <svg width="15" height="11" viewBox="0 0 16 12" fill="none">
-                                <path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                            <svg width="15" height="11" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </a>
-                        <a href="{{ url('/categories') }}" class="pgb-btn-secondary">
-                            Explore Categories
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-                                <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
-                            </svg>
+                        <a href="{{ url('/categories') }}" class="pgh-btn-b">
+                            Explore Collections
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                         </a>
                     </div>
 
-                    {{-- Stats row --}}
-                    <div class="mt-10 flex items-center gap-6 md:gap-8">
+                    {{-- Social proof --}}
+                    <div class="pgh-proof mt-8 flex items-center gap-4">
+                        <div class="pgh-avatar-stack">
+                            <div class="pgh-avatar">A</div>
+                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#c4a070,#8b6510);">B</div>
+                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#d4b888,#bb976d);">C</div>
+                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#a07840,#6b4f20);font-size:9px;">+9K</div>
+                        </div>
                         <div>
-                            <div class="pgb-stat-val">10K+</div>
+                            <div class="pgh-stars">★★★★★</div>
+                            <div style="font-size:12px;color:#a09080;margin-top:2px;">4.9 from 2,400+ verified reviews</div>
+                        </div>
+                    </div>
+
+                    {{-- Stats --}}
+                    <div class="pgh-stats mt-9 flex items-center gap-5 md:gap-7">
+                        <div>
+                            <div class="pgh-stat-n">10K+</div>
                             <div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Happy Customers</div>
                         </div>
-                        <div class="pgb-stat-div"></div>
+                        <div class="pgh-stat-sep"></div>
                         <div>
-                            <div class="pgb-stat-val">500+</div>
+                            <div class="pgh-stat-n">500+</div>
                             <div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Products</div>
                         </div>
-                        <div class="pgb-stat-div"></div>
+                        <div class="pgh-stat-sep"></div>
                         <div>
-                            <div class="pgb-stat-val">4.9★</div>
+                            <div class="pgh-stat-n">4.9★</div>
                             <div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Avg. Rating</div>
                         </div>
-                        <div class="pgb-stat-div hidden sm:block"></div>
+                        <div class="pgh-stat-sep hidden sm:block"></div>
                         <div class="hidden sm:block">
-                            <div class="pgb-stat-val">30D</div>
+                            <div class="pgh-stat-n">30D</div>
                             <div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Free Returns</div>
                         </div>
                     </div>
                 </div>
 
-                {{-- RIGHT: Visual Collage ------------------------------------ --}}
-                @php
-                    $collCats = $categories->take(4);
-                    $cimgs = [];
-                    foreach ($collCats as $cc) {
-                        if ($cc->image) {
-                            $cimgs[] = [
-                                'src'  => str_starts_with($cc->image,'assets/') ? asset($cc->image) : Storage::url($cc->image),
-                                'name' => $cc->name,
-                            ];
-                        } else {
-                            $cimgs[] = null;
-                        }
-                    }
-                    while(count($cimgs) < 4) $cimgs[] = null;
-                    $fallbacks = ['#d8cfc5','#c4b49e','#e2d8ce','#b8a888'];
-                @endphp
+                {{-- RIGHT: Hero image with floating badges ------------------- --}}
+                <div class="pgh-collage pgh-row-right">
 
-                <div class="pgb-collage" data-aos="fade-left" data-aos-delay="120">
-                    <div class="grid grid-cols-2 gap-4" style="padding:24px 28px 24px 8px;">
+                    {{-- Soft glow behind image --}}
+                    <div class="pgh-collage-glow"></div>
 
-                        {{-- Cell 1 — tall left --}}
-                        <div class="pgb-cell pgb-cell-1">
-                            @if($cimgs[0])
-                                <img src="{{ $cimgs[0]['src'] }}" alt="{{ $cimgs[0]['name'] }}">
-                            @else
-                                <div class="pgb-fallback" style="background:{{ $fallbacks[0] }};">
-                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11a2 2 0 1 1 4 0v2h12v-2a2 2 0 1 1 4 0v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/><path d="M6 17v2"/><path d="M18 17v2"/></svg>
-                                    <span style="color:rgba(255,255,255,.7);font-size:11px;font-weight:600;">{{ $collCats[0]->name ?? 'Furniture' }}</span>
-                                </div>
-                            @endif
-                        </div>
+                    {{-- Dot grid accent (top-right) --}}
+                    <div class="pgh-dot-grid"></div>
 
-                        {{-- Cell 2 — short right, pushed down --}}
-                        <div class="pgb-cell pgb-cell-2">
-                            @if($cimgs[1])
-                                <img src="{{ $cimgs[1]['src'] }}" alt="{{ $cimgs[1]['name'] }}">
-                            @else
-                                <div class="pgb-fallback" style="background:{{ $fallbacks[1] }};">
-                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                                    <span style="color:rgba(255,255,255,.7);font-size:11px;font-weight:600;">{{ $collCats[1]->name ?? 'Decor' }}</span>
-                                </div>
-                            @endif
-                        </div>
+                    {{-- Bottom accent line --}}
+                    <div class="pgh-img-accent"></div>
 
-                        {{-- Cell 3 — short left --}}
-                        <div class="pgb-cell pgb-cell-3">
-                            @if($cimgs[2])
-                                <img src="{{ $cimgs[2]['src'] }}" alt="{{ $cimgs[2]['name'] }}">
-                            @else
-                                <div class="pgb-fallback" style="background:{{ $fallbacks[2] }};">
-                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-                                    <span style="color:rgba(255,255,255,.7);font-size:11px;font-weight:600;">{{ $collCats[2]->name ?? 'Lighting' }}</span>
-                                </div>
-                            @endif
-                        </div>
-
-                        {{-- Cell 4 — tall right --}}
-                        <div class="pgb-cell pgb-cell-4">
-                            @if($cimgs[3])
-                                <img src="{{ $cimgs[3]['src'] }}" alt="{{ $cimgs[3]['name'] }}">
-                            @else
-                                <div class="pgb-fallback" style="background:{{ $fallbacks[3] }};">
-                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-                                    <span style="color:rgba(255,255,255,.7);font-size:11px;font-weight:600;">{{ $collCats[3]->name ?? 'Tables' }}</span>
-                                </div>
-                            @endif
-                        </div>
+                    {{-- Main hero image --}}
+                    <div class="pgh-img-wrap">
+                        <img src="{{ asset('assets/img/home-v1/banner-02.png') }}"
+                             alt="Premium Furniture — Delivered to Your Door"
+                             loading="eager">
                     </div>
 
-                    {{-- Floating badge 1: Rating --}}
-                    <div class="pgb-float pgb-float-a" style="top:10px;right:10px;">
+                    {{-- "New Season" pill over image (outside wrap so not clipped) --}}
+                    <span class="pgh-new-badge">New Season</span>
+
+                    {{-- Float 1: Rating (top-right over image) --}}
+                    <div class="pgh-float pgh-float-1">
                         <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="pgb-float-icon" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);">
+                            <div class="pgh-fi" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                             </div>
-                            <div>
-                                <div class="pgb-float-val">4.9 / 5.0</div>
-                                <div class="pgb-float-sub">2,400+ Reviews</div>
-                            </div>
+                            <div><div class="pgh-fv">4.9 / 5.0</div><div class="pgh-fs">2,400+ Reviews</div></div>
                         </div>
                     </div>
 
-                    {{-- Floating badge 2: Free delivery --}}
-                    <div class="pgb-float pgb-float-b" style="bottom:40px;left:-4px;">
+                    {{-- Float 2: Free delivery (bottom-left over image) --}}
+                    <div class="pgh-float pgh-float-2">
                         <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="pgb-float-icon" style="background:linear-gradient(135deg,#bb976d,#8b6510);">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                            <div class="pgh-fi" style="background:linear-gradient(135deg,#bb976d,#8b6510);">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
                             </div>
-                            <div>
-                                <div class="pgb-float-val">Free Delivery</div>
-                                <div class="pgb-float-sub">Orders over $99</div>
-                            </div>
+                            <div><div class="pgh-fv">Free Delivery</div><div class="pgh-fs">On orders over $99</div></div>
                         </div>
                     </div>
 
-                    {{-- Floating badge 3: Secure --}}
-                    <div class="pgb-float pgb-float-c" style="top:46%;left:-10px;">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="pgb-float-icon" style="background:linear-gradient(135deg,#10b981,#047857);">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            </div>
-                            <div>
-                                <div class="pgb-float-val">SSL Secured</div>
-                                <div class="pgb-float-sub">100% Safe Checkout</div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
-            {{-- ── ROW 2 : Category Nav Cards ────────────────────────────── --}}
-            <div class="mb-12 md:mb-16">
-                <div class="flex items-end justify-between mb-7 md:mb-8" data-aos="fade-up">
+            {{-- ════════════════════════════════════════════════════════════
+                 ROW 2 — Category image cards
+            ════════════════════════════════════════════════════════════ --}}
+            <div class="mb-14 md:mb-20">
+                <div class="flex items-end justify-between mb-7" data-aos="fade-up">
                     <div>
-                        <span class="text-xs uppercase tracking-widest text-primary font-semibold">Browse by Category</span>
-                        <h3 class="mt-1 text-xl md:text-2xl font-bold text-title dark:text-white">Shop Your Style</h3>
+                        <span class="text-xs uppercase tracking-widest text-primary font-semibold">Browse by Collection</span>
+                        <h2 class="mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Shop Your Style</h2>
                     </div>
                     <a href="{{ url('/categories') }}"
                        class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-primary
                               border border-primary/30 px-5 py-2.5 rounded-full
                               hover:bg-primary hover:text-white hover:border-primary transition-all duration-200">
-                        All Categories
-                        <svg width="13" height="9" viewBox="0 0 24 14" fill="none"><path d="M23.82 6.62L18.38 1.18C18.18.95 17.84.92 17.61 1.12C17.38 1.31 17.35 1.66 17.55 1.88L22.12 6.46L.57 6.46C.27 6.46.02 6.71.02 7.01C.02 7.31.27 7.55.57 7.55L22.12 7.55L17.61 12.06C17.38 12.26 17.35 12.6 17.55 12.83C17.74 13.06 18.09 13.09 18.32 12.89L23.82 7.39C24.03 7.17 24.03 6.83 23.82 6.62Z" fill="currentColor"/></svg>
+                        All Collections →
                     </a>
                 </div>
 
-                @php
-                    $catIconMap = [
-                        'sofa'      => '<path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11a2 2 0 1 1 4 0v2h12v-2a2 2 0 1 1 4 0v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/><path d="M6 17v2"/><path d="M18 17v2"/>',
-                        'chair'     => '<path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11a2 2 0 1 1 4 0v2h12v-2a2 2 0 1 1 4 0v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>',
-                        'lamp'      => '<path d="M9 18h6"/><path d="M10 22h4"/><path d="m5 6 7-4 7 4"/><path d="M12 2v4"/><rect x="5" y="6" width="14" height="12" rx="2"/>',
-                        'vase'      => '<path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 10v12"/><path d="M9 3h6l1 7H8z"/>',
-                        'table'     => '<path d="M3 6h18"/><path d="M3 18h18"/><path d="M8 6v12"/><path d="M16 6v12"/>',
-                        'wood'      => '<path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/>',
-                        'interior'  => '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
-                        'bedroom'   => '<path d="M2 4v16"/><path d="M2 8h18a2 2 0 012 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/>',
-                        'outdoor'   => '<circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/>',
-                    ];
-                    if (!function_exists('pgbIcon')) { function pgbIcon(string $slug, array $map): string {
-                        $slug = strtolower($slug);
-                        foreach ($map as $key => $path) {
-                            if (str_contains($slug, $key)) return $path;
-                        }
-                        return '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>';
-                    } }
-                @endphp
-
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+                <div class="pgh-cats-scroll" data-aos="fade-up" data-aos-delay="80">
                     @foreach($categories->take(6) as $cat)
-                    <a href="{{ route('category.landing', $cat->slug) }}"
-                       class="pgb-catcard"
-                       data-aos="fade-up"
-                       data-aos-delay="{{ $loop->index * 55 }}">
-                        <div class="pgb-caticon">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-                                 stroke="#bb976d" stroke-width="1.8"
-                                 stroke-linecap="round" stroke-linejoin="round">
-                                {!! pgbIcon($cat->slug ?? $cat->name, $catIconMap) !!}
-                            </svg>
+                    @php
+                        $catSrc = null;
+                        if ($cat->image) {
+                            $catSrc = str_starts_with($cat->image,'assets/') ? asset($cat->image) : Storage::url($cat->image);
+                        }
+                        $catFb = ['#c8b9a8','#b8a48e','#c4b09a','#d4c0aa','#b09078','#c0a88c'];
+                    @endphp
+                    <a href="{{ route('category.landing', $cat->slug) }}" class="pgh-catimg-card"
+                       style="animation-delay:{{ $loop->index * .07 }}s;">
+                        @if($catSrc)
+                            <img src="{{ $catSrc }}" alt="{{ $cat->name }}">
+                        @else
+                            <div class="pgh-cat-fb" style="background:{{ $catFb[$loop->index % 6] }};">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                                    {!! pgbIcon($cat->slug ?? $cat->name, $catIconMap) !!}
+                                </svg>
+                            </div>
+                        @endif
+                        <div class="pgh-cat-scrim"></div>
+                        <div class="pgh-cat-body">
+                            <div class="pgh-cat-count">{{ $cat->products_count }} {{ Str::plural('item', $cat->products_count) }}</div>
+                            <div class="pgh-cat-name">{{ $cat->name }}</div>
                         </div>
-                        <div>
-                            <div class="pgb-catname">{{ $cat->name }}</div>
-                            <div class="pgb-catcount">{{ $cat->products_count }} {{ Str::plural('item', $cat->products_count) }}</div>
+                        <div class="pgh-cat-arrow">
+                            <svg width="12" height="10" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </div>
                     </a>
                     @endforeach
                 </div>
             </div>
 
-            {{-- ── ROW 3 : Trust Glassmorphism Strip ─────────────────────── --}}
-            <div class="pgb-trust-strip" data-aos="fade-up">
-                <div class="flex flex-wrap items-center justify-between divide-y md:divide-y-0 md:divide-x divide-[#e4d8c8]/60 dark:divide-white/8">
-
-                    <div class="pgb-trust-item w-1/2 md:w-auto flex-1">
-                        <div class="pgb-trust-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                        </div>
-                        <div>
-                            <div class="pgb-trust-label">Free Shipping</div>
-                            <div class="pgb-trust-sub">Orders over $99</div>
-                        </div>
-                    </div>
-
-                    <div class="pgb-trust-item w-1/2 md:w-auto flex-1">
-                        <div class="pgb-trust-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                        </div>
-                        <div>
-                            <div class="pgb-trust-label">Secure Payments</div>
-                            <div class="pgb-trust-sub">SSL encrypted</div>
-                        </div>
-                    </div>
-
-                    <div class="pgb-trust-item w-1/2 md:w-auto flex-1">
-                        <div class="pgb-trust-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
-                        </div>
-                        <div>
-                            <div class="pgb-trust-label">Easy Returns</div>
-                            <div class="pgb-trust-sub">30-day policy</div>
-                        </div>
-                    </div>
-
-                    <div class="pgb-trust-item w-1/2 md:w-auto flex-1">
-                        <div class="pgb-trust-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.64A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
-                        </div>
-                        <div>
-                            <div class="pgb-trust-label">24/7 Support</div>
-                            <div class="pgb-trust-sub">Always here for you</div>
-                        </div>
-                    </div>
-
-                    <div class="pgb-trust-item w-1/2 md:w-auto flex-1">
-                        <div class="pgb-trust-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-                        </div>
-                        <div>
-                            <div class="pgb-trust-label">10K+ Customers</div>
-                            <div class="pgb-trust-sub">And counting</div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
         </div>
     </div>
 </section>
-<!-- Business & Category Clarity End -->
+<!-- Hero Section End -->
+
+<!-- Trust Strip Start -->
+<div class="ts-wrap">
+    <div class="container-fluid">
+        <div class="ts-strip" data-aos="fade-up">
+
+                {{-- Free Shipping --}}
+                <div class="ts-item">
+                    <div class="ts-icon" style="background:#FEF3E8;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9893A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="3" width="15" height="13" rx="1"/>
+                            <path d="M16 8h4l3 4v3h-7V8z"/>
+                            <circle cx="5.5" cy="18.5" r="2.5"/>
+                            <circle cx="18.5" cy="18.5" r="2.5"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="ts-label">Free Shipping</div>
+                        <div class="ts-sub">Orders over $99</div>
+                    </div>
+                </div>
+
+                <div class="ts-sep"></div>
+
+                {{-- Secure Payments --}}
+                <div class="ts-item">
+                    <div class="ts-icon" style="background:#EBF4FF;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="4" width="22" height="16" rx="2"/>
+                            <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="ts-label">Secure Payments</div>
+                        <div class="ts-sub">SSL encrypted</div>
+                    </div>
+                </div>
+
+                <div class="ts-sep"></div>
+
+                {{-- Easy Returns --}}
+                <div class="ts-item">
+                    <div class="ts-icon" style="background:#E8FBF6;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="1 4 1 10 7 10"/>
+                            <path d="M3.51 15a9 9 0 1 0 .49-4.5"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="ts-label">Easy Returns</div>
+                        <div class="ts-sub">30-day policy</div>
+                    </div>
+                </div>
+
+                <div class="ts-sep"></div>
+
+                {{-- 24/7 Support --}}
+                <div class="ts-item">
+                    <div class="ts-icon" style="background:#F0EAFF;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.64A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="ts-label">24/7 Support</div>
+                        <div class="ts-sub">Always here for you</div>
+                    </div>
+                </div>
+
+                <div class="ts-sep"></div>
+
+                {{-- 10K+ Customers --}}
+                <div class="ts-item">
+                    <div class="ts-icon" style="background:#FFF3E8;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 010 7.75"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="ts-label">10K+ Customers</div>
+                        <div class="ts-sub">And counting</div>
+                    </div>
+                </div>
+
+        </div>
+    </div>
+</div>
+
+@push('styles')
+<style>
+/* ── Trust Strip ───────────────────────────────────────────── */
+.ts-wrap {
+    padding: 10px 0 32px;
+    background: #FAF9F7;
+}
+.dark .ts-wrap { background: #16120e; }
+
+.ts-strip {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #EDE7DF;
+    border-radius: 18px;
+    box-shadow: 0 2px 20px rgba(0,0,0,.055);
+    overflow: hidden;
+}
+.dark .ts-strip {
+    background: rgba(255,255,255,.04);
+    border-color: rgba(255,255,255,.08);
+}
+
+.ts-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 24px 16px;
+    flex: 1 1 0%;
+    min-width: 0;
+    transition: background .25s ease;
+}
+.ts-item:hover { background: #FDFAF7; }
+.dark .ts-item:hover { background: rgba(255,255,255,.03); }
+
+.ts-icon {
+    width: 46px; height: 46px;
+    border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: transform .3s cubic-bezier(.22,.68,0,1.2);
+}
+.ts-item:hover .ts-icon { transform: scale(1.12) rotate(-6deg); }
+
+.ts-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1c1410;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+.dark .ts-label { color: #f0e8de; }
+
+.ts-sub {
+    font-size: 12px;
+    color: #a09080;
+    margin-top: 3px;
+    white-space: nowrap;
+}
+
+.ts-sep {
+    width: 1px;
+    align-self: stretch;
+    background: linear-gradient(to bottom, transparent 10%, #EDE7DF 40%, #EDE7DF 60%, transparent 90%);
+    flex-shrink: 0;
+}
+.dark .ts-sep { background: linear-gradient(to bottom, transparent 10%, rgba(255,255,255,.1) 40%, rgba(255,255,255,.1) 60%, transparent 90%); }
+
+/* Responsive */
+@media (max-width: 1199px) {
+    .ts-item  { padding: 22px 12px; gap: 12px; }
+    .ts-icon  { width: 42px; height: 42px; border-radius: 12px; }
+    .ts-label { font-size: 14px; }
+}
+@media (max-width: 1023px) {
+    .ts-item  { padding: 20px 10px; gap: 10px; }
+    .ts-icon  { width: 38px; height: 38px; border-radius: 11px; }
+    .ts-label { font-size: 13px; }
+    .ts-sub   { font-size: 11px; }
+}
+@media (max-width: 767px) {
+    .ts-strip { flex-wrap: wrap; border-radius: 14px; }
+    .ts-item  { flex: 0 0 50%; justify-content: flex-start; padding: 18px 18px; }
+    .ts-sep   { display: none; }
+}
+@media (max-width: 479px) {
+    .ts-item  { flex: 0 0 100%; border-bottom: 1px solid #EDE7DF; }
+    .ts-item:last-child { border-bottom: none; }
+}
+</style>
+@endpush
+<!-- Trust Strip End -->
 
 <!-- Product Category Area Start -->
 <div class="s-py-100-50">
@@ -542,15 +721,15 @@
         <!-- Section Title -->
         <div class="flex items-end justify-between gap-4 mb-8 md:mb-10 max-w-[1720px] mx-auto" data-aos="fade-up">
             <div>
-                <span class="text-xs uppercase tracking-widest text-primary font-semibold">Explore our range</span>
-                <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Featured Categories</h2>
-                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">Shop furniture, decor, ceramics and more</p>
+                <span class="text-xs uppercase tracking-widest text-primary font-semibold">Top Sellers</span>
+                <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Featured Products</h2>
+                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">Handpicked favourites loved by our customers</p>
             </div>
-            <a href="{{ url('/categories') }}"
+            <a href="{{ url('/shop') }}"
                class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-title dark:text-white
                       border border-current px-5 py-2.5 rounded-full hover:text-primary hover:border-primary
                       duration-300 whitespace-nowrap">
-                All Categories
+                View All
                 <svg width="14" height="10" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M23.8198 6.61958L18.3757 1.17541C18.1801 0.947054 17.8364 0.920433 17.608 1.11604C17.3797 1.31161 17.3531 1.65529 17.5487 1.88366C17.5669 1.90494 17.5868 1.92483 17.608 1.94303L22.1212 6.46168L0.567835 6.46168C0.267191 6.46168 0.0234375 6.70543 0.0234375 7.00612C0.0234375 7.30681 0.267191 7.55052 0.567835 7.55052L22.1212 7.55052L17.608 12.0637C17.3797 12.2593 17.3531 12.6029 17.5487 12.8313C17.7443 13.0597 18.0879 13.0863 18.3163 12.8907C18.3376 12.8724 18.3575 12.8526 18.3757 12.8313L23.8198 7.38714C24.0309 7.17488 24.0309 6.83194 23.8198 6.61958Z" fill="currentColor"/>
                 </svg>
@@ -592,7 +771,7 @@
                  data-carousel-margin="16"
                  data-carousel-loop="false"
                  data-carousel-autoplay="false">
-                @include('includes.Home.product-category')
+                @include('includes.Home.best-sellers')
             </div>
 
             <!-- Prev Button -->
@@ -626,7 +805,7 @@
 
     </div>
 </div>
-<!-- Product Category Area End -->
+<!-- Featured Products Area End -->
 
 <!-- New Arrivals Area Start -->
 <section class="s-py-50-100">
