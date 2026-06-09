@@ -3,6 +3,53 @@
 @section('title', ($category->meta_title ?: 'Buy ' . $category->name . ' Online') . ' | PeytonGhalib')
 @section('meta_description', $category->meta_description ?: 'Shop our full range of ' . $category->name . ' at PeytonGhalib. Quality pieces, fast delivery, easy returns — browse and buy online today.')
 
+@push('schema')
+@php
+    $catDesc = $category->meta_description
+        ?: 'Shop our full range of ' . $category->name . ' at PeytonGhalib. Quality pieces, fast delivery, easy returns.';
+
+    // Build ItemList elements from $products
+    $catListItems = [];
+    foreach ($products as $i => $p) {
+        $pImg = !empty($p->image)
+            ? (str_starts_with($p->image, 'assets/') ? asset($p->image) : \Storage::url($p->image))
+            : asset('assets/img/logo.svg');
+        $catListItems[] = [
+            '@type'    => 'ListItem',
+            'position' => $i + 1,
+            'name'     => $p->name,
+            'url'      => route('product-details', $p->slug),
+            'image'    => $pImg,
+        ];
+    }
+
+    $schemaCollection = [
+        '@context'    => 'https://schema.org',
+        '@type'       => 'CollectionPage',
+        'name'        => $category->name . ' — PeytonGhalib',
+        'description' => $catDesc,
+        'url'         => url()->current(),
+        'breadcrumb'  => [
+            '@type'           => 'BreadcrumbList',
+            'itemListElement' => [
+                ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home',  'item' => url('/')],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => 'Shop',  'item' => url('/shop')],
+                ['@type' => 'ListItem', 'position' => 3, 'name' => $category->name, 'item' => url()->current()],
+            ],
+        ],
+    ];
+
+    $schemaItemList = [
+        '@context'        => 'https://schema.org',
+        '@type'           => 'ItemList',
+        'name'            => $category->name . ' — PeytonGhalib',
+        'itemListElement' => $catListItems,
+    ];
+@endphp
+<script type="application/ld+json">{!! json_encode($schemaCollection, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
+<script type="application/ld+json">{!! json_encode($schemaItemList, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
+@endpush
+
 @section('content')
 @include('includes.navbar')
 

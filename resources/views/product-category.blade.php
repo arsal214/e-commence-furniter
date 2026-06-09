@@ -1,7 +1,50 @@
 <!-- resources/views/product-category.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'Product-Category Page')
+@section('title', 'All Products | PeytonGhalib')
+@section('meta_description', 'Browse our full product catalogue at PeytonGhalib. Furniture, home decor, ceramics and lifestyle products with fast delivery.')
+
+@push('schema')
+@php
+$pcListItems = [];
+foreach ($products as $i => $p) {
+    $pImg = !empty($p->image)
+        ? (str_starts_with($p->image, 'assets/') ? asset($p->image) : \Storage::url($p->image))
+        : asset('assets/img/logo.svg');
+    $pcListItems[] = [
+        '@type'    => 'ListItem',
+        'position' => $products->firstItem() + $i,
+        'name'     => $p->name,
+        'url'      => route('product-details', $p->slug),
+        'image'    => $pImg,
+    ];
+}
+
+$schemaPc = [
+    '@context'   => 'https://schema.org',
+    '@type'      => 'CollectionPage',
+    'name'       => 'All Products — PeytonGhalib',
+    'description'=> 'Browse our full product catalogue at PeytonGhalib.',
+    'url'        => url()->current(),
+    'breadcrumb' => [
+        '@type'           => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type'=>'ListItem','position'=>1,'name'=>'Home','item'=>url('/')],
+            ['@type'=>'ListItem','position'=>2,'name'=>'Products','item'=>url()->current()],
+        ],
+    ],
+];
+
+$schemaPcList = [
+    '@context'        => 'https://schema.org',
+    '@type'           => 'ItemList',
+    'name'            => 'All Products — PeytonGhalib',
+    'itemListElement' => $pcListItems,
+];
+@endphp
+<script type="application/ld+json">{!! json_encode($schemaPc, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
+<script type="application/ld+json">{!! json_encode($schemaPcList, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
+@endpush
 
 @section('content')
 

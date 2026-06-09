@@ -1,6 +1,20 @@
 @extends('layouts.main')
 @section('title', 'Refund Policy | PeytonGhalib')
 @section('meta_description', 'Learn about PeytonGhalib\'s refund policy. Full refunds processed within 5–7 business days for eligible returns.')
+
+@push('schema')
+@php
+$schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Refund Policy — PeytonGhalib',
+    'description'=>'Learn about PeytonGhalib\'s refund policy. Full refunds processed within 5-7 business days for eligible returns.',
+    'url'=>url()->current(),
+    'breadcrumb'=>['@type'=>'BreadcrumbList','itemListElement'=>[
+        ['@type'=>'ListItem','position'=>1,'name'=>'Home','item'=>url('/')],
+        ['@type'=>'ListItem','position'=>2,'name'=>'Refund Policy','item'=>url()->current()],
+    ]]];
+@endphp
+<script type="application/ld+json">{!! json_encode($schemaPage, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
+@endpush
+
 @section('content')
 @include('includes.navbar')
 <div class="flex items-center gap-4 flex-wrap bg-overlay p-14 sm:p-16 before:bg-title before:bg-opacity-70" style="background-image:url('{{ asset('assets/img/shortcode/breadcumb.jpg') }}');">

@@ -2,6 +2,7 @@
 @extends('layouts.main')
 
 @section('title', 'Edit Account')
+@section('robots', 'noindex, nofollow')
 
 @section('content')
 

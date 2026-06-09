@@ -2,6 +2,7 @@
 @extends('layouts.main')
 
 @section('title', 'Login Page')
+@section('robots', 'noindex, nofollow')
 
 @section('content')
 

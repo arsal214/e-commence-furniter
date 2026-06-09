@@ -2,6 +2,7 @@
 @extends('layouts.main')
 
 @section('title', 'Payment-Failure Page')
+@section('robots', 'noindex, nofollow')
 
 @section('content')
 

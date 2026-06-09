@@ -2,6 +2,7 @@
 @extends('layouts.main')
 
 @section('title', 'My Wishlist')
+@section('robots', 'noindex, nofollow')
 
 @section('content')
 

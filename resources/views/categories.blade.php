@@ -1,7 +1,28 @@
 <!-- resources/views/categories.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'All Categories')
+@section('title', 'All Categories | PeytonGhalib')
+@section('meta_description', 'Browse all product categories at PeytonGhalib — furniture, home decor, ceramics, lifestyle and more.')
+
+@push('schema')
+@php
+$schemaCats = [
+    '@context'   => 'https://schema.org',
+    '@type'      => 'CollectionPage',
+    'name'       => 'All Categories — PeytonGhalib',
+    'description'=> 'Browse all product categories at PeytonGhalib — furniture, home decor, ceramics, lifestyle and more.',
+    'url'        => url()->current(),
+    'breadcrumb' => [
+        '@type'           => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type'=>'ListItem','position'=>1,'name'=>'Home','item'=>url('/')],
+            ['@type'=>'ListItem','position'=>2,'name'=>'Categories','item'=>url()->current()],
+        ],
+    ],
+];
+@endphp
+<script type="application/ld+json">{!! json_encode($schemaCats, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
+@endpush
 
 @section('content')
 

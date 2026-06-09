@@ -2,6 +2,7 @@
 @extends('layouts.main')
 
 @section('title', 'My-Profile Page')
+@section('robots', 'noindex, nofollow')
 
 @section('content')
 

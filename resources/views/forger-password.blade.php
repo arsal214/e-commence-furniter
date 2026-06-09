@@ -2,6 +2,7 @@
 @extends('layouts.main')
 
 @section('title', 'Forger-Password Page')
+@section('robots', 'noindex, nofollow')
 
 @section('content')
 

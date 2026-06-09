@@ -4,6 +4,19 @@
 @section('title', 'Terms & Conditions | PeytonGhalib')
 @section('meta_description', 'Read the Terms and Conditions for using PeytonGhalib. Understand our policies on purchases, returns, privacy, and your rights as a customer.')
 
+@push('schema')
+@php
+$schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Terms & Conditions — PeytonGhalib',
+    'description'=>'Read the Terms and Conditions for using PeytonGhalib.',
+    'url'=>url()->current(),
+    'breadcrumb'=>['@type'=>'BreadcrumbList','itemListElement'=>[
+        ['@type'=>'ListItem','position'=>1,'name'=>'Home','item'=>url('/')],
+        ['@type'=>'ListItem','position'=>2,'name'=>'Terms & Conditions','item'=>url()->current()],
+    ]]];
+@endphp
+<script type="application/ld+json">{!! json_encode($schemaPage, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
+@endpush
+
 @section('content')
 
 @include('includes.navbar')
