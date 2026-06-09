@@ -506,7 +506,7 @@
                         </div>
                         <div class="flex flex-wrap items-center gap-4 text-xs text-gray-400">
                             @if($item->sku)
-                            <span>SKU: <span class="text-gray-600 dark:text-white/60 font-medium">{{ $item->sku }}</span></span>
+                            <span>SKU: <span class="text-gray-800 font-medium">{{ $item->sku }}</span></span>
                             @endif
                             <span class="flex items-center gap-2">
                                 Share:

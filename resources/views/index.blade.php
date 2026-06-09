@@ -3,264 +3,540 @@
 @section('meta_description', 'Shop quality furniture, home decor, ceramics and more at PeytonGhalib. Thousands of products at unbeatable prices with fast, reliable delivery nationwide.')
 @section('content')
 @include('includes.navbar')
-<!-- Banner Start -->
-<div class="carousel-slider-four owl-carousel" data-carousel-dots="true">
-    @forelse ($sliders as $slide)
-    <div class="relative pt-12 md:pt-20 xl:pt-[100px] pb-12 sm:pb-20 xl:pb-24 px-[15px] sm:px-12 bg-[#F5F5F5] dark:bg-title">
-        <div class="max-w-[1720px] mx-auto">
-
-            {{-- Floating badge blob (only if badge_price or badge_label set) --}}
-            @if ($slide->badge_price || $slide->badge_label)
-            <div class="absolute top-5 right-[30%] z-10 hidden lg:block shape-01">
-                <svg class="w-[300px] xl:w-[500px] h-[250px] xl:h-[409px]" viewBox="0 0 501 410" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path opacity="0.1" d="M93.5685 350.941C17.9186 286.326 -22.6142 169.412 13.177 95.6561C48.7857 21.5837 161.217 -9.19765 268.179 2.36595C374.958 13.6135 477.265 67.4732 497.265 147.363C516.948 227.436 454.823 333.672 367.72 380.59C280.8 427.824 169.535 415.374 93.5685 350.941Z" fill="{{ $slide->badge_color }}"/>
-                </svg>
-                <div class="absolute top-1/4 left-[10%] xl:left-[20%] z-30">
-                    @if($slide->badge_price)
-                        <h4 class="leading-none font-semibold text-2xl md:text-1xl" style="color:{{ $slide->badge_color }}">{{ $slide->badge_price }}</h4>
-                    @endif
-                    @if($slide->badge_label)
-                        <h3 class="leading-none md:mt-4 text-3xl md:text-1xl font-bold">{{ $slide->badge_label }}</h3>
-                    @endif
-                </div>
-            </div>
-            {{-- <div class="absolute z-10 right-[10%] xl:right-[40%] bottom-1/4 hidden md:block shape-02">
-                <svg width="101" height="83" viewBox="0 0 101 83" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M29.1775 77.3654C11.2192 68.7991 -2.66244 48.3121 0.433831 32.2115C3.4785 16.0593 23.6043 4.29344 44.8653 0.990749C66.0748 -2.36354 88.626 2.74531 96.6247 17.143C104.572 31.5922 98.0696 55.3303 83.6719 68.9023C69.3259 82.5259 47.1875 85.8802 29.1775 77.3654Z" fill="{{ $slide->badge_color }}"/>
-                </svg>
-                <div class="text-center absolute [top:80%] [left:74%] transform z-30 -translate-x-1/2 -translate-y-1/2">
-                    <h3 class="font-semibold leading-none text-white text-3xl">-5%</h3>
-                    <p class="leading-none text-white mt-1">OFF</p>
-                </div>
-            </div> --}}
-            @endif
-
-            <div class="flex items-center justify-between gap-8 flex-col sm:flex-row">
-                <div class="relative z-10 sm:max-w-[632px] w-full slider-content">
-                    <div class="flex items-end content-top">
-                        <span class="font-bold text-5xl sm:text-7xl xl:text-9xl text-title leading-none dark:text-white">{{ $slide->year_text }}</span>
-                        <img class="-ml-5 sm:-ml-10 w-[150px] sm:w-[200px] lg:w-[250px] xl:w-full" src="{{ asset('assets/img/shortcode/carousel/Summer.png') }}" alt="summer">
-                    </div>
-                    <h1 class="mt-[10px] font-normal text-3xl sm:text-4xl xl:text-5xl !leading-[1.3] dark:text-white">{{ $slide->title }}</h1>
-                    @if($slide->description)
-                        <p class="dark:text-white-light mt-3 md:mt-4 sm:max-w-[450px] xl:max-w-full">{{ $slide->description }}</p>
-                    @endif
-                    <div class="mt-6 md:mt-8 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
-                        {{-- Primary CTA --}}
-                        <a href="{{ $slide->button_url }}"
-                           class="group inline-flex items-center justify-center gap-3 px-7 sm:px-8 py-4
-                                  bg-[#bb976d] text-white text-sm sm:text-base font-bold tracking-widest uppercase
-                                  hover:bg-[#a8845a] transition-all duration-300
-                                  shadow-[0_4px_20px_rgba(187,151,109,0.4)] hover:shadow-[0_6px_28px_rgba(187,151,109,0.55)]
-                                  hover:-translate-y-0.5 w-full sm:w-auto">
-                            {{ $slide->button_text }}
-                            <svg class="flex-none transition-transform duration-300 group-hover:translate-x-1" width="16" height="12" viewBox="0 0 16 12" fill="none">
-                                <path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-
-                        {{-- Track Order --}}
-                        <a href="{{ route('track-order') }}"
-                           class="group inline-flex items-center justify-center gap-3 px-7 sm:px-8 py-4
-                                  bg-white dark:bg-white/10 border-2 border-[#bb976d]/40 dark:border-white/20
-                                  text-title dark:text-white text-sm sm:text-base font-semibold
-                                  hover:border-[#bb976d] hover:bg-[#fdf6ee] dark:hover:bg-white/15
-                                  transition-all duration-300 hover:-translate-y-0.5
-                                  shadow-[0_2px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_20px_rgba(187,151,109,0.2)]
-                                  w-full sm:w-auto">
-                            {{-- Package / tracking icon --}}
-                            <span class="flex-none w-9 h-9 rounded-full bg-[#bb976d]/10 group-hover:bg-[#bb976d]/20
-                                         flex items-center justify-center transition-colors duration-300">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/>
-                                    <polyline points="16.5 9.4 7.55 4.24"/>
-                                    <polyline points="3.29 7 12 12 20.71 7"/>
-                                    <line x1="12" y1="22" x2="12" y2="12"/>
-                                    <circle cx="18.5" cy="15.5" r="2.5"/>
-                                    <path d="M20.27 17.27 22 19"/>
-                                </svg>
-                            </span>
-                            <span>
-                                <span class="block text-xs text-gray-400 dark:text-white/50 font-normal leading-none mb-0.5">Where's my package?</span>
-                                <span class="block font-bold text-title dark:text-white group-hover:text-[#bb976d] transition-colors duration-300">Track Your Order</span>
-                            </span>
-                        </a>
-                    </div>
-                </div>
-                <div class="sm:max-w-[750px] w-full">
-                    @if ($slide->image)
-                        <img class="slider-img" src="{{ Storage::url($slide->image) }}" alt="{{ $slide->title }}">
-                    @else
-                        <img class="slider-img" src="{{ asset('assets/img/home-v1/banner.png') }}" alt="{{ $slide->title }}">
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-    @empty
-    {{-- Fallback: show the original hardcoded slides if no DB slides exist --}}
-    <div class="relative pt-12 md:pt-20 xl:pt-[100px] pb-12 sm:pb-20 xl:pb-24 px-[15px] sm:px-12 bg-[#F5F5F5] dark:bg-title">
-        <div class="max-w-[1720px] mx-auto">
-            <div class="flex items-center justify-between gap-8 flex-col sm:flex-row">
-                <div class="relative z-10 sm:max-w-[632px] w-full slider-content">
-                    <div class="flex items-end content-top">
-                        <span class="font-bold text-4xl sm:text-5xl xl:text-7xl text-title leading-none dark:text-white">2026</span>
-                        <img class="-ml-3 sm:-ml-6 w-[110px] sm:w-[145px] lg:w-[175px] xl:w-[210px]" src="{{ asset('assets/img/shortcode/carousel/Summer.png') }}" alt="summer">
-                    </div>
-                    <h1 class="mt-[8px] font-normal text-2xl sm:text-3xl xl:text-4xl !leading-[1.3] dark:text-white">Buy Furniture, Home Decor &amp; Ceramics Online | PeytonGhalib</h1>
-                    <p class="dark:text-white-light mt-3 md:mt-4 sm:max-w-[450px] xl:max-w-full">Discover quality furniture, handpicked home decor, ceramics, and interior design pieces — delivered fast, nationwide.</p>
-                    <div class="mt-6 md:mt-8 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
-                        {{-- Primary CTA --}}
-                        <a href="{{ url('/shop') }}"
-                           class="group inline-flex items-center justify-center gap-3 px-7 sm:px-8 py-4
-                                  bg-[#bb976d] text-white text-sm sm:text-base font-bold tracking-widest uppercase
-                                  hover:bg-[#a8845a] transition-all duration-300
-                                  shadow-[0_4px_20px_rgba(187,151,109,0.4)] hover:shadow-[0_6px_28px_rgba(187,151,109,0.55)]
-                                  hover:-translate-y-0.5 w-full sm:w-auto">
-                            Shop Now
-                            <svg class="flex-none transition-transform duration-300 group-hover:translate-x-1" width="16" height="12" viewBox="0 0 16 12" fill="none">
-                                <path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-
-                        {{-- Track Order --}}
-                        <a href="{{ route('track-order') }}"
-                           class="group inline-flex items-center justify-center gap-3 px-7 sm:px-8 py-4
-                                  bg-white dark:bg-white/10 border-2 border-[#bb976d]/40 dark:border-white/20
-                                  text-title dark:text-white text-sm sm:text-base font-semibold
-                                  hover:border-[#bb976d] hover:bg-[#fdf6ee] dark:hover:bg-white/15
-                                  transition-all duration-300 hover:-translate-y-0.5
-                                  shadow-[0_2px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_20px_rgba(187,151,109,0.2)]
-                                  w-full sm:w-auto">
-                            {{-- Package / tracking icon --}}
-                            <span class="flex-none w-9 h-9 rounded-full bg-[#bb976d]/10 group-hover:bg-[#bb976d]/20
-                                         flex items-center justify-center transition-colors duration-300">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/>
-                                    <polyline points="16.5 9.4 7.55 4.24"/>
-                                    <polyline points="3.29 7 12 12 20.71 7"/>
-                                    <line x1="12" y1="22" x2="12" y2="12"/>
-                                    <circle cx="18.5" cy="15.5" r="2.5"/>
-                                    <path d="M20.27 17.27 22 19"/>
-                                </svg>
-                            </span>
-                            <span>
-                                <span class="block text-xs text-gray-400 dark:text-white/50 font-normal leading-none mb-0.5">Where's my package?</span>
-                                <span class="block font-bold text-title dark:text-white group-hover:text-[#bb976d] transition-colors duration-300">Track Your Order</span>
-                            </span>
-                        </a>
-                    </div>
-                </div>
-                <div class="sm:max-w-[750px] w-full">
-                    <img class="slider-img" src="{{ asset('assets/img/home-v1/banner.png') }}" alt="banner-slider">
-                </div>
-            </div>
-        </div>
-    </div>
-    @endforelse
-
-</div>
-<!-- Banner End -->
 
 <!-- Business & Category Clarity Start -->
-<section class="bg-white dark:bg-title border-b border-[#E3E5E6] dark:border-white/10">
-    <div class="container-fluid">
-        <div class="max-w-[1720px] mx-auto py-10 md:py-16">
+@push('styles')
+<style>
+/* ── PeytonGhalib Brand Section ─────────────────────────────── */
+.pgb-section {
+    position: relative;
+    overflow: hidden;
+    background: #FAFAF8;
+}
+.dark .pgb-section { background: #1a1410; }
 
-            <!-- Value Proposition -->
-            <div class="text-center mb-8 md:mb-10" data-aos="fade-up">
-                <span class="text-xs uppercase tracking-widest text-primary font-semibold">Welcome to PeytonGhalib</span>
-                <h2 class="mt-2 text-2xl md:text-3xl font-bold text-title dark:text-white leading-tight">
-                    Quality Furniture &amp; Home Decor, Delivered to Your Door
-                </h2>
-                <p class="mt-3 max-w-2xl mx-auto text-paragraph dark:text-white-light text-sm md:text-base">
-                    From premium sofas and dining sets to handcrafted ceramics and interior accessories — everything you need to make your home beautiful, all in one place.
-                </p>
+/* Ambient glow orbs */
+.pgb-section::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 480px; height: 480px;
+    background: radial-gradient(circle, rgba(187,151,109,.09) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+}
+.pgb-section::after {
+    content: '';
+    position: absolute;
+    bottom: -120px; left: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(187,151,109,.07) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+}
+
+/* Trust pill */
+.pgb-pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: linear-gradient(135deg, rgba(187,151,109,.13), rgba(187,151,109,.06));
+    border: 1px solid rgba(187,151,109,.28);
+    color: #9a7040;
+    font-size: 12px; font-weight: 700; letter-spacing: .3px;
+    padding: 7px 16px; border-radius: 100px;
+}
+.dark .pgb-pill { color: #d4a96a; }
+
+/* Gradient headline */
+.pgb-accent {
+    background: linear-gradient(135deg, #bb976d 0%, #d4a96a 45%, #8b6510 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Primary CTA */
+.pgb-btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #bb976d; color: #fff;
+    font-weight: 700; font-size: 14px; letter-spacing: .4px;
+    padding: 14px 28px; border-radius: 14px;
+    box-shadow: 0 4px 22px rgba(187,151,109,.38);
+    transition: all .3s cubic-bezier(.22,.68,0,1.1);
+    text-decoration: none;
+}
+.pgb-btn-primary:hover {
+    background: #a8845a; color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(187,151,109,.48);
+}
+
+/* Secondary CTA */
+.pgb-btn-secondary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #fff; color: #3d3433;
+    font-weight: 600; font-size: 14px;
+    padding: 13px 24px; border-radius: 14px;
+    border: 1.5px solid #e4dbd3;
+    transition: all .3s ease;
+    text-decoration: none;
+}
+.dark .pgb-btn-secondary { background: rgba(255,255,255,.06); color: #fff; border-color: rgba(255,255,255,.12); }
+.pgb-btn-secondary:hover { border-color: #bb976d; color: #bb976d; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(187,151,109,.14); }
+
+/* Stat numbers */
+.pgb-stat-val {
+    font-size: 26px; font-weight: 800; line-height: 1;
+    background: linear-gradient(135deg, #bb976d, #8b6510);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.pgb-stat-div { width:1px; height:38px; background:linear-gradient(to bottom, transparent, #ddd4c8, transparent); }
+.dark .pgb-stat-div { background:linear-gradient(to bottom, transparent, rgba(255,255,255,.12), transparent); }
+
+/* Visual collage */
+.pgb-collage { position: relative; z-index: 1; }
+.pgb-cell {
+    border-radius: 22px; overflow: hidden;
+    background: #e8e0d8;
+    transition: box-shadow .4s ease;
+}
+.pgb-cell img { width:100%; height:100%; object-fit:cover; transition:transform .6s ease; display:block; }
+.pgb-cell:hover img { transform: scale(1.06); }
+.pgb-cell:hover { box-shadow: 0 20px 50px rgba(0,0,0,.14); }
+
+/* Floating badge cards */
+.pgb-float {
+    position: absolute;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,.75);
+    border-radius: 18px;
+    box-shadow: 0 8px 36px rgba(0,0,0,.13), 0 2px 8px rgba(0,0,0,.06);
+    padding: 11px 15px;
+    z-index: 20;
+    white-space: nowrap;
+}
+.dark .pgb-float { background:rgba(28,22,16,.88); border-color:rgba(255,255,255,.1); }
+.pgb-float-icon {
+    width: 34px; height: 34px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.pgb-float-val { font-size:13px; font-weight:700; color:#1c1410; line-height:1.1; }
+.dark .pgb-float-val { color:#f5f0eb; }
+.pgb-float-sub { font-size:10px; color:#a09080; margin-top:2px; }
+@keyframes pgbfloat {
+    0%,100% { transform:translateY(0); }
+    50% { transform:translateY(-7px); }
+}
+.pgb-float-a { animation:pgbfloat 4.2s ease-in-out infinite; }
+.pgb-float-b { animation:pgbfloat 3.8s ease-in-out infinite; animation-delay:-1.8s; }
+.pgb-float-c { animation:pgbfloat 4.6s ease-in-out infinite; animation-delay:-3.2s; }
+
+/* Collage gradient overlays (decorative) */
+.pgb-cell-overlay {
+    position:absolute; inset:0;
+    background:linear-gradient(160deg,rgba(187,151,109,.12) 0%,transparent 60%);
+    pointer-events:none;
+}
+
+/* ── Category Nav Cards ─────────────────────────────────────── */
+.pgb-catcard {
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    padding: 22px 14px 18px;
+    background: #fff;
+    border: 1.5px solid #f0ebe4;
+    border-radius: 22px;
+    text-align: center;
+    text-decoration: none;
+    position: relative; overflow: hidden;
+    transition: all .32s cubic-bezier(.22,.68,0,1.1);
+}
+.dark .pgb-catcard { background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.08); }
+.pgb-catcard::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(145deg, rgba(187,151,109,.08), transparent 60%);
+    opacity:0; transition:opacity .3s;
+}
+.pgb-catcard:hover::before { opacity:1; }
+.pgb-catcard:hover {
+    border-color: #bb976d;
+    transform: translateY(-5px);
+    box-shadow: 0 14px 36px rgba(187,151,109,.2);
+}
+.pgb-caticon {
+    width:54px; height:54px; border-radius:16px;
+    background:linear-gradient(135deg,rgba(187,151,109,.13),rgba(187,151,109,.06));
+    display:flex; align-items:center; justify-content:center;
+    transition:all .3s ease; flex-shrink:0;
+}
+.pgb-catcard:hover .pgb-caticon {
+    background:linear-gradient(135deg,rgba(187,151,109,.26),rgba(187,151,109,.13));
+}
+.pgb-catname { font-size:13px; font-weight:700; color:#2c2420; line-height:1.3; }
+.dark .pgb-catname { color:#f0ebe4; }
+.pgb-catcount { font-size:11px; color:#a09080; margin-top:2px; font-weight:500; }
+
+/* ── Trust Strip ────────────────────────────────────────────── */
+.pgb-trust-strip {
+    background:linear-gradient(135deg,rgba(187,151,109,.07) 0%,rgba(253,246,238,.85) 50%,rgba(187,151,109,.07) 100%);
+    border: 1px solid rgba(187,151,109,.16);
+    border-radius: 26px;
+    position: relative; overflow: hidden;
+}
+.dark .pgb-trust-strip {
+    background:linear-gradient(135deg,rgba(187,151,109,.09) 0%,rgba(255,255,255,.03) 50%,rgba(187,151,109,.07) 100%);
+    border-color:rgba(187,151,109,.13);
+}
+.pgb-trust-strip::before {
+    content:''; position:absolute;
+    top:-60px; left:50%; transform:translateX(-50%);
+    width:300px; height:120px;
+    background:radial-gradient(ellipse,rgba(187,151,109,.12) 0%,transparent 70%);
+    pointer-events:none;
+}
+.pgb-trust-item { display:flex; align-items:center; gap:13px; padding:18px 20px; }
+.pgb-trust-icon {
+    width:42px; height:42px; border-radius:13px;
+    background:rgba(187,151,109,.13);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.pgb-trust-label { font-size:13px; font-weight:700; color:#2c2420; }
+.dark .pgb-trust-label { color:#f0ebe4; }
+.pgb-trust-sub { font-size:11px; color:#a09080; margin-top:2px; }
+.pgb-trust-divider { width:1px; height:36px; background:rgba(187,151,109,.18); flex-shrink:0; }
+
+/* Fallback color cells */
+.pgb-fallback {
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:10px;
+}
+
+/* ── Collage responsive heights ─────────────────────────────── */
+.pgb-cell-1 { height: 290px; }
+.pgb-cell-2 { height: 210px; margin-top: 32px; }
+.pgb-cell-3 { height: 210px; }
+.pgb-cell-4 { height: 265px; }
+@media (max-width: 1023px) {
+    .pgb-cell-1 { height: 155px; }
+    .pgb-cell-2 { height: 125px; margin-top: 18px; }
+    .pgb-cell-3 { height: 125px; }
+    .pgb-cell-4 { height: 145px; }
+    .pgb-collage .grid { padding: 12px 8px 40px 8px !important; }
+    .pgb-float { padding: 9px 13px; }
+    .pgb-float-val { font-size: 12px; }
+    .pgb-float-sub { font-size: 9px; }
+    .pgb-float-icon { width: 28px; height: 28px; }
+    .pgb-float-a { top: 8px !important; right: 8px !important; }
+    .pgb-float-b { bottom: 8px !important; left: 8px !important; }
+    .pgb-float-c { display: none; }
+}
+</style>
+@endpush
+
+<section class="pgb-section pt-24 pb-16 md:pt-32 md:pb-24 xl:pt-36 xl:pb-28">
+    <div class="container-fluid" style="position:relative;z-index:1;">
+        <div class="max-w-[1720px] mx-auto">
+
+            {{-- ── ROW 1 : Copy + Visual Collage ─────────────────────────── --}}
+            <div class="grid lg:grid-cols-2 gap-10 xl:gap-20 items-center mb-16 md:mb-20">
+
+                {{-- LEFT: Copy ------------------------------------------------ --}}
+                <div data-aos="fade-right">
+
+                    {{-- Trust pill --}}
+                    <span class="pgb-pill">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="#bb976d"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        Trusted by 10,000+ Customers
+                    </span>
+
+                    {{-- Headline --}}
+                    <h2 class="mt-5 font-bold leading-[1.1] tracking-tight text-title dark:text-white"
+                        style="font-size:clamp(2rem,3.5vw,3.4rem);">
+                        Everything You Need,<br>
+                        <span class="pgb-accent">Delivered to Your Door</span>
+                    </h2>
+
+                    {{-- Supporting text --}}
+                    <p class="mt-5 text-base md:text-[17px] text-paragraph dark:text-white-light leading-relaxed max-w-[480px]">
+                        Premium furniture &amp; home decor curated for modern living. From handcrafted sofas to artisan ceramics — transform your space with pieces you'll love forever.
+                    </p>
+
+                    {{-- CTAs --}}
+                    <div class="mt-8 flex flex-wrap gap-3 md:gap-4">
+                        <a href="{{ url('/shop') }}" class="pgb-btn-primary">
+                            Shop Now
+                            <svg width="15" height="11" viewBox="0 0 16 12" fill="none">
+                                <path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="{{ url('/categories') }}" class="pgb-btn-secondary">
+                            Explore Categories
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                                <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    {{-- Stats row --}}
+                    <div class="mt-10 flex items-center gap-6 md:gap-8">
+                        <div>
+                            <div class="pgb-stat-val">10K+</div>
+                            <div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Happy Customers</div>
+                        </div>
+                        <div class="pgb-stat-div"></div>
+                        <div>
+                            <div class="pgb-stat-val">500+</div>
+                            <div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Products</div>
+                        </div>
+                        <div class="pgb-stat-div"></div>
+                        <div>
+                            <div class="pgb-stat-val">4.9★</div>
+                            <div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Avg. Rating</div>
+                        </div>
+                        <div class="pgb-stat-div hidden sm:block"></div>
+                        <div class="hidden sm:block">
+                            <div class="pgb-stat-val">30D</div>
+                            <div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Free Returns</div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- RIGHT: Visual Collage ------------------------------------ --}}
+                @php
+                    $collCats = $categories->take(4);
+                    $cimgs = [];
+                    foreach ($collCats as $cc) {
+                        if ($cc->image) {
+                            $cimgs[] = [
+                                'src'  => str_starts_with($cc->image,'assets/') ? asset($cc->image) : Storage::url($cc->image),
+                                'name' => $cc->name,
+                            ];
+                        } else {
+                            $cimgs[] = null;
+                        }
+                    }
+                    while(count($cimgs) < 4) $cimgs[] = null;
+                    $fallbacks = ['#d8cfc5','#c4b49e','#e2d8ce','#b8a888'];
+                @endphp
+
+                <div class="pgb-collage" data-aos="fade-left" data-aos-delay="120">
+                    <div class="grid grid-cols-2 gap-4" style="padding:24px 28px 24px 8px;">
+
+                        {{-- Cell 1 — tall left --}}
+                        <div class="pgb-cell pgb-cell-1">
+                            @if($cimgs[0])
+                                <img src="{{ $cimgs[0]['src'] }}" alt="{{ $cimgs[0]['name'] }}">
+                            @else
+                                <div class="pgb-fallback" style="background:{{ $fallbacks[0] }};">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11a2 2 0 1 1 4 0v2h12v-2a2 2 0 1 1 4 0v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/><path d="M6 17v2"/><path d="M18 17v2"/></svg>
+                                    <span style="color:rgba(255,255,255,.7);font-size:11px;font-weight:600;">{{ $collCats[0]->name ?? 'Furniture' }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Cell 2 — short right, pushed down --}}
+                        <div class="pgb-cell pgb-cell-2">
+                            @if($cimgs[1])
+                                <img src="{{ $cimgs[1]['src'] }}" alt="{{ $cimgs[1]['name'] }}">
+                            @else
+                                <div class="pgb-fallback" style="background:{{ $fallbacks[1] }};">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                    <span style="color:rgba(255,255,255,.7);font-size:11px;font-weight:600;">{{ $collCats[1]->name ?? 'Decor' }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Cell 3 — short left --}}
+                        <div class="pgb-cell pgb-cell-3">
+                            @if($cimgs[2])
+                                <img src="{{ $cimgs[2]['src'] }}" alt="{{ $cimgs[2]['name'] }}">
+                            @else
+                                <div class="pgb-fallback" style="background:{{ $fallbacks[2] }};">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                                    <span style="color:rgba(255,255,255,.7);font-size:11px;font-weight:600;">{{ $collCats[2]->name ?? 'Lighting' }}</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Cell 4 — tall right --}}
+                        <div class="pgb-cell pgb-cell-4">
+                            @if($cimgs[3])
+                                <img src="{{ $cimgs[3]['src'] }}" alt="{{ $cimgs[3]['name'] }}">
+                            @else
+                                <div class="pgb-fallback" style="background:{{ $fallbacks[3] }};">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                                    <span style="color:rgba(255,255,255,.7);font-size:11px;font-weight:600;">{{ $collCats[3]->name ?? 'Tables' }}</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Floating badge 1: Rating --}}
+                    <div class="pgb-float pgb-float-a" style="top:10px;right:10px;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div class="pgb-float-icon" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            </div>
+                            <div>
+                                <div class="pgb-float-val">4.9 / 5.0</div>
+                                <div class="pgb-float-sub">2,400+ Reviews</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Floating badge 2: Free delivery --}}
+                    <div class="pgb-float pgb-float-b" style="bottom:40px;left:-4px;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div class="pgb-float-icon" style="background:linear-gradient(135deg,#bb976d,#8b6510);">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                            </div>
+                            <div>
+                                <div class="pgb-float-val">Free Delivery</div>
+                                <div class="pgb-float-sub">Orders over $99</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Floating badge 3: Secure --}}
+                    <div class="pgb-float pgb-float-c" style="top:46%;left:-10px;">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div class="pgb-float-icon" style="background:linear-gradient(135deg,#10b981,#047857);">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            </div>
+                            <div>
+                                <div class="pgb-float-val">SSL Secured</div>
+                                <div class="pgb-float-sub">100% Safe Checkout</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Core Category Pills — keyword-rich text links to category landing pages -->
-            <div class="flex flex-wrap justify-center gap-2 md:gap-3 mb-10 md:mb-12" data-aos="fade-up" data-aos-delay="100">
-                @foreach($categories->take(6) as $category)
-                <a href="{{ route('category.landing', $category->slug) }}"
-                   class="px-4 py-2 text-sm font-medium border border-[#E3E5E6] dark:border-white/20
-                          text-title dark:text-white/80 bg-[#FAFAFA] dark:bg-white/5
-                          hover:border-primary hover:text-primary hover:bg-[#fdf6ee] dark:hover:bg-white/10
-                          transition-all duration-200 rounded-full">
-                    Shop {{ $category->name }}
-                </a>
-                @endforeach
-                <a href="{{ url('/shop') }}"
-                   class="px-4 py-2 text-sm font-medium border border-primary/40 dark:border-primary/30
-                          text-primary bg-[#fdf6ee] dark:bg-primary/10
-                          hover:bg-primary hover:text-white hover:border-primary
-                          transition-all duration-200 rounded-full">
-                    View All Categories &rarr;
-                </a>
+            {{-- ── ROW 2 : Category Nav Cards ────────────────────────────── --}}
+            <div class="mb-12 md:mb-16">
+                <div class="flex items-end justify-between mb-7 md:mb-8" data-aos="fade-up">
+                    <div>
+                        <span class="text-xs uppercase tracking-widest text-primary font-semibold">Browse by Category</span>
+                        <h3 class="mt-1 text-xl md:text-2xl font-bold text-title dark:text-white">Shop Your Style</h3>
+                    </div>
+                    <a href="{{ url('/categories') }}"
+                       class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-primary
+                              border border-primary/30 px-5 py-2.5 rounded-full
+                              hover:bg-primary hover:text-white hover:border-primary transition-all duration-200">
+                        All Categories
+                        <svg width="13" height="9" viewBox="0 0 24 14" fill="none"><path d="M23.82 6.62L18.38 1.18C18.18.95 17.84.92 17.61 1.12C17.38 1.31 17.35 1.66 17.55 1.88L22.12 6.46L.57 6.46C.27 6.46.02 6.71.02 7.01C.02 7.31.27 7.55.57 7.55L22.12 7.55L17.61 12.06C17.38 12.26 17.35 12.6 17.55 12.83C17.74 13.06 18.09 13.09 18.32 12.89L23.82 7.39C24.03 7.17 24.03 6.83 23.82 6.62Z" fill="currentColor"/></svg>
+                    </a>
+                </div>
+
+                @php
+                    $catIconMap = [
+                        'sofa'      => '<path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11a2 2 0 1 1 4 0v2h12v-2a2 2 0 1 1 4 0v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/><path d="M6 17v2"/><path d="M18 17v2"/>',
+                        'chair'     => '<path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11a2 2 0 1 1 4 0v2h12v-2a2 2 0 1 1 4 0v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>',
+                        'lamp'      => '<path d="M9 18h6"/><path d="M10 22h4"/><path d="m5 6 7-4 7 4"/><path d="M12 2v4"/><rect x="5" y="6" width="14" height="12" rx="2"/>',
+                        'vase'      => '<path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 10v12"/><path d="M9 3h6l1 7H8z"/>',
+                        'table'     => '<path d="M3 6h18"/><path d="M3 18h18"/><path d="M8 6v12"/><path d="M16 6v12"/>',
+                        'wood'      => '<path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/>',
+                        'interior'  => '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+                        'bedroom'   => '<path d="M2 4v16"/><path d="M2 8h18a2 2 0 012 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/>',
+                        'outdoor'   => '<circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/>',
+                    ];
+                    if (!function_exists('pgbIcon')) { function pgbIcon(string $slug, array $map): string {
+                        $slug = strtolower($slug);
+                        foreach ($map as $key => $path) {
+                            if (str_contains($slug, $key)) return $path;
+                        }
+                        return '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>';
+                    } }
+                @endphp
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+                    @foreach($categories->take(6) as $cat)
+                    <a href="{{ route('category.landing', $cat->slug) }}"
+                       class="pgb-catcard"
+                       data-aos="fade-up"
+                       data-aos-delay="{{ $loop->index * 55 }}">
+                        <div class="pgb-caticon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                                 stroke="#bb976d" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                {!! pgbIcon($cat->slug ?? $cat->name, $catIconMap) !!}
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="pgb-catname">{{ $cat->name }}</div>
+                            <div class="pgb-catcount">{{ $cat->products_count }} {{ Str::plural('item', $cat->products_count) }}</div>
+                        </div>
+                    </a>
+                    @endforeach
+                </div>
             </div>
 
-            <!-- Trust & Shopping Advantages -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8" data-aos="fade-up" data-aos-delay="150">
+            {{-- ── ROW 3 : Trust Glassmorphism Strip ─────────────────────── --}}
+            <div class="pgb-trust-strip" data-aos="fade-up">
+                <div class="flex flex-wrap items-center justify-between divide-y md:divide-y-0 md:divide-x divide-[#e4d8c8]/60 dark:divide-white/8">
 
-                <!-- Free Delivery -->
-                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3 text-center sm:text-left">
-                    <span class="flex-none w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-                        </svg>
-                    </span>
-                    <div>
-                        <h4 class="font-semibold text-sm text-title dark:text-white">Free Delivery</h4>
-                        <p class="text-xs text-paragraph dark:text-white-light mt-0.5">On orders over $99 nationwide</p>
+                    <div class="pgb-trust-item w-1/2 md:w-auto flex-1">
+                        <div class="pgb-trust-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                        </div>
+                        <div>
+                            <div class="pgb-trust-label">Free Shipping</div>
+                            <div class="pgb-trust-sub">Orders over $99</div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Secure Payments -->
-                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3 text-center sm:text-left">
-                    <span class="flex-none w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
-                        </svg>
-                    </span>
-                    <div>
-                        <h4 class="font-semibold text-sm text-title dark:text-white">Secure Payments</h4>
-                        <p class="text-xs text-paragraph dark:text-white-light mt-0.5">SSL encrypted &amp; 100% safe checkout</p>
+                    <div class="pgb-trust-item w-1/2 md:w-auto flex-1">
+                        <div class="pgb-trust-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        </div>
+                        <div>
+                            <div class="pgb-trust-label">Secure Payments</div>
+                            <div class="pgb-trust-sub">SSL encrypted</div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Easy Returns -->
-                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3 text-center sm:text-left">
-                    <span class="flex-none w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/>
-                        </svg>
-                    </span>
-                    <div>
-                        <h4 class="font-semibold text-sm text-title dark:text-white">Easy Returns</h4>
-                        <p class="text-xs text-paragraph dark:text-white-light mt-0.5">30-day hassle-free return policy</p>
+                    <div class="pgb-trust-item w-1/2 md:w-auto flex-1">
+                        <div class="pgb-trust-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+                        </div>
+                        <div>
+                            <div class="pgb-trust-label">Easy Returns</div>
+                            <div class="pgb-trust-sub">30-day policy</div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Quality Guarantee -->
-                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-3 text-center sm:text-left">
-                    <span class="flex-none w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        </svg>
-                    </span>
-                    <div>
-                        <h4 class="font-semibold text-sm text-title dark:text-white">Quality Guarantee</h4>
-                        <p class="text-xs text-paragraph dark:text-white-light mt-0.5">Curated products, premium materials</p>
+                    <div class="pgb-trust-item w-1/2 md:w-auto flex-1">
+                        <div class="pgb-trust-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.64A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+                        </div>
+                        <div>
+                            <div class="pgb-trust-label">24/7 Support</div>
+                            <div class="pgb-trust-sub">Always here for you</div>
+                        </div>
                     </div>
-                </div>
 
+                    <div class="pgb-trust-item w-1/2 md:w-auto flex-1">
+                        <div class="pgb-trust-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                        </div>
+                        <div>
+                            <div class="pgb-trust-label">10K+ Customers</div>
+                            <div class="pgb-trust-sub">And counting</div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
+
         </div>
     </div>
 </section>
 <!-- Business & Category Clarity End -->
 
 <!-- Product Category Area Start -->
-<div class="s-py-100-50 overflow-hidden">
+<div class="s-py-100-50">
     <div class="container-fluid">
 
         <!-- Section Title -->
@@ -281,13 +557,36 @@
             </a>
         </div>
 
+        @push('styles')
+        <style>
+        .hv1-pdct-ctgry-slider .owl-item { padding-right: 16px; }
+        .hv1-pdct-ctgry-slider .owl-item:last-child { padding-right: 0; }
+        .pgcat-card { position:relative; overflow:hidden; border-radius:18px; cursor:pointer; display:block; text-decoration:none; height:300px; background:#f0ece8; transition:transform .35s cubic-bezier(.22,.68,0,1.15), box-shadow .35s ease; }
+        .pgcat-card:hover { transform:translateY(-6px); box-shadow:0 24px 60px rgba(0,0,0,.22); }
+        .pgcat-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .5s ease; }
+        .pgcat-card:hover .pgcat-img { transform:scale(1.06); }
+        .pgcat-scrim { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.62) 0%,rgba(0,0,0,.18) 50%,transparent 100%); pointer-events:none; }
+        .pgcat-body { position:absolute; bottom:0; left:0; right:0; padding:20px 20px 18px; text-align:center; }
+        .pgcat-name { font-size:18px; font-weight:700; color:#fff; line-height:1.2; letter-spacing:.2px; margin:0 0 6px; text-shadow:0 2px 8px rgba(0,0,0,.4); }
+        .pgcat-count { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; color:rgba(255,255,255,.85); padding:4px 12px; border-radius:20px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.2); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); transition:background .3s; }
+        .pgcat-card:hover .pgcat-count { background:rgba(255,255,255,.25); }
+        .pgcat-cta { position:absolute; bottom:0; left:0; right:0; padding:14px 20px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(255,255,255,.12); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-top:1px solid rgba(255,255,255,.15); transform:translateY(100%); transition:transform .3s cubic-bezier(.22,.68,0,1.1); }
+        .pgcat-card:hover .pgcat-cta { transform:translateY(0); }
+        .pgcat-cta span { font-size:13px; font-weight:700; color:#fff; letter-spacing:.4px; text-transform:uppercase; }
+        .pgcat-cta svg { transition:transform .3s ease; }
+        .pgcat-card:hover .pgcat-cta svg { transform:translateX(4px); }
+        .pgcat-no-img { position:absolute; inset:0; background:linear-gradient(145deg,#C8956A 0%,#7B4A2D 100%); }
+        .pgcat-card:active { transform:translateY(-3px) scale(.98); }
+        </style>
+        @endpush
+
         <!-- Slider Wrapper -->
         <div class="max-w-[1720px] mx-auto relative" data-aos="fade-up" data-aos-delay="100">
             <div class="owl-carousel hv1-pdct-ctgry-slider"
                  data-carousel-items="4"
                  data-carousel-xl="4"
                  data-carousel-lg="4"
-                 data-carousel-md="3"
+                 data-carousel-md="4"
                  data-carousel-sm="2"
                  data-carousel-xs="1"
                  data-carousel-margin="16"
@@ -508,7 +807,7 @@
                                     font-size:2rem;font-weight:800;color:#fff;
                                     letter-spacing:-.02em;position:relative;overflow:hidden;">
                             <span style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.04) 0%,transparent 60%);pointer-events:none;"></span>
-                            00
+                            <span class="fd-val" style="position:relative;z-index:1;">00</span>
                         </div>
                         <span style="font-family:'Poppins',sans-serif;font-size:8.5px;font-weight:600;
                                      letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);">
@@ -587,10 +886,10 @@
     function pad(n) { return n < 10 ? '0' + n : '' + n; }
     function tick() {
         var diff = Math.max(0, ends - Date.now());
-        el.querySelector('[data-unit="d"]').firstChild.textContent = pad(Math.floor(diff / 86400000));
-        el.querySelector('[data-unit="h"]').firstChild.textContent = pad(Math.floor((diff % 86400000) / 3600000));
-        el.querySelector('[data-unit="m"]').firstChild.textContent = pad(Math.floor((diff % 3600000) / 60000));
-        el.querySelector('[data-unit="s"]').firstChild.textContent = pad(Math.floor((diff % 60000) / 1000));
+        el.querySelector('[data-unit="d"] .fd-val').textContent = pad(Math.floor(diff / 86400000));
+        el.querySelector('[data-unit="h"] .fd-val').textContent = pad(Math.floor((diff % 86400000) / 3600000));
+        el.querySelector('[data-unit="m"] .fd-val').textContent = pad(Math.floor((diff % 3600000) / 60000));
+        el.querySelector('[data-unit="s"] .fd-val').textContent = pad(Math.floor((diff % 60000) / 1000));
         if (diff > 0) setTimeout(tick, 1000);
     }
     tick();
@@ -805,7 +1104,7 @@ $(document).ready(function () {
 
     $cat.owlCarousel({
         items       : 4,
-        margin      : 16,
+        margin      : 0,
         loop        : false,
         rewind      : true,
         autoplay    : false,
@@ -815,7 +1114,7 @@ $(document).ready(function () {
         responsive  : {
             0   : { items: 1 },
             576 : { items: 2 },
-            768 : { items: 3 },
+            768 : { items: 4 },
             1024: { items: 4 },
         }
     });
