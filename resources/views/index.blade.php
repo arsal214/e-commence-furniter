@@ -194,28 +194,6 @@ $schemaWebsite = [
     padding: 12px 0;
     display: flex; align-items: center;
 }
-/* Ambient glow behind card */
-.pgh-collage-glow {
-    position: absolute; inset: -60px;
-    background: radial-gradient(ellipse at 55% 50%, rgba(187,151,109,.22) 0%, transparent 62%);
-    pointer-events: none; z-index: 0; border-radius: 50%;
-}
-/* Top-right decorative dot grid */
-.pgh-dot-grid {
-    position: absolute; top: -8px; right: -20px; z-index: 0;
-    width: 140px; height: 140px;
-    background-image: radial-gradient(rgba(187,151,109,.4) 1.5px, transparent 1.5px);
-    background-size: 18px 18px;
-    opacity: .65; pointer-events: none;
-}
-/* Accent ring decoration */
-.pgh-img-accent {
-    position: absolute; bottom: -10px; left: -10px; z-index: 0;
-    width: 160px; height: 160px; border-radius: 50%;
-    background: transparent;
-    border: 1.5px dashed rgba(187,151,109,.22);
-    pointer-events: none;
-}
 
 /* ── Premium card shell ──────────────────────────────────────── */
 .pgh-img-shell {
@@ -260,23 +238,17 @@ $schemaWebsite = [
 }
 
 /* ── Image itself ────────────────────────────────────────────── */
-.pgh-img-wrap {
-    position: relative; z-index: 1;
-    border-radius: 18px; overflow: hidden;
-    background: #fff;
-    box-shadow: 0 2px 18px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
-}
-.pgh-img-wrap img {
-    width: 100%; height: auto;
-    max-height: 460px;
+/* Designer target: 960×720px PNG/WebP, transparent bg, 4:3 ratio */
+.pgh-img-shell img {
+    width: 100%; height: 100%;
+    aspect-ratio: 4/3;
     object-fit: contain; object-position: center;
     display: block;
     transition: transform .7s ease;
 }
-.pgh-img-shell:hover .pgh-img-wrap img { transform: scale(1.03); }
-@media (max-width: 1279px) { .pgh-img-wrap img { max-height: 400px; } }
-@media (max-width: 1023px) { .pgh-img-wrap img { max-height: 340px; } .pgh-img-shell { border-radius: 24px; } }
-@media (max-width: 767px)  { .pgh-img-wrap img { max-height: 260px; } .pgh-img-shell { padding: 14px 14px 12px; border-radius: 20px; } }
+.pgh-img-shell:hover img { transform: scale(1.03); }
+@media (max-width: 1023px) { .pgh-img-shell { border-radius: 24px; } }
+@media (max-width: 767px)  { .pgh-img-shell { padding: 14px 14px 12px; border-radius: 20px; } }
 
 /* Card footer strip */
 .pgh-card-footer {
@@ -306,25 +278,6 @@ $schemaWebsite = [
     pointer-events: none;
 }
 
-/* ── Floating cards ────────────────────────────────────────── */
-.pgh-float {
-    position: absolute; z-index: 20;
-    background: rgba(255,255,255,.92);
-    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255,255,255,.85);
-    border-radius: 18px;
-    box-shadow: 0 12px 40px rgba(0,0,0,.13), 0 2px 8px rgba(0,0,0,.06);
-    padding: 12px 16px; white-space: nowrap;
-}
-.dark .pgh-float { background:rgba(28,20,10,.9); border-color:rgba(255,255,255,.1); }
-.pgh-fi { width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
-.pgh-fv { font-size:13px;font-weight:700;color:#1c1208;line-height:1.15; }
-.dark .pgh-fv { color:#f5ede0; }
-.pgh-fs { font-size:10px;color:#a09080;margin-top:2px; }
-.pgh-float-1 { top:-16px; right:24px; animation:pgh-bob 4.5s ease-in-out infinite; }
-.pgh-float-2 { bottom:-14px; left:24px; animation:pgh-bob2 4s ease-in-out infinite; animation-delay:-2s; }
-.pgh-float-3 { top:42%; right:18px; animation:pgh-bob 5s ease-in-out infinite; animation-delay:-3.5s; }
-@media (max-width: 767px) { .pgh-float-1 { top: -12px; right: 12px; } .pgh-float-2 { bottom: -12px; left: 12px; } }
 
 /* ── Category image cards ──────────────────────────────────── */
 .pgh-cats-scroll {
@@ -378,21 +331,93 @@ $schemaWebsite = [
 /* ── Responsive misc ────────────────────────────────────────── */
 @media(max-width:1023px){
     .pgh-collage  { padding: 8px 0; }
-    .pgh-dot-grid { width: 72px; height: 72px; right: -4px; }
-    .pgh-float    { padding:9px 13px; }
-    .pgh-fv       { font-size:12px; }
-    .pgh-fs       { font-size:9px; }
-    .pgh-fi       { width:28px;height:28px; }
-    .pgh-float-1  { top:12px !important; right:12px !important; }
-    .pgh-float-2  { bottom:16px !important; left:12px !important; }
-    .pgh-float-3  { display:none !important; }
 }
 @media(max-width:639px){
     .pgh-h1     { font-size: 2.15rem; }
     .pgh-body   { font-size: 15px; }
     .pgh-stat-n { font-size: 22px; }
     .pgh-ti     { padding: 16px 14px; }
-    .pgh-float-2{ display:none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Hero Slider  (pgh-sl-)
+═══════════════════════════════════════════════════════════════ */
+
+/* Section: strip Tailwind padding — slides carry their own */
+.pgh-hero { padding: 0 !important; }
+
+/* Slides wrapper */
+.pgh-slides-wrap { position: relative; overflow: hidden; }
+
+/* Each slide */
+.pgh-slide {
+    width: 100%;
+    padding: 2rem 0 0.5rem;
+    position: absolute; top: 0; left: 0;
+    opacity: 0;
+    transform: translateX(28px);
+    transition: opacity .72s cubic-bezier(.4,0,.2,1), transform .72s cubic-bezier(.4,0,.2,1);
+    pointer-events: none;
+}
+@media(min-width:768px)  { .pgh-slide { padding: 2.5rem 0 0.75rem; } }
+@media(min-width:1280px) { .pgh-slide { padding: 3rem 0 1rem; } }
+
+/* Active slide — in document flow, defines height */
+.pgh-slide.pgh-slide--active {
+    position: relative;
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+/* Leaving slide — slides out to the left */
+.pgh-slide.pgh-slide--leave {
+    opacity: 0;
+    transform: translateX(-28px);
+}
+
+/* ── Dot indicators ─────────────────────────────────────────── */
+.pgh-sl-dots {
+    position: absolute; bottom: 22px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 8px; z-index: 30; align-items: center;
+}
+.pgh-sl-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(187,151,109,.3);
+    border: none; padding: 0; cursor: pointer;
+    transition: all .35s ease;
+}
+.pgh-sl-dot.pgh-sl-dot--active {
+    background: #bb976d;
+    width: 26px; border-radius: 4px;
+}
+
+/* ── Slide counter ──────────────────────────────────────────── */
+.pgh-sl-counter {
+    position: absolute; bottom: 14px; right: 32px; z-index: 30;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: .6px;
+    color: rgba(60,40,20,.5);
+}
+.dark .pgh-sl-counter { color: rgba(255,255,255,.35); }
+.pgh-sl-counter-curr { color: #bb976d; font-size: 16px; font-weight: 800; }
+.pgh-sl-counter-sep  { width: 24px; height: 1.5px; background: rgba(187,151,109,.4); border-radius: 1px; }
+@media(max-width:639px) { .pgh-sl-counter { display: none; } }
+
+/* ── Progress bar ───────────────────────────────────────────── */
+.pgh-sl-prog {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px; background: rgba(187,151,109,.1); z-index: 31; overflow: hidden;
+}
+.pgh-sl-prog-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #bb976d, #e4c28a);
+    width: 0%;
+}
+.pgh-sl-prog-fill.pgh-sl-prog--run {
+    transition: width 5s linear;
+    width: 100%;
 }
 </style>
 @endpush
@@ -421,216 +446,465 @@ $schemaWebsite = [
     }
 @endphp
 
-<section class="pgh-hero pt-24 pb-16 md:pt-32 md:pb-24 xl:pt-36 xl:pb-28">
+<section class="pgh-hero" id="pgHeroSlider">
 
     {{-- Background orbs --}}
     <div class="pgh-orb pgh-orb-1"></div>
     <div class="pgh-orb pgh-orb-2"></div>
     <div class="pgh-orb pgh-orb-3"></div>
 
-    <div class="container-fluid" style="position:relative;z-index:1;">
-        <div class="max-w-[1720px] mx-auto">
+    {{-- ══════════════════════════════════════════════════════════
+         SLIDES WRAPPER
+    ══════════════════════════════════════════════════════════ --}}
+    <div class="pgh-slides-wrap" id="pgSlides">
 
-            {{-- ════════════════════════════════════════════════════════════
-                 ROW 1 — Hero copy + Bento collage
-            ════════════════════════════════════════════════════════════ --}}
-            <div class="pgh-row">
+        {{-- ══ SLIDE 1 — Home Decor & Lifestyle ══ --}}
+        <div class="pgh-slide pgh-slide--active" data-idx="0">
+            <div class="container-fluid" style="position:relative;z-index:1;">
+                <div class="max-w-[1720px] mx-auto">
+                    <div class="pgh-row">
 
-                {{-- LEFT: Copy -------------------------------------------- --}}
-                <div class="pgh-row-left">
-
-                    {{-- Live trust badge --}}
-                    <div class="pgh-badge">
-                        <span class="pgh-badge-dot"></span>
-                        Trusted by 2,000+ Customers
-                    </div>
-
-                    {{-- H1 --}}
-                    <h1 class="pgh-h1 mt-5">
-                        Make your space<br>
-                        <span class="pgh-h1-grad">feel like you</span>
-                    </h1>
-
-                    {{-- Body --}}
-                    <p class="pgh-body mt-5 max-w-[500px]">
-                        From statement lamps and ceramic vases to wall art and decorative cushions — find pieces that actually suit your home, not just fill it. New arrivals are added every week.
-                    </p>
-
-                    {{-- CTAs --}}
-                    <div class="pgh-cta-wrap mt-8 flex flex-wrap gap-3 md:gap-4">
-                        <a href="{{ url('/shop') }}" class="pgh-btn-a">
-                            Shop Home Decor
-                            <svg width="15" height="11" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </a>
-                        <a href="{{ url('/shop') }}" class="pgh-btn-b">
-                            See What's New
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-                        </a>
-                    </div>
-
-                    {{-- Social proof --}}
-                    <div class="pgh-proof mt-8 flex items-center gap-4">
-                        <div class="pgh-avatar-stack">
-                            {{-- Avatar 1 --}}
-                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#d4a96a,#bb976d);">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                        {{-- LEFT --}}
+                        <div class="pgh-row-left">
+                            <h1 class="pgh-h1">
+                                Make your space<br>
+                                <span class="pgh-h1-grad">feel like you</span>
+                            </h1>
+                            <p class="pgh-body mt-5 max-w-[500px]">
+                                From statement lamps and ceramic vases to wall art and decorative cushions — find pieces that actually suit your home, not just fill it. New arrivals are added every week.
+                            </p>
+                            <div class="pgh-cta-wrap mt-8 flex flex-wrap gap-3 md:gap-4">
+                                <a href="{{ url('/shop') }}" class="pgh-btn-a">
+                                    Shop home decor
+                                    <svg width="15" height="11" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </a>
+                                <a href="{{ url('/shop') }}" class="pgh-btn-b">
+                                    See what's new
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                                </a>
                             </div>
-                            {{-- Avatar 2 --}}
-                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#c4a070,#8b6510);">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                            <div class="pgh-proof mt-8 flex items-center gap-4">
+                                <div class="pgh-avatar-stack">
+                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#d4a96a,#bb976d);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#c4a070,#8b6510);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#e8c48a,#c4903c);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#a07840,#6b4f20);font-size:9px;font-weight:700;">+9K</div>
+                                </div>
+                                <div>
+                                    <div class="pgh-stars">★★★★★</div>
+                                    <div style="font-size:12px;color:#a09080;margin-top:2px;">4.9 from 2k+ reviews</div>
+                                </div>
                             </div>
-                            {{-- Avatar 3 --}}
-                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#e8c48a,#c4903c);">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                            <div class="pgh-stats mt-9 flex items-center gap-5 md:gap-7">
+                                <div><div class="pgh-stat-n">2,000+</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Happy Customers</div></div>
+                                <div class="pgh-stat-sep"></div>
+                                <div><div class="pgh-stat-n">500+</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Products</div></div>
+                                <div class="pgh-stat-sep"></div>
+                                <div><div class="pgh-stat-n">4.9★</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Avg. Rating</div></div>
+                                <div class="pgh-stat-sep hidden sm:block"></div>
+                                <div class="hidden sm:block"><div class="pgh-stat-n">30D</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Free Returns</div></div>
                             </div>
-                            {{-- +count --}}
-                            <div class="pgh-avatar" style="background:linear-gradient(135deg,#a07840,#6b4f20);font-size:9px;font-weight:700;">+9K</div>
                         </div>
-                        <div>
-                            <div class="pgh-stars">★★★★★</div>
-                            <div style="font-size:12px;color:#a09080;margin-top:2px;">4.9 from 2k+ reviews</div>
-                        </div>
-                    </div>
 
-                    {{-- Stats --}}
-                    <div class="pgh-stats mt-9 flex items-center gap-5 md:gap-7">
-                        <div>
-                            <div class="pgh-stat-n">2,000+</div>
-                            <div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Happy Customers</div>
-                        </div>
-                        <div class="pgh-stat-sep"></div>
-                        <div>
-                            <div class="pgh-stat-n">500+</div>
-                            <div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Products</div>
-                        </div>
-                        <div class="pgh-stat-sep"></div>
-                        <div>
-                            <div class="pgh-stat-n">4.9★</div>
-                            <div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Avg. Rating</div>
-                        </div>
-                        <div class="pgh-stat-sep hidden sm:block"></div>
-                        <div class="hidden sm:block">
-                            <div class="pgh-stat-n">30D</div>
-                            <div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Free Returns</div>
-                        </div>
-                    </div>
-                </div>
+                        {{-- RIGHT --}}
+                        <div class="pgh-collage pgh-row-right">
 
-                {{-- RIGHT: Hero image with floating badges ------------------- --}}
-                <div class="pgh-collage pgh-row-right">
-
-                    {{-- Ambient glow behind card --}}
-                    <div class="pgh-collage-glow"></div>
-
-                    {{-- Dot grid accent (top-right) --}}
-                    <div class="pgh-dot-grid"></div>
-
-                    {{-- Dashed ring accent (bottom-left) --}}
-                    <div class="pgh-img-accent"></div>
-
-                    {{-- Float 1: Rating (above card, top-right) --}}
-                    <div class="pgh-float pgh-float-1">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="pgh-fi" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            <div class="pgh-img-shell">
+                                <img src="{{ asset('assets/img/home-v1/home-decor.png') }}" alt="Home Decor Collection" loading="eager">
+                                <div class="pgh-card-footer">
+                                    <div class="pgh-card-footer-dots"><span></span><span></span><span></span></div>
+                                    <span class="pgh-card-footer-text">Home Decor Collection</span>
+                                </div>
                             </div>
-                            <div><div class="pgh-fv">4.9 / 5.0</div><div class="pgh-fs">2k+ Reviews</div></div>
-                        </div>
-                    </div>
-
-                    {{-- Float 2: Free delivery (below card, bottom-left) --}}
-                    <div class="pgh-float pgh-float-2">
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <div class="pgh-fi" style="background:linear-gradient(135deg,#bb976d,#8b6510);">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                            </div>
-                            <div><div class="pgh-fv">Free Delivery</div><div class="pgh-fs">On all orders</div></div>
-                        </div>
-                    </div>
-
-                    {{-- Premium card shell --}}
-                    <div class="pgh-img-shell">
-
-                        {{-- Main hero image --}}
-                        <div class="pgh-img-wrap">
-                            <img src="{{ asset('assets/img/home-v1/8.png') }}"
-                                 alt="Shop 2,000+ products — home decor, beauty, gadgets and more"
-                                 loading="eager">
-                        </div>
-
-                        {{-- Card footer strip --}}
-                        <div class="pgh-card-footer">
-                            <div class="pgh-card-footer-dots">
-                                <span></span><span></span><span></span>
-                            </div>
-                            <span class="pgh-card-footer-text">2,000+ Products Available</span>
+                            <span class="pgh-new-badge">New Arrivals</span>
                         </div>
 
                     </div>
-
-                    {{-- "New Arrivals" pill (overlays the card) --}}
-                    <span class="pgh-new-badge">New Arrivals</span>
-
                 </div>
             </div>
+        </div>{{-- /slide 1 --}}
 
-            {{-- ════════════════════════════════════════════════════════════
-                 ROW 2 — Category image cards
-            ════════════════════════════════════════════════════════════ --}}
-            <div class="mb-14 md:mb-20">
-                <div class="mb-7" data-aos="fade-up">
-                    <div class="flex items-end justify-between">
-                        <div>
-                            <span class="text-xs uppercase tracking-widest text-primary font-semibold">Browse by Collection</span>
-                            <h2 class="mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Featured Categories</h2>
-                        </div>
-                        <a href="{{ url('/categories') }}"
-                           class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-primary
-                                  border border-primary/30 px-5 py-2.5 rounded-full
-                                  hover:bg-primary hover:text-white hover:border-primary transition-all duration-200">
-                            All Collections →
-                        </a>
-                    </div>
-                    <p class="mt-3 text-sm text-paragraph dark:text-white-light max-w-2xl">Browse our full range of stunning products — from home decor and kitchen gadgets to sports equipment, beauty products, and everything in between.</p>
-                </div>
+        {{-- ══ SLIDE 2 — Fashion & Beauty ══ --}}
+        <div class="pgh-slide" data-idx="1">
+            <div class="container-fluid" style="position:relative;z-index:1;">
+                <div class="max-w-[1720px] mx-auto">
+                    <div class="pgh-row">
 
-                <div class="pgh-cats-scroll" data-aos="fade-up" data-aos-delay="80">
-                    @foreach($categories->take(6) as $cat)
-                    @php
-                        $catSrc = null;
-                        if ($cat->image) {
-                            $catSrc = str_starts_with($cat->image,'assets/') ? asset($cat->image) : Storage::url($cat->image);
-                        }
-                        $catFb = ['#c8b9a8','#b8a48e','#c4b09a','#d4c0aa','#b09078','#c0a88c'];
-                    @endphp
-                    <a href="{{ route('category.landing', $cat->slug) }}" class="pgh-catimg-card"
-                       style="animation-delay:{{ $loop->index * .07 }}s;">
-                        @if($catSrc)
-                            <img src="{{ $catSrc }}" alt="{{ $cat->name }}">
-                        @else
-                            <div class="pgh-cat-fb" style="background:{{ $catFb[$loop->index % 6] }};">
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-                                    {!! pgbIcon($cat->slug ?? $cat->name, $catIconMap) !!}
-                                </svg>
+                        {{-- LEFT --}}
+                        <div class="pgh-row-left">
+                            <h1 class="pgh-h1">
+                                Little upgrades,<br>
+                                <span class="pgh-h1-grad">big difference</span>
+                            </h1>
+                            <p class="pgh-body mt-5 max-w-[500px]">
+                                The right kitchen tool saves you twenty minutes. The right skincare routine saves your skin. Discover products worth keeping — handpicked for quality and everyday use.
+                            </p>
+                            <div class="pgh-cta-wrap mt-8 flex flex-wrap gap-3 md:gap-4">
+                                <a href="{{ url('/shop') }}" class="pgh-btn-a">
+                                    Shop kitchen gadgets
+                                    <svg width="15" height="11" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </a>
+                                <a href="{{ url('/shop') }}" class="pgh-btn-b">
+                                    Browse beauty
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                                </a>
                             </div>
-                        @endif
-                        <div class="pgh-cat-scrim"></div>
-                        <div class="pgh-cat-body">
-                            <div class="pgh-cat-count">{{ $cat->products_count }} {{ Str::plural('item', $cat->products_count) }}</div>
-                            <div class="pgh-cat-name">{{ $cat->name }}</div>
+                            <div class="pgh-proof mt-8 flex items-center gap-4">
+                                <div class="pgh-avatar-stack">
+                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#d4a96a,#bb976d);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#c4a070,#8b6510);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#e8c48a,#c4903c);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#a07840,#6b4f20);font-size:9px;font-weight:700;">+9K</div>
+                                </div>
+                                <div>
+                                    <div class="pgh-stars">★★★★★</div>
+                                    <div style="font-size:12px;color:#a09080;margin-top:2px;">4.9 from 2k+ reviews</div>
+                                </div>
+                            </div>
+                            <div class="pgh-stats mt-9 flex items-center gap-5 md:gap-7">
+                                <div><div class="pgh-stat-n">1,200+</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Fashion Styles</div></div>
+                                <div class="pgh-stat-sep"></div>
+                                <div><div class="pgh-stat-n">50%</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Off Sale Items</div></div>
+                                <div class="pgh-stat-sep"></div>
+                                <div><div class="pgh-stat-n">4.8★</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Avg. Rating</div></div>
+                                <div class="pgh-stat-sep hidden sm:block"></div>
+                                <div class="hidden sm:block"><div class="pgh-stat-n">2-Day</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Delivery</div></div>
+                            </div>
                         </div>
-                        <div class="pgh-cat-arrow">
-                            <svg width="12" height="10" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+                        {{-- RIGHT --}}
+                        <div class="pgh-collage pgh-row-right">
+
+                            <div class="pgh-img-shell">
+                                <img src="{{ asset('assets/img/home-v1/electronics.png') }}" alt="Fashion & Beauty Collection" loading="lazy">
+                                <div class="pgh-card-footer">
+                                    <div class="pgh-card-footer-dots"><span></span><span></span><span></span></div>
+                                    <span class="pgh-card-footer-text">Fashion & Beauty</span>
+                                </div>
+                            </div>
+                            <span class="pgh-new-badge">Trending Now</span>
                         </div>
-                    </a>
-                    @endforeach
+
+                    </div>
                 </div>
             </div>
+        </div>{{-- /slide 2 --}}
 
-        </div>
+        {{-- ══ SLIDE 3 — Electronics & Gadgets ══ --}}
+        <div class="pgh-slide" data-idx="2">
+            <div class="container-fluid" style="position:relative;z-index:1;">
+                <div class="max-w-[1720px] mx-auto">
+                    <div class="pgh-row">
+
+                        {{-- LEFT --}}
+                        <div class="pgh-row-left">
+                            <h1 class="pgh-h1">
+                                Gear up for<br>
+                                <span class="pgh-h1-grad">whatever's next</span>
+                            </h1>
+                            <p class="pgh-body mt-5 max-w-[500px]">
+                                Whether you're hitting the gym, heading out for a drive, or somewhere in between — we've got the equipment, accessories and gear to keep you ready. Fast delivery across the UAE.
+                            </p>
+                            <div class="pgh-cta-wrap mt-8 flex flex-wrap gap-3 md:gap-4">
+                                <a href="{{ url('/shop') }}" class="pgh-btn-a">
+                                    Shop sports
+                                    <svg width="15" height="11" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </a>
+                                <a href="{{ url('/shop') }}" class="pgh-btn-b">
+                                    View car accessories
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                                </a>
+                            </div>
+                            <div class="pgh-proof mt-8 flex items-center gap-4">
+                                <div class="pgh-avatar-stack">
+                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#d4a96a,#bb976d);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#c4a070,#8b6510);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#e8c48a,#c4903c);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#a07840,#6b4f20);font-size:9px;font-weight:700;">+9K</div>
+                                </div>
+                                <div>
+                                    <div class="pgh-stars">★★★★★</div>
+                                    <div style="font-size:12px;color:#a09080;margin-top:2px;">4.9 from 2k+ reviews</div>
+                                </div>
+                            </div>
+                            <div class="pgh-stats mt-9 flex items-center gap-5 md:gap-7">
+                                <div><div class="pgh-stat-n">10K+</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Total Products</div></div>
+                                <div class="pgh-stat-sep"></div>
+                                <div><div class="pgh-stat-n">24+</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Categories</div></div>
+                                <div class="pgh-stat-sep"></div>
+                                <div><div class="pgh-stat-n">4.9★</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Avg. Rating</div></div>
+                                <div class="pgh-stat-sep hidden sm:block"></div>
+                                <div class="hidden sm:block"><div class="pgh-stat-n">SSL</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Secure Checkout</div></div>
+                            </div>
+                        </div>
+
+                        {{-- RIGHT --}}
+                        <div class="pgh-collage pgh-row-right">
+
+                            <div class="pgh-img-shell">
+                                <img src="{{ asset('assets/img/home-v1/electronics.png') }}" alt="Electronics & Gadgets" loading="lazy">
+                                <div class="pgh-card-footer">
+                                    <div class="pgh-card-footer-dots"><span></span><span></span><span></span></div>
+                                    <span class="pgh-card-footer-text">Electronics & Gadgets</span>
+                                </div>
+                            </div>
+                            <span class="pgh-new-badge">Best Sellers</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>{{-- /slide 3 --}}
+
+    </div>{{-- /.pgh-slides-wrap --}}
+
+    {{-- ── Dot indicators ──────────────────────────────────────── --}}
+    <div class="pgh-sl-dots" id="pgSlDots">
+        <button class="pgh-sl-dot pgh-sl-dot--active" data-slide="0" aria-label="Go to slide 1"></button>
+        <button class="pgh-sl-dot" data-slide="1" aria-label="Go to slide 2"></button>
+        <button class="pgh-sl-dot" data-slide="2" aria-label="Go to slide 3"></button>
     </div>
+
+    {{-- ── Slide counter ────────────────────────────────────────── --}}
+    <div class="pgh-sl-counter" id="pgSlCounter">
+        <span class="pgh-sl-counter-curr" id="pgSlCurr">01</span>
+        <span class="pgh-sl-counter-sep"></span>
+        <span>03</span>
+    </div>
+
+    {{-- ── Progress bar ─────────────────────────────────────────── --}}
+    <div class="pgh-sl-prog">
+        <div class="pgh-sl-prog-fill pgh-sl-prog--run" id="pgSlFill"></div>
+    </div>
+
 </section>
 <!-- Hero Section End -->
+
+@push('scripts')
+<script>
+(function () {
+    const wrap   = document.getElementById('pgSlides');
+    if (!wrap) return;
+    const slides = Array.from(wrap.querySelectorAll('.pgh-slide'));
+    const dots   = Array.from(document.querySelectorAll('#pgSlDots .pgh-sl-dot'));
+    const fill   = document.getElementById('pgSlFill');
+    const curr   = document.getElementById('pgSlCurr');
+    const TOTAL  = slides.length;
+    const DUR    = 5000;
+    let   idx    = 0, timer = null;
+
+    function pad(n) { return String(n + 1).padStart(2, '0'); }
+
+    function resetProgress() {
+        if (!fill) return;
+        fill.classList.remove('pgh-sl-prog--run');
+        void fill.offsetWidth;
+        fill.classList.add('pgh-sl-prog--run');
+    }
+
+    function goTo(n) {
+        const old = idx;
+        idx = ((n % TOTAL) + TOTAL) % TOTAL;
+        if (old === idx) return;
+
+        /* lock height during transition */
+        wrap.style.minHeight = slides[old].offsetHeight + 'px';
+
+        slides[old].classList.remove('pgh-slide--active');
+        slides[old].classList.add('pgh-slide--leave');
+        slides[idx].classList.add('pgh-slide--active');
+
+        dots[old].classList.remove('pgh-sl-dot--active');
+        dots[idx].classList.add('pgh-sl-dot--active');
+
+        if (curr) curr.textContent = pad(idx);
+
+        setTimeout(() => {
+            slides[old].classList.remove('pgh-slide--leave');
+            wrap.style.minHeight = '';
+        }, 750);
+
+        resetProgress();
+    }
+
+    function start() {
+        clearInterval(timer);
+        timer = setInterval(() => goTo(idx + 1), DUR);
+        resetProgress();
+    }
+
+    dots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.slide); start(); }));
+
+    /* pause on hover */
+    wrap.addEventListener('mouseenter', () => {
+        clearInterval(timer);
+        if (fill) { fill.style.transition = 'none'; fill.style.width = fill.offsetWidth + 'px'; }
+    });
+    wrap.addEventListener('mouseleave', start);
+
+    /* touch / swipe support */
+    let tx = 0;
+    wrap.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+    wrap.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - tx;
+        if (Math.abs(dx) > 48) { goTo(dx < 0 ? idx + 1 : idx - 1); start(); }
+    }, { passive: true });
+
+    start();
+})();
+</script>
+@endpush
+
+<!-- Marquee Strip -->
+<div class="mqs-outer">
+    <div class="mqs-track">
+        <div class="mqs-belt" aria-label="Promotions ticker">
+            @php
+            $mqItems = [
+                ['text' => 'New Collection <span class="hi">2026</span>'],
+                ['text' => 'Get Up To <span class="hi">50% Off</span>'],
+                ['text' => 'Clothing &amp; Fashion'],
+                ['text' => 'Best Fashion Picks'],
+                ['text' => '<span class="hi">Summer</span> Collection'],
+                ['text' => 'Shop <span class="hi">10,000+</span> Products'],
+                ['text' => 'Beauty &amp; Skincare'],
+                ['text' => 'Home &amp; <span class="hi">Decor</span>'],
+                ['text' => 'Electronics &amp; Gadgets'],
+                ['text' => 'Free Shipping <span class="hi">Always</span>'],
+            ];
+            @endphp
+            @for($r = 0; $r < 2; $r++)
+                @foreach($mqItems as $it)
+                <span class="mqs-seg">
+                    <span class="mqs-word">{!! $it['text'] !!}</span>
+                    <span class="mqs-star">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+                        </svg>
+                    </span>
+                </span>
+                @endforeach
+            @endfor
+        </div>
+    </div>
+</div>
+
+<!-- Featured Categories Start -->
+<div class="s-py-60 bg-[#FAF9F7] dark:bg-title">
+    <div class="container-fluid">
+        <div class="max-w-[1720px] mx-auto">
+            <div class="mb-7" data-aos="fade-up">
+                <div class="flex items-end justify-between">
+                    <div>
+                        <span class="text-xs uppercase tracking-widest text-primary font-semibold">Browse by Collection</span>
+                        <h2 class="mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Featured Categories</h2>
+                    </div>
+                    <a href="{{ url('/categories') }}"
+                       class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-primary
+                              border border-primary/30 px-5 py-2.5 rounded-full
+                              hover:bg-primary hover:text-white hover:border-primary transition-all duration-200">
+                        All Collections →
+                    </a>
+                </div>
+                <p class="mt-3 text-sm text-paragraph dark:text-white-light max-w-2xl">Browse our full range of stunning products — from home decor and kitchen gadgets to sports equipment, beauty products, and everything in between.</p>
+            </div>
+
+            <div class="pgh-cats-scroll" data-aos="fade-up" data-aos-delay="80">
+                @foreach($categories->take(6) as $cat)
+                @php
+                    $catSrc = null;
+                    if ($cat->image) {
+                        $catSrc = str_starts_with($cat->image,'assets/') ? asset($cat->image) : Storage::url($cat->image);
+                    }
+                    $catFb = ['#c8b9a8','#b8a48e','#c4b09a','#d4c0aa','#b09078','#c0a88c'];
+                @endphp
+                <a href="{{ route('category.landing', $cat->slug) }}" class="pgh-catimg-card"
+                   style="animation-delay:{{ $loop->index * .07 }}s;">
+                    @if($catSrc)
+                        <img src="{{ $catSrc }}" alt="{{ $cat->name }}">
+                    @else
+                        <div class="pgh-cat-fb" style="background:{{ $catFb[$loop->index % 6] }};">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                                {!! pgbIcon($cat->slug ?? $cat->name, $catIconMap) !!}
+                            </svg>
+                        </div>
+                    @endif
+                    <div class="pgh-cat-scrim"></div>
+                    <div class="pgh-cat-body">
+                        <div class="pgh-cat-count">{{ $cat->products_count }} {{ Str::plural('item', $cat->products_count) }}</div>
+                        <div class="pgh-cat-name">{{ $cat->name }}</div>
+                    </div>
+                    <div class="pgh-cat-arrow">
+                        <svg width="12" height="10" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                </a>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Featured Categories End -->
+
+<!-- Marquee Strip Start -->
+@push('styles')
+<style>
+/* ── Scrolling Marquee Strip (mqs-) ──────────────────────────── */
+.mqs-outer {
+    position: relative;
+    z-index: 1;
+    transform: rotate(-1.8deg);
+    /* vertical margin creates breathing room; overflow:hidden clips rotated bleed */
+    margin: 0;
+    overflow: hidden;
+}
+
+.mqs-track {
+    background: #0a0806;
+    border-top:    1.5px solid rgba(187,151,109,.25);
+    border-bottom: 1.5px solid rgba(187,151,109,.25);
+    padding: 13px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    /* inner glow */
+    box-shadow: 0 0 0 1px rgba(0,0,0,.6), 0 6px 40px rgba(0,0,0,.5);
+}
+
+@keyframes mqs-roll { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+
+.mqs-belt {
+    display: inline-flex;
+    align-items: center;
+    animation: mqs-roll 30s linear infinite;
+    will-change: transform;
+}
+.mqs-belt:hover { animation-play-state: paused; }
+
+.mqs-seg {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 6px;
+}
+
+.mqs-word {
+    font-family: 'DM Sans', 'Poppins', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+    color: #ddd5c8;
+    padding: 0 16px;
+    white-space: nowrap;
+}
+.mqs-word .hi { color: #d4a96a; }
+
+/* Gold star separator */
+.mqs-star {
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: #bb976d; line-height: 1;
+}
+</style>
+@endpush
 
 <!-- Why Choose Us Start -->
 @push('styles')
