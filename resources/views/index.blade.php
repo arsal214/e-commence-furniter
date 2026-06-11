@@ -514,15 +514,15 @@ $schemaWebsite = [
 /* Each slide */
 .pgh-slide {
     width: 100%;
-    padding: 2rem 0 0.5rem;
+    padding: 2rem 0 0;
     position: absolute; top: 0; left: 0;
     opacity: 0;
     transform: translateX(28px);
     transition: opacity .72s cubic-bezier(.4,0,.2,1), transform .72s cubic-bezier(.4,0,.2,1);
     pointer-events: none;
 }
-@media(min-width:768px)  { .pgh-slide { padding: 2.5rem 0 0.75rem; } }
-@media(min-width:1280px) { .pgh-slide { padding: 3rem 0 1rem; } }
+@media(min-width:768px)  { .pgh-slide { padding: 2.5rem 0 0; } }
+@media(min-width:1280px) { .pgh-slide { padding: 3rem 0 0; } }
 
 /* Active slide — in document flow, defines height */
 .pgh-slide.pgh-slide--active {
@@ -538,22 +538,6 @@ $schemaWebsite = [
     transform: translateX(-28px);
 }
 
-/* ── Dot indicators ─────────────────────────────────────────── */
-.pgh-sl-dots {
-    position: absolute; bottom: 22px; left: 50%;
-    transform: translateX(-50%);
-    display: flex; gap: 8px; z-index: 30; align-items: center;
-}
-.pgh-sl-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: rgba(187,151,109,.3);
-    border: none; padding: 0; cursor: pointer;
-    transition: all .35s ease;
-}
-.pgh-sl-dot.pgh-sl-dot--active {
-    background: #bb976d;
-    width: 26px; border-radius: 4px;
-}
 
 /* ── Slide counter ──────────────────────────────────────────── */
 .pgh-sl-counter {
@@ -567,20 +551,6 @@ $schemaWebsite = [
 .pgh-sl-counter-sep  { width: 24px; height: 1.5px; background: rgba(187,151,109,.4); border-radius: 1px; }
 @media(max-width:639px) { .pgh-sl-counter { display: none; } }
 
-/* ── Progress bar ───────────────────────────────────────────── */
-.pgh-sl-prog {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    height: 3px; background: rgba(187,151,109,.1); z-index: 31; overflow: hidden;
-}
-.pgh-sl-prog-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #bb976d, #e4c28a);
-    width: 0%;
-}
-.pgh-sl-prog-fill.pgh-sl-prog--run {
-    transition: width 5s linear;
-    width: 100%;
-}
 </style>
 @endpush
 
@@ -820,12 +790,6 @@ $schemaWebsite = [
 
     </div>{{-- /.pgh-slides-wrap --}}
 
-    {{-- ── Dot indicators ──────────────────────────────────────── --}}
-    <div class="pgh-sl-dots" id="pgSlDots">
-        <button class="pgh-sl-dot pgh-sl-dot--active" data-slide="0" aria-label="Go to slide 1"></button>
-        <button class="pgh-sl-dot" data-slide="1" aria-label="Go to slide 2"></button>
-        <button class="pgh-sl-dot" data-slide="2" aria-label="Go to slide 3"></button>
-    </div>
 
     {{-- ── Slide counter ────────────────────────────────────────── --}}
     <div class="pgh-sl-counter" id="pgSlCounter">
@@ -834,9 +798,39 @@ $schemaWebsite = [
         <span>03</span>
     </div>
 
-    {{-- ── Progress bar ─────────────────────────────────────────── --}}
-    <div class="pgh-sl-prog">
-        <div class="pgh-sl-prog-fill pgh-sl-prog--run" id="pgSlFill"></div>
+
+    {{-- ── Marquee strip — bottom of hero ─────────────────────── --}}
+    <div class="mqs-outer">
+        <div class="mqs-track">
+            <div class="mqs-belt" aria-label="Promotions ticker">
+                @php
+                $mqItems = [
+                    ['text' => 'New Collection <span class="hi">2026</span>'],
+                    ['text' => 'Get Up To <span class="hi">50% Off</span>'],
+                    ['text' => 'Clothing &amp; Fashion'],
+                    ['text' => 'Best Fashion Picks'],
+                    ['text' => '<span class="hi">Summer</span> Collection'],
+                    ['text' => 'Shop <span class="hi">10,000+</span> Products'],
+                    ['text' => 'Beauty &amp; Skincare'],
+                    ['text' => 'Home &amp; <span class="hi">Decor</span>'],
+                    ['text' => 'Electronics &amp; Gadgets'],
+                    ['text' => 'Free Shipping <span class="hi">Always</span>'],
+                ];
+                @endphp
+                @for($r = 0; $r < 2; $r++)
+                    @foreach($mqItems as $it)
+                    <span class="mqs-seg">
+                        <span class="mqs-word">{!! $it['text'] !!}</span>
+                        <span class="mqs-star">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+                            </svg>
+                        </span>
+                    </span>
+                    @endforeach
+                @endfor
+            </div>
+        </div>
     </div>
 
 </section>
@@ -848,21 +842,12 @@ $schemaWebsite = [
     const wrap   = document.getElementById('pgSlides');
     if (!wrap) return;
     const slides = Array.from(wrap.querySelectorAll('.pgh-slide'));
-    const dots   = Array.from(document.querySelectorAll('#pgSlDots .pgh-sl-dot'));
-    const fill   = document.getElementById('pgSlFill');
     const curr   = document.getElementById('pgSlCurr');
     const TOTAL  = slides.length;
     const DUR    = 5000;
     let   idx    = 0, timer = null;
 
     function pad(n) { return String(n + 1).padStart(2, '0'); }
-
-    function resetProgress() {
-        if (!fill) return;
-        fill.classList.remove('pgh-sl-prog--run');
-        void fill.offsetWidth;
-        fill.classList.add('pgh-sl-prog--run');
-    }
 
     function goTo(n) {
         const old = idx;
@@ -876,8 +861,6 @@ $schemaWebsite = [
         slides[old].classList.add('pgh-slide--leave');
         slides[idx].classList.add('pgh-slide--active');
 
-        dots[old].classList.remove('pgh-sl-dot--active');
-        dots[idx].classList.add('pgh-sl-dot--active');
 
         if (curr) curr.textContent = pad(idx);
 
@@ -886,16 +869,13 @@ $schemaWebsite = [
             wrap.style.minHeight = '';
         }, 750);
 
-        resetProgress();
     }
 
     function start() {
         clearInterval(timer);
         timer = setInterval(() => goTo(idx + 1), DUR);
-        resetProgress();
     }
 
-    dots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.slide); start(); }));
 
     /* pause on hover */
     wrap.addEventListener('mouseenter', () => {
@@ -916,40 +896,6 @@ $schemaWebsite = [
 })();
 </script>
 @endpush
-
-<!-- Marquee Strip -->
-<div class="mqs-outer">
-    <div class="mqs-track">
-        <div class="mqs-belt" aria-label="Promotions ticker">
-            @php
-            $mqItems = [
-                ['text' => 'New Collection <span class="hi">2026</span>'],
-                ['text' => 'Get Up To <span class="hi">50% Off</span>'],
-                ['text' => 'Clothing &amp; Fashion'],
-                ['text' => 'Best Fashion Picks'],
-                ['text' => '<span class="hi">Summer</span> Collection'],
-                ['text' => 'Shop <span class="hi">10,000+</span> Products'],
-                ['text' => 'Beauty &amp; Skincare'],
-                ['text' => 'Home &amp; <span class="hi">Decor</span>'],
-                ['text' => 'Electronics &amp; Gadgets'],
-                ['text' => 'Free Shipping <span class="hi">Always</span>'],
-            ];
-            @endphp
-            @for($r = 0; $r < 2; $r++)
-                @foreach($mqItems as $it)
-                <span class="mqs-seg">
-                    <span class="mqs-word">{!! $it['text'] !!}</span>
-                    <span class="mqs-star">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
-                        </svg>
-                    </span>
-                </span>
-                @endforeach
-            @endfor
-        </div>
-    </div>
-</div>
 
 <!-- Featured Categories Start -->
 <div class="s-py-60 bg-[#FAF9F7] dark:bg-title">
