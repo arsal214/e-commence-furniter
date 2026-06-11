@@ -21,6 +21,168 @@ $schemaWebsite = [
 @endpush
 
 @section('content')
+
+{{-- ── Announcement Bar ─────────────────────────────────────── --}}
+@push('styles')
+<style>
+.ann-bar {
+    background: #0a0806;
+    border-bottom: 1px solid rgba(187,151,109,.18);
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    z-index: 100;
+}
+.ann-bar.ann--gone { display: none; }
+.ann-wrap {
+    position: relative;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(100% - 80px);
+    overflow: hidden;
+}
+.ann-slide {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255,255,255,.82);
+    font-weight: 500;
+    letter-spacing: .15px;
+    line-height: 1.4;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity .5s ease, transform .5s ease;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+@media(max-width:639px) { .ann-slide { font-size: 11.5px; } }
+.ann-slide.ann-slide--active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+.ann-hi  { color: #e4c28a; }
+.ann-code {
+    display: inline-block;
+    background: rgba(187,151,109,.18);
+    color: #e4c28a;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    font-family: 'Courier New', monospace;
+    border: 1px solid rgba(187,151,109,.28);
+}
+.ann-dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #bb976d;
+    margin: 0 8px;
+    vertical-align: middle;
+    opacity: .7;
+}
+.ann-close {
+    position: absolute;
+    right: 16px;
+    background: none; border: none;
+    color: rgba(255,255,255,.35);
+    font-size: 20px; line-height: 1;
+    cursor: pointer; padding: 4px 6px;
+    transition: color .2s ease;
+    top: 50%; transform: translateY(-50%);
+}
+.ann-close:hover { color: rgba(255,255,255,.85); }
+/* Dots nav */
+.ann-dots {
+    position: absolute;
+    left: 16px;
+    display: flex; gap: 5px; align-items: center;
+    top: 50%; transform: translateY(-50%);
+}
+.ann-nav-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: rgba(187,151,109,.28);
+    border: none; padding: 0; cursor: pointer;
+    transition: background .3s;
+}
+.ann-nav-dot.ann-nav-dot--on { background: #bb976d; }
+@media(max-width:479px) { .ann-dots { display: none; } }
+</style>
+@endpush
+
+<div class="ann-bar" id="annBar">
+
+    {{-- Dot nav --}}
+    <div class="ann-dots" id="annDots">
+        <button class="ann-nav-dot ann-nav-dot--on" data-ann="0"></button>
+        <button class="ann-nav-dot" data-ann="1"></button>
+        <button class="ann-nav-dot" data-ann="2"></button>
+        <button class="ann-nav-dot" data-ann="3"></button>
+    </div>
+
+    {{-- Slides --}}
+    <div class="ann-wrap">
+        <div class="ann-slide ann-slide--active">
+            🚚&nbsp; Free shipping on all orders over <span class="ann-hi">$99</span> <span class="ann-dot"></span> Delivered fast across the USA
+        </div>
+        <div class="ann-slide">
+            Joined by <span class="ann-hi">2,000+</span> happy customers across the USA <span class="ann-dot"></span> ⭐ <span class="ann-hi">4.9 / 5</span>
+        </div>
+        <div class="ann-slide">
+            Use code <span class="ann-code">WELCOME10</span> for <span class="ann-hi">10% off</span> your first order
+        </div>
+        <div class="ann-slide">
+            💬&nbsp; <span class="ann-hi">24/7</span> live chat support <span class="ann-dot"></span> Real help, anytime you need it
+        </div>
+    </div>
+
+    {{-- Close --}}
+    <button class="ann-close" id="annClose" aria-label="Dismiss announcement">&#215;</button>
+
+</div>
+
+@push('scripts')
+<script>
+(function () {
+    const bar   = document.getElementById('annBar');
+    if (!bar) return;
+    const items = Array.from(bar.querySelectorAll('.ann-slide'));
+    const dots  = Array.from(document.querySelectorAll('#annDots .ann-nav-dot'));
+    let cur = 0, timer = null;
+
+    function goTo(n) {
+        items[cur].classList.remove('ann-slide--active');
+        dots[cur]?.classList.remove('ann-nav-dot--on');
+        cur = ((n % items.length) + items.length) % items.length;
+        items[cur].classList.add('ann-slide--active');
+        dots[cur]?.classList.add('ann-nav-dot--on');
+    }
+
+    function start() { timer = setInterval(() => goTo(cur + 1), 4000); }
+
+    dots.forEach(d => d.addEventListener('click', () => {
+        clearInterval(timer); goTo(+d.dataset.ann); start();
+    }));
+
+    document.getElementById('annClose')?.addEventListener('click', () => {
+        clearInterval(timer);
+        bar.classList.add('ann--gone');
+    });
+
+    start();
+})();
+</script>
+@endpush
+
 @include('includes.navbar')
 
 <!-- Hero Section Start -->
@@ -603,7 +765,7 @@ $schemaWebsite = [
                                 <span class="pgh-h1-grad">whatever's next</span>
                             </h1>
                             <p class="pgh-body mt-5 max-w-[500px]">
-                                Whether you're hitting the gym, heading out for a drive, or somewhere in between — we've got the equipment, accessories and gear to keep you ready. Fast delivery across the UAE.
+                                Whether you're hitting the gym, heading out for a drive, or somewhere in between — we've got the equipment, accessories and gear to keep you ready. Fast delivery across the USA.
                             </p>
                             <div class="pgh-cta-wrap mt-8 flex flex-wrap gap-3 md:gap-4">
                                 <a href="{{ url('/shop') }}" class="pgh-btn-a">
