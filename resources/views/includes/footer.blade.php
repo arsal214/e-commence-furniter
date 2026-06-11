@@ -13,7 +13,7 @@
                         <img class="w-[140px] mb-5" src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib">
                     </a>
                     <p class="text-white-light text-sm leading-relaxed">
-                        Your trusted destination for premium furniture, home decor, and interior accessories — curated for quality and delivered fast.
+                        Your trusted online store for home decor, lifestyle products, kitchen gadgets, sports gear, beauty and more — curated for quality, delivered fast across the USA.
                     </p>
                     <div class="flex items-center gap-3 mt-6">
                         <a href="https://www.facebook.com/peytonghalib" target="_blank" rel="noopener noreferrer nofollow"

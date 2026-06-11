@@ -1,6 +1,6 @@
 @extends('layouts.main')
-@section('title', 'PeytonGhalib - Quality Furniture & Home Decor')
-@section('meta_description', 'Shop quality furniture, home decor, ceramics and more at PeytonGhalib. Thousands of products at unbeatable prices with fast, reliable delivery nationwide.')
+@section('title', 'PeytonGhalib — Home Decor & Everyday Essentials Online')
+@section('meta_description', 'Shop home decor, kitchen gadgets, beauty, sports gear & more at PeytonGhalib. 1,000+ products, fast delivery, 30-day returns. Discover your new favourites today.')
 
 @push('schema')
 @php
@@ -9,7 +9,7 @@ $schemaWebsite = [
     '@type'           => 'WebSite',
     'name'            => 'PeytonGhalib',
     'url'             => url('/'),
-    'description'     => 'Shop quality furniture, home decor, ceramics and more at PeytonGhalib. Thousands of products at unbeatable prices with fast, reliable delivery nationwide.',
+    'description'     => 'Shop home decor, kitchen gadgets, beauty, sports gear & more at PeytonGhalib. 1,000+ products, fast delivery, 30-day returns. Discover your new favourites today.',
     'potentialAction' => [
         '@type'       => 'SearchAction',
         'target'      => ['@type' => 'EntryPoint', 'urlTemplate' => url('/shop') . '?search={search_term_string}'],
@@ -191,82 +191,140 @@ $schemaWebsite = [
 .pgh-collage {
     position: relative; z-index: 1;
     animation: pgh-left .75s .1s ease both;
-    padding: 24px 0 24px 0;
+    padding: 12px 0;
+    display: flex; align-items: center;
 }
-/* Decorative glow shape behind image */
+/* Ambient glow behind card */
 .pgh-collage-glow {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 60% 50%, rgba(187,151,109,.18) 0%, transparent 68%);
-    pointer-events: none; z-index: 0;
+    position: absolute; inset: -60px;
+    background: radial-gradient(ellipse at 55% 50%, rgba(187,151,109,.22) 0%, transparent 62%);
+    pointer-events: none; z-index: 0; border-radius: 50%;
 }
+/* Top-right decorative dot grid */
+.pgh-dot-grid {
+    position: absolute; top: -8px; right: -20px; z-index: 0;
+    width: 140px; height: 140px;
+    background-image: radial-gradient(rgba(187,151,109,.4) 1.5px, transparent 1.5px);
+    background-size: 18px 18px;
+    opacity: .65; pointer-events: none;
+}
+/* Accent ring decoration */
+.pgh-img-accent {
+    position: absolute; bottom: -10px; left: -10px; z-index: 0;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: transparent;
+    border: 1.5px dashed rgba(187,151,109,.22);
+    pointer-events: none;
+}
+
+/* ── Premium card shell ──────────────────────────────────────── */
+.pgh-img-shell {
+    position: relative; z-index: 1; width: 100%;
+    background: linear-gradient(148deg, #fefcf9 0%, #f8f1e8 50%, #fefaf6 100%);
+    border-radius: 32px;
+    padding: 20px 20px 16px;
+    border: 1px solid rgba(187,151,109,.2);
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,.9) inset,
+        0 24px 72px rgba(0,0,0,.13),
+        0 8px 28px rgba(187,151,109,.1);
+    transition: box-shadow .45s ease, transform .45s ease;
+}
+.pgh-img-shell:hover {
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,.9) inset,
+        0 36px 96px rgba(0,0,0,.16),
+        0 14px 40px rgba(187,151,109,.15);
+    transform: translateY(-5px);
+}
+.dark .pgh-img-shell {
+    background: linear-gradient(148deg, #1e1912 0%, #261d12 50%, #1d1811 100%);
+    border-color: rgba(187,151,109,.16);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.04) inset, 0 24px 72px rgba(0,0,0,.35), 0 8px 28px rgba(187,151,109,.08);
+}
+/* Gold top bar accent on card */
+.pgh-img-shell::before {
+    content: '';
+    position: absolute; top: 0; left: 32px; right: 32px; height: 2px;
+    background: linear-gradient(90deg, transparent, #bb976d 30%, #e4c28a 50%, #bb976d 70%, transparent);
+    border-radius: 0 0 2px 2px; opacity: .6;
+}
+/* Subtle inner corner dots (decorative) */
+.pgh-img-shell::after {
+    content: '';
+    position: absolute; top: 12px; right: 14px;
+    width: 40px; height: 40px;
+    background-image: radial-gradient(rgba(187,151,109,.3) 1px, transparent 1px);
+    background-size: 8px 8px;
+    border-radius: 4px; pointer-events: none;
+}
+
+/* ── Image itself ────────────────────────────────────────────── */
 .pgh-img-wrap {
     position: relative; z-index: 1;
-    border-radius: 28px; overflow: hidden;
-    height: 520px;
-    box-shadow: 0 32px 90px rgba(0,0,0,.22), 0 8px 24px rgba(0,0,0,.1);
-    transform: perspective(1200px) rotateY(-2deg) rotateX(1.5deg);
-    transition: transform .6s cubic-bezier(.22,.68,0,1.1), box-shadow .6s ease;
-}
-.pgh-img-wrap:hover {
-    transform: perspective(1200px) rotateY(0deg) rotateX(0deg) scale(1.01);
-    box-shadow: 0 40px 110px rgba(0,0,0,.26);
+    border-radius: 18px; overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 18px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
 }
 .pgh-img-wrap img {
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: center;
+    width: 100%; height: auto;
+    max-height: 460px;
+    object-fit: contain; object-position: center;
     display: block;
     transition: transform .7s ease;
 }
-.pgh-img-wrap:hover img { transform: scale(1.04); }
-@media (max-width: 1279px) { .pgh-img-wrap { height: 440px; } }
-@media (max-width: 1023px) { .pgh-img-wrap { height: 380px; transform: none; border-radius: 22px; } }
-@media (max-width: 767px)  { .pgh-img-wrap { height: 280px; } }
+.pgh-img-shell:hover .pgh-img-wrap img { transform: scale(1.03); }
+@media (max-width: 1279px) { .pgh-img-wrap img { max-height: 400px; } }
+@media (max-width: 1023px) { .pgh-img-wrap img { max-height: 340px; } .pgh-img-shell { border-radius: 24px; } }
+@media (max-width: 767px)  { .pgh-img-wrap img { max-height: 260px; } .pgh-img-shell { padding: 14px 14px 12px; border-radius: 20px; } }
 
-/* Top-right decorative corner dot grid */
-.pgh-dot-grid {
-    position: absolute; top: 0; right: -16px; z-index: 0;
-    width: 120px; height: 120px;
-    background-image: radial-gradient(rgba(187,151,109,.35) 1.5px, transparent 1.5px);
-    background-size: 16px 16px;
-    opacity: .7;
-    pointer-events: none;
+/* Card footer strip */
+.pgh-card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 6px 2px;
 }
-/* Bottom-left accent line */
-.pgh-img-accent {
-    position: absolute; bottom: 12px; left: 0; z-index: 0;
-    width: 80px; height: 4px; border-radius: 2px;
-    background: linear-gradient(90deg, #bb976d, transparent);
+.pgh-card-footer-dots { display: flex; gap: 5px; align-items: center; }
+.pgh-card-footer-dots span {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(187,151,109,.35);
 }
-/* "New Season" floating label on image */
+.pgh-card-footer-dots span:first-child { background: rgba(187,151,109,.7); }
+.pgh-card-footer-text {
+    font-size: 10px; font-weight: 600; letter-spacing: .8px;
+    text-transform: uppercase; color: rgba(187,151,109,.7);
+}
+@media (max-width: 767px) { .pgh-card-footer { padding: 8px 4px 0; } .pgh-card-footer-text { font-size: 9px; } }
+
+/* "New Arrivals" floating pill */
 .pgh-new-badge {
-    position: absolute; top: 44px; left: 20px; z-index: 10;
+    position: absolute; top: 36px; left: 12px; z-index: 10;
     background: linear-gradient(135deg, #bb976d, #d4a96a);
-    color: #fff; font-size: 10px; font-weight: 800;
-    letter-spacing: .8px; text-transform: uppercase;
-    padding: 5px 12px; border-radius: 8px;
-    box-shadow: 0 4px 14px rgba(187,151,109,.5);
+    color: #fff; font-size: 9px; font-weight: 800;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 5px 13px; border-radius: 100px;
+    box-shadow: 0 4px 16px rgba(187,151,109,.5);
     pointer-events: none;
 }
 
 /* ── Floating cards ────────────────────────────────────────── */
 .pgh-float {
     position: absolute; z-index: 20;
-    background: rgba(255,255,255,.9);
+    background: rgba(255,255,255,.92);
     backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255,255,255,.8);
+    border: 1px solid rgba(255,255,255,.85);
     border-radius: 18px;
-    box-shadow: 0 10px 40px rgba(0,0,0,.14), 0 2px 8px rgba(0,0,0,.06);
+    box-shadow: 0 12px 40px rgba(0,0,0,.13), 0 2px 8px rgba(0,0,0,.06);
     padding: 12px 16px; white-space: nowrap;
 }
-.dark .pgh-float { background:rgba(25,18,10,.88); border-color:rgba(255,255,255,.1); }
+.dark .pgh-float { background:rgba(28,20,10,.9); border-color:rgba(255,255,255,.1); }
 .pgh-fi { width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
 .pgh-fv { font-size:13px;font-weight:700;color:#1c1208;line-height:1.15; }
 .dark .pgh-fv { color:#f5ede0; }
 .pgh-fs { font-size:10px;color:#a09080;margin-top:2px; }
-.pgh-float-1 { top:18px; right:18px; animation:pgh-bob 4.5s ease-in-out infinite; }
-.pgh-float-2 { bottom:26px; left:18px; animation:pgh-bob2 4s ease-in-out infinite; animation-delay:-2s; }
+.pgh-float-1 { top:-16px; right:24px; animation:pgh-bob 4.5s ease-in-out infinite; }
+.pgh-float-2 { bottom:-14px; left:24px; animation:pgh-bob2 4s ease-in-out infinite; animation-delay:-2s; }
 .pgh-float-3 { top:42%; right:18px; animation:pgh-bob 5s ease-in-out infinite; animation-delay:-3.5s; }
+@media (max-width: 767px) { .pgh-float-1 { top: -12px; right: 12px; } .pgh-float-2 { bottom: -12px; left: 12px; } }
 
 /* ── Category image cards ──────────────────────────────────── */
 .pgh-cats-scroll {
@@ -384,29 +442,28 @@ $schemaWebsite = [
                     {{-- Live trust badge --}}
                     <div class="pgh-badge">
                         <span class="pgh-badge-dot"></span>
-                        Trusted by 10,000+ Customers
+                        Trusted by 2,000+ Customers
                     </div>
 
                     {{-- H1 --}}
                     <h1 class="pgh-h1 mt-5">
-                        Premium Furniture<br>
-                        &amp; Home Decor,<br>
-                        <span class="pgh-h1-grad">Delivered to Your Door</span>
+                        Make your space<br>
+                        <span class="pgh-h1-grad">feel like you</span>
                     </h1>
 
                     {{-- Body --}}
                     <p class="pgh-body mt-5 max-w-[500px]">
-                        From handcrafted sofas and artisan ceramics to complete interior collections — curated for modern living, delivered with care.
+                        From statement lamps and ceramic vases to wall art and decorative cushions — find pieces that actually suit your home, not just fill it. New arrivals are added every week.
                     </p>
 
                     {{-- CTAs --}}
                     <div class="pgh-cta-wrap mt-8 flex flex-wrap gap-3 md:gap-4">
                         <a href="{{ url('/shop') }}" class="pgh-btn-a">
-                            Shop Now
+                            Shop Home Decor
                             <svg width="15" height="11" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </a>
-                        <a href="{{ url('/categories') }}" class="pgh-btn-b">
-                            Explore Collections
+                        <a href="{{ url('/shop') }}" class="pgh-btn-b">
+                            See What's New
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                         </a>
                     </div>
@@ -438,7 +495,7 @@ $schemaWebsite = [
                     {{-- Stats --}}
                     <div class="pgh-stats mt-9 flex items-center gap-5 md:gap-7">
                         <div>
-                            <div class="pgh-stat-n">10K+</div>
+                            <div class="pgh-stat-n">2,000+</div>
                             <div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Happy Customers</div>
                         </div>
                         <div class="pgh-stat-sep"></div>
@@ -462,26 +519,16 @@ $schemaWebsite = [
                 {{-- RIGHT: Hero image with floating badges ------------------- --}}
                 <div class="pgh-collage pgh-row-right">
 
-                    {{-- Soft glow behind image --}}
+                    {{-- Ambient glow behind card --}}
                     <div class="pgh-collage-glow"></div>
 
                     {{-- Dot grid accent (top-right) --}}
                     <div class="pgh-dot-grid"></div>
 
-                    {{-- Bottom accent line --}}
+                    {{-- Dashed ring accent (bottom-left) --}}
                     <div class="pgh-img-accent"></div>
 
-                    {{-- Main hero image --}}
-                    <div class="pgh-img-wrap">
-                        <img src="{{ asset('assets/img/home-v1/banner-02.png') }}"
-                             alt="Premium Furniture — Delivered to Your Door"
-                             loading="eager">
-                    </div>
-
-                    {{-- "New Season" pill over image (outside wrap so not clipped) --}}
-                    <span class="pgh-new-badge">New Season</span>
-
-                    {{-- Float 1: Rating (top-right over image) --}}
+                    {{-- Float 1: Rating (above card, top-right) --}}
                     <div class="pgh-float pgh-float-1">
                         <div style="display:flex;align-items:center;gap:10px;">
                             <div class="pgh-fi" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);">
@@ -491,7 +538,7 @@ $schemaWebsite = [
                         </div>
                     </div>
 
-                    {{-- Float 2: Free delivery (bottom-left over image) --}}
+                    {{-- Float 2: Free delivery (below card, bottom-left) --}}
                     <div class="pgh-float pgh-float-2">
                         <div style="display:flex;align-items:center;gap:10px;">
                             <div class="pgh-fi" style="background:linear-gradient(135deg,#bb976d,#8b6510);">
@@ -501,6 +548,29 @@ $schemaWebsite = [
                         </div>
                     </div>
 
+                    {{-- Premium card shell --}}
+                    <div class="pgh-img-shell">
+
+                        {{-- Main hero image --}}
+                        <div class="pgh-img-wrap">
+                            <img src="{{ asset('assets/img/home-v1/8.png') }}"
+                                 alt="Shop 2,000+ products — home decor, beauty, gadgets and more"
+                                 loading="eager">
+                        </div>
+
+                        {{-- Card footer strip --}}
+                        <div class="pgh-card-footer">
+                            <div class="pgh-card-footer-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <span class="pgh-card-footer-text">2,000+ Products Available</span>
+                        </div>
+
+                    </div>
+
+                    {{-- "New Arrivals" pill (overlays the card) --}}
+                    <span class="pgh-new-badge">New Arrivals</span>
+
                 </div>
             </div>
 
@@ -508,17 +578,20 @@ $schemaWebsite = [
                  ROW 2 — Category image cards
             ════════════════════════════════════════════════════════════ --}}
             <div class="mb-14 md:mb-20">
-                <div class="flex items-end justify-between mb-7" data-aos="fade-up">
-                    <div>
-                        <span class="text-xs uppercase tracking-widest text-primary font-semibold">Browse by Collection</span>
-                        <h2 class="mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Shop Your Style</h2>
+                <div class="mb-7" data-aos="fade-up">
+                    <div class="flex items-end justify-between">
+                        <div>
+                            <span class="text-xs uppercase tracking-widest text-primary font-semibold">Browse by Collection</span>
+                            <h2 class="mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Featured Categories</h2>
+                        </div>
+                        <a href="{{ url('/categories') }}"
+                           class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-primary
+                                  border border-primary/30 px-5 py-2.5 rounded-full
+                                  hover:bg-primary hover:text-white hover:border-primary transition-all duration-200">
+                            All Collections →
+                        </a>
                     </div>
-                    <a href="{{ url('/categories') }}"
-                       class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-primary
-                              border border-primary/30 px-5 py-2.5 rounded-full
-                              hover:bg-primary hover:text-white hover:border-primary transition-all duration-200">
-                        All Collections →
-                    </a>
+                    <p class="mt-3 text-sm text-paragraph dark:text-white-light max-w-2xl">Browse our full range of stunning products — from home decor and kitchen gadgets to sports equipment, beauty products, and everything in between.</p>
                 </div>
 
                 <div class="pgh-cats-scroll" data-aos="fade-up" data-aos-delay="80">
@@ -715,9 +788,9 @@ $schemaWebsite = [
         {{-- Section Header --}}
         <div class="wcu-header" data-aos="fade-up">
             <span class="wcu-label">Our Promise</span>
-            <h2 class="wcu-title">Why Choose PeytonGhalib?</h2>
+            <h2 class="wcu-title">Why Thousands of Customers Choose PeytonGhalib</h2>
             <div class="wcu-divider"></div>
-            <p class="wcu-subtitle">Everything we do is designed to make your experience effortless, safe, and genuinely delightful.</p>
+            <p class="wcu-subtitle">We're committed to delivering quality products and a shopping experience you can count on — from the moment you browse to the day your order arrives.</p>
         </div>
 
         {{-- Cards Grid --}}
@@ -800,9 +873,9 @@ $schemaWebsite = [
         <!-- Section Title -->
         <div class="flex items-end justify-between gap-4 mb-8 md:mb-10 max-w-[1720px] mx-auto" data-aos="fade-up">
             <div>
-                <span class="text-xs uppercase tracking-widest text-primary font-semibold">Top Sellers</span>
-                <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Featured Products</h2>
-                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">Handpicked favourites loved by our customers</p>
+                <span class="text-xs uppercase tracking-widest text-primary font-semibold">Customer favourites</span>
+                <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Our Best-Selling Products</h2>
+                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">These are the products our customers keep coming back for — top-rated, fast-selling, and loved by thousands of shoppers across the USA.</p>
             </div>
             <a href="{{ url('/shop') }}"
                class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-title dark:text-white
@@ -893,7 +966,7 @@ $schemaWebsite = [
             <div>
                 <span class="text-xs uppercase tracking-widest text-primary font-semibold">Just landed</span>
                 <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">New Arrivals</h2>
-                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">Fresh pieces added to our collection</p>
+                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">Fresh products added every week — discover the latest in home decor, lifestyle accessories, and everyday essentials before they sell out.</p>
             </div>
             <a href="{{ url('/shop') }}"
                class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-title dark:text-white
@@ -923,8 +996,8 @@ $schemaWebsite = [
             <div class="max-w-[1186px] ml-auto">
                 <div class="mb-8 md:mb-12" data-aos="fade-up">
                     <span class="text-xs uppercase tracking-widest text-primary font-semibold">Our promise</span>
-                    <h2 class="leading-tight mt-2 text-2xl md:text-3xl font-bold text-title dark:text-white">Why Shop with PeytonGhalib</h2>
-                    <p class="mt-3 max-w-xl text-paragraph dark:text-white-light">We're committed to delivering quality furniture and home decor with service you can count on — from browsing to your doorstep.</p>
+                    <h2 class="leading-tight mt-2 text-2xl md:text-3xl font-bold text-title dark:text-white">Why Thousands of Customers Choose PeytonGhalib</h2>
+                    <p class="mt-3 max-w-xl text-paragraph dark:text-white-light">We're committed to delivering quality products and a shopping experience you can count on — from the moment you browse to the day your order arrives.</p>
                 </div>
                 <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-[30px]">
                     @include('includes.Home.services')
@@ -941,8 +1014,8 @@ $schemaWebsite = [
         <div class="flex items-end justify-between gap-4 mb-8 md:mb-12 max-w-[1720px] mx-auto" data-aos="fade-up">
             <div>
                 <span class="text-xs uppercase tracking-widest text-primary font-semibold">Customer favourites</span>
-                <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Best Selling Products</h2>
-                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">Most loved pieces by our customers</p>
+                <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Our Best-Selling Products</h2>
+                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">These are the products our customers keep coming back for — top-rated, fast-selling, and loved by thousands of shoppers across the USA.</p>
             </div>
             <a href="{{ url('/shop') }}"
                class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-title dark:text-white
@@ -1162,8 +1235,8 @@ $schemaWebsite = [
         <!-- Section Title -->
         <div class="max-w-xl mx-auto mb-8 md:mb-12 text-center" data-aos="fade-up">
             <span class="text-xs uppercase tracking-widest text-primary font-semibold">What our customers say</span>
-            <h2 class="leading-tight mt-2 text-2xl md:text-3xl font-bold text-title dark:text-white">Customer Reviews</h2>
-            <p class="mt-3 text-paragraph dark:text-white-light">Real stories from real shoppers. See why thousands of customers love shopping with PeytonGhalib.</p>
+            <h2 class="leading-tight mt-2 text-2xl md:text-3xl font-bold text-title dark:text-white">Loved by 2,000+ Shoppers Across the UAE</h2>
+            <p class="mt-3 text-paragraph dark:text-white-light">Don't take our word for it — here's what real customers say about their PeytonGhalib shopping experience.</p>
         </div>
 
         <!-- Reviews Slider -->
@@ -1270,6 +1343,7 @@ $schemaWebsite = [
                 <div>
                     <span class="text-xs uppercase tracking-widest text-primary font-semibold">Everything in one place</span>
                     <h2 class="leading-tight mt-1 text-xl md:text-2xl font-bold text-title dark:text-white">Explore Our Full Range</h2>
+                    <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500">From home and garden to tech, sports, beauty and beyond — PeytonGhalib has everything you need in one place.</p>
                 </div>
                 <a href="{{ url('/shop') }}"
                    class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
