@@ -489,6 +489,27 @@ $schemaWebsite = [
 /* Category fallback */
 .pgh-cat-fb { width:100%;height:100%;display:flex;align-items:center;justify-content:center; }
 
+/* ── Category Show More button ──────────────────────────────── */
+#pgh-cat-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 30px;
+    background: #bb976d;
+    color: #fff;
+    border: 2px solid #bb976d;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    cursor: pointer;
+    transition: background .25s ease, color .25s ease;
+}
+#pgh-cat-toggle:hover {
+    background: transparent;
+    color: #bb976d;
+}
+
 
 /* ── Responsive misc ────────────────────────────────────────── */
 @media(max-width:1023px){
@@ -953,8 +974,7 @@ $schemaWebsite = [
 
             @if($categories->count() > 6)
             <div class="text-center mt-7" data-aos="fade-up" data-aos-delay="120">
-                <button id="pgh-cat-toggle"
-                        class="inline-flex items-center gap-2.5 px-7 py-3 border border-[#bb976d] text-[#bb976d] text-sm font-semibold tracking-wide rounded-full hover:bg-[#bb976d] hover:text-white transition-all duration-300">
+                <button id="pgh-cat-toggle">
                     <span id="pgh-cat-toggle-label">Show More</span>
                     <svg id="pgh-cat-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="6 9 12 15 18 9"/>
