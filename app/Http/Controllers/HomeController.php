@@ -23,8 +23,10 @@ class HomeController extends Controller
                               ->withAvg('reviews', 'rating')
                               ->withCount('reviews')
                               ->latest()
-                              ->take(8)
-                              ->get();
+                              ->take(20)
+                              ->get()
+                              ->shuffle()
+                              ->take(8);
         $bestSellers = Product::where('is_active', true)
                               ->where('is_best_seller', true)
                               ->with('category')

@@ -917,8 +917,8 @@ $schemaWebsite = [
                 <p class="mt-3 text-sm text-paragraph dark:text-white-light max-w-2xl">Browse our full range of stunning products — from home decor and kitchen gadgets to sports equipment, beauty products, and everything in between.</p>
             </div>
 
-            <div class="pgh-cats-scroll" data-aos="fade-up" data-aos-delay="80">
-                @foreach($categories->take(6) as $cat)
+            <div class="pgh-cats-scroll" id="pgh-cat-grid" data-aos="fade-up" data-aos-delay="80">
+                @foreach($categories as $cat)
                 @php
                     $catSrc = null;
                     if ($cat->image) {
@@ -926,8 +926,10 @@ $schemaWebsite = [
                     }
                     $catFb = ['#c8b9a8','#b8a48e','#c4b09a','#d4c0aa','#b09078','#c0a88c'];
                 @endphp
-                <a href="{{ route('category.landing', $cat->slug) }}" class="pgh-catimg-card"
-                   style="animation-delay:{{ $loop->index * .07 }}s;">
+                <a href="{{ route('category.landing', $cat->slug) }}"
+                   class="pgh-catimg-card"
+                   data-cat-index="{{ $loop->index }}"
+                   style="{{ $loop->index >= 6 ? 'display:none;' : '' }}animation-delay:{{ $loop->index * .07 }}s;">
                     @if($catSrc)
                         <img src="{{ $catSrc }}" alt="{{ $cat->name }}">
                     @else
@@ -948,6 +950,21 @@ $schemaWebsite = [
                 </a>
                 @endforeach
             </div>
+
+            @if($categories->count() > 6)
+            <div class="text-center mt-7" data-aos="fade-up" data-aos-delay="120">
+                <button id="pgh-cat-toggle"
+                        class="inline-flex items-center gap-2.5 px-7 py-3 border border-[#bb976d] text-[#bb976d] text-sm font-semibold tracking-wide rounded-full hover:bg-[#bb976d] hover:text-white transition-all duration-300">
+                    <span id="pgh-cat-toggle-label">Show More</span>
+                    <svg id="pgh-cat-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>
+                <p id="pgh-cat-toggle-count" class="text-xs text-gray-400 mt-2">
+                    Showing 6 of {{ $categories->count() }} categories
+                </p>
+            </div>
+            @endif
         </div>
     </div>
 </div>
@@ -1617,7 +1634,7 @@ $schemaWebsite = [
         <!-- Section Title -->
         <div class="max-w-xl mx-auto mb-8 md:mb-12 text-center" data-aos="fade-up">
             <span class="text-xs uppercase tracking-widest text-primary font-semibold">What our customers say</span>
-            <h2 class="leading-tight mt-2 text-2xl md:text-3xl font-bold text-title dark:text-white">Loved by 2,000+ Shoppers Across the UAE</h2>
+            <h2 class="leading-tight mt-2 text-2xl md:text-3xl font-bold text-title dark:text-white">Loved by 2,000+ Shoppers Across the USA</h2>
             <p class="mt-3 text-paragraph dark:text-white-light">Don't take our word for it — here's what real customers say about their PeytonGhalib shopping experience.</p>
         </div>
 
@@ -1841,6 +1858,77 @@ $(document).ready(function () {
         $cat.trigger('prev.owl.carousel');
     });
 });
+</script>
+@endpush
+
+@push('scripts')
+<script>
+(function () {
+    var grid    = document.getElementById('pgh-cat-grid');
+    var btn     = document.getElementById('pgh-cat-toggle');
+    var label   = document.getElementById('pgh-cat-toggle-label');
+    var icon    = document.getElementById('pgh-cat-toggle-icon');
+    var counter = document.getElementById('pgh-cat-toggle-count');
+    if (!grid || !btn) return;
+
+    var cards   = Array.from(grid.querySelectorAll('[data-cat-index]'));
+    var total   = cards.length;
+    var BATCH   = 6;
+    var visible = Math.min(BATCH, total);
+
+    function revealCard(card) {
+        card.style.display = '';
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(12px)';
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                card.style.transition = 'opacity .35s ease, transform .35s ease';
+                card.style.opacity    = '1';
+                card.style.transform  = 'translateY(0)';
+            });
+        });
+    }
+
+    function hideCard(card) {
+        card.style.transition = '';
+        card.style.opacity    = '';
+        card.style.transform  = '';
+        card.style.display    = 'none';
+    }
+
+    function updateButton() {
+        if (visible >= total) {
+            label.textContent = 'Hide';
+            icon.innerHTML    = '<polyline points="18 15 12 9 6 15"/>';
+        } else {
+            label.textContent = 'Show More';
+            icon.innerHTML    = '<polyline points="6 9 12 15 18 9"/>';
+        }
+        if (counter) {
+            counter.textContent = 'Showing ' + Math.min(visible, total) + ' of ' + total + ' categories';
+        }
+    }
+
+    btn.addEventListener('click', function () {
+        if (visible >= total) {
+            /* Collapse back to first BATCH */
+            cards.forEach(function (c, i) {
+                if (i >= BATCH) hideCard(c);
+            });
+            visible = BATCH;
+        } else {
+            /* Reveal next BATCH */
+            var next = Math.min(visible + BATCH, total);
+            cards.forEach(function (c, i) {
+                if (i >= visible && i < next) revealCard(c);
+            });
+            visible = next;
+        }
+        updateButton();
+    });
+
+    updateButton();
+})();
 </script>
 @endpush
 
