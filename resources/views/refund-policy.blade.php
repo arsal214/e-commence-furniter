@@ -44,7 +44,7 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Refu
         <h3>Partial Refunds</h3>
         <p>Items returned with signs of use, missing parts, or damaged packaging may be subject to a partial refund at our discretion.</p>
         <h3>Contact Us</h3>
-        <p>For refund queries, email <a href="mailto:support@peytonghalib.com">support@peytonghalib.com</a> or call <a href="tel:+97141234567">+971 4 123 4567</a>.</p>
+        <p>For refund queries, email <a href="mailto:support@peytonghalib.com">support@peytonghalib.com</a> or call <a href="tel:+19294699864">+1 (929) 469-9864</a>.</p>
         <p class="text-sm text-gray-400">Last updated: June 2026</p>
     </div></div>
 </section>

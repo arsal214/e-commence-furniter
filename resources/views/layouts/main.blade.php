@@ -29,20 +29,20 @@
         <meta name="description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
 <meta name="author" content="PeytonGhalib">
         <meta name="robots" content="@yield('robots', 'index, follow')">
-        <link rel="canonical" href="{{ url()->current() }}">
+        <link rel="canonical" href="@yield('canonical', url()->current())">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="@yield('og_type', 'website')">
         <meta property="og:url" content="{{ url()->current() }}">
         <meta property="og:title" content="@yield('title', 'PeytonGhalib — Home Decor & Everyday Essentials Online')">
-        <meta property="og:description" content="@yield('meta_description', 'Shop home decor, kitchen gadgets, beauty, sports gear &amp; more. Fast USA delivery, 30-day returns. 2,000+ happy customers.')">
+        <meta property="og:description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
         <meta property="og:image" content="@yield('og_image', asset('assets/img/logo.svg'))">
         <meta property="og:site_name" content="PeytonGhalib">
         <!-- Twitter Card -->
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:url" content="{{ url()->current() }}">
         <meta name="twitter:title" content="@yield('title', 'PeytonGhalib — Home Decor & Everyday Essentials Online')">
-        <meta name="twitter:description" content="@yield('meta_description', 'Shop home decor, kitchen gadgets, beauty, sports gear &amp; more. Fast USA delivery, 30-day returns. 2,000+ happy customers.')">
+        <meta name="twitter:description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
         <meta name="twitter:image" content="@yield('og_image', asset('assets/img/logo.svg'))">
         @auth
         <meta name="wishlist-ids" content="{{ json_encode(\App\Models\Wishlist::where('user_id', auth()->id())->pluck('product_id')) }}">
@@ -73,7 +73,9 @@
         $schemaOrg = ['@context'=>'https://schema.org','@type'=>'Organization','name'=>'PeytonGhalib','url'=>url('/'),
             'logo'=>['@type'=>'ImageObject','url'=>asset('assets/img/favicon.png')],
             'description'=>'PeytonGhalib offers quality furniture, home decor, ceramics, and everyday essentials with fast delivery.',
-            'contactPoint'=>['@type'=>'ContactPoint','contactType'=>'customer service','url'=>url('/contact')],
+            'telephone'=>'+19294699864',
+            'address'=>['@type'=>'PostalAddress','streetAddress'=>'200 Orient Ave STE 2B','addressLocality'=>'Jersey City','addressRegion'=>'NJ','postalCode'=>'07305','addressCountry'=>'US'],
+            'contactPoint'=>['@type'=>'ContactPoint','contactType'=>'customer service','telephone'=>'+19294699864','url'=>url('/contact')],
             'sameAs'=>['https://www.facebook.com/peytonghalib','https://www.instagram.com/peytonghalib','https://twitter.com/peytonghalib']];
         @endphp
         <script type="application/ld+json">{!! json_encode($schemaOrg, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>

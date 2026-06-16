@@ -1,6 +1,6 @@
 User-agent: *
 Disallow: /admin/
-Disallow: /admin
+Allow: /wp-admin/admin-ajax.php
 Disallow: /login
 Disallow: /register
 Disallow: /my-account
@@ -15,11 +15,18 @@ Disallow: /payment-confirmation
 Disallow: /payment-success
 Disallow: /payment-failure
 Disallow: /track-order
+Disallow: /forgot-password
+Disallow: /forger-password
 Disallow: /coming-soon
 Disallow: /short-code
 Disallow: /error
-Disallow: /forgot-password
-Disallow: /forger-password
+Disallow: /*?search=
+User-agent: GPTBot
 Allow: /
-
+User-agent: ClaudeBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: PerplexityBot
+Allow: /
 Sitemap: https://peytonghalib.com/sitemap.xml

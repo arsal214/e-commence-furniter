@@ -184,6 +184,7 @@ class HomeController extends Controller
     public function shopV1(Request $request)
     {
         $activeCategory = $request->get('category');
+        $searchQuery    = trim($request->get('search', ''));
         $minPrice       = (float) $request->get('min_price', 0);
         $maxPrice       = (float) $request->get('max_price', 9999);
 
@@ -192,6 +193,10 @@ class HomeController extends Controller
             ->withCount('reviews')
             ->where('is_active', true)
             ->when($activeCategory, fn($q) => $q->whereHas('category', fn($q2) => $q2->where('slug', $activeCategory)))
+            ->when($searchQuery, fn($q) => $q->where(function ($q2) use ($searchQuery) {
+                $q2->where('name', 'like', '%' . $searchQuery . '%')
+                   ->orWhere('description', 'like', '%' . $searchQuery . '%');
+            }))
             ->when($minPrice > 0, fn($q) => $q->where(function ($q2) use ($minPrice) {
                 $q2->where('sale_price', '>=', $minPrice)
                    ->orWhere(function ($q3) use ($minPrice) {
@@ -209,7 +214,7 @@ class HomeController extends Controller
             ->withQueryString();
 
         $categories = Category::where('is_active', true)->orderBy('name')->get();
-        return view('shop', compact('products', 'categories', 'activeCategory', 'minPrice', 'maxPrice'));
+        return view('shop', compact('products', 'categories', 'activeCategory', 'searchQuery', 'minPrice', 'maxPrice'));
     }
 
     public function categories()

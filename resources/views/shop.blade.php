@@ -4,6 +4,21 @@
 @section('title', 'Shop | PeytonGhalib')
 @section('meta_description', 'Browse our full collection of furniture, home decor, ceramics and lifestyle products. Filter by category and find exactly what you need at PeytonGhalib.')
 
+@php
+    // Canonical logic:
+    // - ?category=slug  → /category/{slug}
+    // - ?page=N (N>1)   → self-referencing (full URL with query string)
+    // - anything else   → /shop
+    if ($activeCategory) {
+        $shopCanonical = url('/category/' . $activeCategory);
+    } elseif (request()->get('page', 1) > 1) {
+        $shopCanonical = url('/shop') . '?page=' . request()->get('page');
+    } else {
+        $shopCanonical = url('/shop');
+    }
+@endphp
+@section('canonical', $shopCanonical)
+
 @push('schema')
 @php
     $shopCategoryObj = $activeCategory ? $categories->firstWhere('slug', $activeCategory) : null;

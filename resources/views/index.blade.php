@@ -583,7 +583,7 @@ $schemaWebsite = [
     {{-- Background orbs --}}
     <div class="pgh-orb pgh-orb-1"></div>
     <div class="pgh-orb pgh-orb-2"></div>
-    <div class="pgh-orb pgh-orb-3"></div>
+    <div class="pgh-orb pgh-orbfv-3"></div>
 
     {{-- ══════════════════════════════════════════════════════════
          SLIDES WRAPPER

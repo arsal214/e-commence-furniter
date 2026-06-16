@@ -108,7 +108,7 @@ Route::post('/cart/clear',   [CartController::class, 'clear'])->name('cart.clear
 
 Route::get('/short-code', [HomeController::class, 'shortCode']);
 
-Route::get('/contact',  [HomeController::class, 'contact']);
-Route::get('/contactus',  [ContactController::class, 'show'])->name('contact.show');
+Route::get('/contact',  [HomeController::class, 'contact'])->name('contact.show');
+Route::redirect('/contactus', '/contact', 301);
 Route::post('/contactus', [ContactController::class, 'send'])->name('contact.send');
 Route::post('/newsletter', [ContactController::class, 'newsletter'])->name('newsletter.subscribe');

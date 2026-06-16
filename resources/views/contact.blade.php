@@ -3,6 +3,7 @@
 
 @section('title', 'Contact Us | PeytonGhalib')
 @section('meta_description', 'Get in touch with PeytonGhalib. We\'re here to help with any questions about our products, orders, or services. Contact us today.')
+@section('canonical', url('/contact'))
 
 @push('schema')
 @php
