@@ -73,11 +73,8 @@
             </h5>
 
             {{-- Stars --}}
-            <div class="flex items-center gap-1 mb-3">
-                @include('includes.Home._stars', ['rating' => $item->avgRating()])
-                @if ($item->reviewCount() > 0)
-                    <span class="text-xs text-gray-400 dark:text-gray-500 ml-1">({{ $item->reviewCount() }})</span>
-                @endif
+            <div class="mb-3">
+                @include('includes.Home._stars', ['rating' => $item->avgRating(), 'count' => $item->reviewCount()])
             </div>
 
             {{-- Price row --}}

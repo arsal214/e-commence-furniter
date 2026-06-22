@@ -63,7 +63,7 @@ $rightProducts = $featuredProducts->skip(4)->take(2);
                 <h5 class="text-sm font-semibold text-title dark:text-white leading-snug mb-2 line-clamp-2">
                     <a href="{{ route('product-details', $item->slug) }}" class="hover:text-[#bb976d] transition-colors duration-200">{{ $item->name }}</a>
                 </h5>
-                @include('includes.Home._stars')
+                @include('includes.Home._stars', ['rating' => $item->avgRating(), 'count' => $item->reviewCount()])
                 <div class="flex items-center gap-2 mt-2">
                     <span class="text-base font-bold text-title dark:text-white">{{ $item->display_price }}</span>
                     @if ($item->sale_price)
@@ -129,7 +129,7 @@ $rightProducts = $featuredProducts->skip(4)->take(2);
                 <h5 class="text-sm font-semibold text-title dark:text-white leading-snug mb-2 line-clamp-2">
                     <a href="{{ route('product-details', $item->slug) }}" class="hover:text-[#bb976d] transition-colors duration-200">{{ $item->name }}</a>
                 </h5>
-                @include('includes.Home._stars')
+                @include('includes.Home._stars', ['rating' => $item->avgRating(), 'count' => $item->reviewCount()])
                 <div class="flex items-center gap-2 mt-2">
                     <span class="text-base font-bold text-title dark:text-white">{{ $item->display_price }}</span>
                     @if ($item->sale_price)
