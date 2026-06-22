@@ -218,18 +218,18 @@
 .pd-info-col {
     background: #fff;
     border-radius: 16px;
-    padding: 28px 24px;
+    padding: 18px 18px;
     box-shadow: 0 4px 24px rgba(0,0,0,.06);
 }
-@media (min-width: 768px) { .pd-info-col { padding: 36px 32px; } }
+@media (min-width: 768px) { .pd-info-col { padding: 24px 24px; } }
 
 /* Price block */
 .pd-price-block {
     background: linear-gradient(135deg, #f9f6f1 0%, #fdf8f2 100%);
     border-left: 3px solid #bb976d;
     border-radius: 0 10px 10px 0;
-    padding: 14px 18px;
-    margin-bottom: 18px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
 }
 
 /* Qty */
@@ -250,10 +250,10 @@
 
 /* Buttons */
 .pd-btn-cart {
-    width: 100%; height: 52px;
+    width: 100%; height: 60px;
     background: #172430;
     color: #fff; font-weight: 700;
-    font-size: .8rem; letter-spacing: .08em; text-transform: uppercase;
+    font-size: .85rem; letter-spacing: .08em; text-transform: uppercase;
     border: none; border-radius: 10px; cursor: pointer;
     transition: background .2s, transform .15s, box-shadow .2s;
     box-shadow: 0 4px 14px rgba(23,36,48,.25);
@@ -305,14 +305,15 @@
 }
 </style>
 
-<div class="pd-section py-8 md:py-12 lg:py-16">
+<div class="pd-section py-5 md:py-8 lg:py-10">
     <div class="container-fluid px-4 sm:px-6">
         <div class="max-w-[1360px] mx-auto">
             <div class="pd-layout">
 
-                {{-- ── Left: Image + Thumbs ── --}}
+                {{-- ── Left: Image Carousel + Thumbs ── --}}
                 <div class="pd-img-panel">
-                    <div class="pd-main-wrap">
+                    <div class="pd-main-wrap" id="pd-carousel">
+                        {{-- Badge --}}
                         @if($item->tag)
                             @php
                                 $badgeBg    = match($item->tag) { 'Sale'=>'#1CB28E','NEW'=>'#9739E1', default=>'#E13939' };
@@ -320,17 +321,60 @@
                             @endphp
                             <span class="pd-badge absolute top-4 left-4 z-10" style="background:{{ $badgeBg }}">{{ $badgeLabel }}</span>
                         @elseif($item->sale_price)
-                            @php $badgeBg = '#E13939'; $badgeLabel = 'Sale'; @endphp
                             <span class="pd-badge absolute top-4 left-4 z-10" style="background:#E13939">Sale</span>
                         @endif
-                        <img id="pd-main-img" src="{{ $primarySrc }}" alt="{{ $item->name }}">
+
+                        {{-- Slides --}}
+                        <div id="pd-slides" style="display:flex;width:100%;height:100%;transition:transform .35s cubic-bezier(.4,0,.2,1);">
+                            @foreach($galleryImages as $ti => $src)
+                            <div style="min-width:100%;height:100%;flex-shrink:0;">
+                                <img src="{{ $src }}"
+                                     alt="{{ $item->name }} image {{ $ti + 1 }}"
+                                     style="width:100%;height:100%;object-fit:cover;display:block;">
+                            </div>
+                            @endforeach
+                        </div>
+
+                        {{-- Prev arrow --}}
+                        <button id="pd-prev" aria-label="Previous image"
+                                style="position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:10;
+                                       width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
+                                       background:rgba(255,255,255,.92);box-shadow:0 2px 10px rgba(0,0,0,.15);
+                                       display:flex;align-items:center;justify-content:center;transition:background .2s;">
+                            <svg width="9" height="15" viewBox="0 0 9 15" fill="none">
+                                <path d="M7.5 13.5L1.5 7.5L7.5 1.5" stroke="#172430" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+
+                        {{-- Next arrow --}}
+                        <button id="pd-next" aria-label="Next image"
+                                style="position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:10;
+                                       width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
+                                       background:rgba(255,255,255,.92);box-shadow:0 2px 10px rgba(0,0,0,.15);
+                                       display:flex;align-items:center;justify-content:center;transition:background .2s;">
+                            <svg width="9" height="15" viewBox="0 0 9 15" fill="none">
+                                <path d="M1.5 1.5L7.5 7.5L1.5 13.5" stroke="#172430" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+
+                        {{-- Dot indicators --}}
+                        @if($galleryImages->count() > 1)
+                        <div id="pd-dots" style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:10;">
+                            @foreach($galleryImages as $ti => $src)
+                            <span class="pd-dot" data-index="{{ $ti }}"
+                                  style="width:{{ $ti===0?'20px':'8px' }};height:8px;border-radius:50px;cursor:pointer;transition:all .3s;
+                                         background:{{ $ti===0?'#bb976d':'rgba(255,255,255,.7)' }};"></span>
+                            @endforeach
+                        </div>
+                        @endif
                     </div>
+
                     {{-- Thumbnail strip --}}
                     <div class="pd-thumbs">
                         @foreach($galleryImages as $ti => $src)
                         <img src="{{ $src }}"
                              class="pd-thumb {{ $ti === 0 ? 'active' : '' }}"
-                             data-src="{{ $src }}"
+                             data-index="{{ $ti }}"
                              alt="{{ $item->name }} image {{ $ti + 1 }}">
                         @endforeach
                     </div>
@@ -340,7 +384,7 @@
                 <div class="pd-info-col">
 
                     {{-- Category + badges row --}}
-                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                    <div class="flex items-center gap-2 flex-wrap mb-1">
                         @if($item->category)
                         <a href="{{ route('category.landing', $item->category->slug) }}"
                            class="text-xs font-semibold text-[#bb976d] uppercase tracking-widest hover:underline">
@@ -357,14 +401,19 @@
                     </div>
 
                     {{-- Product Name H1 --}}
-                    <h1 class="font-bold text-2xl sm:text-[1.75rem] text-[#172430] leading-snug mb-2" style="line-height:1.25">
+                    <h1 class="font-bold text-2xl sm:text-[1.75rem] text-[#172430] leading-snug mb-1" style="line-height:1.25">
                         {{ $item->name }}
                     </h1>
+
+                    {{-- SKU --}}
+                    @if($item->sku)
+                    <p class="text-xs text-gray-400 mb-1">SKU: <span class="text-gray-600 font-medium">{{ $item->sku }}</span></p>
+                    @endif
 
                     {{-- Short tagline --}}
                     @if($item->description)
                     @php $tagline = Str::limit(strip_tags($item->description), 110); @endphp
-                    <p class="text-sm text-gray-500 leading-relaxed mb-3">{{ $tagline }}</p>
+                    <p class="text-sm text-gray-500 leading-relaxed mb-2">{{ $tagline }}</p>
                     @endif
 
                     {{-- Stars --}}
@@ -372,7 +421,7 @@
                         $avgR = $item->reviews_avg_rating ?? 0;
                         $revC = $item->reviews_count ?? 0;
                     @endphp
-                    <div class="flex items-center gap-2 mb-4 pb-4 border-b border-gray-100">
+                    <div class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100">
                         <div class="flex items-center gap-0.5">
                             @for($s=1;$s<=5;$s++)
                             <svg width="15" height="15" viewBox="0 0 20 20" fill="{{ $s <= round($avgR) ? '#F59E0B' : '#E5E7EB' }}">
@@ -388,26 +437,27 @@
                     </div>
 
                     {{-- Price block --}}
-                    <div class="pd-price-block mb-4">
+                    <div class="pd-price-block mb-2">
                         @if($item->sale_price)
-                        <div class="flex items-baseline gap-3 flex-wrap">
+                        @php
+                            $savePct = $item->price > 0 ? round((($item->price - $item->sale_price) / $item->price) * 100) : 0;
+                            $saveAmt = number_format($item->price - $item->sale_price, 2);
+                        @endphp
+                        <div class="flex items-center gap-3 flex-wrap mb-1">
                             <span class="text-[2rem] font-extrabold text-[#172430] leading-none">${{ number_format($item->sale_price, 2) }}</span>
                             <span class="text-base text-gray-400 line-through font-medium">${{ number_format($item->price, 2) }}</span>
-                            @php $savePct = round((($item->price - $item->sale_price) / $item->price) * 100); @endphp
-                            <span class="text-xs font-bold text-white bg-emerald-500 px-2 py-0.5 rounded-full">SAVE {{ $savePct }}%</span>
+                            @if($savePct > 0)
+                            <span class="text-sm font-bold text-white rounded-full px-3 py-1" style="background:#E13939;">{{ $savePct }}% OFF</span>
+                            @endif
                         </div>
+                        @if($savePct > 0)
+                        <p class="text-xs font-semibold" style="color:#1CB28E;">
+                            You save ${{ $saveAmt }} on this product
+                        </p>
+                        @endif
                         @else
                         <span class="text-[2rem] font-extrabold text-[#172430] leading-none">${{ number_format($item->price, 2) }}</span>
                         @endif
-                    </div>
-
-                    {{-- Social proof urgency --}}
-                    @php $buyCount = rand(18, 63); @endphp
-                    <div class="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3.5 py-2.5 mb-4 text-sm text-amber-700">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="#F59E0B" class="flex-shrink-0">
-                            <path d="M13 10V6l-5 6h4v4l5-6h-4z"/><circle cx="12" cy="12" r="10" fill="#F59E0B" opacity=".1" stroke="#F59E0B" stroke-width="1.5"/>
-                        </svg>
-                        <span><strong>{{ $buyCount }} people</strong> bought this in the last 24 hours</span>
                     </div>
 
                     {{-- Key Features --}}
@@ -466,7 +516,7 @@
                         @if(!empty($item->colors))<input type="hidden" name="color" id="selected-color" value="{{ $item->colors[0] ?? '' }}">@endif
 
                         {{-- Qty --}}
-                        <div class="flex items-center gap-4 mb-4">
+                        <div class="flex items-center gap-4 mb-2">
                             <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Qty</p>
                             <div class="pd-qty-wrap">
                                 <button type="button" id="pd-dec" class="pd-qty-btn">
@@ -480,25 +530,39 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="pd-btn-cart mb-3">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:8px;margin-top:-2px">
-                                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                            </svg>
-                            Add to Cart
-                        </button>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="flex-1">
+                                <button type="submit" class="pd-btn-cart w-full">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:8px;margin-top:-2px">
+                                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                    </svg>
+                                    Add to Cart
+                                </button>
+                            </div>
+                            <div class="flex-1">
+                                <button type="button"
+                                        class="wishlist-toggle-btn w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl text-gray-600 text-sm font-semibold hover:border-[#bb976d] hover:text-[#bb976d] hover:bg-[#fdf8f2] transition-all duration-200"
+                                        style="background:transparent;cursor:pointer;height:60px;"
+                                        data-product-id="{{ $item->id }}"
+                                        data-text-add="Add to wishlist"
+                                        data-text-remove="In Wishlist">
+                                    <svg class="wishlist-btn-icon flex-shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                    </svg>
+                                    <span class="wishlist-btn-text">Add to wishlist</span>
+                                </button>
+                            </div>
+                        </div>
                     </form>
 
-                    {{-- Wishlist --}}
-                    <button type="button"
-                            class="wishlist-toggle-btn pd-btn-wish mb-4"
-                            data-product-id="{{ $item->id }}"
-                            data-text-add="Add to wishlist"
-                            data-text-remove="In Wishlist">
-                        <svg class="wishlist-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    {{-- Social proof urgency --}}
+                    @php $buyCount = rand(18, 63); @endphp
+                    <div class="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3.5 py-2.5 mb-4 text-sm text-amber-700">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="#F59E0B" class="flex-shrink-0">
+                            <path d="M13 10V6l-5 6h4v4l5-6h-4z"/><circle cx="12" cy="12" r="10" fill="#F59E0B" opacity=".1" stroke="#F59E0B" stroke-width="1.5"/>
                         </svg>
-                        <span class="wishlist-btn-text">Add to wishlist</span>
-                    </button>
+                        <span><strong>{{ $buyCount }} people</strong> bought this in the last 24 hours</span>
+                    </div>
 
                     {{-- 3 trust tiles --}}
                     <div class="pd-trust-row">
@@ -559,19 +623,16 @@
                                 <span style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Arial,sans-serif;font-weight:500;font-size:11px;color:#fff;letter-spacing:-0.2px"> Pay</span>
                             </span>
                         </div>
-                        <div class="flex flex-wrap items-center gap-4 text-xs text-gray-400">
-                            @if($item->sku)
-                            <span>SKU: <span class="text-gray-800 font-medium">{{ $item->sku }}</span></span>
-                            @endif
-                            <span class="flex items-center gap-2">
-                                Share:
-                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(route('product-details', $item->slug)) }}" target="_blank" rel="noopener noreferrer nofollow" aria-label="Facebook" class="hover:text-[#bb976d] transition-colors">
-                                    <svg width="8" height="15" viewBox="0 0 9 17" fill="currentColor"><path d="M6.60577 3.57091H8.06641V1.01793C7.35979 0.939731 6.64934 0.901696 5.93845 0.904012C5.44674 0.875673 4.9548 0.955623 4.49713 1.13826C4.03945 1.32089 3.6271 1.60179 3.28898 1.96127C2.95087 2.32075 2.69516 2.7501 2.5398 3.21924C2.38443 3.68838 2.33316 4.18596 2.38957 4.67708V6.92589H0.0664062V9.78076H2.38957V16.9578H5.2382V9.78076H7.46831L7.8224 6.92589H5.2382V4.95961C5.23934 4.13482 5.46065 3.57091 6.60577 3.57091Z"/></svg>
-                                </a>
-                                <a href="https://twitter.com/intent/tweet?text={{ urlencode($item->name.' — PeytonGhalib') }}&url={{ urlencode(route('product-details', $item->slug)) }}" target="_blank" rel="noopener noreferrer nofollow" aria-label="Twitter" class="hover:text-[#bb976d] transition-colors">
-                                    <svg width="16" height="13" viewBox="0 0 21 17" fill="currentColor"><path d="M20.0664 2.79793C19.3139 3.12213 18.518 3.33748 17.7034 3.43737C18.5614 2.93408 19.203 2.1373 19.5067 1.19787C18.7031 1.66898 17.824 2.00078 16.9073 2.17893C16.3448 1.58655 15.6152 1.17498 14.813 0.997632C14.0109 0.820283 13.1734 0.885344 12.4092 1.18437C11.645 1.4834 10.9893 2.0026 10.5273 2.67457C10.0653 3.34654 9.81826 4.14027 9.81829 4.95275C9.8149 5.26331 9.84661 5.57327 9.91281 5.87687C8.2822 5.79842 6.68668 5.38079 5.23048 4.65126C3.77429 3.92172 2.49018 2.89669 1.46206 1.64315C0.934597 2.53471 0.771252 3.59165 1.00537 4.59822C1.23949 5.60479 1.85343 6.48508 2.72185 7.05939C2.07295 7.0421 1.43777 6.87085 0.869833 6.5601V6.6039C0.870909 7.53977 1.1981 8.4467 1.79632 9.17206C2.39455 9.89742 3.22731 10.3969 4.15443 10.5865C3.80358 10.6777 3.44202 10.7224 3.07926 10.7194C2.81857 10.7242 2.55811 10.7012 2.30241 10.6508C2.56687 11.4554 3.07741 12.1591 3.76359 12.6649C4.44978 13.1706 5.27781 13.4534 6.13346 13.4742C4.68099 14.5956 2.89006 15.2032 1.04706 15.1998C0.719312 15.202 0.391758 15.1835 0.0664062 15.1443C1.94176 16.3371 4.12647 16.9674 6.35647 16.959C7.89156 16.9693 9.41342 16.678 10.8337 16.102C12.2539 15.5261 13.5443 14.6769 14.6298 13.6039C15.7153 12.5309 16.5743 11.2554 17.1569 9.85148C17.7396 8.44756 18.0343 6.94319 18.0239 5.42576C18.0239 5.24619 18.0239 5.07392 18.0091 4.90165C18.8186 4.32993 19.5158 3.61702 20.0664 2.79793Z"/></svg>
-                                </a>
-                            </span>
+                        <div class="flex items-center gap-3 text-xs text-gray-400">
+                            <span class="font-medium text-gray-500">Share:</span>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(route('product-details', $item->slug)) }}" target="_blank" rel="noopener noreferrer nofollow" aria-label="Share on Facebook"
+                               class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-[#bb976d] hover:text-[#bb976d] transition-colors">
+                                <svg width="8" height="15" viewBox="0 0 9 17" fill="currentColor"><path d="M6.60577 3.57091H8.06641V1.01793C7.35979 0.939731 6.64934 0.901696 5.93845 0.904012C5.44674 0.875673 4.9548 0.955623 4.49713 1.13826C4.03945 1.32089 3.6271 1.60179 3.28898 1.96127C2.95087 2.32075 2.69516 2.7501 2.5398 3.21924C2.38443 3.68838 2.33316 4.18596 2.38957 4.67708V6.92589H0.0664062V9.78076H2.38957V16.9578H5.2382V9.78076H7.46831L7.8224 6.92589H5.2382V4.95961C5.23934 4.13482 5.46065 3.57091 6.60577 3.57091Z"/></svg>
+                            </a>
+                            <a href="https://twitter.com/intent/tweet?text={{ urlencode($item->name.' — PeytonGhalib') }}&url={{ urlencode(route('product-details', $item->slug)) }}" target="_blank" rel="noopener noreferrer nofollow" aria-label="Share on Twitter"
+                               class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-[#bb976d] hover:text-[#bb976d] transition-colors">
+                                <svg width="14" height="12" viewBox="0 0 21 17" fill="currentColor"><path d="M20.0664 2.79793C19.3139 3.12213 18.518 3.33748 17.7034 3.43737C18.5614 2.93408 19.203 2.1373 19.5067 1.19787C18.7031 1.66898 17.824 2.00078 16.9073 2.17893C16.3448 1.58655 15.6152 1.17498 14.813 0.997632C14.0109 0.820283 13.1734 0.885344 12.4092 1.18437C11.645 1.4834 10.9893 2.0026 10.5273 2.67457C10.0653 3.34654 9.81826 4.14027 9.81829 4.95275C9.8149 5.26331 9.84661 5.57327 9.91281 5.87687C8.2822 5.79842 6.68668 5.38079 5.23048 4.65126C3.77429 3.92172 2.49018 2.89669 1.46206 1.64315C0.934597 2.53471 0.771252 3.59165 1.00537 4.59822C1.23949 5.60479 1.85343 6.48508 2.72185 7.05939C2.07295 7.0421 1.43777 6.87085 0.869833 6.5601V6.6039C0.870909 7.53977 1.1981 8.4467 1.79632 9.17206C2.39455 9.89742 3.22731 10.3969 4.15443 10.5865C3.80358 10.6777 3.44202 10.7224 3.07926 10.7194C2.81857 10.7242 2.55811 10.7012 2.30241 10.6508C2.56687 11.4554 3.07741 12.1591 3.76359 12.6649C4.44978 13.1706 5.27781 13.4534 6.13346 13.4742C4.68099 14.5956 2.89006 15.2032 1.04706 15.1998C0.719312 15.202 0.391758 15.1835 0.0664062 15.1443C1.94176 16.3371 4.12647 16.9674 6.35647 16.959C7.89156 16.9693 9.41342 16.678 10.8337 16.102C12.2539 15.5261 13.5443 14.6769 14.6298 13.6039C15.7153 12.5309 16.5743 11.2554 17.1569 9.85148C17.7396 8.44756 18.0343 6.94319 18.0239 5.42576C18.0239 5.24619 18.0239 5.07392 18.0091 4.90165C18.8186 4.32993 19.5158 3.61702 20.0664 2.79793Z"/></svg>
+                            </a>
                         </div>
                     </div>
 
@@ -585,16 +646,67 @@
 
 <script>
 (function(){
-    // Thumbnail switcher
-    var mainImg = document.getElementById('pd-main-img');
-    document.querySelectorAll('.pd-thumb').forEach(function(th){
-        th.addEventListener('click', function(){
-            if(mainImg){ mainImg.style.opacity='.4'; setTimeout(function(){ mainImg.src=th.dataset.src; mainImg.style.opacity='1'; },150); }
-            document.querySelectorAll('.pd-thumb').forEach(function(t){ t.classList.remove('active'); });
-            th.classList.add('active');
+    // ── Carousel ──
+    var slides   = document.getElementById('pd-slides');
+    var thumbs   = document.querySelectorAll('.pd-thumb');
+    var dots     = document.querySelectorAll('.pd-dot');
+    var total    = thumbs.length;
+    var current  = 0;
+
+    function goTo(idx) {
+        if(total === 0) return;
+        current = (idx + total) % total;
+        if(slides) slides.style.transform = 'translateX(-' + (current * 100) + '%)';
+
+        // sync thumbs
+        thumbs.forEach(function(t, i){
+            t.classList.toggle('active', i === current);
         });
+
+        // sync dots
+        dots.forEach(function(d, i){
+            d.style.width       = i === current ? '20px' : '8px';
+            d.style.background  = i === current ? '#bb976d' : 'rgba(255,255,255,.7)';
+        });
+    }
+
+    var prevBtn = document.getElementById('pd-prev');
+    var nextBtn = document.getElementById('pd-next');
+    if(prevBtn) prevBtn.addEventListener('click', function(){ goTo(current - 1); });
+    if(nextBtn) nextBtn.addEventListener('click', function(){ goTo(current + 1); });
+
+    // Thumbnail clicks
+    thumbs.forEach(function(th){
+        th.addEventListener('click', function(){ goTo(parseInt(th.dataset.index) || 0); });
     });
-    // Qty +/-
+
+    // Dot clicks
+    dots.forEach(function(d){
+        d.addEventListener('click', function(){ goTo(parseInt(d.dataset.index) || 0); });
+    });
+
+    // Touch swipe
+    var startX = 0;
+    var carousel = document.getElementById('pd-carousel');
+    if(carousel){
+        carousel.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; pauseAuto(); }, {passive:true});
+        carousel.addEventListener('touchend', function(e){
+            var diff = startX - e.changedTouches[0].clientX;
+            if(Math.abs(diff) > 40) goTo(diff > 0 ? current + 1 : current - 1);
+            resumeAuto();
+        }, {passive:true});
+        carousel.addEventListener('mouseenter', pauseAuto);
+        carousel.addEventListener('mouseleave', resumeAuto);
+    }
+
+    // ── Auto-swipe every 3 seconds ──
+    var autoTimer;
+    function startAuto(){ autoTimer = setInterval(function(){ goTo(current + 1); }, 3000); }
+    function pauseAuto(){ clearInterval(autoTimer); }
+    function resumeAuto(){ pauseAuto(); startAuto(); }
+    if(total > 1) startAuto();
+
+    // ── Qty +/- ──
     var qtyEl = document.getElementById('pd-qty');
     var dec = document.getElementById('pd-dec');
     var inc = document.getElementById('pd-inc');
@@ -602,7 +714,8 @@
         dec.addEventListener('click', function(){ var v=parseInt(qtyEl.value)||1; if(v>1) qtyEl.value=v-1; });
         inc.addEventListener('click', function(){ var v=parseInt(qtyEl.value)||1; qtyEl.value=v+1; });
     }
-    // Color label + hidden input sync
+
+    // ── Color label + hidden input sync ──
     document.querySelectorAll('.color-radio').forEach(function(r){
         r.addEventListener('change', function(){
             var lbl = document.getElementById('selected-color-label');
@@ -611,7 +724,8 @@
             if(hid) hid.value = r.value;
         });
     });
-    // Size hidden input sync
+
+    // ── Size hidden input sync ──
     document.querySelectorAll('.size-radio').forEach(function(r){
         r.addEventListener('change', function(){
             var hid = document.getElementById('selected-size');

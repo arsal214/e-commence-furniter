@@ -59,6 +59,19 @@
              but AOS.init() in scripts.js runs much later. Keep elements visible until AOS sets
              its data-aos-easing attribute on <body> (the exact moment AOS.init() fires). --}}
         <style>
+            /* Quick-action icon buttons on product cards */
+            .new-product-icon {
+                background: rgba(23, 36, 48, 0.82) !important;
+                color: #ffffff !important;
+                box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+            }
+            .new-product-icon svg { color: #ffffff !important; fill: #ffffff !important; }
+            .new-product-icon:hover {
+                background: #bb976d !important;
+                box-shadow: 0 6px 20px rgba(187,151,109,0.4);
+            }
+        </style>
+        <style>
             body:not([data-aos-easing]) [data-aos] {
                 opacity: 1 !important;
                 transform: none !important;
