@@ -228,21 +228,39 @@ class HomeController extends Controller
     public function categoryLanding($slug)
     {
         $category = Category::where('slug', $slug)->where('is_active', true)->firstOrFail();
-        $products = Product::where('category_id', $category->id)
-                           ->where('is_active', true)
-                           ->with('category')
-                           ->withAvg('reviews', 'rating')
-                           ->withCount('reviews')
-                           ->latest()
-                           ->take(8)
-                           ->get();
+
+        $baseQuery = Product::where('category_id', $category->id)->where('is_active', true);
+
+        $totalCount = (clone $baseQuery)->count();
+        $priceMin   = (clone $baseQuery)->min(\DB::raw('COALESCE(sale_price, price)'));
+        $priceMax   = (clone $baseQuery)->max(\DB::raw('COALESCE(sale_price, price)'));
+
+        $featuredProduct = (clone $baseQuery)
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->orderByDesc('reviews_count')
+            ->first();
+
+        $products = (clone $baseQuery)
+            ->with('category')
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->when($featuredProduct, fn($q) => $q->where('id', '!=', $featuredProduct->id))
+            ->latest()
+            ->take(8)
+            ->get();
+
         $relatedCategories = Category::where('is_active', true)
                                      ->where('id', '!=', $category->id)
                                      ->withCount('products')
                                      ->inRandomOrder()
                                      ->take(4)
                                      ->get();
-        return view('category-landing', compact('category', 'products', 'relatedCategories'));
+
+        return view('category-landing', compact(
+            'category', 'products', 'relatedCategories',
+            'totalCount', 'priceMin', 'priceMax', 'featuredProduct'
+        ));
     }
 
     public function returnPolicy()   { return view('return-policy'); }
