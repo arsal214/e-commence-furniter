@@ -32,7 +32,7 @@ class ProductController extends Controller
 
     public function export()
     {
-        $products = Product::orderBy('name')->get(['name', 'price', 'sale_price']);
+        $products = Product::orderBy('name')->get(['name', 'slug', 'price', 'sale_price']);
 
         $filename = 'products-' . now()->format('Y-m-d') . '.csv';
 
@@ -46,11 +46,12 @@ class ProductController extends Controller
 
         $callback = function () use ($products) {
             $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['Name', 'Price', 'Sale Price']);
+            fputcsv($handle, ['Name', 'URL', 'Price', 'Sale Price']);
 
             foreach ($products as $product) {
                 fputcsv($handle, [
                     $product->name,
+                    route('product-details', $product->slug),
                     number_format($product->price, 2),
                     $product->sale_price ? number_format($product->sale_price, 2) : '',
                 ]);
