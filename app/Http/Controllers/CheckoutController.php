@@ -98,7 +98,9 @@ class CheckoutController extends Controller
             $this->cart->clear();
             $order->load('items');
             Mail::to($order->email)->send(new OrderConfirmationMail($order));
-            return redirect()->route('thank-you')->with('success', 'Order placed! Your tracking number is <strong>' . $order->tracking_number . '</strong>. Check your email for details.');
+            return redirect()->route('thank-you')
+                ->with('success', 'Order placed! Your tracking number is <strong>' . $order->tracking_number . '</strong>. Check your email for details.')
+                ->with('order_total', $total);
         }
 
         // Stripe payment
@@ -133,7 +135,9 @@ class CheckoutController extends Controller
                 Mail::to($order->email)->send(new OrderConfirmationMail($order));
             }
             $this->cart->clear();
-            return redirect()->route('thank-you')->with('success', 'Payment successful! Your tracking number is <strong>' . ($order?->tracking_number ?? '') . '</strong>. Check your email.');
+            return redirect()->route('thank-you')
+                ->with('success', 'Payment successful! Your tracking number is <strong>' . ($order?->tracking_number ?? '') . '</strong>. Check your email.')
+                ->with('order_total', $order?->total ?? 0);
         }
 
         return redirect()->route('checkout')->with('error', 'Payment was not completed. Please try again.');

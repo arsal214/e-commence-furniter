@@ -175,6 +175,7 @@
                                        required
                                        class="flex-1 h-11 border border-[#E3E5E6] dark:border-bdr-clr-drk bg-transparent text-title dark:text-white px-4 text-sm outline-none focus:border-primary duration-200 placeholder:text-gray-400">
                                 <button type="submit"
+                                        onclick="fbq('track', 'Lead');"
                                         class="h-11 px-5 bg-primary text-white text-sm font-medium hover:bg-title duration-200 whitespace-nowrap">
                                     Claim Offer
                                 </button>
@@ -464,5 +465,16 @@
         })();
         </script>
 
+        <!-- Meta Pixel Add to Cart Tracking -->
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.addEventListener('click', function (event) {
+                var el = event.target.closest('button, a');
+                if (el && el.textContent.trim().toLowerCase() === 'add to cart') {
+                    fbq('track', 'AddToCart');
+                }
+            });
+        });
+        </script>
     </body>
 </html>

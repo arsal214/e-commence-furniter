@@ -78,6 +78,7 @@
                             <input type="email" name="email" required placeholder="Your email address"
                                    class="w-full h-11 bg-white/5 border border-white/25 text-white placeholder:text-white/40 text-sm px-4 outline-none focus:border-primary duration-300">
                             <button type="submit"
+                                    onclick="fbq('track', 'Lead');"
                                     class="w-full h-11 bg-primary text-white text-sm font-semibold tracking-wider uppercase hover:bg-[#a8845a] duration-300">
                                 Subscribe
                             </button>

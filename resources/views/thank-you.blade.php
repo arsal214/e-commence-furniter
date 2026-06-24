@@ -30,5 +30,16 @@
 <!-- Thank you Area End -->
 
 @include('includes.footer')
-  
+
 @endsection
+
+@if(session('order_total'))
+@push('scripts')
+<script>
+fbq('track', 'Purchase', {
+    value: {{ number_format((float) session('order_total'), 2, '.', '') }},
+    currency: 'USD'
+});
+</script>
+@endpush
+@endif
