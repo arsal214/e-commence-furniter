@@ -97,7 +97,11 @@ class CheckoutController extends Controller
         if ($data['payment_method'] === 'cod') {
             $this->cart->clear();
             $order->load('items');
-            Mail::to($order->email)->send(new OrderConfirmationMail($order));
+            try {
+                Mail::to($order->email)->send(new OrderConfirmationMail($order));
+            } catch (\Exception $e) {
+                \Log::warning('Order confirmation email failed for order #' . $order->tracking_number . ': ' . $e->getMessage());
+            }
             return redirect()->route('thank-you')
                 ->with('success', 'Order placed! Your tracking number is <strong>' . $order->tracking_number . '</strong>. Check your email for details.')
                 ->with('order_total', $total);
@@ -132,7 +136,11 @@ class CheckoutController extends Controller
             $order = Order::with('items')->where('stripe_payment_intent', $intent->id)->first();
             if ($order) {
                 $order->update(['payment_status' => 'paid', 'status' => 'processing']);
-                Mail::to($order->email)->send(new OrderConfirmationMail($order));
+                try {
+                    Mail::to($order->email)->send(new OrderConfirmationMail($order));
+                } catch (\Exception $e) {
+                    \Log::warning('Stripe order confirmation email failed for order #' . $order->tracking_number . ': ' . $e->getMessage());
+                }
             }
             $this->cart->clear();
             return redirect()->route('thank-you')

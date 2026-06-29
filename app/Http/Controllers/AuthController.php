@@ -69,7 +69,11 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        Mail::to($user->email)->send(new WelcomeMail($user));
+        try {
+            Mail::to($user->email)->send(new WelcomeMail($user));
+        } catch (\Exception $e) {
+            \Log::warning('Welcome email failed: ' . $e->getMessage());
+        }
 
         return redirect('/my-account');
     }

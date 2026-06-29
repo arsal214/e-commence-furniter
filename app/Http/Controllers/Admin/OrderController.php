@@ -64,7 +64,11 @@ class OrderController extends Controller
 
         // Send shipped email when status becomes shipped
         if (isset($data['status']) && $data['status'] === 'shipped' && $wasShipped) {
-            Mail::to($order->email)->send(new OrderShippedMail($order));
+            try {
+                Mail::to($order->email)->send(new OrderShippedMail($order));
+            } catch (\Exception $e) {
+                \Log::warning('Order shipped email failed for order #' . $order->id . ': ' . $e->getMessage());
+            }
         }
 
         return back()->with('success', 'Order #' . $order->id . ' updated successfully.');

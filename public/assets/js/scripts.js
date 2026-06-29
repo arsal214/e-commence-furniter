@@ -1023,7 +1023,7 @@ let styles = `
     visibility: hidden;`
 
 window.addEventListener('load',function() {
-    loader.style = styles;
+    if (loader) { loader.style = styles; }
 });
 
 
