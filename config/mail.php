@@ -115,4 +115,16 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Contact Form Recipient
+    |--------------------------------------------------------------------------
+    |
+    | The inbox that receives submissions from the site's contact form.
+    | Falls back to the "from" address when CONTACT_MAIL_TO is not set.
+    |
+    */
+
+    'contact_to' => env('CONTACT_MAIL_TO', env('MAIL_FROM_ADDRESS')),
+
 ];

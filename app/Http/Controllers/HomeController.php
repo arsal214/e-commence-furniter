@@ -65,11 +65,6 @@ class HomeController extends Controller
         return view('error');  
     }
 
-    public function myProfile()
-    {
-        return view('my-profile');  
-    }
-
     public function myAccount()
     {
         $user   = Auth::user();

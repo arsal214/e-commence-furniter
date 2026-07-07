@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\Contactus;
+use App\Models\NewsletterSubscriber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -15,8 +16,14 @@ class ContactController extends Controller
 
     public function newsletter(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
-        // Store in session as confirmation (extend later to save to DB or mail service)
+        $data = $request->validate(['email' => 'required|email']);
+
+        // Persist the subscription (idempotent — re-subscribing clears any prior opt-out).
+        NewsletterSubscriber::updateOrCreate(
+            ['email' => $data['email']],
+            ['unsubscribed_at' => null]
+        );
+
         return back()->with('newsletter_success', 'Thank you for subscribing! You\'ll hear from us soon.');
     }
 
@@ -35,8 +42,9 @@ class ContactController extends Controller
             // Prepare email data
             $data = $request->only(['name', 'email', 'number', 'subject', 'Message']);
             
-            // Send email
-            Mail::to('peytonexpress44@gmail.com')->send(new Contactus($data));
+            // Send email to the configured contact recipient
+            $recipient = config('mail.contact_to') ?: config('mail.from.address');
+            Mail::to($recipient)->send(new Contactus($data));
 
             // Return raw HTML for success
             $successMessage = "

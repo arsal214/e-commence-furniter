@@ -110,11 +110,13 @@
                 <div class="mt-10 md:mt-12">
                     <h4 class="font-medium leading-none">Popular Tags</h4>
                     <div class="flex flex-wrap gap-[10px] md:gap-[15px] mt-5 md:mt-6">
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Chair"><span>Chair</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Art & Paint"><span>Art & Paint</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Mirror"><span>Mirror</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Table"><span>Table</span></a>
-                        <a class="btn btn-theme-outline btn-xs" href="#" data-text="Lamp"><span>Lamp</span></a>
+                        @if(!empty($product->category))
+                            <a class="btn btn-theme-outline btn-xs" href="{{ route('category.landing', $product->category->slug) }}" data-text="{{ $product->category->name }}"><span>{{ $product->category->name }}</span></a>
+                        @endif
+                        @if(!empty($product->tag))
+                            <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop') }}" data-text="{{ $product->tag }}"><span>{{ $product->tag }}</span></a>
+                        @endif
+                        <a class="btn btn-theme-outline btn-xs" href="{{ url('/shop') }}" data-text="Shop All"><span>Shop All</span></a>
                     </div>
                 </div>
             </div>

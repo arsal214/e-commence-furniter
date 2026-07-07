@@ -86,15 +86,15 @@
                 <h3 class="font-medium leading-none text-2xl md:text-3xl" data-aos="fade-up" data-aos-delay="400">Payment</h3>
                 <p class="text-base sm:text-lg mt-3 md:mt-4" data-aos="fade-up" data-aos-delay="500">Seamless transactions await with our secure payment gateway. Choose from a range of trusted payment options for your convenience. Your financial information is safeguarded with the latest encryption technology. Experience hassle-free checkout and peace of mind when you shop with us. </p>
                 <div class="flex items-center gap-x-7 md:gap-x-12 gap-y-5 flex-wrap mt-5 md:mt-6" data-aos="fade-up" >
-                    <a href="#"><img src="{{ asset('assets/img/Payment/payment-01.png') }}" alt="Payment"></a>
-                    <a href="#"><img src="{{ asset('assets/img/Payment/payment-02.png') }}" alt="Payment"></a>
-                    <a href="#"><img src="{{ asset('assets/img/Payment/payment-03.png') }}" alt="Payment"></a>
-                    <a href="#">
+                    <span><img src="{{ asset('assets/img/Payment/payment-01.png') }}" alt="Payment"></span>
+                    <span><img src="{{ asset('assets/img/Payment/payment-02.png') }}" alt="Payment"></span>
+                    <span><img src="{{ asset('assets/img/Payment/payment-03.png') }}" alt="Payment"></span>
+                    <span>
                         <img class="dark:hidden" src="{{ asset('assets/img/Payment/payment-04.png') }}" alt="Payment">
                         <img class="hidden dark:block" src="{{ asset('assets/img/Payment/payment-04-2.png') }}" alt="Payment">
-                    </a>
-                    <a href="#"><img src="{{ asset('assets/img/Payment/payment-05.png') }}" alt="Payment"></a>
-                    <a href="#"><img src="{{ asset('assets/img/Payment/payment-06.png') }}" alt="Payment"></a>
+                    </span>
+                    <span><img src="{{ asset('assets/img/Payment/payment-05.png') }}" alt="Payment"></span>
+                    <span><img src="{{ asset('assets/img/Payment/payment-06.png') }}" alt="Payment"></span>
                 </div>
             </div>
         </div>

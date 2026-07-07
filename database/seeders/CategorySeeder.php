@@ -10,11 +10,11 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['name' => 'Sofa & Chair',   'description' => 'Comfortable sofas and chairs for your living space.'],
-            ['name' => 'Full Interior',  'description' => 'Complete interior furniture sets and collections.'],
-            ['name' => 'Lamp & Vase',    'description' => 'Decorative lamps and vases for home decor.'],
-            ['name' => 'Table',          'description' => 'Dining, coffee, and side tables for every room.'],
-            ['name' => 'Wood Design',    'description' => 'Premium wood furniture crafted with care.'],
+            ['name' => 'Sofa & Chair',   'description' => 'Comfortable sofas and chairs for your living space.',        'image' => 'assets/img/home-v1/pdct-cgry-01.jpg'],
+            ['name' => 'Full Interior',  'description' => 'Complete interior furniture sets and collections.',            'image' => 'assets/img/home-v1/pdct-cgry-03.jpg'],
+            ['name' => 'Lamp & Vase',    'description' => 'Decorative lamps and vases for home decor.',                  'image' => 'assets/img/home-v1/pdct-cgry-02.jpg'],
+            ['name' => 'Table',          'description' => 'Dining, coffee, and side tables for every room.',              'image' => 'assets/img/gallery/shop-01/shop-10.jpg'],
+            ['name' => 'Wood Design',    'description' => 'Premium wood furniture crafted with care.',                    'image' => 'assets/img/home-v6/latest-pdct-01.jpg'],
         ];
 
         foreach ($categories as $cat) {

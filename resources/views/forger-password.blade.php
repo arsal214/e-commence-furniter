@@ -16,15 +16,29 @@
         <div class="mx-auto md:mx-0 max-w-md">
             <h2 class="leading-none text-4xl font-bold" data-aos="fade-up">Forget Password</h2>
             <p class="text-lg mt-[15px]" data-aos="fade-up" data-aos-delay="100">Buy & sale your exclusive product only on PeytonGhalib</p>
-            <div class="mt-7" data-aos="fade-up" data-aos-delay="200">
-                <label class="text-base sm:text-lg font-medium leading-none mb-2.5 block dark:text-white">Email</label>
-                <input class="w-full h-12 md:h-14 bg-white dark:bg-transparent border border-bdr-clr focus:border-primary p-4 outline-none duration-300" type="email" placeholder="Enter your email address">
-            </div>
-            <div data-aos="fade-up" data-aos-delay="300">
-                <a href="#" class="btn btn-theme-solid mt-[15px]" data-text="Send Info">
-                    <span>Send Info</span>
-                </a>
-            </div>
+
+            @if (session('status'))
+                <div class="mt-5 p-4 bg-green-50 border border-green-400 text-green-700 text-base" data-aos="fade-up">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            <form action="{{ route('password.email') }}" method="POST">
+                @csrf
+                <div class="mt-7" data-aos="fade-up" data-aos-delay="200">
+                    <label class="text-base sm:text-lg font-medium leading-none mb-2.5 block dark:text-white">Email</label>
+                    <input name="email" value="{{ old('email') }}" required class="w-full h-12 md:h-14 bg-white dark:bg-transparent border border-bdr-clr focus:border-primary p-4 outline-none duration-300" type="email" placeholder="Enter your email address">
+                    @error('email')
+                        <span class="text-red-500 text-sm mt-2 block">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div data-aos="fade-up" data-aos-delay="300">
+                    <button type="submit" class="btn btn-theme-solid mt-[15px]" data-text="Send Info">
+                        <span>Send Info</span>
+                    </button>
+                </div>
+            </form>
+
             <p class="text-lg mt-[15px]" data-aos="fade-up" data-aos-delay="400">
                 Note: We will send a password reset link to your email
             </p>

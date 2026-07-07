@@ -102,7 +102,7 @@
             'telephone'=>'+19294699864',
             'address'=>['@type'=>'PostalAddress','streetAddress'=>'200 Orient Ave STE 2B','addressLocality'=>'Jersey City','addressRegion'=>'NJ','postalCode'=>'07305','addressCountry'=>'US'],
             'contactPoint'=>['@type'=>'ContactPoint','contactType'=>'customer service','telephone'=>'+19294699864','url'=>url('/contact')],
-            'sameAs'=>['https://www.facebook.com/profile.php?id=61590448962752','https://www.instagram.com/peytonghalib/','https://twitter.com/peytonghalib']];
+            'sameAs'=>['https://www.facebook.com/profile.php?id=61590448962752','https://www.instagram.com/peytonghalibexpress/','https://www.tiktok.com/@peytonghalib','https://www.pinterest.com/peytonexpress/']];
         @endphp
         <script type="application/ld+json">{!! json_encode($schemaOrg, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
         {{-- Page-specific schemas pushed from each template --}}

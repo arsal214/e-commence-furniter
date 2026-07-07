@@ -21,14 +21,17 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register',[AuthController::class, 'register']);
 Route::post('/logout',  [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/forgot-password', [HomeController::class, 'forgerPassword'])->name('password.request');
+Route::get('/forgot-password',  [HomeController::class, 'forgerPassword'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+Route::get('/reset-password/{token}',  [AuthController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password',         [AuthController::class, 'resetPassword'])->name('password.update');
 Route::get('/forger-password', fn() => redirect('/forgot-password', 301));
 
 // ──────────────────────────────────────────────
 //  Protected customer routes
 // ──────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
-    Route::get('/my-profile',    [HomeController::class, 'myProfile']);
+    Route::get('/my-profile',    fn() => redirect('/my-account'));
     Route::get('/my-account',    [HomeController::class, 'myAccount']);
     Route::get('/edit-account',  [HomeController::class, 'editAccount']);
     Route::post('/edit-account', [HomeController::class, 'updateAccount'])->name('account.update');
