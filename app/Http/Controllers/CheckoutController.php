@@ -6,6 +6,7 @@ use App\Mail\OrderConfirmationMail;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\CartService;
+use App\Services\TikTokEventsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -14,7 +15,36 @@ use Stripe\PaymentIntent;
 
 class CheckoutController extends Controller
 {
-    public function __construct(protected CartService $cart) {}
+    public function __construct(protected CartService $cart, protected TikTokEventsService $tiktok) {}
+
+    /**
+     * Fire CompletePayment for a paid order.
+     *
+     * The event_id is derived from the order id rather than randomly generated, so
+     * a refreshed Stripe return page cannot register the purchase twice.
+     */
+    protected function trackCompletePayment(Order $order, Request $request): void
+    {
+        $properties = [
+            'content_type' => 'product',
+            'contents'     => $this->tiktok->contents($order->items),
+            'currency'     => 'USD',
+            'value'        => (float) $order->total,
+        ];
+
+        $eventId = 'CompletePayment.order-' . $order->id;
+
+        $this->tiktok->track(
+            'CompletePayment',
+            $eventId,
+            $properties,
+            $this->tiktok->buildUser($request, $order->email, $order->phone),
+            $request->fullUrl(),
+        );
+
+        // Redirect to thank-you follows — flash the twin to the next request.
+        $this->tiktok->queueBrowserEvent('CompletePayment', $eventId, $properties);
+    }
 
     public function index()
     {
@@ -97,6 +127,7 @@ class CheckoutController extends Controller
         if ($data['payment_method'] === 'cod') {
             $this->cart->clear();
             $order->load('items');
+            $this->trackCompletePayment($order, $request);
             try {
                 Mail::to($order->email)->send(new OrderConfirmationMail($order));
             } catch (\Exception $e) {
@@ -135,7 +166,12 @@ class CheckoutController extends Controller
         if ($intent->status === 'succeeded') {
             $order = Order::with('items')->where('stripe_payment_intent', $intent->id)->first();
             if ($order) {
+                $alreadyPaid = $order->payment_status === 'paid';
                 $order->update(['payment_status' => 'paid', 'status' => 'processing']);
+
+                if (! $alreadyPaid) {
+                    $this->trackCompletePayment($order, $request);
+                }
                 try {
                     Mail::to($order->email)->send(new OrderConfirmationMail($order));
                 } catch (\Exception $e) {

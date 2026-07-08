@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Services\CartService;
+use App\Services\TikTokEventsService;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    public function __construct(protected CartService $cart) {}
+    public function __construct(protected CartService $cart, protected TikTokEventsService $tiktok) {}
 
     public function index()
     {
@@ -39,13 +40,42 @@ class CartController extends Controller
             if ($inCart + $qty > $stock) {
                 $qty = $stock - $inCart;
                 $this->cart->add($product, $qty, $color, $size);
+                $this->trackAddToCart($product, $qty, $request);
                 return back()->with('error', 'Only ' . $qty . ' more unit(s) added — stock limit of ' . $stock . ' reached for "' . $product->name . '".');
             }
         }
 
         $this->cart->add($product, $qty, $color, $size);
+        $this->trackAddToCart($product, $qty, $request);
 
         return back()->with('success', '"' . $product->name . '" added to cart.');
+    }
+
+    protected function trackAddToCart(Product $product, int $qty, Request $request): void
+    {
+        $unitPrice  = (float) ($product->sale_price ?: $product->price);
+        $eventId    = $this->tiktok->newEventId('AddToCart');
+        $properties = [
+            'content_type' => 'product',
+            'contents'     => [[
+                'content_name' => $product->name,
+                'quantity'     => $qty,
+                'price'        => $unitPrice,
+            ]],
+            'currency' => 'USD',
+            'value'    => round($unitPrice * $qty, 2),
+        ];
+
+        $this->tiktok->track(
+            'AddToCart',
+            $eventId,
+            $properties,
+            $this->tiktok->buildUser($request),
+            $request->headers->get('referer') ?: $request->fullUrl(),
+        );
+
+        // This response is a redirect — flash so the twin fires on the next page.
+        $this->tiktok->queueBrowserEvent('AddToCart', $eventId, $properties);
     }
 
     public function update(Request $request)

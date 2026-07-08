@@ -88,11 +88,12 @@
         ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
 
 
-          ttq.load('D95OHCRC77UFCF7AKUBG');
+          ttq.load(@json(config('services.tiktok.pixel_id', 'D95OHCRC77UFCF7AKUBG')));
           ttq.page();
         }(window, document, 'ttq');
         </script>
         <!-- TikTok Pixel Code End -->
+        @include('includes.tiktok-events')
         @stack('styles')
         {{-- Organization schema: present on every page --}}
         @php

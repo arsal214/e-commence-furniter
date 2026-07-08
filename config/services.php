@@ -40,4 +40,13 @@ return [
         ],
     ],
 
+    'tiktok' => [
+        'pixel_id'     => env('TIKTOK_PIXEL_ID'),
+        'access_token' => env('TIKTOK_ACCESS_TOKEN'),
+        'endpoint'     => env('TIKTOK_API_ENDPOINT', 'https://business-api.tiktok.com/open_api/v1.3/event/track/'),
+        // Set TIKTOK_TEST_EVENT_CODE while validating in Events Manager > Test Events.
+        'test_event_code' => env('TIKTOK_TEST_EVENT_CODE'),
+        'enabled'      => env('TIKTOK_EVENTS_ENABLED', true),
+    ],
+
 ];

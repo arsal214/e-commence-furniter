@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Services\TikTokEventsService;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    public function __construct(protected TikTokEventsService $tiktok) {}
+
     public function suggestions(Request $request)
     {
         $q = trim($request->get('q', ''));
@@ -42,7 +45,7 @@ class ProductController extends Controller
         return response()->json($results);
     }
 
-    public function show(string $slug)
+    public function show(string $slug, Request $request)
     {
         $item = Product::with(['category', 'productImages', 'reviews.user'])
             ->withAvg('reviews', 'rating')
@@ -70,6 +73,30 @@ class ProductController extends Controller
             );
         }
 
+        $this->trackViewContent($item, $request);
+
         return view('product-details', compact('item', 'newProducts'));
+    }
+
+    protected function trackViewContent(Product $item, Request $request): void
+    {
+        $eventId    = $this->tiktok->newEventId('ViewContent');
+        $properties = [
+            'content_type' => 'product',
+            'contents'     => [['content_name' => $item->name]],
+            'currency'     => 'USD',
+            'value'        => (float) ($item->sale_price ?: $item->price),
+        ];
+
+        $this->tiktok->track(
+            'ViewContent',
+            $eventId,
+            $properties,
+            $this->tiktok->buildUser($request),
+            $request->fullUrl(),
+        );
+
+        // Rendered in this same response, so the browser twin carries the same id.
+        $this->tiktok->queueBrowserEvent('ViewContent', $eventId, $properties, immediate: true);
     }
 }
