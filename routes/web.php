@@ -52,11 +52,11 @@ Route::middleware('auth')->group(function () {
 // ──────────────────────────────────────────────
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [Admin\DashboardController::class, 'index'])->name('admin.dashboard');
-    Route::resource('categories', Admin\CategoryController::class)->names('admin.categories');
+    Route::resource('categories', Admin\CategoryController::class)->names('admin.categories')->except(['show']);
     Route::get('products/export', [Admin\ProductController::class, 'export'])->name('admin.products.export');
     Route::get('products/import',  [Admin\ProductImportController::class, 'index'])->name('admin.products.import');
     Route::post('products/import', [Admin\ProductImportController::class, 'store'])->name('admin.products.import.store');
-    Route::resource('products',   Admin\ProductController::class)->names('admin.products');
+    Route::resource('products',   Admin\ProductController::class)->names('admin.products')->except(['show']);
     Route::resource('orders',     Admin\OrderController::class)->names('admin.orders')->only(['index', 'show', 'update']);
     Route::resource('sliders',    Admin\SliderController::class)->names('admin.sliders')->except(['show']);
     Route::get('flash-deal',     [Admin\FlashDealController::class, 'index'])->name('admin.flash-deal.index');

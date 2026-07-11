@@ -32,7 +32,7 @@ class CategoryController extends Controller
         ]);
 
         $data['slug']      = Str::slug($data['name']);
-        $data['is_active'] = $request->boolean('is_active', true);
+        $data['is_active'] = $request->boolean('is_active');
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('categories', 'public');
@@ -60,7 +60,7 @@ class CategoryController extends Controller
             'is_active'        => ['nullable', 'boolean'],
         ]);
 
-        $data['is_active'] = $request->boolean('is_active', true);
+        $data['is_active'] = $request->boolean('is_active');
 
         if ($request->hasFile('image')) {
             // Delete old image and store the new one

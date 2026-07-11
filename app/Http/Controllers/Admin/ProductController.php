@@ -101,8 +101,8 @@ class ProductController extends Controller
         $data['slug']           = Str::slug($data['name']);
         $data['is_featured']    = $request->boolean('is_featured');
         $data['is_best_seller'] = $request->boolean('is_best_seller');
-        $data['is_active']      = $request->boolean('is_active', true);
-        $data['sale_price']  = $data['sale_price'] ?: null;
+        $data['is_active']      = $request->boolean('is_active');
+        $data['sale_price']  = ($data['sale_price'] ?? null) ?: null;
         $data['colors']      = $this->parseVariants($request->input('colors_raw'));
         $data['sizes']       = $this->parseVariants($request->input('sizes_raw'));
         $data['key_features'] = $this->buildKeyFeatures($request);
@@ -182,8 +182,8 @@ class ProductController extends Controller
 
         $data['is_featured']    = $request->boolean('is_featured');
         $data['is_best_seller'] = $request->boolean('is_best_seller');
-        $data['is_active']      = $request->boolean('is_active', true);
-        $data['sale_price']  = $data['sale_price'] ?: null;
+        $data['is_active']      = $request->boolean('is_active');
+        $data['sale_price']  = ($data['sale_price'] ?? null) ?: null;
         $data['colors']       = $this->parseVariants($request->input('colors_raw'));
         $data['sizes']        = $this->parseVariants($request->input('sizes_raw'));
         $data['key_features'] = $this->buildKeyFeatures($request);

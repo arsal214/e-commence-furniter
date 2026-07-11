@@ -41,7 +41,7 @@ class SliderController extends Controller
             $data['image'] = $request->file('image')->store('sliders', 'public');
         }
 
-        $data['is_active']  = $request->boolean('is_active', true);
+        $data['is_active']  = $request->boolean('is_active');
         $data['sort_order'] = $request->input('sort_order', 0);
 
         Slider::create($data);
@@ -78,7 +78,7 @@ class SliderController extends Controller
             $data['image'] = $request->file('image')->store('sliders', 'public');
         }
 
-        $data['is_active']  = $request->boolean('is_active', true);
+        $data['is_active']  = $request->boolean('is_active');
         $data['sort_order'] = $request->input('sort_order', $slider->sort_order);
 
         $slider->update($data);
