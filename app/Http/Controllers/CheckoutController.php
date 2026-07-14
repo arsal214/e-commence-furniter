@@ -133,8 +133,11 @@ class CheckoutController extends Controller
             } catch (\Exception $e) {
                 \Log::warning('Order confirmation email failed for order #' . $order->tracking_number . ': ' . $e->getMessage());
             }
+            // Kept in the session (not flashed) so a page refresh still shows the order.
+            // The purchase pixel stays on the flashed order_total, so it fires only once.
+            session()->put('recent_order', $order->tracking_number);
+
             return redirect()->route('thank-you')
-                ->with('success', 'Order placed! Your tracking number is <strong>' . $order->tracking_number . '</strong>. Check your email for details.')
                 ->with('order_total', $total);
         }
 
@@ -179,8 +182,12 @@ class CheckoutController extends Controller
                 }
             }
             $this->cart->clear();
+
+            if ($order) {
+                session()->put('recent_order', $order->tracking_number);
+            }
+
             return redirect()->route('thank-you')
-                ->with('success', 'Payment successful! Your tracking number is <strong>' . ($order?->tracking_number ?? '') . '</strong>. Check your email.')
                 ->with('order_total', $order?->total ?? 0);
         }
 

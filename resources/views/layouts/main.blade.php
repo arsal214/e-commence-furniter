@@ -472,6 +472,7 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
                 }
 
                 const productId = btn.dataset.productId;
+                const name      = btn.dataset.productName;
                 btn.disabled = true;
 
                 fetch(toggleUrl, {
@@ -483,18 +484,213 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
                     },
                     body: JSON.stringify({ product_id: productId }),
                 })
-                .then(r => r.json())
+                .then(r => {
+                    if (!r.ok) throw new Error('bad status');
+                    return r.json();
+                })
                 .then(data => {
                     wishlistIds = data.wishlist_ids || [];
                     updateButtons();
                     updateNavCount(data.count);
+
+                    const label = name ? `“${name}”` : 'Item';
+                    window.showToast?.(
+                        data.added ? `${label} added to your wishlist.` : `${label} removed from your wishlist.`,
+                        data.added ? 'success' : 'info'
+                    );
                 })
-                .catch(() => {})
+                // Was an empty catch: a failed toggle looked identical to a successful one.
+                .catch(() => {
+                    window.showToast?.("Couldn't update your wishlist. Please try again.", 'error');
+                })
                 .finally(() => { btn.disabled = false; });
             });
 
             // Init state on load
             document.addEventListener('DOMContentLoaded', updateButtons);
+        })();
+        </script>
+
+        {{-- Toasts + Quick View.
+             Deliberately plain CSS, not Tailwind utilities: assets/css/style.css loads
+             after the Vite build, so base utilities there silently override Vite-only
+             responsive variants. Scoped pg-* classes avoid that cascade entirely. --}}
+        <style>
+            .pg-toasts {
+                position: fixed; top: 24px; right: 24px; z-index: 99999999;
+                display: flex; flex-direction: column; gap: 10px;
+                max-width: calc(100vw - 32px); pointer-events: none;
+            }
+            .pg-toast {
+                display: flex; align-items: flex-start; gap: 10px;
+                min-width: 280px; max-width: 380px; padding: 14px 14px 14px 16px;
+                background: #fff; color: #172430;
+                border: 1px solid #E8E1D7; border-left: 3px solid #BB976D;
+                border-radius: 10px; box-shadow: 0 8px 28px rgba(23,36,48,.14);
+                font-size: 14px; line-height: 1.45; pointer-events: auto;
+                transform: translateX(16px); opacity: 0;
+                transition: transform .22s ease-out, opacity .22s ease-out;
+            }
+            .pg-toast.pg-in     { transform: translateX(0); opacity: 1; }
+            .pg-toast.pg-out    { transform: translateX(16px); opacity: 0; }
+            .pg-toast--success  { border-left-color: #1F7A4C; }
+            .pg-toast--error    { border-left-color: #C62828; }
+            .pg-toast__icon     { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; }
+            .pg-toast--success .pg-toast__icon { color: #1F7A4C; }
+            .pg-toast--error   .pg-toast__icon { color: #C62828; }
+            .pg-toast--info    .pg-toast__icon { color: #8A6A3F; }
+            .pg-toast__msg      { flex: 1 1 auto; }
+            .pg-toast__close {
+                flex: 0 0 auto; width: 28px; height: 28px; margin: -4px -4px 0 0;
+                display: inline-flex; align-items: center; justify-content: center;
+                background: none; border: 0; border-radius: 6px;
+                color: #6B6560; cursor: pointer;
+            }
+            .pg-toast__close:hover { color: #172430; background: #F6F6F6; }
+            .pg-toast__close:focus-visible { outline: 2px solid #BB976D; outline-offset: 1px; }
+
+            .dark .pg-toast { background: #172430; color: #fff; border-color: #2F3B45; }
+            .dark .pg-toast__close { color: #DBDBDB; }
+            .dark .pg-toast__close:hover { color: #fff; background: rgba(255,255,255,.08); }
+
+            @media (max-width: 640px) {
+                .pg-toasts { top: auto; bottom: 16px; right: 16px; left: 16px; }
+                .pg-toast  { min-width: 0; max-width: none; }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .pg-toast { transition: none; transform: none; }
+            }
+
+            /* ── Quick View ─────────────────────────────────────────── */
+            .pg-qv[hidden] { display: none; }
+            .pg-qv {
+                position: fixed; inset: 0; z-index: 99999990;
+                display: flex; align-items: center; justify-content: center; padding: 20px;
+            }
+            .pg-qv__backdrop { position: absolute; inset: 0; background: rgba(23,36,48,.6); }
+            .pg-qv__panel {
+                position: relative; width: 100%; max-width: 820px;
+                max-height: calc(100vh - 40px); overflow-y: auto;
+                background: #fff; border-radius: 16px;
+                box-shadow: 0 24px 60px rgba(0,0,0,.28);
+            }
+            .dark .pg-qv__panel { background: #172430; color: #fff; }
+            .pg-qv__close {
+                position: absolute; top: 12px; right: 12px; z-index: 2;
+                width: 44px; height: 44px; display: inline-flex;
+                align-items: center; justify-content: center;
+                background: #fff; border: 1px solid #E8E1D7; border-radius: 50%;
+                color: #172430; cursor: pointer;
+            }
+            .pg-qv__close:hover { border-color: #BB976D; color: #BB976D; }
+            .pg-qv__close:focus-visible { outline: 2px solid #BB976D; outline-offset: 2px; }
+            .dark .pg-qv__close { background: #172430; border-color: #2F3B45; color: #fff; }
+            .pg-qv__loading { padding: 60px; text-align: center; color: #6B6560; font-size: 14px; }
+            body.pg-noscroll { overflow: hidden; }
+        </style>
+
+        <div id="pg-toasts" class="pg-toasts" role="status" aria-live="polite" aria-atomic="false"></div>
+
+        <div id="pg-qv" class="pg-qv" hidden role="dialog" aria-modal="true" aria-labelledby="pg-qv-title">
+            <div class="pg-qv__backdrop" data-pg-qv-close></div>
+            <div class="pg-qv__panel">
+                <button type="button" class="pg-qv__close" data-pg-qv-close aria-label="Close quick view">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                        <path d="M18 6 6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+                <div id="pg-qv-body"><p class="pg-qv__loading">Loading…</p></div>
+            </div>
+        </div>
+
+        <script>
+        (function () {
+            /* ── Toasts ─────────────────────────────────────────────── */
+            var host = document.getElementById('pg-toasts');
+
+            var ICONS = {
+                success: '<path d="M20 6 9 17l-5-5"/>',
+                error:   '<circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/>',
+                info:    '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>'
+            };
+
+            window.showToast = function (message, type) {
+                if (!host) return;
+                type = ICONS[type] ? type : 'info';
+
+                var el = document.createElement('div');
+                el.className = 'pg-toast pg-toast--' + type;
+                el.innerHTML =
+                    '<svg class="pg-toast__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+                    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[type] + '</svg>' +
+                    '<span class="pg-toast__msg"></span>' +
+                    '<button type="button" class="pg-toast__close" aria-label="Dismiss notification">' +
+                    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+                    'stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>';
+
+                // textContent, not innerHTML — product names are user data
+                el.querySelector('.pg-toast__msg').textContent = message;
+
+                var timer;
+                function dismiss() {
+                    clearTimeout(timer);
+                    el.classList.add('pg-out');
+                    setTimeout(function () { el.remove(); }, 220);
+                }
+                el.querySelector('.pg-toast__close').addEventListener('click', dismiss);
+
+                host.appendChild(el);
+                requestAnimationFrame(function () { el.classList.add('pg-in'); });
+                timer = setTimeout(dismiss, 4000);
+            };
+
+            /* ── Quick View ─────────────────────────────────────────── */
+            var modal   = document.getElementById('pg-qv');
+            var body    = document.getElementById('pg-qv-body');
+            var lastFocus = null;
+
+            function closeQv() {
+                if (!modal || modal.hidden) return;
+                modal.hidden = true;
+                document.body.classList.remove('pg-noscroll');
+                body.innerHTML = '<p class="pg-qv__loading">Loading…</p>';
+                if (lastFocus) lastFocus.focus();          // focus returns where it came from
+            }
+
+            function openQv(url, trigger) {
+                if (!modal) return;
+                lastFocus = trigger || null;
+                modal.hidden = false;
+                document.body.classList.add('pg-noscroll');
+                modal.querySelector('.pg-qv__close').focus();
+
+                fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(function (r) {
+                        if (!r.ok) throw new Error('bad status');
+                        return r.text();
+                    })
+                    .then(function (html) { body.innerHTML = html; })
+                    .catch(function () {
+                        closeQv();
+                        window.showToast("Couldn't load that product. Please try again.", 'error');
+                    });
+            }
+
+            document.addEventListener('click', function (e) {
+                // .pg-qv-btn-trigger, not .pg-qv-btn — the latter styles the buttons
+                // *inside* the panel, and matching it would hijack Add to Cart.
+                var open = e.target.closest('.pg-qv-btn-trigger');
+                if (open) {
+                    e.preventDefault();
+                    openQv(open.dataset.qvUrl, open);
+                    return;
+                }
+                if (e.target.closest('[data-pg-qv-close]')) closeQv();
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeQv();
+            });
         })();
         </script>
 

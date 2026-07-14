@@ -183,7 +183,17 @@ class HomeController extends Controller
 
     public function thankYou()
     {
-        return view('thank-you');
+        $order = null;
+
+        if ($tracking = session('recent_order')) {
+            $order = Order::with('items.product')
+                ->where('tracking_number', $tracking)
+                ->first();
+        }
+
+        // No order in session (direct visit, expired session) still renders —
+        // the view falls back to a generic thank-you with a way to find the order.
+        return view('thank-you', compact('order'));
     }
 
     public function trackOrder(Request $request)
@@ -229,40 +239,160 @@ class HomeController extends Controller
         return view('payment-failure');  
     }
 
+    /** Sort options offered on the shop page. Keys are whitelisted against ?sort=. */
+    public const SHOP_SORTS = [
+        'latest'     => 'Newest',
+        'price_low'  => 'Price: Low to High',
+        'price_high' => 'Price: High to Low',
+        'rating'     => 'Top Rated',
+        'name'       => 'Name: A–Z',
+    ];
+
+    /** Price facets. Bounds are inclusive; null means open-ended. */
+    public const SHOP_PRICE_BUCKETS = [
+        'under-50'  => ['label' => 'Under $50',      'min' => null, 'max' => 49.99],
+        '50-100'    => ['label' => '$50 – $100',     'min' => 50,   'max' => 100],
+        '100-200'   => ['label' => '$100 – $200',    'min' => 100.01, 'max' => 200],
+        '200-500'   => ['label' => '$200 – $500',    'min' => 200.01, 'max' => 500],
+        'over-500'  => ['label' => '$500 & above',   'min' => 500.01, 'max' => null],
+    ];
+
+    /** Mirrors Product::getEffectivePriceAttribute() in SQL, so filtering and sorting
+     *  use the same price the customer is actually charged. */
+    private const EFFECTIVE_PRICE = 'COALESCE(NULLIF(sale_price, 0), price)';
+
+    /**
+     * Base product query with every active filter applied.
+     *
+     * $except skips one facet, which is what makes the sidebar counts behave: the
+     * count next to "Chairs" must reflect the other filters but not the category
+     * filter itself, or checking one category would zero out all the others.
+     */
+    private function shopQuery(array $f, ?string $except = null)
+    {
+        $eff = self::EFFECTIVE_PRICE;
+
+        return Product::query()
+            ->where('is_active', true)
+            ->when($except !== 'search' && $f['search'] !== '', fn($q) => $q->where(function ($w) use ($f) {
+                $w->where('name', 'like', '%' . $f['search'] . '%')
+                  ->orWhere('description', 'like', '%' . $f['search'] . '%');
+            }))
+            ->when($except !== 'categories' && $f['categories'], fn($q) => $q->whereHas(
+                'category', fn($c) => $c->whereIn('slug', $f['categories'])
+            ))
+            ->when($except !== 'price' && $f['price'], fn($q) => $q->where(function ($w) use ($f, $eff) {
+                foreach ($f['price'] as $key) {
+                    $b = self::SHOP_PRICE_BUCKETS[$key] ?? null;
+                    if (! $b) continue;
+                    $w->orWhere(function ($x) use ($b, $eff) {          // buckets OR together
+                        if ($b['min'] !== null) $x->whereRaw("{$eff} >= ?", [$b['min']]);
+                        if ($b['max'] !== null) $x->whereRaw("{$eff} <= ?", [$b['max']]);
+                    });
+                }
+            }))
+            ->when($except !== 'colors' && $f['colors'], fn($q) => $q->where(function ($w) use ($f) {
+                foreach ($f['colors'] as $c) $w->orWhereJsonContains('colors', $c);
+            }))
+            ->when($except !== 'sizes' && $f['sizes'], fn($q) => $q->where(function ($w) use ($f) {
+                foreach ($f['sizes'] as $s) $w->orWhereJsonContains('sizes', $s);
+            }));
+    }
+
     public function shopV1(Request $request)
     {
-        $activeCategory = $request->get('category');
-        $searchQuery    = trim($request->get('search', ''));
-        $minPrice       = (float) $request->get('min_price', 0);
-        $maxPrice       = (float) $request->get('max_price', 9999);
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $validSlugs = $categories->pluck('slug')->all();
 
-        $products = Product::with('category')
+        // Every facet is multi-select, so each arrives as an array. Values are
+        // intersected against what actually exists — never trusted straight from the URL.
+        $f = [
+            'search'     => trim((string) $request->get('search', '')),
+            'categories' => array_values(array_intersect((array) $request->get('category', []), $validSlugs)),
+            'price'      => array_values(array_intersect((array) $request->get('price', []), array_keys(self::SHOP_PRICE_BUCKETS))),
+            'colors'     => array_values(array_filter((array) $request->get('color', []), 'is_string')),
+            'sizes'      => array_values(array_filter((array) $request->get('size', []), 'is_string')),
+        ];
+
+        $sort = array_key_exists($request->get('sort'), self::SHOP_SORTS) ? $request->get('sort') : 'latest';
+        $eff  = self::EFFECTIVE_PRICE;
+
+        $products = $this->shopQuery($f)
+            ->with('category')
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
-            ->where('is_active', true)
-            ->when($activeCategory, fn($q) => $q->whereHas('category', fn($q2) => $q2->where('slug', $activeCategory)))
-            ->when($searchQuery, fn($q) => $q->where(function ($q2) use ($searchQuery) {
-                $q2->where('name', 'like', '%' . $searchQuery . '%')
-                   ->orWhere('description', 'like', '%' . $searchQuery . '%');
-            }))
-            ->when($minPrice > 0, fn($q) => $q->where(function ($q2) use ($minPrice) {
-                $q2->where('sale_price', '>=', $minPrice)
-                   ->orWhere(function ($q3) use ($minPrice) {
-                       $q3->whereNull('sale_price')->where('price', '>=', $minPrice);
-                   });
-            }))
-            ->when($maxPrice < 9999, fn($q) => $q->where(function ($q2) use ($maxPrice) {
-                $q2->where('sale_price', '<=', $maxPrice)
-                   ->orWhere(function ($q3) use ($maxPrice) {
-                       $q3->whereNull('sale_price')->where('price', '<=', $maxPrice);
-                   });
-            }))
-            ->latest()
+            ->when($sort === 'price_low',  fn($q) => $q->orderByRaw("{$eff} ASC"))
+            ->when($sort === 'price_high', fn($q) => $q->orderByRaw("{$eff} DESC"))
+            ->when($sort === 'rating',     fn($q) => $q->orderByDesc('reviews_avg_rating'))
+            ->when($sort === 'name',       fn($q) => $q->orderBy('name'))
+            ->when($sort === 'latest',     fn($q) => $q->latest())
             ->paginate(12)
             ->withQueryString();
 
-        $categories = Category::where('is_active', true)->orderBy('name')->get();
-        return view('shop', compact('products', 'categories', 'activeCategory', 'searchQuery', 'minPrice', 'maxPrice'));
+        // Facet values that actually exist in the catalogue (colors/sizes are JSON arrays).
+        $allColors = Product::where('is_active', true)->whereNotNull('colors')->pluck('colors')
+            ->flatten()->filter()->unique()->sort()->values();
+        $allSizes = Product::where('is_active', true)->whereNotNull('sizes')->pluck('sizes')
+            ->flatten()->filter()->unique()->sort()->values();
+
+        // Counts per facet option. Small catalogue, so a count query per option is fine;
+        // this would need rethinking (a single GROUP BY) at thousands of products.
+        $categoryCounts = [];
+        foreach ($categories as $cat) {
+            $categoryCounts[$cat->slug] = (clone $this->shopQuery($f, 'categories'))
+                ->whereHas('category', fn($c) => $c->where('slug', $cat->slug))->count();
+        }
+
+        $priceCounts = [];
+        foreach (self::SHOP_PRICE_BUCKETS as $key => $b) {
+            $priceCounts[$key] = (clone $this->shopQuery($f, 'price'))
+                ->where(function ($x) use ($b, $eff) {
+                    if ($b['min'] !== null) $x->whereRaw("{$eff} >= ?", [$b['min']]);
+                    if ($b['max'] !== null) $x->whereRaw("{$eff} <= ?", [$b['max']]);
+                })->count();
+        }
+
+        $colorCounts = [];
+        foreach ($allColors as $c) {
+            $colorCounts[$c] = (clone $this->shopQuery($f, 'colors'))->whereJsonContains('colors', $c)->count();
+        }
+
+        $sizeCounts = [];
+        foreach ($allSizes as $s) {
+            $sizeCounts[$s] = (clone $this->shopQuery($f, 'sizes'))->whereJsonContains('sizes', $s)->count();
+        }
+
+        return view('shop', [
+            'products'       => $products,
+            'categories'     => $categories,
+            'filters'        => $f,
+            'sort'           => $sort,
+            'sortOptions'    => self::SHOP_SORTS,
+            'priceBuckets'   => self::SHOP_PRICE_BUCKETS,
+            'allColors'      => $allColors,
+            'allSizes'       => $allSizes,
+            'categoryCounts' => $categoryCounts,
+            'priceCounts'    => $priceCounts,
+            'colorCounts'    => $colorCounts,
+            'sizeCounts'     => $sizeCounts,
+        ]);
+    }
+
+    /**
+     * Quick-view panel for a single product. Returns a bare partial (no layout) that
+     * the shop grid injects into the modal — the template's own .quick-view popup is
+     * a static demo with hardcoded images, so it can't be reused here.
+     */
+    public function quickView(string $slug)
+    {
+        $product = Product::with('category')
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->where('is_active', true)
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        return view('includes.Shop.quick-view', compact('product'));
     }
 
     public function categories()

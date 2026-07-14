@@ -89,6 +89,7 @@ Route::get('/payment-failure',       [HomeController::class, 'paymentFailure']);
 
 Route::get('/shop',             [HomeController::class, 'shopV1'])->name('shop');
 Route::get('/shop-v1',          fn() => redirect('/shop', 301));
+Route::get('/quick-view/{slug}', [HomeController::class, 'quickView'])->name('quick-view');
 Route::get('/categories',       [HomeController::class, 'categories']);
 Route::get('/category/{slug}',  [HomeController::class, 'categoryLanding'])->name('category.landing');
 Route::get('/product-category', [HomeController::class, 'productCategory']);

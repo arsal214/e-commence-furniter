@@ -24,8 +24,24 @@ class OrderConfirmationMail extends Mailable
 
     public function content(): Content
     {
+        // Thumbnails read $item->product->image — eager load to avoid a query per line item.
+        $this->order->loadMissing('items.product');
+
+        $count = $this->order->items->count();
+
         return new Content(
-            view: 'emails.order-confirmation',
+            view: 'emails.order-mail',
+            text: 'emails.order-mail-text',
+            with: [
+                'order'   => $this->order,
+                'eyebrow' => 'Order Confirmed',
+                'heading' => 'Thank you, ' . $this->order->name . '.',
+                'intro'   => "We've received your order of {$count} " . str('item')->plural($count)
+                    . ' and our team is preparing it for dispatch. Everything you need is below — keep this email for your records.',
+                'noteTitle'    => 'Need to change something?',
+                'noteBody'     => "Just reply to this email within 24 hours and we'll sort it out before your order ships.",
+                'showTracking' => true,
+            ],
         );
     }
 }

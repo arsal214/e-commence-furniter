@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Mail\OrderShippedMail;
+use App\Mail\OrderStatusUpdatedMail;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -53,24 +53,40 @@ class OrderController extends Controller
             'carrier'           => 'nullable|string|max:100',
         ]);
 
-        $wasShipped = $order->status !== 'shipped';
+        $previousStatus = $order->status;
+        $newStatus      = $data['status'] ?? $previousStatus;
+        $statusChanged  = $newStatus !== $previousStatus;
 
-        // Set shipped_at timestamp when status changes to shipped
-        if (isset($data['status']) && $data['status'] === 'shipped' && $wasShipped) {
+        // Stamp the ship date on the first transition into 'shipped'.
+        if ($statusChanged && $newStatus === 'shipped') {
             $data['shipped_at'] = now();
         }
 
         $order->update($data);
 
-        // Send shipped email when status becomes shipped
-        if (isset($data['status']) && $data['status'] === 'shipped' && $wasShipped) {
+        // Notify the customer on any status change they'd care about. Carrier and
+        // tracking fields are saved above, so the shipped email can include them.
+        $notified = false;
+
+        if ($statusChanged && OrderStatusUpdatedMail::shouldNotify($newStatus)) {
             try {
-                Mail::to($order->email)->send(new OrderShippedMail($order));
+                Mail::to($order->email)->send(new OrderStatusUpdatedMail($order));
+                $notified = true;
             } catch (\Exception $e) {
-                \Log::warning('Order shipped email failed for order #' . $order->id . ': ' . $e->getMessage());
+                \Log::warning("Order status email ({$newStatus}) failed for order #{$order->id}: " . $e->getMessage());
             }
         }
 
-        return back()->with('success', 'Order #' . $order->id . ' updated successfully.');
+        $message = 'Order #' . $order->id . ' updated successfully.';
+
+        if ($statusChanged) {
+            $message .= $notified
+                ? ' Customer notified by email.'
+                : (OrderStatusUpdatedMail::shouldNotify($newStatus)
+                    ? ' Customer email could not be sent — check the logs.'
+                    : '');
+        }
+
+        return back()->with('success', $message);
     }
 }

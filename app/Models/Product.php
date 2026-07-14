@@ -41,6 +41,38 @@ class Product extends Model
         });
     }
 
+    /**
+     * Swatch colour for a colour *name* — `colors` stores names ("Charcoal"), not hex.
+     * Unknown names fall back to a neutral grey; the name is always shown as text too,
+     * so an unmapped colour is never conveyed by the swatch alone.
+     */
+    public const COLOR_HEX = [
+        'beige'        => '#D8C3A5',
+        'cream'        => '#EFE6D5',
+        'white'        => '#FFFFFF',
+        'black'        => '#1A1A1A',
+        'charcoal'     => '#36393D',
+        'gray'         => '#9AA0A6',
+        'grey'         => '#9AA0A6',
+        'navy'         => '#1F3352',
+        'blue'         => '#3B6FB6',
+        'teal'         => '#2F8C86',
+        'green'        => '#4F7A4A',
+        'red'          => '#B5423A',
+        'brown'        => '#7A5A42',
+        'tan'          => '#B08A5E',
+        'oak'          => '#C89F66',
+        'walnut'       => '#5C4033',
+        'natural wood' => '#C4A484',
+        'gold'         => '#BB976D',
+        'silver'       => '#C9CBCD',
+    ];
+
+    public static function colorHex(string $name): string
+    {
+        return self::COLOR_HEX[strtolower(trim($name))] ?? '#9AA0A6';
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);
