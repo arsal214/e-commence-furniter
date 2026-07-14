@@ -262,7 +262,7 @@
     $fpImg = !empty($featuredProduct->image)
         ? (str_starts_with($featuredProduct->image, 'assets/') ? asset($featuredProduct->image) : Storage::url($featuredProduct->image))
         : asset('assets/img/gallery/product-detls/product-01.jpg');
-    $fpPrice   = $featuredProduct->sale_price ?? $featuredProduct->price;
+    $fpPrice   = $featuredProduct->effective_price;
     $fpSavePct = $featuredProduct->sale_price && $featuredProduct->price > 0
         ? round((($featuredProduct->price - $featuredProduct->sale_price) / $featuredProduct->price) * 100)
         : 0;
@@ -337,7 +337,7 @@
             : null;
     @endphp
     <div class="cl-card group"
-         data-price="{{ $product->sale_price ?? $product->price }}"
+         data-price="{{ $product->effective_price }}"
          data-rating="{{ $product->reviews_avg_rating ?? 0 }}"
          data-date="{{ $product->created_at->timestamp }}">
 
@@ -411,7 +411,7 @@
             @include('includes.Home._stars', ['rating' => $product->reviews_avg_rating ?? 0, 'count' => $product->reviews_count ?? 0])
             <div class="flex items-center gap-2 mt-2">
                 <span class="text-base font-bold text-[#172430] dark:text-white">
-                    ${{ number_format($product->sale_price ?? $product->price, 2) }}
+                    {{ $product->display_price }}
                 </span>
                 @if($product->sale_price)
                 <span class="text-xs text-gray-400 line-through">${{ number_format($product->price, 2) }}</span>

@@ -33,7 +33,7 @@ class CartService
                 'id'    => $product->id,
                 'name'  => $product->name,
                 'slug'  => $product->slug,
-                'price' => (float) $product->price,
+                'price' => $product->effective_price,
                 'image' => $product->image,
                 'qty'   => $qty,
                 'color' => $color,

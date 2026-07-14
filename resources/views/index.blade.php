@@ -1014,7 +1014,7 @@ $schemaWebsite = [
     box-shadow: 0 0 0 1px rgba(0,0,0,.6), 0 6px 40px rgba(0,0,0,.5);
 }
 
-@keyframes mqs-roll { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+@keyframes mqs-roll { from { transform: translateX(-50%) } to { transform: translateX(0) } }
 
 .mqs-belt {
     display: inline-flex;

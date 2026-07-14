@@ -85,7 +85,7 @@ class ProductController extends Controller
             'content_type' => 'product',
             'contents'     => [['content_name' => $item->name]],
             'currency'     => 'USD',
-            'value'        => (float) ($item->sale_price ?: $item->price),
+            'value'        => $item->effective_price,
         ];
 
         $this->tiktok->track(

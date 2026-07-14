@@ -25,6 +25,7 @@
         @vite('resources/css/app.css')
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
         <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+        @stack('styles')
         <!-- TikTok Pixel Code Start -->
         <script>
         !function (w, d, t) {
@@ -62,5 +63,6 @@
         </div>
 
         <script src="{{ asset('assets/js/scripts.js') }}"></script>
+        @stack('scripts')
     </body>
 </html>

@@ -53,7 +53,7 @@ class CartController extends Controller
 
     protected function trackAddToCart(Product $product, int $qty, Request $request): void
     {
-        $unitPrice  = (float) ($product->sale_price ?: $product->price);
+        $unitPrice  = $product->effective_price;
         $eventId    = $this->tiktok->newEventId('AddToCart');
         $properties = [
             'content_type' => 'product',

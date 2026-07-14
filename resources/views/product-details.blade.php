@@ -28,7 +28,7 @@
             '@type'          => 'Offer',
             'url'            => route('product-details', $item->slug),
             'priceCurrency'  => 'USD',
-            'price'          => number_format((float)($item->sale_price ?? $item->price), 2, '.', ''),
+            'price'          => number_format($item->effective_price, 2, '.', ''),
             'priceValidUntil'=> now()->addYear()->toDateString(),
             'itemCondition'  => 'https://schema.org/NewCondition',
             'availability'   => $schemaInStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
@@ -150,7 +150,7 @@
         $galleryImages->push(Storage::url($pi->image));
     }
     $savingsAmt = $item->sale_price ? number_format($item->price - $item->sale_price, 2) : null;
-    $activePrice = number_format($item->sale_price ?? $item->price, 2);
+    $activePrice = number_format($item->effective_price, 2);
 @endphp
 
 <style>

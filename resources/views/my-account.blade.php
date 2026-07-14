@@ -1,148 +1,169 @@
-<!-- resources/views/my-account.blade.php -->
+{{-- resources/views/my-account.blade.php --}}
 @extends('layouts.main')
 
-@section('title', 'My Account')
+@section('title', 'My Account — PeytonGhalib')
 @section('robots', 'noindex, nofollow')
+
+@php
+    // Derived from the already-loaded collection — no extra queries.
+    $orderCount = $orders->count();
+    $totalSpent = $orders->sum('total');
+    $inProgress = $orders->whereIn('status', ['pending', 'processing', 'shipped'])->count();
+@endphp
 
 @section('content')
 
 @include('includes.navbar')
 
-<!-- Banner Start -->
-<div class="flex items-center gap-4 flex-wrap bg-overlay p-14 sm:p-16 before:bg-title before:bg-opacity-70" style="background-image:url('{{ asset('assets/img/shortcode/breadcumb.jpg') }}');">
-    <div class="text-center w-full">
-        <h2 class="text-white text-8 md:text-[40px] font-normal leading-none text-center">My Account</h2>
-        <ul class="flex items-center justify-center gap-[10px] text-base md:text-lg leading-none font-normal text-white mt-3 md:mt-4">
-            <li><a href="{{ url('/') }}">Home</a></li>
-            <li>/</li>
-            <li class="text-primary">Account</li>
-        </ul>
-    </div>
-</div>
-<!-- Banner End -->
+<x-account.shell
+    active="dashboard"
+    :user="$user"
+    subheading="Here's what's happening with your orders."
+>
 
-<!-- My Account Start -->
-<div class="s-py-100" data-aos="fade-up">
-    <div class="container-fluid">
-        <div class="max-w-[1720px] mx-auto flex items-start gap-8 md:gap-12 2xl:gap-24 flex-col md:flex-row my-profile-navtab">
+    <x-slot:stats>
+        <div class="acc-stat">
+            <span class="acc-stat__label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+                Orders
+            </span>
+            <span class="acc-stat__value">{{ $orderCount }}</span>
+        </div>
 
-            <!-- Sidebar Nav -->
-            <div class="w-full md:w-[200px] lg:w-[300px] flex-none">
-                <ul class="divide-y dark:divide-paragraph text-title dark:text-white text-base sm:text-lg lg:text-xl flex flex-col justify-center leading-none">
-                    <li class="active text-primary pb-3 lg:pb-6 pl-6 lg:pl-12">
-                        <a class="duration-300 hover:text-primary" href="{{ url('/my-account') }}">My Account</a>
-                    </li>
-                    <li class="py-3 lg:py-6 pl-6 lg:pl-12">
-                        <a class="duration-300 hover:text-primary" href="{{ url('/edit-account') }}">Edit Account</a>
-                    </li>
-                    <li class="py-3 lg:py-6 pl-6 lg:pl-12">
-                        <a class="duration-300 hover:text-primary" href="{{ url('/order-history') }}">Order History</a>
-                    </li>
-                    <li class="py-3 lg:py-6 pl-6 lg:pl-12">
-                        <a class="duration-300 hover:text-primary" href="{{ url('/wishlist') }}">Wishlist</a>
-                    </li>
-                    <li class="pt-3 lg:pt-6 pl-6 lg:pl-12">
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="duration-300 hover:text-primary">Logout</button>
-                        </form>
-                    </li>
-                </ul>
+        <div class="acc-stat">
+            <span class="acc-stat__label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                Total spent
+            </span>
+            <span class="acc-stat__value">${{ number_format($totalSpent, 2) }}</span>
+        </div>
+
+        <div class="acc-stat">
+            <span class="acc-stat__label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
+                In progress
+            </span>
+            <span class="acc-stat__value">{{ $inProgress }}</span>
+        </div>
+
+        <div class="acc-stat">
+            <span class="acc-stat__label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.7 1.1-1a5.5 5.5 0 0 0 0-7.7z"/></svg>
+                Wishlist
+            </span>
+            <span class="acc-stat__value">{{ $wishlistCount }}</span>
+        </div>
+    </x-slot:stats>
+
+    {{-- Profile --}}
+    <section class="acc-panel" aria-labelledby="acc-profile-title">
+        <div class="acc-panel__head">
+            <h2 class="acc-panel__title" id="acc-profile-title">Profile</h2>
+            <a class="acc-btn" href="{{ url('/edit-account') }}">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+                Edit profile
+            </a>
+        </div>
+
+        <div class="acc-detail">
+            <div class="acc-detail__item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+                <span>
+                    <span class="acc-detail__k">Name</span>
+                    <span class="acc-detail__v">{{ $user->name }}</span>
+                </span>
             </div>
 
-            <!-- Main Content -->
-            <div class="w-full md:w-auto md:flex-1 overflow-auto space-y-6">
+            <div class="acc-detail__item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+                <span>
+                    <span class="acc-detail__k">Email</span>
+                    <span class="acc-detail__v">{{ $user->email }}</span>
+                </span>
+            </div>
 
-                @if(session('success'))
-                    <div class="bg-green-50 border border-green-300 text-green-700 px-5 py-3 rounded text-sm">
-                        {{ session('success') }}
-                    </div>
-                @endif
+            <div class="acc-detail__item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg>
+                <span>
+                    <span class="acc-detail__k">Member since</span>
+                    <span class="acc-detail__v">{{ $user->created_at->format('F Y') }}</span>
+                </span>
+            </div>
 
-                <!-- Profile Info -->
-                <div class="w-full max-w-[951px] bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-8 lg:p-[50px]">
-                    <div>
-                        <h3 class="font-semibold leading-none text-3xl dark:text-white">{{ $user->name }}</h3>
-                        <span class="leading-none mt-3 block text-gray-500 dark:text-gray-400">Customer</span>
-                    </div>
-                    <div class="mt-5 sm:mt-8 md:mt-10 grid gap-4 sm:gap-6">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-3 sm:w-[18px] flex-none" viewBox="0 0 18 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M16.2 0.0615234H1.8C0.81 0.0615234 0.00899999 0.849023 0.00899999 1.81152L0 12.3115C0 13.274 0.81 14.0615 1.8 14.0615H16.2C17.19 14.0615 18 13.274 18 12.3115V1.81152C18 0.849023 17.19 0.0615234 16.2 0.0615234ZM16.2 3.56152L9 7.93652L1.8 3.56152V1.81152L9 6.18652L16.2 1.81152V3.56152Z" fill="#BB976D"/>
-                            </svg>
-                            <span class="leading-none font-medium text-base sm:text-lg text-title dark:text-white">{{ $user->email }}</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <svg class="w-3 sm:w-[15px] flex-none" viewBox="0 0 15 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M7.49927 0.0615234C3.36415 0.0615234 0 3.42567 0 7.56075C0 12.6925 6.71111 20.2262 6.99684 20.5444C7.26522 20.8434 7.7338 20.8428 8.00169 20.5444C8.28743 20.2262 14.9985 12.6925 14.9985 7.56075C14.9985 3.42567 11.6343 0.0615234 7.49927 0.0615234ZM7.49927 11.3338C5.41879 11.3338 3.72624 9.64123 3.72624 7.56075C3.72624 5.48027 5.41883 3.78772 7.49927 3.78772C9.57971 3.78772 11.2723 5.48031 11.2723 7.56079C11.2723 9.64127 9.57971 11.3338 7.49927 11.3338Z" fill="#BB976D"/>
-                            </svg>
-                            <span class="leading-none font-medium text-base sm:text-lg text-title dark:text-white">Member since {{ $user->created_at->format('M Y') }}</span>
-                        </div>
-                    </div>
-                    <div class="mt-6">
-                        <a href="{{ url('/edit-account') }}" class="btn btn-solid" data-text="Edit Profile">
-                            <span>Edit Profile</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Order History -->
-                <div class="bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-8 lg:p-[50px] order-history-table">
-                    <h4 class="font-semibold text-xl md:text-2xl leading-none mb-5 dark:text-white">Order History</h4>
-                    @if($orders->isEmpty())
-                        <p class="text-gray-500 dark:text-gray-400 text-base">You haven't placed any orders yet. <a href="{{ url('/shop') }}" class="text-primary hover:underline">Start shopping</a>.</p>
-                    @else
-                    <ul class="order-history">
-                        <!-- Table Heading -->
-                        <li class="title flex items-center justify-between gap-5 pb-[10px] sm:pb-5 border-b border-bdr-clr dark:border-bdr-clr-drk">
-                            <span class="cart-product-title text-base md:text-lg font-semibold leading-none text-title dark:text-white block w-[200px] sm:w-[280px] xl:w-[320px]">Order</span>
-                            <span class="text-base md:text-lg font-semibold leading-none text-title dark:text-white w-[80px]">Total</span>
-                            <span class="text-base md:text-lg font-semibold leading-none text-title dark:text-white w-[110px]">Status</span>
-                            <span class="text-base md:text-lg font-semibold leading-none text-title dark:text-white hidden sm:block w-[100px]">Date</span>
-                        </li>
-
-                        @foreach($orders as $order)
-                        <li class="flex items-center justify-between gap-5 py-[15px] border-b border-bdr-clr dark:border-bdr-clr-drk last:border-b-0">
-                            <div class="flex items-center gap-3 md:gap-4 w-[200px] sm:w-[280px] xl:w-[320px]">
-                                <div class="flex-1">
-                                    <span class="text-[13px] text-gray-500 dark:text-gray-400 leading-none">Order #{{ $order->id }}</span>
-                                    <h5 class="font-semibold leading-none mt-2 text-base dark:text-white">
-                                        {{ $order->items->count() }} item{{ $order->items->count() !== 1 ? 's' : '' }}
-                                        @if($order->items->first())
-                                            &mdash; {{ Str::limit($order->items->first()->name, 28) }}
-                                        @endif
-                                    </h5>
-                                </div>
-                            </div>
-
-                            <span class="text-base leading-none text-title dark:text-white font-semibold w-[80px]">${{ number_format($order->total, 2) }}</span>
-
-                            <div class="w-[110px]">
-                                @php
-                                    $statusColor = match($order->status) {
-                                        'completed' => 'bg-[#31A051]',
-                                        'processing' => 'bg-[#3B82F6]',
-                                        'cancelled'  => 'bg-[#E13939]',
-                                        default      => 'bg-[#EC991D]',
-                                    };
-                                @endphp
-                                <span class="{{ $statusColor }} py-[6px] px-[10px] font-semibold leading-none text-white text-xs rounded capitalize">
-                                    {{ $order->status }}
-                                </span>
-                            </div>
-
-                            <span class="text-sm text-gray-500 dark:text-gray-400 hidden sm:block w-[100px]">{{ $order->created_at->format('d M Y') }}</span>
-                        </li>
-                        @endforeach
-                    </ul>
-                    @endif
-                </div>
-
+            <div class="acc-detail__item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>
+                    <span class="acc-detail__k">Account type</span>
+                    <span class="acc-detail__v">{{ ucfirst($user->role ?? 'customer') }}</span>
+                </span>
             </div>
         </div>
-    </div>
-</div>
-<!-- My Account End -->
+    </section>
+
+    {{-- Recent orders --}}
+    <section class="acc-panel" aria-labelledby="acc-orders-title">
+        <div class="acc-panel__head">
+            <h2 class="acc-panel__title" id="acc-orders-title">Recent orders</h2>
+            @if ($orders->isNotEmpty())
+                <a class="acc-link" href="{{ url('/order-history') }}">
+                    View all
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            @endif
+        </div>
+
+        @if ($orders->isEmpty())
+            <div class="acc-empty">
+                <div class="acc-empty__icon" aria-hidden="true">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+                </div>
+                <p class="acc-empty__title">No orders yet</p>
+                <p class="acc-empty__text">When you place an order, it'll show up here with its status and tracking number.</p>
+                <a class="acc-btn" href="{{ url('/shop') }}">Start shopping</a>
+            </div>
+        @else
+            <ul class="acc-orders">
+                @foreach ($orders->take(5) as $order)
+                    <li class="acc-order">
+                        <div class="acc-order__main">
+                            <div class="acc-order__thumbs">
+                                @foreach ($order->items->take(3) as $item)
+                                    @php $img = $item->product?->image; @endphp
+                                    @if ($img)
+                                        <img
+                                            class="acc-order__thumb"
+                                            src="{{ Str::startsWith($img, 'assets/') ? asset($img) : Storage::url($img) }}"
+                                            alt="" width="44" height="44" loading="lazy"
+                                        >
+                                    @endif
+                                @endforeach
+
+                                @if ($order->items->count() > 3)
+                                    <span class="acc-order__more">+{{ $order->items->count() - 3 }}</span>
+                                @endif
+                            </div>
+
+                            <div style="min-width:0">
+                                <span class="acc-order__id">
+                                    {{ $order->tracking_number ?? '#' . $order->id }}
+                                    &middot; {{ $order->items->count() }} item{{ $order->items->count() === 1 ? '' : 's' }}
+                                </span>
+                                <p class="acc-order__name">{{ $order->items->first()?->name ?? 'Order' }}</p>
+                            </div>
+                        </div>
+
+                        <div class="acc-order__meta">
+                            <span class="acc-order__date">{{ $order->created_at->format('d M Y') }}</span>
+                            <span class="acc-order__total">${{ number_format($order->total, 2) }}</span>
+                            <x-account.status :status="$order->status" />
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+    </section>
+
+</x-account.shell>
 
 @include('includes.footer')
 

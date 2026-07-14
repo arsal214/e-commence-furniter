@@ -68,22 +68,41 @@ class Product extends Model
     }
 
     /**
-     * Returns a display-friendly price string (e.g. "$122.75" or "$122.75 - $140.99")
+     * The price a customer actually pays: sale_price when discounted, else price.
+     * Single source of truth for the discount rule — everything that charges or
+     * displays a price should go through this rather than re-deriving it.
      */
-    public function getDisplayPriceAttribute(): string
+    public function getEffectivePriceAttribute(): float
     {
-        $main = '$' . number_format($this->price, 2);
-        if ($this->sale_price) {
-            return $main . ' - $' . number_format($this->sale_price, 2);
-        }
-        return $main;
+        $sale = $this->sale_price === null ? null : (float) $this->sale_price;
+
+        return $sale !== null && $sale > 0 ? $sale : (float) $this->price;
     }
 
     /**
-     * Whether the product has an original price crossed out (sale_price is the discounted one)
+     * The effective price, formatted (e.g. "$122.75").
+     *
+     * Views pair this with a struck-through {{ $product->price }} when
+     * has_strike is true, so it must be the *current* price, not a range.
+     */
+    public function getDisplayPriceAttribute(): string
+    {
+        return '$' . number_format($this->effective_price, 2);
+    }
+
+    /**
+     * The original price to strike through, or null when nothing is discounted.
+     */
+    public function getWasPriceAttribute(): ?string
+    {
+        return $this->has_strike ? '$' . number_format($this->price, 2) : null;
+    }
+
+    /**
+     * Whether price should be shown crossed out (sale_price is the discounted one).
      */
     public function getHasStrikeAttribute(): bool
     {
-        return !is_null($this->sale_price);
+        return $this->effective_price < (float) $this->price;
     }
 }

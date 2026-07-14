@@ -1,51 +1,45 @@
-<!-- resources/views/forger-password.blade.php -->
-@extends('layouts.main')
+{{-- resources/views/forger-password.blade.php --}}
+@extends('layouts.no-header')
 
-@section('title', 'Forger-Password Page')
-@section('robots', 'noindex, nofollow')
+@section('title', 'Forgot your password? — PeytonGhalib')
 
 @section('content')
 
-@include('includes.navbar')
+<x-auth.shell
+    eyebrow="Password Help"
+    heading="Forgot your password?"
+    subheading="Enter the email on your account and we'll send you a link to set a new one."
+>
 
-<div class="flex">
-    <div class="w-1/2 hidden md:block lg:flex-1">
-        <img class="h-full object-cover" src="{{ asset('assets/img/bg/forget-pass.jpg') }}" alt="forget password">
-    </div>
-    <div class="w-full md:w-1/2 lg:max-w-lg xl:max-w-3xl lg:w-full py-16 px-[20px] sm:px-8 lg:p-16 xl:p-24 relative z-10 flex items-center overflow-hidden">
-        <div class="mx-auto md:mx-0 max-w-md">
-            <h2 class="leading-none text-4xl font-bold" data-aos="fade-up">Forget Password</h2>
-            <p class="text-lg mt-[15px]" data-aos="fade-up" data-aos-delay="100">Buy & sale your exclusive product only on PeytonGhalib</p>
+    <form method="POST" action="{{ route('password.email') }}" data-auth-form novalidate>
+        @csrf
 
-            @if (session('status'))
-                <div class="mt-5 p-4 bg-green-50 border border-green-400 text-green-700 text-base" data-aos="fade-up">
-                    {{ session('status') }}
-                </div>
-            @endif
+        <x-auth.field
+            name="email"
+            label="Email address"
+            type="email"
+            icon="mail"
+            placeholder="name@example.com"
+            autocomplete="email"
+            inputmode="email"
+            required
+            autofocus
+        />
 
-            <form action="{{ route('password.email') }}" method="POST">
-                @csrf
-                <div class="mt-7" data-aos="fade-up" data-aos-delay="200">
-                    <label class="text-base sm:text-lg font-medium leading-none mb-2.5 block dark:text-white">Email</label>
-                    <input name="email" value="{{ old('email') }}" required class="w-full h-12 md:h-14 bg-white dark:bg-transparent border border-bdr-clr focus:border-primary p-4 outline-none duration-300" type="email" placeholder="Enter your email address">
-                    @error('email')
-                        <span class="text-red-500 text-sm mt-2 block">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div data-aos="fade-up" data-aos-delay="300">
-                    <button type="submit" class="btn btn-theme-solid mt-[15px]" data-text="Send Info">
-                        <span>Send Info</span>
-                    </button>
-                </div>
-            </form>
-
-            <p class="text-lg mt-[15px]" data-aos="fade-up" data-aos-delay="400">
-                Note: We will send a password reset link to your email
-            </p>
+        <div class="pgh-auth__note">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+            </svg>
+            <span>The link expires after 60 minutes. Check your spam folder if it doesn't arrive.</span>
         </div>
-    </div>
-</div>
-  
-@include('includes.footer')
-  
+
+        <x-auth.submit label="Send reset link" loading="Sending the link…" />
+    </form>
+
+    <x-slot:footer>
+        Remembered it? <a href="{{ url('/login') }}">Back to sign in</a>
+    </x-slot:footer>
+
+</x-auth.shell>
+
 @endsection

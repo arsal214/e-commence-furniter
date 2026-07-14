@@ -1,283 +1,273 @@
-<!-- resources/views/cart.blade.php -->
+{{-- resources/views/cart.blade.php --}}
 @extends('layouts.main')
 
-@section('title', 'Cart | PeytonGhalib')
+@section('title', 'Your cart — PeytonGhalib')
 @section('robots', 'noindex, nofollow')
+
+@php
+    $itemCount = collect($cartItems)->sum('qty');
+@endphp
 
 @section('content')
 
 @include('includes.navbar')
 
-<!-- Banner Start -->
-<div class="flex items-center gap-4 flex-wrap bg-overlay p-14 sm:p-16 before:bg-title before:bg-opacity-70" style="background-image:url('{{ asset('assets/img/shortcode/breadcumb.jpg') }}');">
-    <div class="text-center w-full">
-        <h2 class="text-white text-8 md:text-[40px] font-normal leading-none text-center text-2xl">Cart</h2>
-        <ul class="flex items-center justify-center gap-[10px] text-base md:text-lg leading-none font-normal text-white mt-3 md:mt-4">
-            <li><a href="{{ url('/') }}">Home</a></li>
-            <li>/</li>
-            <li class="text-primary">Cart</li>
-        </ul>
-    </div>
-</div>
-<!-- Banner End -->
+<x-checkout.shell step="cart" title="Your cart">
 
-<!-- Cart Area Start -->
-<div class="s-py-100" data-aos="fade-up">
-    <div class="container ">
-        <div class="flex xl:flex-row flex-col gap-[30px] lg:gap-[30px] xl:gap-[70px]">
-            <div class="flex-1 overflow-hidden">
-                <table id="cart-table" class="responsive nowrap table-wrapper" style="width:100%">
-                    <thead class="table-header">
-                        <tr>
-                            <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">Product Info</th>
-                            <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">Price</th>
-                            <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">Quantity</th>
-                            <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">Total</th>
-                            <th class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white">Remove</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-body">
-                        @forelse ($cartItems as $item)
-                        <tr>
-                            <td class="md:w-[42%]">
-                                <div class="flex items-center gap-3 md:gap-4 lg:gap-6 cart-product">
-                                    <div class="w-14 sm:w-20 flex-none">
-                                        @if($item['image'] && str_starts_with($item['image'], 'assets/'))
-                                            <img src="{{ asset($item['image']) }}" alt="{{ $item['name'] }}">
-                                        @elseif($item['image'])
-                                            <img src="{{ Storage::url($item['image']) }}" alt="{{ $item['name'] }}">
-                                        @else
-                                            <img src="{{ asset('assets/img/gallery/cart/cart-01.jpg') }}" alt="{{ $item['name'] }}">
-                                        @endif
-                                    </div>
-                                    <div class="flex-1">
-                                        <h5 class="font-semibold leading-none text-xl dark:text-white">
-                                            <a href="{{ route('product-details', $item['slug']) }}">{{ $item['name'] }}</a>
-                                        </h5>
-                                        @if(!empty($item['color']) || !empty($item['size']))
-                                        <div class="flex flex-wrap gap-x-3 gap-y-1 mt-2">
-                                            @if(!empty($item['color']))
-                                            <span class="text-xs text-gray-500 dark:text-gray-400">
-                                                <span class="font-medium text-title dark:text-white">Color:</span> {{ $item['color'] }}
-                                            </span>
-                                            @endif
-                                            @if(!empty($item['size']))
-                                            <span class="text-xs text-gray-500 dark:text-gray-400">
-                                                <span class="font-medium text-title dark:text-white">Size:</span> {{ $item['size'] }}
-                                            </span>
-                                            @endif
-                                        </div>
-                                        @endif
-                                    </div>
+    @if (empty($cartItems))
+
+        <section class="co-panel">
+            <div class="co-empty">
+                <div class="co-empty__icon" aria-hidden="true">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M2 3h3l2.4 12h11L21 7H6"/></svg>
+                </div>
+                <p class="co-empty__title">Your cart is empty</p>
+                <p class="co-empty__text">Once you add something you love, it'll show up here.</p>
+                <a class="co-submit" href="{{ url('/shop') }}" style="text-decoration:none">Continue shopping</a>
+            </div>
+        </section>
+
+    @else
+
+        <div class="co__grid">
+
+            {{-- ── Left: line items ─────────────────────────── --}}
+            <div>
+                <section class="co-panel" aria-labelledby="co-items-title">
+                    <h2 class="co-panel__title" id="co-items-title">
+                        {{ $itemCount }} item{{ $itemCount === 1 ? '' : 's' }} in your cart
+                    </h2>
+                    <p class="co-panel__hint">Prices and stock are confirmed at checkout.</p>
+
+                    <ul class="co-lines">
+                        @foreach ($cartItems as $item)
+                            <li class="co-line">
+                                @php
+                                    $img = $item['image'] ?? null;
+                                    $src = $img
+                                        ? (Str::startsWith($img, 'assets/') ? asset($img) : Storage::url($img))
+                                        : asset('assets/img/gallery/cart/cart-01.jpg');
+                                @endphp
+
+                                <a href="{{ route('product-details', $item['slug']) }}">
+                                    <img class="co-line__thumb" src="{{ $src }}" alt="{{ $item['name'] }}"
+                                         width="76" height="76" loading="lazy">
+                                </a>
+
+                                <div style="min-width:0">
+                                    <p class="co-line__name">
+                                        <a href="{{ route('product-details', $item['slug']) }}">{{ $item['name'] }}</a>
+                                    </p>
+
+                                    @if (!empty($item['color']) || !empty($item['size']))
+                                        <p class="co-line__variant">
+                                            {{ collect([$item['color'] ?? null, $item['size'] ?? null])->filter()->implode(' · ') }}
+                                        </p>
+                                    @endif
+
+                                    <p class="co-line__unit">${{ number_format($item['price'], 2) }} each</p>
                                 </div>
-                            </td>
-                            <td>
-                                <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">${{ number_format($item['price'], 2) }}</h6>
-                            </td>
-                            <td>
-                                <form action="{{ route('cart.update') }}" method="POST" class="inc-dec flex items-center gap-2">
+
+                                {{-- Quantity. The +/- buttons submit this form; the number
+                                     input submits on change, so keyboard users don't need
+                                     a separate "update" click. --}}
+                                <form method="POST" action="{{ route('cart.update') }}" data-qty-form>
                                     @csrf
                                     <input type="hidden" name="cart_key" value="{{ $item['key'] }}">
-                                    <button type="button" class="dec w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
-                                        <svg class="fill-current text-title dark:text-white" width="14" height="2" viewBox="0 0 14 2" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M10.4361 0.203613H12.0736L7.81774 0.203615H13.8729V1.80309H7.81774L3.50809 1.80309H1.87053L6.18017 1.80309H0.125V0.203615H6.18017L10.4361 0.203613Z"/>
-                                        </svg>
-                                    </button>
-                                    <input class="w-6 h-auto outline-none bg-transparent text-base leading-none text-title dark:text-white text-center cart-qty-input" name="qty" type="number" value="{{ $item['qty'] }}" min="1">
-                                    <button type="button" class="inc w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center">
-                                        <svg class="fill-current text-title dark:text-white" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M6.18017 0.110352H7.81774V6.16553H13.8729V7.76501H7.81774V13.8963H6.18017V7.76501H0.125V6.16553H6.18017V0.110352Z"/>
-                                        </svg>
-                                    </button>
-                                    <button type="submit" class="ml-1 text-xs text-primary underline">Update</button>
+
+                                    <div class="co-qty">
+                                        <button class="co-qty__btn" type="button" data-qty-dec
+                                                aria-label="Decrease quantity of {{ $item['name'] }}"
+                                                @disabled($item['qty'] <= 1)>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>
+                                        </button>
+
+                                        <input class="co-qty__input" type="number" name="qty" min="1"
+                                               value="{{ $item['qty'] }}" data-qty-input
+                                               aria-label="Quantity of {{ $item['name'] }}">
+
+                                        <button class="co-qty__btn" type="button" data-qty-inc
+                                                aria-label="Increase quantity of {{ $item['name'] }}">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                                        </button>
+                                    </div>
+
+                                    <noscript>
+                                        <button class="co-ghost" type="submit" style="min-height:36px; margin-top:6px; font-size:13px">Update</button>
+                                    </noscript>
                                 </form>
-                            </td>
-                            <td>
-                                <h6 class="text-base md:text-lg leading-none text-title dark:text-white font-semibold">${{ number_format($item['price'] * $item['qty'], 2) }}</h6>
-                            </td>
-                            <td>
-                                <form action="{{ route('cart.remove') }}" method="POST">
+
+                                <span class="co-line__total">${{ number_format($item['price'] * $item['qty'], 2) }}</span>
+
+                                <form method="POST" action="{{ route('cart.remove') }}">
                                     @csrf
                                     <input type="hidden" name="cart_key" value="{{ $item['key'] }}">
-                                    <button type="submit" class="w-8 h-8 bg-[#E8E9EA] dark:bg-dark-secondary flex items-center justify-center ml-auto duration-300 text-title dark:text-white hover:bg-red-100">
-                                        <svg class="fill-current" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M0.546875 1.70822L1.70481 0.550293L5.98646 4.83195L10.2681 0.550293L11.3991 1.6813L7.11746 5.96295L11.453 10.2985L10.295 11.4564L5.95953 7.12088L1.67788 11.4025L0.546875 10.2715L4.82853 5.98988L0.546875 1.70822Z"/>
-                                        </svg>
+                                    <button class="co-line__remove" type="submit" aria-label="Remove {{ $item['name'] }} from cart">
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
                                     </button>
                                 </form>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5" class="text-center py-12">
-                                <p class="text-lg text-title dark:text-white">Your cart is empty.</p>
-                                <a href="{{ url('/shop') }}" class="btn btn-sm btn-theme-solid mt-4 inline-block !text-white">Continue Shopping</a>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                            </li>
+                        @endforeach
+                    </ul>
+                </section>
+
+                <form method="POST" action="{{ route('cart.clear') }}" style="margin-top:14px">
+                    @csrf
+                    <button class="co-back" type="submit" style="width:auto; margin:0">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+                        Clear cart
+                    </button>
+                </form>
             </div>
 
-            <div>
-                <div class="mb-[30px]">
-                    <h4 class="text-lg md:text-xl font-semibold leading-none text-title dark:text-white mb-[15px]">
-                        Promo Code
-                    </h4>
-                    <div class="flex xs:flex-row gap-3">
-                        <input class="h-12 md:h-14 bg-snow dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300 placeholder:text-title dark:placeholder:text-white flex-1" type="text" placeholder="Coupon Code">
-                        <button class="btn btn-solid" data-text="Apply">
-                            <span>Apply</span>
-                        </button>
+            {{-- ── Right: summary ───────────────────────────── --}}
+            <div class="co-summary">
+                <section class="co-panel" aria-labelledby="co-sum-title">
+                    <h2 class="co-panel__title" id="co-sum-title">Summary</h2>
+                    <p class="co-panel__hint">Shipping is calculated at the next step.</p>
+
+                    <div class="co-sum__row">
+                        <span>Subtotal ({{ $itemCount }} item{{ $itemCount === 1 ? '' : 's' }})</span>
+                        <span>${{ number_format($cartTotal, 2) }}</span>
                     </div>
-                </div>
-                <div class="bg-[#FAFAFA] dark:bg-dark-secondary pt-[30px] md:pt-[40px] px-[30px] md:px-[40px] pb-[30px] border border-[#17243026] border-opacity-15 rounded-xl">   
-                    <div class="text-right flex justify-end flex-col w-full ml-auto mr-0">
-                        <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium">
-                            <span>Sub Total:</span>
-                            <span>${{ number_format($cartTotal, 2) }}</span>
-                        </div>
+                    <div class="co-sum__row">
+                        <span>Shipping</span>
+                        <span>Free</span>
                     </div>
-                    <div class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk">
-                        <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                            <div>
-                                <label class="flex items-center gap-[10px] categoryies-iteem">
-                                    <input class="appearance-none hidden" type="radio" name="item-type">
-                                    <span class="w-4 h-4 rounded-full border border-title dark:border-white flex items-center justify-center duration-300">
-                                        <svg class="duration-300 opacity-0" width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect width="10" height="10" rx="5" fill="#BB976D"/>
-                                        </svg>
-                                    </span>
-                                    <span class="sm:text-lg text-title dark:text-white block sm:leading-none transform translate-y-[3px] select-none">Free Shipping:</span>
-                                </label>
-                            </div>
-                            <span> $0</span>
-                        </div>
-                        <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                            <div>
-                                <label class="flex items-center gap-[10px] categoryies-iteem">
-                                    <input class="appearance-none hidden" type="radio" name="item-type">
-                                    <span class="w-4 h-4 rounded-full border border-title dark:border-white flex items-center justify-center duration-300">
-                                        <svg class="duration-300 opacity-0" width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect width="10" height="10" rx="5" fill="#BB976D"/>
-                                        </svg>
-                                    </span>
-                                    <span class="sm:text-lg text-title dark:text-white block sm:leading-none transform translate-y-[3px] select-none"> Fast Shipping:</span>
-                                </label>
-                            </div>
-                            <span>$10</span>
-                        </div>
-                        <div class="flex justify-between flex-wrap text-base sm:text-lg text-title dark:text-white font-medium mt-3">
-                            <div>
-                                <label class="flex items-center gap-[10px] categoryies-iteem">
-                                    <input class="appearance-none hidden" type="radio" name="item-type">
-                                    <span class="w-4 h-4 rounded-full border border-title dark:border-white flex items-center justify-center duration-300">
-                                        <svg class="duration-300 opacity-0" width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect width="10" height="10" rx="5" fill="#BB976D"/>
-                                        </svg>
-                                    </span>
-                                    <span class="sm:text-lg text-title dark:text-white block sm:leading-none transform translate-y-[3px] select-none"> Local Pickup:</span>
-                                </label>
-                            </div>
-                            <span>$15</span>
-                        </div>
+
+                    <div class="co-sum__rule"></div>
+
+                    <div class="co-sum__total">
+                        <span>Total</span>
+                        <b>${{ number_format($cartTotal, 2) }}</b>
                     </div>
-                    <div class="mt-6 pt-6 border-t border-bdr-clr dark:border-bdr-clr-drk">
-                        <div class="flex justify-between flex-wrap font-semibold leading-none text-2xl">
-                            <span>Total:</span>
-                            <span id="cart-grand-total">&nbsp;${{ number_format($cartTotal, 2) }}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="sm:mt-[10px] py-5 flex items-end gap-3 flex-wrap justify-end">
-                    <a href="{{ url('/shop') }}" class="btn btn-sm btn-outline" data-text="Continue Shopping">
-                        Continue Shopping
-                    </a>
+
                     @auth
-                        <a href="{{ url('/checkout') }}" class="btn btn-sm btn-theme-solid !text-white hover:!text-[#bb976d] before:!z-[-1]">
-                            Checkout
+                        <a class="co-submit" href="{{ url('/checkout') }}" style="text-decoration:none">
+                            Proceed to checkout
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </a>
                     @else
-                        <button onclick="document.getElementById('login-required-modal').classList.remove('hidden')"
-                            class="btn btn-sm btn-theme-solid !text-white hover:!text-[#bb976d] before:!z-[-1]">
-                            Checkout
+                        <button class="co-submit" type="button" data-signin-open>
+                            Proceed to checkout
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </button>
                     @endauth
+
+                    <a class="co-back" href="{{ url('/shop') }}">Continue shopping</a>
+
+                    <p class="co-secure">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                        Secure, encrypted checkout
+                    </p>
+
+                    <div class="co-cards" aria-hidden="true">
+                        <img src="{{ asset('assets/img/Payment/payment-01.png') }}" alt="" loading="lazy">
+                        <img src="{{ asset('assets/img/Payment/payment-02.png') }}" alt="" loading="lazy">
+                        <img src="{{ asset('assets/img/Payment/payment-03.png') }}" alt="" loading="lazy">
+                    </div>
+                </section>
+            </div>
+
+        </div>
+
+    @endif
+
+    {{-- Sign-in gate for guests --}}
+    @guest
+        <div class="co-modal" id="signin-modal" role="dialog" aria-modal="true" aria-labelledby="signin-title" hidden>
+            <div class="co-modal__scrim" data-signin-close></div>
+
+            <div class="co-modal__box">
+                <button class="co-modal__close" type="button" data-signin-close aria-label="Close">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+
+                <div class="co-modal__icon" aria-hidden="true">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+                </div>
+
+                <h2 class="co-modal__title" id="signin-title">Sign in to check out</h2>
+                <p class="co-modal__text">Your cart is saved. Sign in or create an account to complete your order.</p>
+
+                <div class="co-modal__actions">
+                    <a class="co-submit" href="{{ url('/login') }}?redirect={{ urlencode(url('/checkout')) }}" style="text-decoration:none">Sign in</a>
+                    <a class="co-ghost" href="{{ url('/register') }}">Register</a>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-<!-- Cart Area End -->
+    @endguest
 
-<!-- Login Required Modal -->
-<div id="login-required-modal" class="hidden fixed inset-0 z-[999] flex items-center justify-center px-4">
-    <!-- Backdrop -->
-    <div class="absolute inset-0 bg-title bg-opacity-70 backdrop-blur-sm" onclick="document.getElementById('login-required-modal').classList.add('hidden')"></div>
-    <!-- Modal Box -->
-    <div class="relative bg-white dark:bg-title w-full max-w-md p-8 sm:p-10 z-10">
-        <button onclick="document.getElementById('login-required-modal').classList.add('hidden')"
-            class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 hover:bg-primary hover:text-white text-title dark:text-white duration-200">
-            <svg class="fill-current w-3 h-3" viewBox="0 0 12 12"><path d="M0.546875 1.70822L1.70481 0.550293L5.98646 4.83195L10.2681 0.550293L11.3991 1.6813L7.11746 5.96295L11.453 10.2985L10.295 11.4564L5.95953 7.12088L1.67788 11.4025L0.546875 10.2715L4.82853 5.98988L0.546875 1.70822Z"/></svg>
-        </button>
-        <div class="text-center mb-8">
-            <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 fill-current text-primary" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-            </div>
-            <h3 class="text-2xl font-semibold text-title dark:text-white leading-none">Sign in to Checkout</h3>
-            <p class="text-gray-500 dark:text-gray-400 mt-3 text-base">Please login or create an account to complete your purchase.</p>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-            <a href="{{ url('/login') }}?redirect={{ url('/checkout') }}"
-                class="btn btn-solid text-center" data-text="Login">
-                <span>Login</span>
-            </a>
-            <a href="{{ url('/register') }}"
-                class="btn btn-outline text-center" data-text="Register">
-                <span>Register</span>
-            </a>
-        </div>
-        <p class="text-center text-sm text-gray-400 dark:text-gray-500 mt-5">
-            Already have an account? <a href="{{ url('/login') }}" class="text-primary hover:underline">Sign in here</a>
-        </p>
-    </div>
-</div>
+</x-checkout.shell>
 
 @include('includes.footer')
 
+@endsection
+
 @push('scripts')
 <script>
-// Update grand total when shipping option selected
-(function() {
-    var subtotal = {{ $cartTotal }};
-    var shippingCosts = { 'free': 0, 'fast': 10, 'local': 15 };
-    var radios = document.querySelectorAll('input[name="item-type"]');
-    var labels = ['free', 'fast', 'local'];
-    var totalEl = document.getElementById('cart-grand-total');
+(function () {
+    'use strict';
 
-    radios.forEach(function(radio, i) {
-        radio.addEventListener('change', function() {
-            var shipping = shippingCosts[labels[i]] || 0;
-            totalEl.textContent = ' $' + (subtotal + shipping).toFixed(2);
-        });
-    });
-})();
+    /* ── Quantity stepper ───────────────────────────────────────
+       Submitting on change keeps the server as the source of truth for
+       stock limits — CartController clamps the qty and flashes a notice. */
+    document.querySelectorAll('[data-qty-form]').forEach(function (form) {
+        var input = form.querySelector('[data-qty-input]');
+        var dec   = form.querySelector('[data-qty-dec]');
+        var inc   = form.querySelector('[data-qty-inc]');
+        if (!input) return;
 
-document.querySelectorAll('.inc-dec').forEach(function(form) {
-    var input = form.querySelector('.cart-qty-input');
-    form.querySelector('.inc').addEventListener('click', function() {
-        input.value = parseInt(input.value) + 1;
-        form.submit();
-    });
-    form.querySelector('.dec').addEventListener('click', function() {
-        var val = parseInt(input.value);
-        if (val > 1) {
-            input.value = val - 1;
+        function submitWith(value) {
+            input.value = value;
             form.submit();
         }
+
+        if (dec) dec.addEventListener('click', function () {
+            var v = parseInt(input.value, 10) || 1;
+            if (v > 1) submitWith(v - 1);
+        });
+
+        if (inc) inc.addEventListener('click', function () {
+            var v = parseInt(input.value, 10) || 1;
+            submitWith(v + 1);
+        });
+
+        input.addEventListener('change', function () {
+            var v = parseInt(input.value, 10);
+            submitWith(!v || v < 1 ? 1 : v);
+        });
     });
-});
+
+    /* ── Sign-in modal ──────────────────────────────────────── */
+    var modal = document.getElementById('signin-modal');
+    if (!modal) return;
+
+    var opener  = document.querySelector('[data-signin-open]');
+    var lastFocused = null;
+
+    function open() {
+        lastFocused = document.activeElement;
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+        var first = modal.querySelector('a, button');
+        if (first) first.focus();
+    }
+
+    function close() {
+        modal.hidden = true;
+        document.body.style.overflow = '';
+        if (lastFocused) lastFocused.focus();   // return focus where it came from
+    }
+
+    if (opener) opener.addEventListener('click', open);
+    modal.querySelectorAll('[data-signin-close]').forEach(function (el) {
+        el.addEventListener('click', close);
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !modal.hidden) close();   // every modal needs an escape route
+    });
+})();
 </script>
 @endpush
-
-@endsection

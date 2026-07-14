@@ -1,129 +1,120 @@
-<!-- resources/views/order-history.blade.php -->
+{{-- resources/views/order-history.blade.php --}}
 @extends('layouts.main')
 
-@section('title', 'Order History')
+@section('title', 'Order History — PeytonGhalib')
 @section('robots', 'noindex, nofollow')
 
 @section('content')
 
 @include('includes.navbar')
 
-<!-- Banner Start -->
-<div class="flex items-center gap-4 flex-wrap bg-overlay p-14 sm:p-16 before:bg-title before:bg-opacity-70" style="background-image:url('{{ asset('assets/img/shortcode/breadcumb.jpg') }}');">
-    <div class="text-center w-full">
-        <h2 class="text-white text-8 md:text-[40px] font-normal leading-none text-center">Order History</h2>
-        <ul class="flex items-center justify-center gap-[10px] text-base md:text-lg leading-none font-normal text-white mt-3 md:mt-4">
-            <li><a href="{{ url('/') }}">Home</a></li>
-            <li>/</li>
-            <li class="text-primary">Orders</li>
-        </ul>
-    </div>
-</div>
-<!-- Banner End -->
+<x-account.shell
+    active="orders"
+    :user="$user"
+    crumb="Order History"
+    heading="Order history"
+    subheading="Every order you've placed, newest first."
+>
 
-<!-- Order History Start -->
-<div class="s-py-100" data-aos="fade-up">
-    <div class="container-fluid">
-        <div class="max-w-[1720px] mx-auto flex items-start gap-8 md:gap-12 2xl:gap-24 flex-col md:flex-row my-profile-navtab">
-
-            <!-- Sidebar Nav -->
-            <div class="w-full md:w-[200px] lg:w-[300px] flex-none">
-                <ul class="divide-y dark:divide-paragraph text-title dark:text-white text-base sm:text-lg lg:text-xl flex flex-col justify-center leading-none">
-                    <li class="pb-3 lg:pb-6 pl-6 lg:pl-12">
-                        <a class="duration-300 hover:text-primary" href="{{ url('/my-account') }}">My Account</a>
-                    </li>
-                    <li class="py-3 lg:py-6 pl-6 lg:pl-12">
-                        <a class="duration-300 hover:text-primary" href="{{ url('/edit-account') }}">Edit Account</a>
-                    </li>
-                    <li class="active text-primary py-3 lg:py-6 pl-6 lg:pl-12">
-                        <a class="duration-300 hover:text-primary" href="{{ url('/order-history') }}">Order History</a>
-                    </li>
-                    <li class="py-3 lg:py-6 pl-6 lg:pl-12">
-                        <a class="duration-300 hover:text-primary" href="{{ url('/wishlist') }}">Wishlist</a>
-                    </li>
-                    <li class="pt-3 lg:pt-6 pl-6 lg:pl-12">
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="duration-300 hover:text-primary">Logout</button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Main Content -->
-            <div class="w-full md:w-auto md:flex-1 overflow-auto">
-                <div class="bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-8 lg:p-[50px] order-history-table">
-                    <h4 class="font-semibold text-xl md:text-2xl leading-none mb-6 dark:text-white">Your Orders</h4>
-
-                    @if($orders->isEmpty())
-                        <div class="text-center py-12">
-                            <svg class="w-16 h-16 fill-current text-gray-300 dark:text-gray-600 mx-auto mb-4" viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/></svg>
-                            <p class="text-gray-500 dark:text-gray-400 text-lg">No orders yet.</p>
-                            <a href="{{ url('/shop') }}" class="btn btn-solid mt-6 inline-block" data-text="Start Shopping">
-                                <span>Start Shopping</span>
-                            </a>
-                        </div>
-                    @else
-                        @foreach($orders as $order)
-                        <div class="mb-6 border border-bdr-clr dark:border-bdr-clr-drk">
-                            <!-- Order Header -->
-                            <div class="flex flex-wrap items-center justify-between gap-4 p-4 sm:p-5 bg-white dark:bg-title border-b border-bdr-clr dark:border-bdr-clr-drk">
-                                <div class="flex flex-wrap gap-6">
-                                    <div>
-                                        <span class="text-xs text-gray-400 uppercase tracking-wide block mb-1">Order</span>
-                                        <span class="font-semibold text-title dark:text-white">#{{ $order->id }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-xs text-gray-400 uppercase tracking-wide block mb-1">Date</span>
-                                        <span class="font-semibold text-title dark:text-white">{{ $order->created_at->format('d M Y') }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-xs text-gray-400 uppercase tracking-wide block mb-1">Total</span>
-                                        <span class="font-semibold text-title dark:text-white">${{ number_format($order->total, 2) }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-xs text-gray-400 uppercase tracking-wide block mb-1">Payment</span>
-                                        <span class="font-semibold text-title dark:text-white capitalize">{{ $order->payment_method }}</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    @php
-                                        $statusColor = match($order->status) {
-                                            'completed'  => 'bg-[#31A051]',
-                                            'processing' => 'bg-[#3B82F6]',
-                                            'cancelled'  => 'bg-[#E13939]',
-                                            default      => 'bg-[#EC991D]',
-                                        };
-                                    @endphp
-                                    <span class="{{ $statusColor }} py-[6px] px-4 font-semibold leading-none text-white text-sm rounded capitalize">
-                                        {{ $order->status }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <!-- Order Items -->
-                            <div class="divide-y divide-bdr-clr dark:divide-bdr-clr-drk">
-                                @foreach($order->items as $item)
-                                <div class="flex items-center justify-between gap-4 p-4 sm:p-5">
-                                    <div class="flex items-center gap-4">
-                                        <div class="flex-1">
-                                            <p class="font-semibold text-title dark:text-white text-base leading-none">{{ $item->name }}</p>
-                                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Qty: {{ $item->qty }}</p>
-                                        </div>
-                                    </div>
-                                    <span class="font-semibold text-title dark:text-white">${{ number_format($item->total, 2) }}</span>
-                                </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        @endforeach
-                    @endif
-                </div>
-            </div>
+    <section class="acc-panel" aria-labelledby="acc-orders-title">
+        <div class="acc-panel__head">
+            <h2 class="acc-panel__title" id="acc-orders-title">
+                Your orders
+                @if ($orders->isNotEmpty())
+                    <span class="acc-order__date">({{ $orders->count() }})</span>
+                @endif
+            </h2>
         </div>
-    </div>
-</div>
-<!-- Order History End -->
+
+        @forelse ($orders as $order)
+            <article class="acc-ordercard">
+
+                <header class="acc-ordercard__head">
+                    <div class="acc-ordercard__facts">
+                        <div>
+                            <span class="acc-ordercard__k">Order</span>
+                            <span class="acc-ordercard__v">#{{ $order->id }}</span>
+                        </div>
+                        <div>
+                            <span class="acc-ordercard__k">Date</span>
+                            <span class="acc-ordercard__v">{{ $order->created_at->format('d M Y') }}</span>
+                        </div>
+                        <div>
+                            <span class="acc-ordercard__k">Total</span>
+                            <span class="acc-ordercard__v">${{ number_format($order->total, 2) }}</span>
+                        </div>
+                        <div>
+                            <span class="acc-ordercard__k">Payment</span>
+                            <span class="acc-ordercard__v">
+                                {{ $order->payment_method === 'cod' ? 'Cash on delivery' : ucfirst($order->payment_method) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <x-account.status :status="$order->status" />
+                </header>
+
+                <ul class="acc-ordercard__items">
+                    @foreach ($order->items as $item)
+                        <li class="acc-ordercard__item">
+                            @php $img = $item->product?->image; @endphp
+                            @if ($img)
+                                <img
+                                    class="acc-ordercard__thumb"
+                                    src="{{ Str::startsWith($img, 'assets/') ? asset($img) : Storage::url($img) }}"
+                                    alt="" width="46" height="46" loading="lazy"
+                                >
+                            @endif
+
+                            <div style="min-width:0">
+                                <p class="acc-ordercard__name">
+                                    @if ($item->product?->slug)
+                                        <a class="acc-link" href="{{ route('product-details', $item->product->slug) }}">{{ $item->name }}</a>
+                                    @else
+                                        {{ $item->name }}
+                                    @endif
+                                </p>
+                                <p class="acc-ordercard__qty">
+                                    Qty {{ $item->qty }} &times; ${{ number_format($item->price, 2) }}
+                                </p>
+                            </div>
+
+                            <span class="acc-ordercard__line">${{ number_format($item->total, 2) }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+
+                <footer class="acc-ordercard__foot">
+                    <span class="acc-ordercard__track">
+                        @if ($order->tracking_number)
+                            Tracking <strong>{{ $order->tracking_number }}</strong>
+                        @else
+                            No tracking number yet
+                        @endif
+                        @if ($order->shipping_cost > 0)
+                            &middot; Shipping ${{ number_format($order->shipping_cost, 2) }}
+                        @else
+                            &middot; Free shipping
+                        @endif
+                    </span>
+
+                    <span class="acc-ordercard__total">Total ${{ number_format($order->total, 2) }}</span>
+                </footer>
+
+            </article>
+        @empty
+            <div class="acc-empty">
+                <div class="acc-empty__icon" aria-hidden="true">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+                </div>
+                <p class="acc-empty__title">No orders yet</p>
+                <p class="acc-empty__text">Once you place an order, you'll be able to track it right here.</p>
+                <a class="acc-btn" href="{{ url('/shop') }}">Start shopping</a>
+            </div>
+        @endforelse
+    </section>
+
+</x-account.shell>
 
 @include('includes.footer')
 

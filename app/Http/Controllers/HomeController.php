@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\FlashDeal;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Review;
 use App\Models\Slider;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
@@ -47,12 +49,50 @@ class HomeController extends Controller
 
     public function about()
     {
-        return view('about');  
+        // Real reviews with something to say — no fabricated testimonials.
+        $reviews = Review::with(['user:id,name', 'product:id,name,slug'])
+            ->whereNotNull('comment')
+            ->where('comment', '!=', '')
+            ->where('rating', '>=', 4)
+            ->latest()
+            ->take(6)
+            ->get();
+
+        // A review is only "verified" if that customer actually bought that product.
+        // Reviewing is open to any signed-in user, so we can't assume it.
+        $verified = [];
+
+        if ($reviews->isNotEmpty()) {
+            $verified = OrderItem::query()
+                ->join('orders', 'orders.id', '=', 'order_items.order_id')
+                ->whereIn('orders.user_id', $reviews->pluck('user_id'))
+                ->whereIn('order_items.product_id', $reviews->pluck('product_id'))
+                ->get(['orders.user_id', 'order_items.product_id'])
+                ->map(fn ($row) => $row->user_id . '-' . $row->product_id)
+                ->flip()
+                ->toArray();
+        }
+
+        return view('about', [
+            // Counts are stated as fact on the page, so read them, don't hardcode them.
+            'productCount'  => Product::where('is_active', true)->count(),
+            'categoryCount' => Category::where('is_active', true)->count(),
+            'reviews'       => $reviews,
+            'verified'      => $verified,
+            'ratingAvg'     => round((float) Review::avg('rating'), 1),
+            'ratingCount'   => Review::count(),
+        ]);
     }
 
     public function faq()
     {
-        return view('faq');  
+        // Real category names, so the "what do you sell" answer can't go stale.
+        return view('faq', [
+            'categoryNames' => Category::where('is_active', true)
+                                       ->orderBy('name')
+                                       ->pluck('name')
+                                       ->all(),
+        ]);
     }
 
     public function termsAndConditions()
@@ -67,9 +107,14 @@ class HomeController extends Controller
 
     public function myAccount()
     {
-        $user   = Auth::user();
-        $orders = Order::where('user_id', $user->id)->with('items')->latest()->get();
-        return view('my-account', compact('user', 'orders'));
+        $user = Auth::user();
+
+        // items.product supplies the order thumbnails on the dashboard
+        $orders = Order::where('user_id', $user->id)->with('items.product')->latest()->get();
+
+        $wishlistCount = Wishlist::where('user_id', $user->id)->count();
+
+        return view('my-account', compact('user', 'orders', 'wishlistCount'));
     }
 
     public function editAccount()
@@ -106,18 +151,24 @@ class HomeController extends Controller
 
     public function orderHistory()
     {
-        $user   = Auth::user();
-        $orders = Order::where('user_id', $user->id)->with('items')->latest()->get();
+        $user = Auth::user();
+
+        // items.product supplies the thumbnails and product links
+        $orders = Order::where('user_id', $user->id)->with('items.product')->latest()->get();
+
         return view('order-history', compact('user', 'orders'));
     }
 
     public function wishlist()
     {
-        $wishlistItems = Wishlist::where('user_id', Auth::id())
+        $user = Auth::user();
+
+        $wishlistItems = Wishlist::where('user_id', $user->id)
                                  ->with('product')
                                  ->latest()
                                  ->get();
-        return view('wishlist', compact('wishlistItems'));
+
+        return view('wishlist', compact('user', 'wishlistItems'));
     }
     
     public function forgerPassword()

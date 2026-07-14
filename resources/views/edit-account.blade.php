@@ -1,121 +1,118 @@
-<!-- resources/views/edit-account.blade.php -->
+{{-- resources/views/edit-account.blade.php --}}
 @extends('layouts.main')
 
-@section('title', 'Edit Account')
+@section('title', 'Edit Account — PeytonGhalib')
 @section('robots', 'noindex, nofollow')
 
 @section('content')
 
 @include('includes.navbar')
 
-<!-- Banner Start -->
-<div class="flex items-center gap-4 flex-wrap bg-overlay p-14 sm:p-16 before:bg-title before:bg-opacity-70" style="background-image:url('{{ asset('assets/img/shortcode/breadcumb.jpg') }}');">
-    <div class="text-center w-full">
-        <h2 class="text-white text-8 md:text-[40px] font-normal leading-none text-center">Edit Account</h2>
-        <ul class="flex items-center justify-center gap-[10px] text-base md:text-lg leading-none font-normal text-white mt-3 md:mt-4">
-            <li><a href="{{ url('/') }}">Home</a></li>
-            <li>/</li>
-            <li class="text-primary">Account</li>
-        </ul>
-    </div>
-</div>
-<!-- Banner End -->
+<x-account.shell
+    active="edit"
+    :user="$user"
+    crumb="Edit Account"
+    heading="Edit account"
+    subheading="Update your details, or set a new password."
+>
 
-<!-- Edit Account Start -->
-<div class="s-py-100" data-aos="fade-up">
-    <div class="container-fluid">
-        <div class="max-w-[1720px] mx-auto flex items-start gap-8 md:gap-12 2xl:gap-24 flex-col md:flex-row my-profile-navtab">
+    <form method="POST" action="{{ route('account.update') }}" data-acc-form novalidate>
+        @csrf
 
-            <!-- Sidebar Nav -->
-            <div class="w-full md:w-[200px] lg:w-[300px] flex-none">
-                <ul class="divide-y dark:divide-paragraph text-title dark:text-white text-base sm:text-lg lg:text-xl flex flex-col justify-center leading-none">
-                    <li class="pb-3 lg:pb-6 pl-6 lg:pl-12">
-                        <a class="duration-300 hover:text-primary" href="{{ url('/my-account') }}">My Account</a>
-                    </li>
-                    <li class="active text-primary py-3 lg:py-6 pl-6 lg:pl-12">
-                        <a class="duration-300 hover:text-primary" href="{{ url('/edit-account') }}">Edit Account</a>
-                    </li>
-                    <li class="py-3 lg:py-6 pl-6 lg:pl-12">
-                        <a class="duration-300 hover:text-primary" href="{{ url('/order-history') }}">Order History</a>
-                    </li>
-                    <li class="py-3 lg:py-6 pl-6 lg:pl-12">
-                        <a class="duration-300 hover:text-primary" href="{{ url('/wishlist') }}">Wishlist</a>
-                    </li>
-                    <li class="pt-3 lg:pt-6 pl-6 lg:pl-12">
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="duration-300 hover:text-primary">Logout</button>
-                        </form>
-                    </li>
-                </ul>
+        {{-- Server-side error summary, announced immediately --}}
+        @if ($errors->any())
+            <div class="acc-alert" role="alert">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                <span>{{ $errors->first() }}</span>
+            </div>
+        @endif
+
+        <section class="acc-panel">
+
+            <fieldset class="acc-fieldset">
+                <legend class="acc-fieldset__legend">Personal information</legend>
+                <p class="acc-fieldset__hint">This is the name and email we use for your orders and receipts.</p>
+
+                <div class="acc-form__grid">
+                    <x-account.field
+                        name="name"
+                        label="Full name"
+                        icon="user"
+                        :value="$user->name"
+                        placeholder="Jane Doe"
+                        autocomplete="name"
+                        required
+                    />
+
+                    <x-account.field
+                        name="email"
+                        label="Email address"
+                        type="email"
+                        icon="mail"
+                        :value="$user->email"
+                        placeholder="name@example.com"
+                        autocomplete="email"
+                        inputmode="email"
+                        required
+                    />
+                </div>
+            </fieldset>
+
+            <fieldset class="acc-fieldset">
+                <legend class="acc-fieldset__legend">Change password</legend>
+                <p class="acc-fieldset__hint">Leave these blank to keep your current password.</p>
+
+                <div class="acc-form__grid">
+                    <x-account.field
+                        name="current_password"
+                        label="Current password"
+                        type="password"
+                        icon="lock"
+                        placeholder="Enter your current password"
+                        autocomplete="current-password"
+                        toggle
+                        full
+                    />
+
+                    {{-- requiredWith: filling "new password" makes the current one mandatory,
+                         which is exactly what HomeController::updateAccount enforces. --}}
+                    <x-account.field
+                        name="password"
+                        label="New password"
+                        type="password"
+                        icon="lock"
+                        placeholder="Create a new password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        toggle
+                        required-with="current_password"
+                    />
+
+                    <x-account.field
+                        name="password_confirmation"
+                        label="Confirm new password"
+                        type="password"
+                        icon="lock"
+                        placeholder="Re-enter new password"
+                        autocomplete="new-password"
+                        match="password"
+                        toggle
+                    />
+                </div>
+            </fieldset>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px">
+                <button class="acc-btn" type="submit" data-acc-submit>
+                    <svg class="acc-btn__spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/></svg>
+                    Save changes
+                </button>
+                <a class="acc-btn acc-btn--ghost" href="{{ url('/my-account') }}">Cancel</a>
             </div>
 
-            <!-- Main Content -->
-            <div class="w-full md:w-auto md:flex-1 overflow-auto">
+        </section>
+    </form>
 
-                @if(session('success'))
-                    <div class="bg-green-50 border border-green-300 text-green-700 px-5 py-3 rounded text-sm mb-6">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                <form action="{{ route('account.update') }}" method="POST">
-                    @csrf
-                    <div class="w-full max-w-[951px] bg-[#F8F8F9] dark:bg-dark-secondary p-5 sm:p-8 lg:p-[50px]">
-                        <h4 class="font-semibold text-xl md:text-2xl leading-none mb-6 dark:text-white">Personal Information</h4>
-
-                        <div class="flex items-start flex-col lg:flex-row gap-5 sm:gap-6">
-                            <!-- Left column -->
-                            <div class="grid gap-5 sm:gap-6 w-full lg:w-1/2">
-                                <div>
-                                    <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Full Name <span class="text-red-500">*</span></label>
-                                    <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border @error('name') border-red-400 @else border-[#E3E5E6] @enderror text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
-                                        type="text" name="name" value="{{ old('name', $user->name) }}" placeholder="Enter your full name" required>
-                                    @error('name')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
-                                </div>
-                                <div>
-                                    <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Email Address <span class="text-red-500">*</span></label>
-                                    <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border @error('email') border-red-400 @else border-[#E3E5E6] @enderror text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
-                                        type="email" name="email" value="{{ old('email', $user->email) }}" placeholder="Enter your email address" required>
-                                    @error('email')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
-                                </div>
-                            </div>
-
-                            <!-- Right column - password -->
-                            <div class="grid gap-5 sm:gap-6 w-full lg:w-1/2">
-                                <div>
-                                    <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Current Password</label>
-                                    <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border @error('current_password') border-red-400 @else border-[#E3E5E6] @enderror text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
-                                        type="password" name="current_password" placeholder="Enter current password (to change)">
-                                    @error('current_password')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
-                                </div>
-                                <div>
-                                    <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">New Password</label>
-                                    <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border @error('password') border-red-400 @else border-[#E3E5E6] @enderror text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
-                                        type="password" name="password" placeholder="Enter new password">
-                                    @error('password')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
-                                </div>
-                                <div>
-                                    <label class="text-base md:text-lg text-title dark:text-white leading-none mb-2 sm:mb-3 block">Confirm New Password</label>
-                                    <input class="w-full h-12 md:h-14 bg-white dark:bg-dark-secondary border border-[#E3E5E6] text-title dark:text-white focus:border-primary p-4 outline-none duration-300"
-                                        type="password" name="password_confirmation" placeholder="Confirm new password">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-5 sm:mt-8 md:mt-12">
-                            <button type="submit" class="btn btn-solid" data-text="Save Changes">
-                                <span>Save Changes</span>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Edit Account End -->
+</x-account.shell>
 
 @include('includes.footer')
 
