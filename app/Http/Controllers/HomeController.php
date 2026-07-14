@@ -290,12 +290,6 @@ class HomeController extends Controller
                         if ($b['max'] !== null) $x->whereRaw("{$eff} <= ?", [$b['max']]);
                     });
                 }
-            }))
-            ->when($except !== 'colors' && $f['colors'], fn($q) => $q->where(function ($w) use ($f) {
-                foreach ($f['colors'] as $c) $w->orWhereJsonContains('colors', $c);
-            }))
-            ->when($except !== 'sizes' && $f['sizes'], fn($q) => $q->where(function ($w) use ($f) {
-                foreach ($f['sizes'] as $s) $w->orWhereJsonContains('sizes', $s);
             }));
     }
 
@@ -310,8 +304,6 @@ class HomeController extends Controller
             'search'     => trim((string) $request->get('search', '')),
             'categories' => array_values(array_intersect((array) $request->get('category', []), $validSlugs)),
             'price'      => array_values(array_intersect((array) $request->get('price', []), array_keys(self::SHOP_PRICE_BUCKETS))),
-            'colors'     => array_values(array_filter((array) $request->get('color', []), 'is_string')),
-            'sizes'      => array_values(array_filter((array) $request->get('size', []), 'is_string')),
         ];
 
         $sort = array_key_exists($request->get('sort'), self::SHOP_SORTS) ? $request->get('sort') : 'latest';
@@ -328,12 +320,6 @@ class HomeController extends Controller
             ->when($sort === 'latest',     fn($q) => $q->latest())
             ->paginate(12)
             ->withQueryString();
-
-        // Facet values that actually exist in the catalogue (colors/sizes are JSON arrays).
-        $allColors = Product::where('is_active', true)->whereNotNull('colors')->pluck('colors')
-            ->flatten()->filter()->unique()->sort()->values();
-        $allSizes = Product::where('is_active', true)->whereNotNull('sizes')->pluck('sizes')
-            ->flatten()->filter()->unique()->sort()->values();
 
         // Counts per facet option. Small catalogue, so a count query per option is fine;
         // this would need rethinking (a single GROUP BY) at thousands of products.
@@ -352,16 +338,6 @@ class HomeController extends Controller
                 })->count();
         }
 
-        $colorCounts = [];
-        foreach ($allColors as $c) {
-            $colorCounts[$c] = (clone $this->shopQuery($f, 'colors'))->whereJsonContains('colors', $c)->count();
-        }
-
-        $sizeCounts = [];
-        foreach ($allSizes as $s) {
-            $sizeCounts[$s] = (clone $this->shopQuery($f, 'sizes'))->whereJsonContains('sizes', $s)->count();
-        }
-
         return view('shop', [
             'products'       => $products,
             'categories'     => $categories,
@@ -369,12 +345,8 @@ class HomeController extends Controller
             'sort'           => $sort,
             'sortOptions'    => self::SHOP_SORTS,
             'priceBuckets'   => self::SHOP_PRICE_BUCKETS,
-            'allColors'      => $allColors,
-            'allSizes'       => $allSizes,
             'categoryCounts' => $categoryCounts,
             'priceCounts'    => $priceCounts,
-            'colorCounts'    => $colorCounts,
-            'sizeCounts'     => $sizeCounts,
         ]);
     }
 

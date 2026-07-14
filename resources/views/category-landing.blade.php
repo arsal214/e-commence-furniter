@@ -296,8 +296,8 @@
         {{-- Price --}}
         <div class="flex items-baseline gap-3 mb-6">
             <span class="text-3xl font-extrabold text-[#172430]">${{ number_format($fpPrice, 2) }}</span>
-            @if($featuredProduct->sale_price)
-            <span class="text-base text-gray-400 line-through">${{ number_format($featuredProduct->price, 2) }}</span>
+            @if ($featuredProduct->was_price)
+            <span class="text-base text-gray-400 line-through">{{ $featuredProduct->was_price }}</span>
             @endif
         </div>
 
@@ -413,8 +413,8 @@
                 <span class="text-base font-bold text-[#172430] dark:text-white">
                     {{ $product->display_price }}
                 </span>
-                @if($product->sale_price)
-                <span class="text-xs text-gray-400 line-through">${{ number_format($product->price, 2) }}</span>
+                @if ($product->was_price)
+                <span class="text-xs text-gray-400 line-through">{{ $product->was_price }}</span>
                 @endif
             </div>
         </div>

@@ -132,6 +132,26 @@
     .pg-apply:hover { opacity: .9; }
     .pg-apply:focus-visible { outline: 2px solid #172430; outline-offset: 2px; }
 
+    /* Native select (opted out of niceSelect). appearance:none + our own chevron so it
+       looks consistent across browsers without the plugin rewriting the markup. */
+    .pg-native-select {
+        appearance: none; -webkit-appearance: none; -moz-appearance: none;
+        height: 44px; padding: 0 38px 0 14px;
+        border: 1px solid #E8E1D7; border-radius: 8px;
+        background-color: #fff; color: #172430;
+        font-size: 14px; line-height: 44px;
+        cursor: pointer; touch-action: manipulation;
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B6560' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+    }
+    .pg-native-select:hover { border-color: #BB976D; }
+    .pg-native-select:focus-visible { outline: 2px solid #BB976D; outline-offset: 2px; }
+    .dark .pg-native-select {
+        background-color: #172430; color: #fff; border-color: #2F3B45;
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23DBDBDB' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    }
+
     /* Mobile: the sidebar collapses behind a Filters disclosure */
     .pg-mobile-toggle { display: block; }
     @media (min-width: 1025px) {
@@ -153,8 +173,7 @@
         return url('/shop') . ($params ? '?' . http_build_query($params) : '');
     };
 
-    $hasFilters = $filters['categories'] || $filters['price'] || $filters['colors']
-        || $filters['sizes'] || $filters['search'] !== '';
+    $hasFilters = $filters['categories'] || $filters['price'] || $filters['search'] !== '';
 
     // One removable chip per active filter value.
     $chips = [];
@@ -167,12 +186,6 @@
     }
     foreach ($filters['price'] as $key) {
         $chips[] = ['label' => $priceBuckets[$key]['label'], 'url' => $shopUrl(['price' => array_values(array_diff($filters['price'], [$key]))])];
-    }
-    foreach ($filters['colors'] as $c) {
-        $chips[] = ['label' => $c, 'url' => $shopUrl(['color' => array_values(array_diff($filters['colors'], [$c]))])];
-    }
-    foreach ($filters['sizes'] as $s) {
-        $chips[] = ['label' => $s, 'url' => $shopUrl(['size' => array_values(array_diff($filters['sizes'], [$s]))])];
     }
 @endphp
 
@@ -267,50 +280,6 @@
                             </div>
                         </details>
 
-                        {{-- Colour — only rendered when the catalogue actually has colours --}}
-                        @if ($allColors->isNotEmpty())
-                            <details class="pg-facet" open>
-                                <summary>
-                                    Colour
-                                    <svg class="pg-facet__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-                                </summary>
-                                <div class="pg-facet__body">
-                                    @foreach ($allColors as $color)
-                                        @php $n = $colorCounts[$color] ?? 0; @endphp
-                                        <label class="pg-opt {{ $n === 0 ? 'pg-opt--off' : '' }}">
-                                            <input type="checkbox" name="color[]" value="{{ $color }}"
-                                                   @checked(in_array($color, $filters['colors'], true))>
-                                            {{-- Swatch is decorative; the name is always spelled out --}}
-                                            <span class="pg-opt__dot" style="background: {{ \App\Models\Product::colorHex($color) }}" aria-hidden="true"></span>
-                                            <span class="pg-opt__label">{{ $color }}</span>
-                                            <span class="pg-opt__count">({{ $n }})</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                            </details>
-                        @endif
-
-                        {{-- Size --}}
-                        @if ($allSizes->isNotEmpty())
-                            <details class="pg-facet" open>
-                                <summary>
-                                    Size
-                                    <svg class="pg-facet__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-                                </summary>
-                                <div class="pg-facet__body">
-                                    @foreach ($allSizes as $size)
-                                        @php $n = $sizeCounts[$size] ?? 0; @endphp
-                                        <label class="pg-opt {{ $n === 0 ? 'pg-opt--off' : '' }}">
-                                            <input type="checkbox" name="size[]" value="{{ $size }}"
-                                                   @checked(in_array($size, $filters['sizes'], true))>
-                                            <span class="pg-opt__label">{{ $size }}</span>
-                                            <span class="pg-opt__count">({{ $n }})</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                            </details>
-                        @endif
-
                         <div class="pg-facet__body" style="padding-top:16px;">
                             {{-- Kept for no-JS: with JS, changing any input auto-applies --}}
                             <button type="submit" class="pg-apply">Apply Filters</button>
@@ -335,8 +304,10 @@
 
                         <div class="flex items-center gap-2">
                             <label for="pg-sort" class="text-sm text-paragraph dark:text-white-light">Sort by</label>
-                            <select id="pg-sort" name="sort"
-                                    class="h-11 px-3 rounded-lg border border-gray-200 dark:border-bdr-clr-drk bg-white dark:bg-title text-sm text-title dark:text-white cursor-pointer focus:outline-none focus:border-primary">
+                            {{-- pg-native-select keeps niceSelect's hands off it: the plugin
+                                 mangles utility-styled selects and its jQuery-only change
+                                 event never reaches the auto-submit listener. --}}
+                            <select id="pg-sort" name="sort" class="pg-native-select">
                                 @foreach ($sortOptions as $value => $label)
                                     <option value="{{ $value }}" @selected($sort === $value)>{{ $label }}</option>
                                 @endforeach

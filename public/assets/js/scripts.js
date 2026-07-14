@@ -1281,7 +1281,10 @@ window.addEventListener('load',function() {
 
         // Nice Select 
         nice_select: function(){
-            $('select').niceSelect();
+            // .pg-native-select opts out: niceSelect copies the select's classes onto its
+            // generated div (breaking utility-styled selects) and signals picks with
+            // jQuery .trigger('change'), which never reaches addEventListener handlers.
+            $('select:not(.pg-native-select)').niceSelect();
          },
 
         //  Cart Table 

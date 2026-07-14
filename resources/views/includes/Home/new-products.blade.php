@@ -25,11 +25,17 @@
                 </div>
             @endif
 
-            <div class="absolute z-10 top-[76%] right-3 transform -translate-y-[40%] opacity-0 duration-300 transition-all group-hover:-translate-y-1/2 group-hover:opacity-100 flex flex-col items-end gap-3">
-                <a href="#" class="bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon">
-                    <svg class="dark:text-white fill-current" width="20" height="22" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.3927 0.0917969C15.4463 0.0917969 13.7401 0.959692 12.4584 2.60171C12.2875 2.8207 12.1351 3.03979 12.0001 3.25198C11.865 3.03974 11.7127 2.8207 11.5417 2.60171C10.2601 0.959692 8.55381 0.0917969 6.60743 0.0917969C2.93056 0.0917969 0.300781 3.17049 0.300781 6.86477C0.300781 11.089 3.7629 15.0701 11.5265 19.7733C11.672 19.8614 11.8361 19.9055 12.0001 19.9055C12.1641 19.9055 12.3281 19.8615 12.4737 19.7733C20.2372 15.0702 23.6994 11.089 23.6994 6.86482C23.6994 3.17246 21.0717 0.0917969 17.3927 0.0917969Z"/></svg>
-                    <span class="mt-1">Add to wishlist</span>
-                </a>
+            {{-- pg-card-actions: visible by default, hover-revealed only on pointer devices.
+                 Hover-only would leave these unreachable on touch. --}}
+            <div class="pg-card-actions pg-card-actions--slide absolute z-10 top-[76%] right-3 flex flex-col items-end gap-3">
+                {{-- Was an <a href="#"> with no product id: it looked live but did nothing --}}
+                <button type="button"
+                        class="wishlist-toggle-btn bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon"
+                        data-product-id="{{ $product->id }}"
+                        data-product-name="{{ $product->name }}">
+                    <svg class="dark:text-white fill-current wishlist-icon-outline" width="20" height="22" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.3927 0.0917969C15.4463 0.0917969 13.7401 0.959692 12.4584 2.60171C12.2875 2.8207 12.1351 3.03979 12.0001 3.25198C11.865 3.03974 11.7127 2.8207 11.5417 2.60171C10.2601 0.959692 8.55381 0.0917969 6.60743 0.0917969C2.93056 0.0917969 0.300781 3.17049 0.300781 6.86477C0.300781 11.089 3.7629 15.0701 11.5265 19.7733C11.672 19.8614 11.8361 19.9055 12.0001 19.9055C12.1641 19.9055 12.3281 19.8615 12.4737 19.7733C20.2372 15.0702 23.6994 11.089 23.6994 6.86482C23.6994 3.17246 21.0717 0.0917969 17.3927 0.0917969Z"/></svg>
+                    <span class="mt-1 wishlist-btn-text">Add to wishlist</span>
+                </button>
                 <form action="{{ route('cart.add') }}" method="POST" class="contents">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -39,7 +45,11 @@
                         <span class="mt-1">Add to Cart</span>
                     </button>
                 </form>
-                <button class="bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon quick-view">
+                {{-- pg-qv-btn-trigger, not the template's .quick-view: that class opens a
+                     static demo popup with hardcoded images, the same for every product. --}}
+                <button type="button"
+                        class="pg-qv-btn-trigger bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon"
+                        data-qv-url="{{ route('quick-view', ['slug' => $product->slug]) }}">
                     <svg class="dark:text-white fill-current" width="20" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.3478 8.44208C20.2569 12.1678 16.2916 14.4822 12.0014 14.4822C7.70844 14.4822 3.74319 12.1678 1.65223 8.44208C1.49119 8.15278 1.49119 7.84697 1.65223 7.55792C3.74319 3.83229 7.70844 1.51813 12.0014 1.51813C16.2916 1.51813 20.2568 3.83229 22.3478 7.55792C22.5116 7.84697 22.5116 8.15278 22.3478 8.44208ZM23.6834 6.81924C21.3231 2.61279 16.8469 0 12.0014 0C7.15306 0 2.67686 2.61279 0.316559 6.81924C-0.10552 7.56977 -0.10552 8.43023 0.316559 9.1802C2.67686 13.3867 7.15306 16 12.0014 16C16.8469 16 21.3231 13.3867 23.6834 9.1802C24.1055 8.43028 24.1055 7.56977 23.6834 6.81924ZM12.0014 11.1141C13.7314 11.1141 15.1392 9.71721 15.1392 7.99987C15.1392 6.28253 13.7314 4.88562 12.0014 4.88562C10.2686 4.88562 8.86081 6.28253 8.86081 7.99987C8.86081 9.71721 10.2687 11.1141 12.0014 11.1141ZM12.0014 3.36749C9.42449 3.36749 7.3308 5.44578 7.3308 7.99993C7.3308 10.5546 9.42454 12.6321 12.0014 12.6321C14.5755 12.6321 16.6692 10.5546 16.6692 7.99993C16.6692 5.44578 14.5755 3.36749 12.0014 3.36749Z"/></svg>
                     <span class="mt-1">Quick View</span>
                 </button>
@@ -53,8 +63,10 @@
             @include('includes.Home._stars', ['rating' => $product->avgRating(), 'count' => $product->reviewCount()])
             <div class="flex items-center gap-2 mt-2">
                 <span class="text-base font-bold text-title dark:text-white">{{ $product->display_price }}</span>
-                @if ($product->sale_price)
-                    <span class="text-xs text-gray-400 line-through">${{ number_format($product->price, 2) }}</span>
+                {{-- was_price is null unless the current price is genuinely lower, so a
+                     sale_price above price can't render a "was" that undercuts it --}}
+                @if ($product->was_price)
+                    <span class="text-xs text-gray-400 line-through">{{ $product->was_price }}</span>
                 @endif
             </div>
         </div>

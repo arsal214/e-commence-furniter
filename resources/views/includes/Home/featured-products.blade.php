@@ -40,7 +40,7 @@ $rightProducts = $featuredProducts->skip(4)->take(2);
                     </div>
                 @endif
 
-                <div class="absolute z-10 top-[80%] right-3 transform -translate-y-[40%] opacity-0 duration-300 transition-all group-hover:-translate-y-1/2 group-hover:opacity-100 flex flex-col items-end gap-3">
+                <div class="pg-card-actions pg-card-actions--slide absolute z-10 top-[80%] right-3 flex flex-col items-end gap-3">
                     <button type="button"
                         class="wishlist-toggle-btn bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon"
                         data-product-id="{{ $item->id }}">
@@ -66,8 +66,8 @@ $rightProducts = $featuredProducts->skip(4)->take(2);
                 @include('includes.Home._stars', ['rating' => $item->avgRating(), 'count' => $item->reviewCount()])
                 <div class="flex items-center gap-2 mt-2">
                     <span class="text-base font-bold text-title dark:text-white">{{ $item->display_price }}</span>
-                    @if ($item->sale_price)
-                        <span class="text-xs text-gray-400 line-through">${{ number_format($item->price, 2) }}</span>
+                    @if ($item->was_price)
+                        <span class="text-xs text-gray-400 line-through">{{ $item->was_price }}</span>
                     @endif
                 </div>
             </div>
@@ -106,7 +106,7 @@ $rightProducts = $featuredProducts->skip(4)->take(2);
                     </div>
                 @endif
 
-                <div class="absolute z-10 top-[62%] right-3 transform -translate-y-[40%] opacity-0 duration-300 transition-all group-hover:-translate-y-1/2 group-hover:opacity-100 flex flex-col items-end gap-3">
+                <div class="pg-card-actions pg-card-actions--slide absolute z-10 top-[62%] right-3 flex flex-col items-end gap-3">
                     <button type="button"
                         class="wishlist-toggle-btn bg-white dark:bg-title dark:text-white bg-opacity-80 flex items-center justify-center gap-2 px-4 py-[10px] text-base leading-none text-title rounded-[40px] h-14 overflow-hidden new-product-icon"
                         data-product-id="{{ $item->id }}">
@@ -132,8 +132,8 @@ $rightProducts = $featuredProducts->skip(4)->take(2);
                 @include('includes.Home._stars', ['rating' => $item->avgRating(), 'count' => $item->reviewCount()])
                 <div class="flex items-center gap-2 mt-2">
                     <span class="text-base font-bold text-title dark:text-white">{{ $item->display_price }}</span>
-                    @if ($item->sale_price)
-                        <span class="text-xs text-gray-400 line-through">${{ number_format($item->price, 2) }}</span>
+                    @if ($item->was_price)
+                        <span class="text-xs text-gray-400 line-through">{{ $item->was_price }}</span>
                     @endif
                 </div>
             </div>

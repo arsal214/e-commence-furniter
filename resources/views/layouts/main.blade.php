@@ -318,19 +318,29 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
         @if($spItems->count())
         <style>
         #pg-sp {
-            position: fixed; bottom: 28px; right: 24px; z-index: 9990;
-            width: 310px; background: #fff;
+            position: fixed; bottom: 28px; left: 24px; z-index: 9990;
+            width: 310px; max-width: calc(100vw - 32px); background: #fff;
             box-shadow: 0 8px 40px rgba(23,36,48,.14), 0 2px 8px rgba(23,36,48,.06);
             display: flex; align-items: center; gap: 13px;
             padding: 12px 14px 12px 12px;
-            transform: translateY(20px); opacity: 0;
+            /* Slides in from the left edge it's anchored to */
+            transform: translateX(-24px); opacity: 0;
             transition: transform .4s cubic-bezier(.34,1.3,.64,1), opacity .35s ease;
             pointer-events: none;
             border-left: 3px solid #bb976d;
             font-family: 'Poppins', -apple-system, sans-serif;
         }
         .dark #pg-sp { background: #1c2d3e; box-shadow: 0 8px 40px rgba(0,0,0,.35); }
-        #pg-sp.sp-show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+        #pg-sp.sp-show { transform: translateX(0); opacity: 1; pointer-events: auto; }
+
+        /* Toasts sit along the bottom on mobile — lift this clear of them */
+        @media (max-width: 640px) {
+            #pg-sp { bottom: 96px; left: 16px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #pg-sp { transition: opacity .2s ease; transform: none; }
+            #pg-sp.sp-show { transform: none; }
+        }
         #pg-sp-img { width: 56px; height: 56px; object-fit: cover; flex-shrink: 0; background: #f5f0e8; display: block; }
         #pg-sp-body { flex: 1; min-width: 0; }
         #pg-sp-line1 { font-size: 11.5px; color: #666; line-height: 1.45; margin: 0 0 3px; }
@@ -587,6 +597,31 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
             .dark .pg-qv__close { background: #172430; border-color: #2F3B45; color: #fff; }
             .pg-qv__loading { padding: 60px; text-align: center; color: #6B6560; font-size: 14px; }
             body.pg-noscroll { overflow: hidden; }
+
+            /* ── Product card actions ───────────────────────────────── */
+            /* Touch devices have no hover, so a hover-revealed action stack is simply
+               unreachable — wishlist, cart and quick view become dead on mobile.
+               Visible by default; reveal-on-hover is a pointer-device enhancement.
+               --slide keeps the original vertical nudge on the stacks that had one. */
+            .pg-card-actions        { opacity: 1; }
+            .pg-card-actions--slide { transform: translateY(-50%); }
+
+            @media (hover: hover) and (pointer: fine) {
+                .pg-card-actions {
+                    opacity: 0;
+                    transition: opacity .3s ease, transform .3s ease;
+                }
+                .group:hover .pg-card-actions,
+                .group:focus-within .pg-card-actions {   /* keyboard users get it too */
+                    opacity: 1;
+                }
+                .pg-card-actions--slide { transform: translateY(-40%); }
+                .group:hover .pg-card-actions--slide,
+                .group:focus-within .pg-card-actions--slide { transform: translateY(-50%); }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .pg-card-actions { transition: none; }
+            }
         </style>
 
         <div id="pg-toasts" class="pg-toasts" role="status" aria-live="polite" aria-atomic="false"></div>
