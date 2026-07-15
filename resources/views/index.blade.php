@@ -1057,6 +1057,35 @@ $schemaWebsite = [
 </style>
 @endpush
 
+<!-- New Arrivals Area Start -->
+<section class="s-py-50-100">
+    <div class="container-fluid">
+        <div class="flex items-end justify-between gap-4 mb-8 md:mb-12 max-w-[1720px] mx-auto" data-aos="fade-up">
+            <div>
+                <span class="text-xs uppercase tracking-widest text-primary font-semibold">Just landed</span>
+                <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">New Arrivals</h2>
+                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">Fresh products added every week — discover the latest in home decor, lifestyle accessories, and everyday essentials before they sell out.</p>
+            </div>
+            <a href="{{ url('/shop') }}"
+               class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-title dark:text-white
+                      border border-current px-5 py-2.5 rounded-full hover:text-primary hover:border-primary
+                      duration-300 whitespace-nowrap">
+                View All
+                <svg width="14" height="10" viewBox="0 0 24 14" fill="none"><path d="M23.8198 6.61958L18.3757 1.17541C18.1801 0.947054 17.8364 0.920433 17.608 1.11604C17.3797 1.31161 17.3531 1.65529 17.5487 1.88366C17.5669 1.90494 17.5868 1.92483 17.608 1.94303L22.1212 6.46168L0.567835 6.46168C0.267191 6.46168 0.0234375 6.70543 0.0234375 7.00612C0.0234375 7.30681 0.267191 7.55052 0.567835 7.55052L22.1212 7.55052L17.608 12.0637C17.3797 12.2593 17.3531 12.6029 17.5487 12.8313C17.7443 13.0597 18.0879 13.0863 18.3163 12.8907C18.3376 12.8724 18.3575 12.8526 18.3757 12.8313L23.8198 7.38714C24.0309 7.17488 24.0309 6.83194 23.8198 6.61958Z" fill="currentColor"/></svg>
+            </a>
+        </div>
+        <div class="max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8" data-aos="fade-up" data-aos-delay="100">
+            @include('includes.Home.new-products')
+        </div>
+        <div class="text-center mt-8 md:mt-12">
+            <a href="{{ url('/shop') }}" class="btn btn-outline" data-text="Shop All New Arrivals">
+                <span>Shop All New Arrivals</span>
+            </a>
+        </div>
+    </div>
+</section>
+<!-- New Arrivals Area End -->
+
 <!-- Why Choose Us Start -->
 @push('styles')
 <style>
@@ -1290,35 +1319,6 @@ $schemaWebsite = [
     </div>
 </section>
 <!-- Why Choose Us End -->
-
-<!-- New Arrivals Area Start -->
-<section class="s-py-50-100">
-    <div class="container-fluid">
-        <div class="flex items-end justify-between gap-4 mb-8 md:mb-12 max-w-[1720px] mx-auto" data-aos="fade-up">
-            <div>
-                <span class="text-xs uppercase tracking-widest text-primary font-semibold">Just landed</span>
-                <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">New Arrivals</h2>
-                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">Fresh products added every week — discover the latest in home decor, lifestyle accessories, and everyday essentials before they sell out.</p>
-            </div>
-            <a href="{{ url('/shop') }}"
-               class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-title dark:text-white
-                      border border-current px-5 py-2.5 rounded-full hover:text-primary hover:border-primary
-                      duration-300 whitespace-nowrap">
-                View All
-                <svg width="14" height="10" viewBox="0 0 24 14" fill="none"><path d="M23.8198 6.61958L18.3757 1.17541C18.1801 0.947054 17.8364 0.920433 17.608 1.11604C17.3797 1.31161 17.3531 1.65529 17.5487 1.88366C17.5669 1.90494 17.5868 1.92483 17.608 1.94303L22.1212 6.46168L0.567835 6.46168C0.267191 6.46168 0.0234375 6.70543 0.0234375 7.00612C0.0234375 7.30681 0.267191 7.55052 0.567835 7.55052L22.1212 7.55052L17.608 12.0637C17.3797 12.2593 17.3531 12.6029 17.5487 12.8313C17.7443 13.0597 18.0879 13.0863 18.3163 12.8907C18.3376 12.8724 18.3575 12.8526 18.3757 12.8313L23.8198 7.38714C24.0309 7.17488 24.0309 6.83194 23.8198 6.61958Z" fill="currentColor"/></svg>
-            </a>
-        </div>
-        <div class="max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8" data-aos="fade-up" data-aos-delay="100">
-            @include('includes.Home.new-products')
-        </div>
-        <div class="text-center mt-8 md:mt-12">
-            <a href="{{ url('/shop') }}" class="btn btn-outline" data-text="Shop All New Arrivals">
-                <span>Shop All New Arrivals</span>
-            </a>
-        </div>
-    </div>
-</section>
-<!-- New Arrivals Area End -->
 
 {{-- Second "Why Thousands of Customers Choose PeytonGhalib" block removed —
      it duplicated the "Why Choose Us" section above. --}}
