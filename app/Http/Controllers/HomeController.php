@@ -19,7 +19,7 @@ class HomeController extends Controller
     public function index()
     {
         $sliders     = Slider::active()->get();
-        $categories  = Category::where('is_active', true)->withCount('products')->get();
+        $categories  = Category::where('is_active', true)->has('activeProducts')->withCount(['activeProducts as products_count'])->get();
         $newProducts = Product::where('is_active', true)
                               ->with('category')
                               ->withAvg('reviews', 'rating')
@@ -295,7 +295,7 @@ class HomeController extends Controller
 
     public function shopV1(Request $request)
     {
-        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $categories = Category::where('is_active', true)->has('activeProducts')->orderBy('name')->get();
         $validSlugs = $categories->pluck('slug')->all();
 
         // Every facet is multi-select, so each arrives as an array. Values are
@@ -369,7 +369,7 @@ class HomeController extends Controller
 
     public function categories()
     {
-        $categories = Category::where('is_active', true)->withCount('products')->orderBy('name')->get();
+        $categories = Category::where('is_active', true)->has('activeProducts')->withCount(['activeProducts as products_count'])->orderBy('name')->get();
         return view('categories', compact('categories'));
     }
 
@@ -400,7 +400,8 @@ class HomeController extends Controller
 
         $relatedCategories = Category::where('is_active', true)
                                      ->where('id', '!=', $category->id)
-                                     ->withCount('products')
+                                     ->has('activeProducts')
+                                     ->withCount(['activeProducts as products_count'])
                                      ->inRandomOrder()
                                      ->take(4)
                                      ->get();
@@ -419,7 +420,7 @@ class HomeController extends Controller
     public function productCategory()
     {
         $products   = Product::where('is_active', true)->latest()->paginate(12);
-        $categories = Category::where('is_active', true)->orderBy('name')->get();
+        $categories = Category::where('is_active', true)->has('activeProducts')->orderBy('name')->get();
         return view('product-category', compact('products', 'categories'));
     }
     

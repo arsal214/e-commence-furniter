@@ -32,4 +32,10 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+    // Storefront counts should ignore products the admin has deactivated.
+    public function activeProducts()
+    {
+        return $this->hasMany(Product::class)->where('is_active', true);
+    }
 }
