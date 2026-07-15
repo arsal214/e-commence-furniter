@@ -80,7 +80,7 @@ Route::get('/coming-soon', [HomeController::class, 'comingSoon']);
 Route::get('/thank-you',   [HomeController::class, 'thankYou'])->name('thank-you');
 Route::get('/track-order', [HomeController::class, 'trackOrder'])->name('track-order');
 
-Route::get('/shipping-method',       [HomeController::class, 'shippingMethod']);
+Route::redirect('/shipping-method', '/shipping-policy', 301); // SEO: duplicate of shipping-policy
 Route::get('/payment-method',        [HomeController::class, 'paymentMethod']);
 Route::get('/invoice',               [HomeController::class, 'invoice']);
 Route::get('/payment-confirmation',  [HomeController::class, 'paymentConfirmation']);
@@ -91,8 +91,9 @@ Route::get('/shop',             [HomeController::class, 'shopV1'])->name('shop')
 Route::get('/shop-v1',          fn() => redirect('/shop', 301));
 Route::get('/quick-view/{slug}', [HomeController::class, 'quickView'])->name('quick-view');
 Route::get('/categories',       [HomeController::class, 'categories']);
+Route::redirect('/category/beauty-produts', '/category/beauty-products', 301); // SEO: typo fix (must precede dynamic route)
 Route::get('/category/{slug}',  [HomeController::class, 'categoryLanding'])->name('category.landing');
-Route::get('/product-category', [HomeController::class, 'productCategory']);
+Route::redirect('/product-category', '/shop', 301); // SEO: duplicate of /shop
 
 Route::get('/return-policy',   [HomeController::class, 'returnPolicy'])->name('return-policy');
 Route::get('/refund-policy',   [HomeController::class, 'refundPolicy'])->name('refund-policy');

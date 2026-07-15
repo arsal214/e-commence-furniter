@@ -9,8 +9,11 @@ class SitemapController extends Controller
 {
     public function index()
     {
+        // Only live, canonical URLs belong in the sitemap: active products and
+        // active categories that actually have something to show.
         $products   = Product::where('is_active', true)->select('slug', 'updated_at')->get();
-        $categories = Category::where('is_active', true)->select('slug', 'updated_at')->get();
+        $categories = Category::where('is_active', true)->has('activeProducts')
+                              ->select('slug', 'updated_at')->get();
 
         return response()
             ->view('sitemap', compact('products', 'categories'))

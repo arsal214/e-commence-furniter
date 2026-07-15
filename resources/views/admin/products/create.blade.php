@@ -27,6 +27,14 @@
                                class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
                     </div>
 
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Brand / Manufacturer
+                            <span class="text-gray-400 font-normal ml-1 text-xs">optional — real maker, e.g. "Ninja". Used in Google Product schema; leave blank for unbranded items.</span>
+                        </label>
+                        <input type="text" name="brand" value="{{ old('brand') }}"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                    </div>
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Category <span class="text-red-500">*</span></label>
                         <select name="category_id" required

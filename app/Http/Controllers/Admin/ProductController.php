@@ -74,6 +74,7 @@ class ProductController extends Controller
         $data = $request->validate([
             'category_id'    => ['required', 'exists:categories,id'],
             'name'           => ['required', 'string', 'max:255', 'unique:products,name'],
+            'brand'          => ['nullable', 'string', 'max:255'],
             'description'    => ['nullable', 'string'],
             'key_feature_1'  => ['nullable', 'string', 'max:255'],
             'key_feature_2'  => ['nullable', 'string', 'max:255'],
@@ -147,6 +148,7 @@ class ProductController extends Controller
         $data = $request->validate([
             'category_id'        => ['required', 'exists:categories,id'],
             'name'               => ['required', 'string', 'max:255', 'unique:products,name,' . $product->id],
+            'brand'              => ['nullable', 'string', 'max:255'],
             'slug'               => ['nullable', 'string', 'max:255', 'unique:products,slug,' . $product->id, 'regex:/^[a-z0-9\-]+$/'],
             'meta_title'         => ['nullable', 'string', 'max:160'],
             'meta_description'   => ['nullable', 'string', 'max:320'],

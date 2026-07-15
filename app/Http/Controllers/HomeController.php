@@ -318,7 +318,7 @@ class HomeController extends Controller
             ->when($sort === 'rating',     fn($q) => $q->orderByDesc('reviews_avg_rating'))
             ->when($sort === 'name',       fn($q) => $q->orderBy('name'))
             ->when($sort === 'latest',     fn($q) => $q->latest())
-            ->paginate(12)
+            ->paginate(30)
             ->withQueryString();
 
         // Counts per facet option. Small catalogue, so a count query per option is fine;

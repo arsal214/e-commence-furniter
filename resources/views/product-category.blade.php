@@ -92,8 +92,7 @@ $schemaPcList = [
 </div>
 <!-- Shop End -->
 
-<!-- includes/Home/popup.blade.php -->
-@include('includes.Home.popup')
+{{-- Static demo quick-view removed (dummy 'Classic Relaxable Chair'). --}}
 
 @include('includes.footer')
   

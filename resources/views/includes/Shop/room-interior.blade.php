@@ -4,9 +4,9 @@
             <a href="{{ route('product-details', $product->slug) }}">
                 @if ($product->image)
                     @if (str_starts_with($product->image, 'assets/'))
-                        <img class="w-full transform group-hover:scale-110 duration-300" src="{{ asset($product->image) }}" alt="{{ $product->name }}">
+                        <img loading="lazy" decoding="async" class="w-full transform group-hover:scale-110 duration-300" src="{{ asset($product->image) }}" alt="{{ $product->name }}">
                     @else
-                        <img class="w-full transform group-hover:scale-110 duration-300" src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}">
+                        <img loading="lazy" decoding="async" class="w-full transform group-hover:scale-110 duration-300" src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}">
                     @endif
                 @else
                     <div class="w-full h-52 bg-gray-100 flex items-center justify-center">

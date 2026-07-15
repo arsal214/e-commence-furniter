@@ -34,7 +34,7 @@
 
     <!-- Contact -->
     <url>
-        <loc>{{ url('/contactus') }}</loc>
+        <loc>{{ url('/contact') }}</loc>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
@@ -46,6 +46,15 @@
         <priority>0.6</priority>
     </url>
 
+    <!-- Policy pages -->
+    @foreach (['shipping-policy', 'return-policy', 'refund-policy', 'privacy-policy'] as $policy)
+    <url>
+        <loc>{{ url('/' . $policy) }}</loc>
+        <changefreq>yearly</changefreq>
+        <priority>0.3</priority>
+    </url>
+    @endforeach
+
     <!-- Terms & Conditions -->
     <url>
         <loc>{{ url('/terms-and-conditions') }}</loc>
@@ -53,10 +62,10 @@
         <priority>0.3</priority>
     </url>
 
-    <!-- Category-filtered shop pages -->
+    <!-- Category pages (clean canonical /category/ URLs, not ?category= params) -->
     @foreach($categories as $category)
     <url>
-        <loc>{{ url('/shop') }}?category={{ $category->slug }}</loc>
+        <loc>{{ route('category.landing', $category->slug) }}</loc>
         <lastmod>{{ $category->updated_at->tz('UTC')->toAtomString() }}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>

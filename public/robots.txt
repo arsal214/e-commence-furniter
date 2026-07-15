@@ -1,32 +1,19 @@
 User-agent: *
 Disallow: /admin/
-Allow: /wp-admin/admin-ajax.php
-Disallow: /login
-Disallow: /register
-Disallow: /my-account
-Disallow: /my-profile
-Disallow: /edit-account
-Disallow: /order-history
-Disallow: /checkout
-Disallow: /wishlist
-Disallow: /cart
-Disallow: /invoice
-Disallow: /payment-confirmation
-Disallow: /payment-success
-Disallow: /payment-failure
-Disallow: /track-order
-Disallow: /forgot-password
-Disallow: /forger-password
-Disallow: /coming-soon
-Disallow: /short-code
-Disallow: /error
-Disallow: /*?search=
+# Utility, cart, checkout, account and search pages are NOT blocked here on
+# purpose: they send `X-Robots-Tag: noindex, follow`, and Google must be able to
+# crawl a page to read that directive. Private customer pages are auth-gated.
+
 User-agent: GPTBot
 Allow: /
+
 User-agent: ClaudeBot
 Allow: /
+
 User-agent: Google-Extended
 Allow: /
+
 User-agent: PerplexityBot
 Allow: /
+
 Sitemap: https://peytonghalib.com/sitemap.xml

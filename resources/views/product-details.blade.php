@@ -4,14 +4,14 @@
 @section('og_type', 'product')
 @php
     $ogImg = !empty($item->image)
-        ? (str_starts_with($item->image, 'assets/') ? asset($item->image) : \Storage::url($item->image))
+        ? (str_starts_with($item->image, 'assets/') ? asset($item->image) : url(\Storage::url($item->image)))
         : asset('assets/img/logo.svg');
 @endphp
 @section('og_image', $ogImg)
 @push('schema')
 @php
     $schemaImg = !empty($item->image)
-        ? (str_starts_with($item->image, 'assets/') ? asset($item->image) : \Storage::url($item->image))
+        ? (str_starts_with($item->image, 'assets/') ? asset($item->image) : url(\Storage::url($item->image)))
         : asset('assets/img/logo.svg');
     $schemaInStock     = ($item->stock ?? 0) > 0;
     $schemaReviewCount = $item->reviewCount();
@@ -23,7 +23,6 @@
         'name'       => $item->name,
         'image'      => [$schemaImg],
         'description'=> strip_tags($item->description ?? ''),
-        'brand'      => ['@type' => 'Brand', 'name' => 'PeytonGhalib'],
         'offers'     => [
             '@type'          => 'Offer',
             'url'            => route('product-details', $item->slug),
@@ -33,8 +32,27 @@
             'itemCondition'  => 'https://schema.org/NewCondition',
             'availability'   => $schemaInStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
             'seller'         => ['@type' => 'Organization', 'name' => 'PeytonGhalib', 'url' => url('/')],
+            // Merchant listing fields Google recommends for product results.
+            'hasMerchantReturnPolicy' => [
+                '@type'                => 'MerchantReturnPolicy',
+                'applicableCountry'    => 'US',
+                'returnPolicyCategory' => 'https://schema.org/MerchantReturnFiniteReturnWindow',
+                'merchantReturnDays'   => 30,
+                'returnMethod'         => 'https://schema.org/ReturnByMail',
+                'returnFees'           => 'https://schema.org/FreeReturn',
+            ],
+            'shippingDetails' => [
+                '@type'          => 'OfferShippingDetails',
+                'shippingRate'   => ['@type' => 'MonetaryAmount', 'value' => '0', 'currency' => 'USD'],
+                'shippingDestination' => ['@type' => 'DefinedRegion', 'addressCountry' => 'US'],
+            ],
         ],
     ];
+    // Only assert a brand when the product actually records one — hardcoding the
+    // store name mislabelled third-party goods (e.g. a Ninja product as "PeytonGhalib").
+    if (!empty($item->brand)) {
+        $schemaProduct['brand'] = ['@type' => 'Brand', 'name' => $item->brand];
+    }
     if (!empty($item->sku))      { $schemaProduct['sku']      = $item->sku; }
     if ($item->category)         { $schemaProduct['category'] = $item->category->name; }
     if ($schemaReviewCount > 0) {
@@ -52,7 +70,7 @@
         ['@type' => 'ListItem', 'position' => 2, 'name' => 'Shop', 'item' => url('/shop')],
     ];
     if ($item->category) {
-        $breadcrumbItems[] = ['@type'=>'ListItem','position'=>3,'name'=>$item->category->name,'item'=>url('/shop').'?category='.$item->category->slug];
+        $breadcrumbItems[] = ['@type'=>'ListItem','position'=>3,'name'=>$item->category->name,'item'=>route('category.landing', $item->category->slug)];
         $breadcrumbItems[] = ['@type'=>'ListItem','position'=>4,'name'=>$item->name,'item'=>url()->current()];
     } else {
         $breadcrumbItems[] = ['@type'=>'ListItem','position'=>3,'name'=>$item->name,'item'=>url()->current()];
@@ -932,8 +950,8 @@ function switchTab(panelId, btn) {
 </div>
 <!-- Related Product End -->
 
-<!-- includes/Home/popup.blade.php -->
-@include('includes.Home.popup')
+{{-- Static demo quick-view removed: it rendered dummy 'Classic Relaxable Chair'
+     content in the HTML of every page. Real quick-view is the pg-qv modal. --}}
     
 @include('includes.footer')
 

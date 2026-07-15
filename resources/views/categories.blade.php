@@ -31,7 +31,7 @@ $schemaCats = [
 <!-- Banner Start -->
 <div class="flex items-center gap-4 flex-wrap bg-overlay p-14 sm:p-16 before:bg-title before:bg-opacity-70" style="background-image:url('{{ asset('assets/img/shortcode/breadcumb.jpg') }}');">
     <div class="text-center w-full">
-        <h2 class="text-white text-8 md:text-[40px] font-normal leading-none text-center">All Categories</h2>
+        <h1 class="text-white text-8 md:text-[40px] font-normal leading-none text-center">All Categories</h1>
         <ul class="flex items-center justify-center gap-[10px] text-base md:text-lg leading-none font-normal text-white mt-3 md:mt-4">
             <li><a href="{{ url('/') }}">Home</a></li>
             <li>/</li>
@@ -48,7 +48,7 @@ $schemaCats = [
 
             <!-- Section Title -->
             <div class="max-w-xl mx-auto mb-8 md:mb-12 text-center" data-aos="fade-up">
-                <h3 class="font-medium leading-none text-2xl md:text-3xl">Shop by Category</h3>
+                <h2 class="font-medium leading-none text-2xl md:text-3xl">Shop by Category</h2>
                 <p class="mt-3 text-paragraph dark:text-white-light">Explore our full range of product categories. Click any category to browse all available products.</p>
             </div>
 

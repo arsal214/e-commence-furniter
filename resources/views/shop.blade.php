@@ -1,8 +1,13 @@
 {{-- resources/views/shop.blade.php --}}
 @extends('layouts.main')
 
-@section('title', 'Shop | PeytonGhalib')
-@section('meta_description', 'Browse our full collection of furniture, home decor, ceramics and lifestyle products. Filter by category, price, colour and size at PeytonGhalib.')
+@php
+    // Unique title/description per paginated page so page 2+ isn't a duplicate of page 1.
+    $shopPage    = max(1, (int) request()->get('page', 1));
+    $pageSuffix  = $shopPage > 1 ? ' — Page ' . $shopPage : '';
+@endphp
+@section('title', 'Shop' . $pageSuffix . ' | PeytonGhalib')
+@section('meta_description', 'Browse our full collection of furniture, home decor, ceramics and lifestyle products. Filter by category and price at PeytonGhalib.' . ($shopPage > 1 ? ' Page ' . $shopPage . '.' : ''))
 
 @php
     // Canonical: a single selected category maps to its landing page; anything else
@@ -409,7 +414,7 @@
     </div>
 </div>
 
-@include('includes.Home.popup')
+{{-- Static demo quick-view removed (dummy 'Classic Relaxable Chair'). --}}
 @include('includes.footer')
 
 @endsection

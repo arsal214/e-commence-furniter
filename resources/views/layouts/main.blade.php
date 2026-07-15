@@ -51,6 +51,8 @@
         @endauth
         <meta name="is-logged-in" content="{{ auth()->check() ? 'true' : 'false' }}">
         <meta name="wishlist-toggle-url" content="{{ auth()->check() ? route('wishlist.toggle') : url('/login') }}">
+        {{-- Per-page LCP image preload (pushed only where a known hero image exists) --}}
+        @stack('preload')
         <!-- Main Stylesheet -->
         @vite('resources/css/app.css')
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">

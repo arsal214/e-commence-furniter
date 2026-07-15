@@ -11,9 +11,9 @@ $rightProducts = $featuredProducts->skip(4)->take(2);
                 <a href="{{ route('product-details', $item->slug) }}">
                     @if ($item->image)
                         @if (str_starts_with($item->image, 'assets/'))
-                            <img class="w-full transform group-hover:scale-110 duration-300 sm:max-h-[320px] object-cover" src="{{ asset($item->image) }}" alt="{{ $item->name }}">
+                            <img loading="lazy" decoding="async" class="w-full transform group-hover:scale-110 duration-300 sm:max-h-[320px] object-cover" src="{{ asset($item->image) }}" alt="{{ $item->name }}">
                         @else
-                            <img class="w-full transform group-hover:scale-110 duration-300 sm:max-h-[320px] object-cover" src="{{ Storage::url($item->image) }}" alt="{{ $item->name }}">
+                            <img loading="lazy" decoding="async" class="w-full transform group-hover:scale-110 duration-300 sm:max-h-[320px] object-cover" src="{{ Storage::url($item->image) }}" alt="{{ $item->name }}">
                         @endif
                     @else
                         <div class="w-full sm:max-h-[320px] h-52 bg-gray-100 flex items-center justify-center">
@@ -85,9 +85,9 @@ $rightProducts = $featuredProducts->skip(4)->take(2);
                 <a href="{{ route('product-details', $item->slug) }}">
                     @if ($item->image)
                         @if (str_starts_with($item->image, 'assets/'))
-                            <img class="w-full transform group-hover:scale-110 duration-300 h-full object-cover" src="{{ asset($item->image) }}" alt="{{ $item->name }}">
+                            <img loading="lazy" decoding="async" class="w-full transform group-hover:scale-110 duration-300 h-full object-cover" src="{{ asset($item->image) }}" alt="{{ $item->name }}">
                         @else
-                            <img class="w-full transform group-hover:scale-110 duration-300 h-full object-cover" src="{{ Storage::url($item->image) }}" alt="{{ $item->name }}">
+                            <img loading="lazy" decoding="async" class="w-full transform group-hover:scale-110 duration-300 h-full object-cover" src="{{ Storage::url($item->image) }}" alt="{{ $item->name }}">
                         @endif
                     @else
                         <div class="w-full h-64 bg-gray-100 flex items-center justify-center">

@@ -2,6 +2,10 @@
 @section('title', 'PeytonGhalib — Home Decor & Everyday Essentials Online')
 @section('meta_description', 'Shop home decor, kitchen gadgets, beauty, sports gear & more at PeytonGhalib. 1,000+ products, fast delivery, 30-day returns. Discover your new favourites today.')
 
+@push('preload')
+<link rel="preload" as="image" href="{{ asset('assets/img/home-v1/home-decor.png') }}" fetchpriority="high">
+@endpush
+
 @push('schema')
 @php
 $schemaWebsite = [
@@ -663,7 +667,7 @@ $schemaWebsite = [
                         <div class="pgh-collage pgh-row-right">
 
                             <div class="pgh-img-shell">
-                                <img src="{{ asset('assets/img/home-v1/home-decor.png') }}" alt="Home Decor Collection" loading="eager">
+                                <img src="{{ asset('assets/img/home-v1/home-decor.png') }}" alt="Home Decor Collection" loading="eager" fetchpriority="high" decoding="async">
                                 <div class="pgh-card-footer">
                                     <div class="pgh-card-footer-dots"><span></span><span></span><span></span></div>
                                     <span class="pgh-card-footer-text">Home Decor Collection</span>
@@ -685,10 +689,11 @@ $schemaWebsite = [
 
                         {{-- LEFT --}}
                         <div class="pgh-row-left">
-                            <h1 class="pgh-h1">
+                            {{-- Carousel slide 2/3: h2, not h1 — one primary H1 per page (slide 1). --}}
+                            <h2 class="pgh-h1">
                                 Little upgrades,<br>
                                 <span class="pgh-h1-grad">big difference</span>
-                            </h1>
+                            </h2>
                             <p class="pgh-body mt-5 max-w-[500px]">
                                 The right kitchen tool saves you twenty minutes. The right skincare routine saves your skin. Discover products worth keeping — handpicked for quality and everyday use.
                             </p>
@@ -751,10 +756,11 @@ $schemaWebsite = [
 
                         {{-- LEFT --}}
                         <div class="pgh-row-left">
-                            <h1 class="pgh-h1">
+                            {{-- Carousel slide 3/3: h2, not h1 — one primary H1 per page (slide 1). --}}
+                            <h2 class="pgh-h1">
                                 Gear up for<br>
                                 <span class="pgh-h1-grad">whatever's next</span>
-                            </h1>
+                            </h2>
                             <p class="pgh-body mt-5 max-w-[500px]">
                                 Whether you're hitting the gym, heading out for a drive, or somewhere in between — we've got the equipment, accessories and gear to keep you ready. Fast delivery across the USA.
                             </p>
@@ -952,7 +958,7 @@ $schemaWebsite = [
                    data-cat-index="{{ $loop->index }}"
                    style="{{ $loop->index >= 6 ? 'display:none;' : '' }}animation-delay:{{ $loop->index * .07 }}s;">
                     @if($catSrc)
-                        <img src="{{ $catSrc }}" alt="{{ $cat->name }}">
+                        <img src="{{ $catSrc }}" alt="{{ $cat->name }}" loading="lazy" decoding="async">
                     @else
                         <div class="pgh-cat-fb" style="background:{{ $catFb[$loop->index % 6] }};">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
@@ -1824,8 +1830,8 @@ $schemaWebsite = [
 </section>
 <!-- Internal Linking — Explore Our Range End -->
 
-<!-- includes/Home/popup.blade.php -->
-@include('includes.Home.popup')
+{{-- Static demo quick-view removed: it rendered dummy 'Classic Relaxable Chair'
+     content in the HTML of every page. Real quick-view is the pg-qv modal. --}}
 
 @include('includes.footer')
 
