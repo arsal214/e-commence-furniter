@@ -14,20 +14,34 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $status = in_array($request->input('status'), ['active', 'inactive'], true)
+            ? $request->input('status')
+            : null;
 
-        $products = Product::with('category')
-            ->when($search, function ($q) use ($search) {
-                $q->where(function ($q2) use ($search) {
-                    $q2->where('name', 'like', "%{$search}%")
-                       ->orWhere('sku', 'like', "%{$search}%")
-                       ->orWhereHas('category', fn($c) => $c->where('name', 'like', "%{$search}%"));
-                });
-            })
+        // Search applies to the counts too, so the tab numbers reflect what's filtered.
+        $base = Product::query()->when($search, function ($q) use ($search) {
+            $q->where(function ($q2) use ($search) {
+                $q2->where('name', 'like', "%{$search}%")
+                   ->orWhere('sku', 'like', "%{$search}%")
+                   ->orWhereHas('category', fn($c) => $c->where('name', 'like', "%{$search}%"));
+            });
+        });
+
+        $counts = [
+            'all'      => (clone $base)->count(),
+            'active'   => (clone $base)->where('is_active', true)->count(),
+            'inactive' => (clone $base)->where('is_active', false)->count(),
+        ];
+
+        $products = (clone $base)
+            ->with('category')
+            ->when($status === 'active',   fn($q) => $q->where('is_active', true))
+            ->when($status === 'inactive', fn($q) => $q->where('is_active', false))
             ->latest()
             ->paginate(15)
             ->withQueryString();
 
-        return view('admin.products.index', compact('products', 'search'));
+        return view('admin.products.index', compact('products', 'search', 'status', 'counts'));
     }
 
     public function export()

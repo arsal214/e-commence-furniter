@@ -26,8 +26,35 @@
     </div>
 </div>
 
+{{-- Status filter tabs --}}
+@php
+    $tabs = [
+        ''         => ['label' => 'All',      'count' => $counts['all']],
+        'active'   => ['label' => 'Active',   'count' => $counts['active']],
+        'inactive' => ['label' => 'Inactive', 'count' => $counts['inactive']],
+    ];
+@endphp
+<div class="flex flex-wrap items-center gap-2 mb-4">
+    @foreach ($tabs as $key => $tab)
+        @php $isCurrent = (string) $status === $key; @endphp
+        <a href="{{ route('admin.products.index', array_filter(['status' => $key ?: null, 'search' => $search ?: null])) }}"
+           class="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg border transition-colors
+                  {{ $isCurrent
+                        ? 'bg-[#bb976d] text-white border-[#bb976d]'
+                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50' }}">
+            {{ $tab['label'] }}
+            <span class="inline-flex items-center justify-center min-w-[1.25rem] px-1.5 py-0.5 rounded-full text-xs font-semibold
+                         {{ $isCurrent ? 'bg-white/25 text-white' : 'bg-gray-100 text-gray-600' }}">
+                {{ $tab['count'] }}
+            </span>
+        </a>
+    @endforeach
+</div>
+
 {{-- Search bar --}}
 <form method="GET" action="{{ route('admin.products.index') }}" class="mb-4">
+    {{-- Keep the active status tab when searching --}}
+    @if($status)<input type="hidden" name="status" value="{{ $status }}">@endif
     <div class="flex items-center gap-2">
         <div class="relative flex-1 max-w-md">
             <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 pointer-events-none">
@@ -44,7 +71,7 @@
                 autofocus="{{ $search ? 'autofocus' : false }}"
             >
             @if($search)
-            <a href="{{ route('admin.products.index') }}"
+            <a href="{{ route('admin.products.index', array_filter(['status' => $status ?: null])) }}"
                class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600">
                 <i class="mdi mdi-close-circle text-base"></i>
             </a>
@@ -144,8 +171,11 @@
             <tr>
                 <td colspan="8" class="px-5 py-10 text-center text-gray-400">
                     @if($search)
-                        No products match <span class="font-medium text-gray-600">"{{ $search }}"</span>.
-                        <a href="{{ route('admin.products.index') }}" class="text-[#bb976d] hover:underline ml-1">Clear search</a>
+                        No products match <span class="font-medium text-gray-600">"{{ $search }}"</span>@if($status) in <span class="font-medium text-gray-600">{{ $status }}</span>@endif.
+                        <a href="{{ route('admin.products.index', array_filter(['status' => $status ?: null])) }}" class="text-[#bb976d] hover:underline ml-1">Clear search</a>
+                    @elseif($status)
+                        No <span class="font-medium text-gray-600">{{ $status }}</span> products.
+                        <a href="{{ route('admin.products.index') }}" class="text-[#bb976d] hover:underline ml-1">View all</a>
                     @else
                         No products found. <a href="{{ route('admin.products.create') }}" class="text-[#bb976d] hover:underline">Add one?</a>
                     @endif
