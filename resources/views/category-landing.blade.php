@@ -1,6 +1,9 @@
 @extends('layouts.main')
 
 @section('title', ($category->meta_title ?: 'Buy ' . $category->name . ' Online') . ' | PeytonGhalib')
+{{-- Explicit self-canonical to the clean slug so tracking/junk query params
+     (?utm_source=…) never spawn duplicate canonical URLs. --}}
+@section('canonical', url('/category/' . $category->slug))
 @section('meta_description', $category->meta_description ?: 'Shop our full range of ' . $category->name . ' at PeytonGhalib. Quality pieces, fast delivery, easy returns — browse and buy online today.')
 
 @push('schema')
@@ -14,7 +17,7 @@
             : asset('assets/img/logo.svg');
         $catListItems[] = ['@type'=>'ListItem','position'=>$i+1,'name'=>$p->name,'url'=>route('product-details',$p->slug),'image'=>$pImg];
     }
-    $schemaCollection = ['@context'=>'https://schema.org','@type'=>'CollectionPage','name'=>$category->name.' — PeytonGhalib','description'=>$catDesc,'url'=>url()->current()];
+    $schemaCollection = ['@context'=>'https://schema.org','@type'=>'CollectionPage','name'=>$category->name.' — PeytonGhalib','description'=>$catDesc,'url'=>url('/category/' . $category->slug)];
     $schemaItemList  = ['@context'=>'https://schema.org','@type'=>'ItemList','name'=>$category->name.' — PeytonGhalib','itemListElement'=>$catListItems];
 @endphp
 <script type="application/ld+json">{!! json_encode($schemaCollection, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
@@ -457,7 +460,7 @@
         ['q'=>'What materials are used in your '.$category->name.'?',
          'a'=>'All PeytonGhalib '.$category->name.' products are made from premium, sustainably sourced materials. Each product page lists exact material details, finishes, and care instructions.'],
         ['q'=>'How long does delivery take for '.$category->name.'?',
-         'a'=>'Standard delivery takes 3–7 business days. Free delivery on orders over $99. For large furniture items, white-glove delivery with in-room placement is available on request.'],
+         'a'=>'Standard delivery takes 3–7 business days. Free delivery on all orders, with no minimum spend. For large furniture items, white-glove delivery with in-room placement is available on request.'],
         ['q'=>'Can I return a '.$category->name.' item if it doesn\'t fit?',
          'a'=>'Yes — 30-day hassle-free returns on all items in original, unused condition. Contact our support team and we\'ll arrange collection or a pre-paid return label.'],
         ['q'=>'Are '.$category->name.' dimensions accurate on the product page?',

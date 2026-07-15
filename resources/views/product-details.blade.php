@@ -54,6 +54,8 @@
         $schemaProduct['brand'] = ['@type' => 'Brand', 'name' => $item->brand];
     }
     if (!empty($item->sku))      { $schemaProduct['sku']      = $item->sku; }
+    if (!empty($item->gtin))     { $schemaProduct['gtin']     = $item->gtin; }
+    if (!empty($item->mpn))      { $schemaProduct['mpn']      = $item->mpn; }
     if ($item->category)         { $schemaProduct['category'] = $item->category->name; }
     if ($schemaReviewCount > 0) {
         $schemaProduct['aggregateRating'] = [
@@ -126,7 +128,9 @@
                 </div>
                 <!-- Tags -->
                 <div class="mt-10 md:mt-12">
-                    <h4 class="font-medium leading-none">Popular Tags</h4>
+                    {{-- Plain text, not a heading: this search-popup label otherwise
+                         becomes an <h4> ahead of the product's real <h1>. --}}
+                    <p class="font-medium leading-none">Popular Tags</p>
                     <div class="flex flex-wrap gap-[10px] md:gap-[15px] mt-5 md:mt-6">
                         @if(!empty($product->category))
                             <a class="btn btn-theme-outline btn-xs" href="{{ route('category.landing', $product->category->slug) }}" data-text="{{ $product->category->name }}"><span>{{ $product->category->name }}</span></a>
@@ -151,7 +155,11 @@
             <li>/</li>
             <li><a href="{{ url('/shop') }}">Shop</a></li>
             <li>/</li>
-            <li class="text-primary">{{ $item->name ?? 'Classic Relaxable Chair' }}</li>
+            @if($item->category)
+            <li><a href="{{ route('category.landing', $item->category->slug) }}">{{ $item->category->name }}</a></li>
+            <li>/</li>
+            @endif
+            <li class="text-primary">{{ $item->name }}</li>
         </ul>
     </div>
 </div>
@@ -323,6 +331,38 @@
     font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
     padding: 4px 10px; border-radius: 50px; color: #fff;
 }
+
+/* ── Mobile: above-the-fold priority ──
+   The square media used to fill the first screen, pushing the title, price and
+   Add to Cart below the fold. A shorter image lifts the title into view, and a
+   fixed bottom bar keeps price + Add to Cart reachable at all times. Desktop is
+   unaffected — its two-column layout already shows everything up top. */
+.pd-sticky-bar { display: none; }
+@media (max-width: 767px) {
+    .pd-main-wrap { aspect-ratio: 4/3; }        /* shorter than 1/1 → title shows sooner */
+    body { padding-bottom: 74px; }              /* room so the bar never covers content */
+
+    .pd-sticky-bar {
+        display: flex; align-items: center; gap: 12px;
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 9990;
+        padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+        background: #fff; border-top: 1px solid #ece7df;
+        box-shadow: 0 -6px 20px rgba(0,0,0,.10);
+    }
+    .dark .pd-sticky-bar { background: #172430; border-color: #2f3b45; }
+    .pd-sticky-bar__price { display: flex; flex-direction: column; line-height: 1.12; flex: none; }
+    .pd-sticky-bar__now { font-size: 18px; font-weight: 800; color: #172430; }
+    .dark .pd-sticky-bar__now { color: #fff; }
+    .pd-sticky-bar__was { font-size: 12px; color: #9aa0a6; text-decoration: line-through; }
+    .pd-sticky-bar__btn {
+        flex: 1; min-height: 50px; border: 0; border-radius: 10px; cursor: pointer;
+        background: #172430; color: #fff; font-weight: 700; font-size: 14px;
+        letter-spacing: .04em; text-transform: uppercase;
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .pd-sticky-bar__btn:active { transform: scale(.99); }
+    .pd-sticky-bar__btn[disabled] { opacity: .5; cursor: not-allowed; }
+}
 </style>
 
 <div class="pd-section py-5 md:py-8 lg:py-10">
@@ -441,6 +481,9 @@
                         $avgR = $item->reviews_avg_rating ?? 0;
                         $revC = $item->reviews_count ?? 0;
                     @endphp
+                    {{-- Rating row hidden until the product actually has reviews — no
+                         "0.0 · 0 reviews" placeholder. --}}
+                    @if($revC > 0)
                     <div class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100">
                         <div class="flex items-center gap-0.5">
                             @for($s=1;$s<=5;$s++)
@@ -449,12 +492,11 @@
                             </svg>
                             @endfor
                         </div>
-                        <span class="text-sm font-bold text-gray-700">{{ $revC > 0 ? number_format($avgR,1) : '0.0' }}</span>
+                        <span class="text-sm font-bold text-gray-700">{{ number_format($avgR,1) }}</span>
                         <span class="text-sm text-gray-400">· {{ $revC }} {{ Str::plural('review',$revC) }}</span>
-                        @if($revC > 0)
                         <a href="#tab-review" onclick="switchTab('tab-review', document.querySelectorAll('.pdtab-btn')[1])" class="text-xs text-[#bb976d] hover:underline ml-1">See all</a>
-                        @endif
                     </div>
+                    @endif
 
                     {{-- Price block --}}
                     <div class="pd-price-block mb-2">
@@ -590,7 +632,7 @@
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
                             </svg>
-                            <span>Free shipping<br>over $25</span>
+                            <span>Free shipping<br>on all orders</span>
                         </div>
                         <div class="pd-trust-item">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -663,6 +705,27 @@
     </div>
 </div>
 <!-- Product Detail End -->
+
+{{-- Mobile sticky Add to Cart: submits the main #pd-cart-form (so selected qty /
+     size / colour carry over) and triggers the same confirmation modal. --}}
+<div class="pd-sticky-bar" aria-hidden="false">
+    <div class="pd-sticky-bar__price">
+        <span class="pd-sticky-bar__now">${{ $activePrice }}</span>
+        @if($item->sale_price)
+            <span class="pd-sticky-bar__was">${{ number_format($item->price, 2) }}</span>
+        @endif
+    </div>
+    @if(($item->stock ?? 1) > 0)
+        <button type="submit" form="pd-cart-form" class="pd-sticky-bar__btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            Add to Cart
+        </button>
+    @else
+        <button type="button" class="pd-sticky-bar__btn" disabled aria-disabled="true">Out of Stock</button>
+    @endif
+</div>
 
 <script>
 (function(){
@@ -787,6 +850,25 @@
                     </div>
                 @else
                     <p class="text-gray-400 italic">No description available for this product.</p>
+                @endif
+
+                {{-- Specifications table (rendered only when the product has specs) --}}
+                @if(!empty($item->specifications))
+                <div class="mt-8">
+                    <h2 class="text-lg font-bold text-title dark:text-white mb-4">Specifications</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm border border-bdr-clr dark:border-bdr-clr-drk rounded-lg overflow-hidden">
+                            <tbody>
+                                @foreach($item->specifications as $i => $spec)
+                                <tr class="{{ $i % 2 === 0 ? 'bg-[#F8F5F0] dark:bg-white/5' : '' }}">
+                                    <th scope="row" class="text-left font-semibold text-title dark:text-white px-4 py-3 w-1/3 align-top">{{ $spec['label'] ?? '' }}</th>
+                                    <td class="text-paragraph dark:text-white/70 px-4 py-3">{{ $spec['value'] ?? '' }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 @endif
             </div>
 
@@ -937,7 +1019,7 @@ function switchTab(panelId, btn) {
 <div class="s-py-50-100">
     <div class="container-fluid">
         <div class="max-w-[547px] mx-auto text-center">
-            <h6 class="text-xl sm:text-2xl leading-none font-bold dark:text-white">Related Products</h6>
+            <h2 class="text-xl sm:text-2xl leading-none font-bold dark:text-white">Related Products</h2>
             <p class="mt-3">Explore complementary options that enhance your experience. Discover related products curated just for you. </p>
         </div>
         <div class="max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-8 pt-8 md:pt-[50px]">

@@ -69,7 +69,7 @@
                         {{ $product->name }}
                     </a>
                 </h5>
-                @include('includes.Home._stars')
+                @include('includes.Home._stars', ['rating' => $product->avgRating(), 'count' => $product->reviewCount()])
             </div>
         </div>
     </div>

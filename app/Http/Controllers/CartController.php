@@ -13,10 +13,50 @@ class CartController extends Controller
 
     public function index()
     {
+        $items = $this->cart->items();
+
         return view('cart', [
-            'cartItems' => $this->cart->items(),
+            'cartItems' => $items,
             'cartTotal' => $this->cart->total(),
+            'crossSell' => $this->crossSell($items),
         ]);
+    }
+
+    /**
+     * Companion products for the cart's "You might also like" tray: items not
+     * already in the cart, preferring the shopper's own categories and cheapest
+     * first (impulse-friendly). Falls back to the cheapest of anything else so the
+     * tray always fills. Empty cart → empty collection (the tray isn't shown).
+     */
+    protected function crossSell(array $items): \Illuminate\Support\Collection
+    {
+        $cartIds = collect($items)->pluck('id')->filter()->values();
+        if ($cartIds->isEmpty()) {
+            return collect();
+        }
+
+        $eff    = 'COALESCE(NULLIF(sale_price, 0), price)';
+        $catIds = Product::whereIn('id', $cartIds)->pluck('category_id')->filter()->unique()->values();
+
+        $picks = Product::where('is_active', true)
+            ->whereNotIn('id', $cartIds)
+            ->when($catIds->isNotEmpty(), fn ($q) => $q->whereIn('category_id', $catIds))
+            ->orderByRaw("$eff ASC")
+            ->take(4)
+            ->get();
+
+        if ($picks->count() < 4) {
+            $exclude = $picks->pluck('id')->merge($cartIds);
+            $picks = $picks->merge(
+                Product::where('is_active', true)
+                    ->whereNotIn('id', $exclude)
+                    ->orderByRaw("$eff ASC")
+                    ->take(4 - $picks->count())
+                    ->get()
+            );
+        }
+
+        return $picks;
     }
 
     public function add(Request $request)

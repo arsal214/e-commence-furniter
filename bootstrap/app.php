@@ -12,7 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'admin'       => \App\Http\Middleware\AdminMiddleware::class,
+            'must-reset'  => \App\Http\Middleware\EnsurePasswordSet::class,
         ]);
         // SEO: 301 trailing-slash URLs to their slashless canonical.
         $middleware->web(prepend: [

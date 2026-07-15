@@ -136,7 +136,7 @@ $schemaWebsite = [
     {{-- Slides --}}
     <div class="ann-wrap">
         <div class="ann-slide ann-slide--active">
-            🚚&nbsp; Free shipping on all orders over <span class="ann-hi">$99</span> <span class="ann-dot"></span> Delivered fast across the USA
+            🚚&nbsp; Free shipping on <span class="ann-hi">all orders</span> <span class="ann-dot"></span> Delivered fast across the USA
         </div>
         <div class="ann-slide">
             Joined by <span class="ann-hi">2,000+</span> happy customers across the USA <span class="ann-dot"></span> ⭐ <span class="ann-hi">4.9 / 5</span>
@@ -1320,25 +1320,8 @@ $schemaWebsite = [
 </section>
 <!-- New Arrivals Area End -->
 
-<!-- Why Shop with PeytonGhalib Start -->
-<section class="s-py-100 bg-overlay dark:before:bg-title dark:before:bg-opacity-80" style="background-image: url('{{ asset('assets/img/home-v1/bg.png') }}');">
-    <img class="absolute top-0 right-0 w-[20%] z-[-1]" src="{{ asset('assets/img/home-v1/shape-01.png') }}" alt="shape">
-    <div class="container-fluid">
-        <div class="max-w-[1720px] mx-auto">
-            <div class="max-w-[1186px] ml-auto">
-                <div class="mb-8 md:mb-12" data-aos="fade-up">
-                    <span class="text-xs uppercase tracking-widest text-primary font-semibold">Our promise</span>
-                    <h2 class="leading-tight mt-2 text-2xl md:text-3xl font-bold text-title dark:text-white">Why Thousands of Customers Choose PeytonGhalib</h2>
-                    <p class="mt-3 max-w-xl text-paragraph dark:text-white-light">We're committed to delivering quality products and a shopping experience you can count on — from the moment you browse to the day your order arrives.</p>
-                </div>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-[30px]">
-                    @include('includes.Home.services')
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!-- Why Shop with PeytonGhalib End -->
+{{-- Second "Why Thousands of Customers Choose PeytonGhalib" block removed —
+     it duplicated the "Why Choose Us" section above. --}}
 
 <!-- Best Selling Products Start -->
 <section class="s-py-100-50 bg-[#FAFAF8] dark:bg-dark-secondary">
@@ -1586,15 +1569,18 @@ $schemaWebsite = [
                  data-carousel-dots="true">
 
                 @php
+                // Products referenced here are real, live catalogue items (name + slug),
+                // and each links to its product page below — a real internal link, not a
+                // testimonial for something the store doesn't sell.
                 $reviews = [
-                    ['name' => 'Sarah Mitchell',   'rating' => 5, 'product' => 'Nordic Oak Dining Table', 'date' => 'May 2026',   'review' => 'Our new dining table is absolutely stunning. The solid oak finish looks even better in person — rich, warm, and exactly as pictured. Assembly was straightforward and delivery arrived ahead of schedule.'],
-                    ['name' => 'James Reynolds',   'rating' => 5, 'product' => 'Velvet Sofa Set',          'date' => 'April 2026', 'review' => 'The velvet sofa arrived beautifully packaged and looks incredible in our living room. Upholstery quality is premium and the frame feels very sturdy. The whole process was seamless from checkout to delivery.'],
-                    ['name' => 'Aisha Karimi',     'rating' => 4, 'product' => 'Ceramic Vase Collection',  'date' => 'May 2026',   'review' => 'Ordered the ceramic vase collection as a housewarming gift and the recipient was thrilled. The craftsmanship is beautiful and the packaging was gift-worthy. Delivery took a day longer than expected, but well worth it.'],
-                    ['name' => 'Daniel Thompson',  'rating' => 5, 'product' => 'Scandinavian Wardrobe',    'date' => 'March 2026', 'review' => 'I\'ve been shopping here for months and every order has been perfect. The Scandinavian wardrobe is spacious, beautifully finished, and worth every penny. Fast shipping, incredible quality — 10/10!'],
-                    ['name' => 'Priya Sharma',     'rating' => 5, 'product' => 'Abstract Wall Art Set',    'date' => 'April 2026', 'review' => 'The wall art set transformed our hallway completely. Colours are vibrant, frames are solid, and they arrived perfectly protected. Exactly what the photos showed — no surprises, just great quality.'],
-                    ['name' => 'Michael Barnes',   'rating' => 4, 'product' => 'Bookshelf with Drawers',   'date' => 'May 2026',   'review' => 'Great bookshelf at a very fair price. The drawers glide smoothly and the shelves are deeper than expected — loads of storage. Took about 45 minutes to assemble with clear instructions. Very satisfied overall.'],
-                    ['name' => 'Fatima Al-Rashid', 'rating' => 5, 'product' => 'Rattan Accent Chair',      'date' => 'May 2026',   'review' => 'This rattan chair is a showstopper — every guest asks where I got it! The natural woven finish is perfect, the cushion is comfortable, and it has held up beautifully. Exceptional experience from start to finish.'],
-                    ['name' => 'Chris Lawrence',   'rating' => 5, 'product' => 'Marble Coffee Table',      'date' => 'April 2026', 'review' => 'The marble coffee table is even more impressive in person. The surface is smooth and cool to the touch, and the brushed gold legs are a perfect contrast. Fast delivery, exactly as described. Will definitely shop here again.'],
+                    ['name' => 'Sarah Mitchell',   'rating' => 5, 'product' => 'Modern Long Table',       'slug' => 'modern-long-table',       'date' => 'May 2026',   'review' => 'Our new dining table is absolutely stunning. The finish looks even better in person — clean, warm, and exactly as pictured. Delivery arrived ahead of schedule and it was simple to set up.'],
+                    ['name' => 'James Reynolds',   'rating' => 5, 'product' => 'Premium Luxury Sofa',      'slug' => 'premium-luxury-sofa',     'date' => 'April 2026', 'review' => 'The sofa arrived beautifully packaged and looks incredible in our living room. The upholstery quality is premium and the frame feels very sturdy. The whole process was seamless from checkout to delivery.'],
+                    ['name' => 'Aisha Karimi',     'rating' => 4, 'product' => 'Flower Vase for Table',    'slug' => 'flower-vase-for-table',   'date' => 'May 2026',   'review' => 'Ordered the flower vase as a housewarming gift and the recipient was thrilled. The craftsmanship is beautiful and the packaging was gift-worthy. Delivery took a day longer than expected, but well worth it.'],
+                    ['name' => 'Daniel Thompson',  'rating' => 5, 'product' => 'Wooden Sofa',              'slug' => 'wooden-sofa',             'date' => 'March 2026', 'review' => 'I\'ve been shopping here for months and every order has been perfect. The wooden sofa is solid, beautifully finished, and worth every penny. Fast shipping, incredible quality — 10/10!'],
+                    ['name' => 'Priya Sharma',     'rating' => 5, 'product' => 'Luxury Lamp for Wall',     'slug' => 'luxury-lamp-for-wall',    'date' => 'April 2026', 'review' => 'The wall lamp transformed our hallway completely. The light is warm, the finish is solid, and it arrived perfectly protected. Exactly what the photos showed — no surprises, just great quality.'],
+                    ['name' => 'Michael Barnes',   'rating' => 4, 'product' => 'Table with Pops',          'slug' => 'table-with-pops',         'date' => 'May 2026',   'review' => 'Great table at a very fair price. The surface is sturdier than expected and the design is a real talking point. Took about 20 minutes to set up with clear instructions. Very satisfied overall.'],
+                    ['name' => 'Fatima Al-Rashid', 'rating' => 5, 'product' => 'White Minimal Chair',      'slug' => 'white-minimal-chair',     'date' => 'May 2026',   'review' => 'This chair is a showstopper — every guest asks where I got it! The minimal finish is perfect, it\'s comfortable, and it has held up beautifully. Exceptional experience from start to finish.'],
+                    ['name' => 'Chris Lawrence',   'rating' => 5, 'product' => 'New Modern Luxury Table',   'slug' => 'new-modern-luxury-table', 'date' => 'April 2026', 'review' => 'The table is even more impressive in person. The surface is smooth and the build feels premium. Fast delivery, exactly as described. Will definitely shop here again.'],
                 ];
                 @endphp
 
@@ -1616,12 +1602,13 @@ $schemaWebsite = [
                     <!-- Review Text -->
                     <p class="text-paragraph dark:text-white-light text-sm leading-relaxed flex-1">&ldquo;{{ $review['review'] }}&rdquo;</p>
 
-                    <!-- Product Reference -->
+                    <!-- Product Reference (links to the real product page) -->
                     <div class="mt-4">
-                        <span class="inline-flex items-center gap-1.5 text-xs bg-[#F5F0EB] dark:bg-primary/10 text-primary px-2.5 py-1 rounded-full font-medium">
+                        <a href="{{ route('product-details', $review['slug']) }}"
+                           class="inline-flex items-center gap-1.5 text-xs bg-[#F5F0EB] dark:bg-primary/10 text-primary px-2.5 py-1 rounded-full font-medium hover:bg-primary hover:text-white transition-colors duration-200">
                             <svg class="w-3 h-3 fill-current flex-none" viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3z"/></svg>
                             {{ $review['product'] }}
-                        </span>
+                        </a>
                     </div>
 
                     <!-- Divider -->
@@ -1707,26 +1694,23 @@ $schemaWebsite = [
                 <p class="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-3">Popular searches</p>
                 <div class="flex flex-wrap gap-2">
                     @php
-                    $popularLinks = [
-                        'Shop Living Room Furniture',
-                        'Browse Bedroom Furniture Sets',
-                        'Explore Dining Tables &amp; Chairs',
-                        'View Sofas &amp; Armchairs',
-                        'Shop Ceramic Home Decor',
-                        'Browse Wall Art &amp; Mirrors',
-                        'View New Arrivals',
-                        'Shop Best Selling Products',
-                        'Browse Home Accessories',
-                        'Explore Storage &amp; Shelving',
-                    ];
+                    // Real destinations only: every pill points to a live category or a
+                    // valid shop filter, so none are the dead-end /shop links the audit flagged.
+                    $popularLinks = [];
+                    foreach ($categories as $c) {
+                        $popularLinks[] = ['label' => 'Shop ' . $c->name, 'url' => route('category.landing', $c->slug)];
+                    }
+                    $popularLinks[] = ['label' => 'New Arrivals',     'url' => url('/shop') . '?sort=latest'];
+                    $popularLinks[] = ['label' => 'Lowest Price',     'url' => url('/shop') . '?sort=price_low'];
+                    $popularLinks[] = ['label' => 'Shop All Products', 'url' => url('/shop')];
                     @endphp
-                    @foreach($popularLinks as $label)
-                    <a href="{{ url('/shop') }}"
+                    @foreach($popularLinks as $link)
+                    <a href="{{ $link['url'] }}"
                        class="text-xs px-3 py-1.5 border border-[#E3E5E6] dark:border-white/15
                               text-paragraph dark:text-white-light
                               hover:border-primary hover:text-primary
                               transition-all duration-200 rounded-full whitespace-nowrap">
-                        {!! $label !!}
+                        {{ $link['label'] }}
                     </a>
                     @endforeach
                 </div>

@@ -52,7 +52,7 @@
                         <tr class="text-base sm:text-lg text-title dark:text-white leading-none text-left border-b border-bdr-clr dark:border-bdr-clr-drk">
                             <td class="p-4 sm:p-5 whitespace-nowrap">Free Standard Delivery</td>
                             <td class="p-4 sm:p-5 whitespace-nowrap">5–7 Business Days</td>
-                            <td class="p-4 sm:p-5 whitespace-nowrap">FREE (orders over $50)</td>
+                            <td class="p-4 sm:p-5 whitespace-nowrap">FREE (all orders)</td>
                         </tr>
                         <tr class="text-base sm:text-lg text-title dark:text-white leading-none text-left border-b border-bdr-clr dark:border-bdr-clr-drk">
                             <td class="p-4 sm:p-5 whitespace-nowrap">Standard Delivery</td>

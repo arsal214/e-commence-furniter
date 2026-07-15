@@ -5,6 +5,10 @@
     $half  = ($starRating - $full) >= 0.5 ? 1 : 0;
     $empty = 5 - $full - $half;
 @endphp
+{{-- Hide the widget entirely when a caller passes an explicit review count of 0
+     (an empty "0.0 (0)" rating erodes trust). When no count is passed — e.g. the
+     stars for one individual review — the count is null and the stars still show. --}}
+@if ($reviewCount === null || $reviewCount > 0)
 <div class="flex items-center gap-1 mt-1">
     <ul class="flex items-center gap-1">
         @for ($s = 0; $s < $full; $s++)
@@ -39,3 +43,4 @@
     <span class="text-xs text-gray-400 dark:text-gray-500">({{ $reviewCount }})</span>
     @endif
 </div>
+@endif

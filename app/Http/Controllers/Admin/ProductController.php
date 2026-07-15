@@ -102,6 +102,12 @@ class ProductController extends Controller
             'size_chart'     => ['nullable', 'image', 'max:8192'],
             'tag'            => ['nullable', 'in:Sale,NEW,OFF,OFF1'],
             'sku'           => ['nullable', 'string', 'max:100'],
+            'gtin'          => ['nullable', 'string', 'max:50'],
+            'mpn'           => ['nullable', 'string', 'max:100'],
+            'spec_label'    => ['nullable', 'array'],
+            'spec_label.*'  => ['nullable', 'string', 'max:120'],
+            'spec_value'    => ['nullable', 'array'],
+            'spec_value.*'  => ['nullable', 'string', 'max:255'],
             'stock'         => ['required', 'integer', 'min:0'],
             'is_featured'    => ['nullable', 'boolean'],
             'is_best_seller' => ['nullable', 'boolean'],
@@ -120,10 +126,14 @@ class ProductController extends Controller
         $data['sale_price']  = ($data['sale_price'] ?? null) ?: null;
         $data['colors']      = $this->parseVariants($request->input('colors_raw'));
         $data['sizes']       = $this->parseVariants($request->input('sizes_raw'));
-        $data['key_features'] = $this->buildKeyFeatures($request);
+        $data['key_features']   = $this->buildKeyFeatures($request);
+        $data['specifications'] = $this->buildSpecifications($request);
+        $data['gtin'] = trim((string) $request->input('gtin')) ?: null;
+        $data['mpn']  = trim((string) $request->input('mpn')) ?: null;
 
         unset($data['colors_raw'], $data['sizes_raw'], $data['images'],
-              $data['key_feature_1'], $data['key_feature_2'], $data['key_feature_3']);
+              $data['key_feature_1'], $data['key_feature_2'], $data['key_feature_3'],
+              $data['spec_label'], $data['spec_value']);
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('products', 'public');
@@ -182,6 +192,12 @@ class ProductController extends Controller
             'remove_images.*'    => ['integer'],
             'tag'                => ['nullable', 'in:Sale,NEW,OFF,OFF1'],
             'sku'           => ['nullable', 'string', 'max:100'],
+            'gtin'          => ['nullable', 'string', 'max:50'],
+            'mpn'           => ['nullable', 'string', 'max:100'],
+            'spec_label'    => ['nullable', 'array'],
+            'spec_label.*'  => ['nullable', 'string', 'max:120'],
+            'spec_value'    => ['nullable', 'array'],
+            'spec_value.*'  => ['nullable', 'string', 'max:255'],
             'stock'         => ['required', 'integer', 'min:0'],
             'is_featured'    => ['nullable', 'boolean'],
             'is_best_seller' => ['nullable', 'boolean'],
@@ -202,10 +218,14 @@ class ProductController extends Controller
         $data['sale_price']  = ($data['sale_price'] ?? null) ?: null;
         $data['colors']       = $this->parseVariants($request->input('colors_raw'));
         $data['sizes']        = $this->parseVariants($request->input('sizes_raw'));
-        $data['key_features'] = $this->buildKeyFeatures($request);
+        $data['key_features']   = $this->buildKeyFeatures($request);
+        $data['specifications'] = $this->buildSpecifications($request);
+        $data['gtin'] = trim((string) $request->input('gtin')) ?: null;
+        $data['mpn']  = trim((string) $request->input('mpn')) ?: null;
 
         unset($data['colors_raw'], $data['sizes_raw'], $data['remove_size_chart'], $data['remove_images'], $data['images'],
-              $data['key_feature_1'], $data['key_feature_2'], $data['key_feature_3']);
+              $data['key_feature_1'], $data['key_feature_2'], $data['key_feature_3'],
+              $data['spec_label'], $data['spec_value']);
 
         if ($request->hasFile('image')) {
             if ($product->image && \Storage::disk('public')->exists($product->image)) {
@@ -287,6 +307,28 @@ class ProductController extends Controller
         ], fn($v) => $v !== ''));
 
         return !empty($features) ? json_encode($features) : null;
+    }
+
+    /**
+     * Zip the parallel spec_label[] / spec_value[] inputs into ordered label/value
+     * rows, dropping any row where either side is blank. Returns null when empty so
+     * the column stays NULL rather than storing "[]".
+     */
+    private function buildSpecifications(Request $request): ?array
+    {
+        $labels = $request->input('spec_label', []);
+        $values = $request->input('spec_value', []);
+        $specs  = [];
+
+        foreach ((array) $labels as $i => $label) {
+            $label = trim((string) $label);
+            $value = trim((string) ($values[$i] ?? ''));
+            if ($label !== '' && $value !== '') {
+                $specs[] = ['label' => $label, 'value' => $value];
+            }
+        }
+
+        return $specs ?: null;
     }
 
     private function parseVariants(?string $raw): ?array

@@ -777,7 +777,9 @@
 <div id="pg-cart-ovl"></div>
 <div id="pg-cart-drw" role="dialog" aria-modal="true" aria-label="Shopping cart">
     <div class="pg-drw-hd">
-        <h2 class="pg-drw-title">Your Cart <span>({{ $cart->count() }} {{ $cart->count() === 1 ? 'item' : 'items' }})</span></h2>
+        {{-- Not a heading: this drawer lives in the global navbar, so an <h2> here
+             becomes the first heading on every page, before the real H1. --}}
+        <p class="pg-drw-title" role="heading" aria-level="2">Your Cart <span>({{ $cart->count() }} {{ $cart->count() === 1 ? 'item' : 'items' }})</span></p>
         <button id="pg-cart-close-btn" class="pg-drw-close-btn" aria-label="Close cart">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="1" y1="1" x2="12" y2="12"/><line x1="12" y1="1" x2="1" y2="12"/></svg>
         </button>

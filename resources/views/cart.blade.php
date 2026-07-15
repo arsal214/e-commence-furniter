@@ -171,6 +171,41 @@
 
         </div>
 
+        {{-- ── Cross-sell: companion products, full-width under the cart grid ──
+             "Add" does a normal POST (data-full-submit) so the cart list refreshes. --}}
+        @if($crossSell->isNotEmpty())
+        <section class="co-panel co-xsell" aria-labelledby="co-xsell-title">
+            <h2 class="co-panel__title" id="co-xsell-title">You might also like</h2>
+            <p class="co-panel__hint">Popular add-ons shoppers grab before checkout.</p>
+
+            <div class="co-xsell__row">
+                @foreach($crossSell as $p)
+                    @php
+                        $pimg = $p->image
+                            ? (Str::startsWith($p->image, 'assets/') ? asset($p->image) : Storage::url($p->image))
+                            : asset('assets/img/gallery/cart/cart-01.jpg');
+                    @endphp
+                    <div class="co-xsell__card">
+                        <a href="{{ route('product-details', $p->slug) }}" class="co-xsell__media">
+                            <img src="{{ $pimg }}" alt="{{ $p->name }}" width="140" height="140" loading="lazy">
+                        </a>
+                        <a href="{{ route('product-details', $p->slug) }}" class="co-xsell__name">{{ $p->name }}</a>
+                        <div class="co-xsell__price">{{ $p->display_price }}</div>
+                        <form method="POST" action="{{ route('cart.add') }}" data-full-submit class="co-xsell__form">
+                            @csrf
+                            <input type="hidden" name="product_id" value="{{ $p->id }}">
+                            <input type="hidden" name="qty" value="1">
+                            <button type="submit" class="co-xsell__add" aria-label="Add {{ $p->name }} to cart">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                                Add
+                            </button>
+                        </form>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+        @endif
+
     @endif
 
     {{-- Sign-in gate for guests --}}
@@ -270,4 +305,46 @@
     });
 })();
 </script>
+@endpush
+
+@push('styles')
+<style>
+/* ── Cart cross-sell tray ── */
+.co-xsell { margin-top: 20px; }
+.co-xsell__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 14px; }
+@media (max-width: 720px) {
+    /* Horizontal swipe row on small screens so the cards stay tappable */
+    .co-xsell__row {
+        grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 60%;
+        overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+        padding-bottom: 6px;
+    }
+    .co-xsell__card { scroll-snap-align: start; }
+}
+.co-xsell__card {
+    display: flex; flex-direction: column;
+    border: 1px solid #e8e1d7; border-radius: 12px; padding: 10px; background: #fff;
+}
+.co-xsell__media { display: block; border-radius: 8px; overflow: hidden; background: #f5f2ec; aspect-ratio: 1 / 1; }
+.co-xsell__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.co-xsell__name {
+    font-size: 13px; font-weight: 600; color: #172430; line-height: 1.3; text-decoration: none;
+    margin: 10px 0 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.co-xsell__name:hover { color: #bb976d; }
+.co-xsell__price { font-size: 14px; font-weight: 700; color: #172430; margin-bottom: 10px; }
+.co-xsell__form { margin-top: auto; margin-bottom: 0; }
+.co-xsell__add {
+    width: 100%; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: 1px solid #172430; border-radius: 8px; background: transparent;
+    color: #172430; font-size: 13px; font-weight: 700; cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+}
+.co-xsell__add:hover { background: #172430; color: #fff; }
+.co-xsell__add:focus-visible { outline: 2px solid #bb976d; outline-offset: 2px; }
+.dark .co-xsell__card { background: #172430; border-color: #2f3b45; }
+.dark .co-xsell__name, .dark .co-xsell__price { color: #fff; }
+.dark .co-xsell__add { border-color: #fff; color: #fff; }
+.dark .co-xsell__add:hover { background: #fff; color: #172430; }
+</style>
 @endpush

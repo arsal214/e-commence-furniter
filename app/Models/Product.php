@@ -11,6 +11,7 @@ class Product extends Model
         'category_id', 'name', 'brand', 'slug', 'meta_title', 'meta_description',
         'description', 'key_features', 'review_content', 'shipping_info',
         'price', 'sale_price', 'image', 'tag', 'is_featured', 'is_best_seller', 'is_active', 'stock', 'sku',
+        'gtin', 'mpn', 'specifications',
         'colors', 'sizes', 'size_chart',
         'supplier_name', 'supplier_url', 'supplier_sku',
     ];
@@ -23,6 +24,7 @@ class Product extends Model
         'is_active'      => 'boolean',
         'colors'      => 'array',
         'sizes'       => 'array',
+        'specifications' => 'array',
     ];
 
     protected static function boot()

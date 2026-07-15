@@ -54,14 +54,32 @@ class ProductImportController extends Controller
             ]);
         }
 
-        $updated  = [];
-        $notFound = [];
-        $skipped  = [];
-        $rowNum   = 1;
+        $updated      = [];
+        $notFound     = [];
+        $skipped      = [];
+        $warnings     = [];
+        $rowNum       = 1;
+        $expectedCols = count($rawHeaders);
 
         while (($row = fgetcsv($handle)) !== false) {
             $rowNum++;
             $row = $this->toUtf8($row);
+
+            // Skip completely blank lines quietly (trailing newline, spacer rows).
+            if (count(array_filter($row, fn($c) => trim((string) $c) !== '')) === 0) {
+                continue;
+            }
+
+            // Guard: a row whose column count doesn't match the header is almost
+            // always a shifted row (an unescaped comma or line break in the source).
+            // Importing it would drop the wrong text into the wrong field — the exact
+            // "description belongs to another product" bug. Skip it instead.
+            if (count($row) !== $expectedCols) {
+                $skipped[] = "Row {$rowNum}: expected {$expectedCols} columns but found " . count($row)
+                    . " — row skipped (likely an unescaped comma or line break in the source CSV).";
+                continue;
+            }
+
             $originalTitle = trim($row[$colOriginal] ?? '');
             if ($originalTitle === '') continue;
 
@@ -89,7 +107,16 @@ class ProductImportController extends Controller
 
             if ($colDescription !== null) {
                 $v = trim($row[$colDescription] ?? '');
-                if ($v !== '') $data['description'] = $v;
+                if ($v !== '') {
+                    $data['description'] = $v;
+                    // Soft check: does the incoming description mention the product at
+                    // all? Share no significant word with the title → flag for review
+                    // (still applied, since the column count already passed the guard).
+                    $titleForCheck = $data['name'] ?? $product->name;
+                    if (! $this->descriptionMatchesTitle($v, $titleForCheck)) {
+                        $warnings[] = "Row {$rowNum} \"{$titleForCheck}\": the new description doesn't mention the product — please double-check it's not another item's text.";
+                    }
+                }
             }
 
             if ($colSlug !== null) {
@@ -115,7 +142,30 @@ class ProductImportController extends Controller
             'import_updated'   => $updated,
             'import_not_found' => $notFound,
             'import_skipped'   => $skipped,
+            'import_warnings'  => $warnings,
         ]);
+    }
+
+    /** True if the description shares at least one significant word with the title. */
+    private function descriptionMatchesTitle(string $description, string $title): bool
+    {
+        $desc  = strtolower(strip_tags($description));
+        $words = array_filter(
+            preg_split('/\W+/', strtolower($title)),
+            fn ($w) => strlen($w) > 3
+        );
+
+        if (empty($words)) {
+            return true;
+        }
+
+        foreach ($words as $w) {
+            if (str_contains($desc, $w)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function col(array $map, array $candidates): ?int

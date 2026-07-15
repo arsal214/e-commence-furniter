@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AccountCreatedMail;
 use App\Mail\OrderConfirmationMail;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\User;
 use App\Services\CartService;
 use App\Services\TikTokEventsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Stripe\Stripe;
@@ -91,9 +95,36 @@ class CheckoutController extends Controller
         $subtotal      = $this->cart->total();
         $total         = $subtotal + $shippingCost;
 
+        // Resolve the buyer's account (guest checkout, flow B).
+        //  - logged in         → use their account
+        //  - email is known    → attach the order to that account, but never log an
+        //                        anonymous visitor in or touch its password
+        //  - brand-new email   → auto-create an account with a temporary password and
+        //                        the must_reset flag; credentials are emailed below
+        $newUser       = null;
+        $plainPassword = null;
+        $buyerId       = auth()->id();
+
+        if (! $buyerId) {
+            $existing = User::where('email', $data['email'])->first();
+            if ($existing) {
+                $buyerId = $existing->id;
+            } else {
+                $plainPassword = Str::password(12);
+                $newUser = User::create([
+                    'name'                => $data['name'],
+                    'email'               => $data['email'],
+                    'role'                => 'customer',
+                    'password'            => Hash::make($plainPassword),
+                    'must_reset_password' => true,
+                ]);
+                $buyerId = $newUser->id;
+            }
+        }
+
         // Create the order
         $order = Order::create([
-            'user_id'         => auth()->id(),
+            'user_id'         => $buyerId,
             'name'            => $data['name'],
             'email'           => $data['email'],
             'phone'           => $data['phone'],
@@ -122,6 +153,18 @@ class CheckoutController extends Controller
                 'qty'        => $item['qty'],
                 'total'      => $item['price'] * $item['qty'],
             ]);
+        }
+
+        // A freshly auto-created account: sign the buyer in for this session and
+        // email their temporary credentials. Done here (not per payment branch) so
+        // both COD and the Stripe hand-off get the same treatment.
+        if ($newUser) {
+            Auth::login($newUser);
+            try {
+                Mail::to($newUser->email)->send(new AccountCreatedMail($newUser, $plainPassword));
+            } catch (\Exception $e) {
+                \Log::warning('Account-created email failed for ' . $newUser->email . ': ' . $e->getMessage());
+            }
         }
 
         if ($data['payment_method'] === 'cod') {

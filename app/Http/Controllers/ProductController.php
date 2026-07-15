@@ -54,20 +54,28 @@ class ProductController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
-        // Related: same category first, then fill with latest
+        // Related products: same category AND closest in price first, so a premium
+        // item isn't paired with bargain-bin products (a $350 machine next to $9
+        // brushes reads as a broken recommender). Effective price mirrors what the
+        // cart charges — sale price when set, otherwise the list price.
+        $eff       = 'COALESCE(NULLIF(sale_price, 0), price)';
+        $itemPrice = (float) $item->effective_price;
+
         $newProducts = Product::where('is_active', true)
             ->where('id', '!=', $item->id)
             ->where('category_id', $item->category_id)
-            ->latest()
+            ->orderByRaw("ABS($eff - ?) ASC", [$itemPrice])
             ->take(4)
             ->get();
 
+        // Fall back to the nearest-priced items from any category (not the newest),
+        // so the tail is still tier-appropriate rather than random.
         if ($newProducts->count() < 4) {
             $ids = $newProducts->pluck('id')->push($item->id);
             $newProducts = $newProducts->merge(
                 Product::where('is_active', true)
                     ->whereNotIn('id', $ids)
-                    ->latest()
+                    ->orderByRaw("ABS($eff - ?) ASC", [$itemPrice])
                     ->take(4 - $newProducts->count())
                     ->get()
             );

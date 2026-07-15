@@ -10,14 +10,23 @@
 @section('meta_description', 'Browse our full collection of furniture, home decor, ceramics and lifestyle products. Filter by category and price at PeytonGhalib.' . ($shopPage > 1 ? ' Page ' . $shopPage . '.' : ''))
 
 @php
-    // Canonical: a single selected category maps to its landing page; anything else
-    // (multi-select, price/colour/size facets) is a filtered view of /shop.
+    // Canonical strategy — de-duplicates /shop?category=X against the /category/{slug}
+    // landing without hiding paginated content:
+    //   • page 1 of a single category (with or without price facets) is the twin of the
+    //     landing → consolidate ranking there.
+    //   • deeper category pages keep their own URL (the landing isn't paginated), so
+    //     their further products stay discoverable.
+    //   • search views self-reference only nominally — they're noindexed anyway.
+    //   • everything else self-references /shop (with the page number when > 1).
     $soleCategory = count($filters['categories']) === 1 ? $filters['categories'][0] : null;
+    $isSearch     = $filters['search'] !== '';
 
-    if ($soleCategory) {
+    if ($soleCategory && $shopPage === 1 && ! $isSearch) {
         $shopCanonical = url('/category/' . $soleCategory);
-    } elseif (request()->get('page', 1) > 1) {
-        $shopCanonical = url('/shop') . '?page=' . request()->get('page');
+    } elseif ($soleCategory && ! $isSearch) {
+        $shopCanonical = url('/shop') . '?' . http_build_query(['category' => $soleCategory, 'page' => $shopPage]);
+    } elseif ($shopPage > 1) {
+        $shopCanonical = url('/shop') . '?page=' . $shopPage;
     } else {
         $shopCanonical = url('/shop');
     }
@@ -211,8 +220,10 @@
     <div class="container-fluid">
         <div class="max-w-[1720px] mx-auto">
 
-            {{-- One GET form wraps the sidebar and the sort control, so every facet composes --}}
-            <form method="GET" action="{{ url('/shop') }}" id="pg-shop-form" class="pg-shop">
+            {{-- Layout container only. The GET filter form is scoped to the sidebar below;
+                 wrapping the product grid too would nest the add-to-cart POST forms inside a
+                 form (invalid HTML), and the browser would drop them — breaking Add to Cart. --}}
+            <div class="pg-shop">
 
                 {{-- ── Sidebar ────────────────────────────────────────── --}}
                 <aside class="pg-shop__aside" aria-label="Product filters">
@@ -222,6 +233,9 @@
                         Filters @if ($hasFilters) ({{ count($chips) }}) @endif
                     </button>
 
+                    {{-- Scoped GET form: sidebar facets only. display:contents so it has no
+                         layout effect and .pg-fbox still behaves as a direct child of the aside. --}}
+                    <form method="GET" action="{{ url('/shop') }}" id="pg-shop-form" style="display:contents">
                     <div class="pg-fbox" id="pg-filter-box">
                         <div class="pg-fbox__head">
                             <div>
@@ -290,6 +304,7 @@
                             <button type="submit" class="pg-apply">Apply Filters</button>
                         </div>
                     </div>
+                    </form>
                 </aside>
 
                 {{-- ── Main ───────────────────────────────────────────── --}}
@@ -312,7 +327,7 @@
                             {{-- pg-native-select keeps niceSelect's hands off it: the plugin
                                  mangles utility-styled selects and its jQuery-only change
                                  event never reaches the auto-submit listener. --}}
-                            <select id="pg-sort" name="sort" class="pg-native-select">
+                            <select id="pg-sort" name="sort" form="pg-shop-form" class="pg-native-select">
                                 @foreach ($sortOptions as $value => $label)
                                     <option value="{{ $value }}" @selected($sort === $value)>{{ $label }}</option>
                                 @endforeach
@@ -408,7 +423,7 @@
                     @endif
 
                 </div>
-            </form>
+            </div>
 
         </div>
     </div>
@@ -426,8 +441,12 @@
     if (!form) return;
 
     // Auto-apply on change. The Apply button stays in the markup as the no-JS path.
-    form.addEventListener('change', function (e) {
-        if (e.target.matches('input[type="checkbox"], select')) form.submit();
+    // The sort <select> is outside the form (linked via form="pg-shop-form"), so its
+    // change won't bubble to the form — listen on the document and match it explicitly.
+    document.addEventListener('change', function (e) {
+        if (e.target.matches('#pg-shop-form input[type="checkbox"], #pg-sort')) {
+            (form.requestSubmit ? form.requestSubmit() : form.submit());
+        }
     });
 
     // Mobile: collapse the filter panel behind a disclosure button.

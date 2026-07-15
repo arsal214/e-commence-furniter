@@ -35,6 +35,13 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+
+            // Flow B: accounts created at guest checkout must set their own password
+            // before anything else on their first sign-in.
+            if (Auth::user()->must_reset_password) {
+                return redirect()->route('account.set-password');
+            }
+
             return redirect()->intended(
                 Auth::user()->isAdmin() ? '/admin' : '/my-account'
             );
@@ -86,6 +93,31 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/login');
+    }
+
+    // ──────────────────────────────────────────────
+    //  First-login password setup (guest-checkout accounts, flow B)
+    // ──────────────────────────────────────────────
+
+    /** Show the "choose your own password" screen. */
+    public function showSetPassword()
+    {
+        return view('set-password');
+    }
+
+    /** Persist the chosen password and clear the forced-reset flag. */
+    public function setPassword(Request $request)
+    {
+        $request->validate([
+            'password' => ['required', 'min:8', 'confirmed'],
+        ]);
+
+        $request->user()->forceFill([
+            'password'            => Hash::make($request->password),
+            'must_reset_password' => false,
+        ])->save();
+
+        return redirect('/my-account')->with('status', 'Your password is set — welcome to PeytonGhalib!');
     }
 
     // ──────────────────────────────────────────────

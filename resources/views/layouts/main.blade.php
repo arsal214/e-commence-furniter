@@ -927,6 +927,9 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
                 var form = e.target;
                 if (!(form instanceof HTMLFormElement)) return;
                 if (!/\/cart\/add\/?$/.test(form.getAttribute('action') || '')) return;
+                // Opt-out: the cart page's cross-sell adds do a normal POST so the
+                // cart list itself refreshes, rather than only popping the modal.
+                if (form.hasAttribute('data-full-submit')) return;
 
                 e.preventDefault();
                 var btn = form.querySelector('[type="submit"]');

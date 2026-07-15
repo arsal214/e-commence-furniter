@@ -30,7 +30,12 @@ Route::get('/forger-password', fn() => redirect('/forgot-password', 301));
 // ──────────────────────────────────────────────
 //  Protected customer routes
 // ──────────────────────────────────────────────
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'must-reset'])->group(function () {
+    // First-login password setup for guest-checkout accounts (flow B). Kept inside
+    // the must-reset group; the middleware exempts these routes so the user can finish.
+    Route::get('/account/set-password',  [AuthController::class, 'showSetPassword'])->name('account.set-password');
+    Route::post('/account/set-password', [AuthController::class, 'setPassword']);
+
     Route::get('/my-profile',    fn() => redirect('/my-account'));
     Route::get('/my-account',    [HomeController::class, 'myAccount']);
     Route::get('/edit-account',  [HomeController::class, 'editAccount']);
@@ -40,12 +45,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/wishlist/toggle',  [WishlistController::class, 'toggle'])->name('wishlist.toggle');
     Route::post('/wishlist/remove',  [WishlistController::class, 'remove'])->name('wishlist.remove');
 
-    Route::get('/checkout',         [CheckoutController::class, 'index'])->name('checkout');
-    Route::post('/checkout',        [CheckoutController::class, 'store'])->name('checkout.store');
-    Route::get('/checkout/success', [CheckoutController::class, 'stripeSuccess'])->name('checkout.stripe-success');
-
     Route::post('/product/{slug}/review', [ReviewController::class, 'store'])->name('product.review.store');
 });
+
+// Checkout is open to guests. Placing an order auto-creates an account (flow B).
+Route::get('/checkout',         [CheckoutController::class, 'index'])->name('checkout');
+Route::post('/checkout',        [CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/checkout/success', [CheckoutController::class, 'stripeSuccess'])->name('checkout.stripe-success');
 
 // ──────────────────────────────────────────────
 //  Admin routes

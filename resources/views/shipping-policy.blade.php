@@ -31,7 +31,7 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Ship
         <p>We ship all PeytonGhalib orders with care, ensuring your furniture and home decor arrives safely and on time.</p>
         <h3>Shipping Options</h3>
         <ul>
-            <li><strong>Free Standard Shipping:</strong> Available on all orders over $99. Estimated 3–7 business days.</li>
+            <li><strong>Free Standard Shipping:</strong> Available on all orders, with no minimum spend. Estimated 3–7 business days.</li>
             <li><strong>Express Shipping ($10):</strong> 1–3 business days. Available at checkout.</li>
             <li><strong>Local Pickup ($0):</strong> Collect from our warehouse. Scheduling confirmed by email.</li>
         </ul>

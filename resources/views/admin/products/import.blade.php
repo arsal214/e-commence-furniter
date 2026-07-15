@@ -66,7 +66,7 @@
     </div>
 
     {{-- ── Results ── --}}
-    @if (session('import_updated') || session('import_not_found') || session('import_skipped'))
+    @if (session('import_updated') || session('import_not_found') || session('import_skipped') || session('import_warnings'))
     <div class="space-y-4">
 
         {{-- Updated --}}
@@ -110,7 +110,25 @@
         </div>
         @endif
 
-        {{-- Skipped / Warnings --}}
+        {{-- Review warnings (applied, but description looks off) --}}
+        @if (session('import_warnings'))
+        <div class="bg-white rounded-xl shadow-sm border border-amber-100 p-5">
+            <div class="flex items-center gap-2 mb-3">
+                <i class="mdi mdi-eye-check text-amber-500 text-xl"></i>
+                <h3 class="font-semibold text-gray-800 text-sm">
+                    {{ count(session('import_warnings')) }} row(s) applied but need a look
+                </h3>
+            </div>
+            <p class="text-xs text-gray-400 mb-3">These descriptions were saved, but they don't mention the product by name — worth confirming they aren't another item's text.</p>
+            <ul class="space-y-1">
+                @foreach (session('import_warnings') as $msg)
+                <li class="text-sm text-amber-700 bg-amber-50 rounded-lg px-3 py-2">{{ $msg }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
+        {{-- Skipped (not applied) --}}
         @if (session('import_skipped'))
         <div class="bg-white rounded-xl shadow-sm border border-red-100 p-5">
             <div class="flex items-center gap-2 mb-3">
