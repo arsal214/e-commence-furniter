@@ -648,7 +648,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
                 </svg>
-                <span class="pg-badge" id="pg-cart-badge">{{ $cart->count() }}</span>
+                <span class="pg-badge js-cart-count" id="pg-cart-badge">{{ $cart->count() }}</span>
             </button>
 
 
@@ -701,7 +701,7 @@
         </button>
         <button class="pg-act-btn" id="pg-mob-cart-btn" aria-label="Cart" style="width:38px;height:38px;position:relative;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-            <span class="pg-badge" style="width:15px;height:15px;font-size:8px;top:2px;right:1px;">{{ $cart->count() }}</span>
+            <span class="pg-badge js-cart-count" style="width:15px;height:15px;font-size:8px;top:2px;right:1px;">{{ $cart->count() }}</span>
         </button>
     </div>
 </div>

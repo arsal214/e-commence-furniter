@@ -624,6 +624,115 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
             @media (prefers-reduced-motion: reduce) {
                 .pg-card-actions { transition: none; }
             }
+
+            /* ── Compact card action icons (wishlist / cart / quick view) ─ */
+            .pg-ico-btn {
+                width: 44px; height: 44px; border-radius: 50%;
+                display: inline-flex; align-items: center; justify-content: center;
+                background: rgba(255,255,255,.92); color: #172430; border: 0; cursor: pointer;
+                box-shadow: 0 4px 14px rgba(0,0,0,.14);
+                transition: background .2s ease, color .2s ease, transform .15s ease;
+            }
+            .pg-ico-btn:hover  { background: #BB976D; color: #fff; }
+            .pg-ico-btn:active { transform: scale(.93); }
+            .pg-ico-btn:focus-visible { outline: 2px solid #BB976D; outline-offset: 2px; }
+            .pg-ico-btn svg { width: auto; height: 18px; }   /* height-only keeps each icon's aspect */
+            .dark .pg-ico-btn { background: #172430; color: #fff; }
+            .dark .pg-ico-btn:hover { background: #BB976D; color: #fff; }
+            .pg-ico-btn.wishlist-active { color: #E13939; }
+            /* Self-contained visually-hidden label (independent of style.css .sr-only) */
+            .pg-ico-sr {
+                position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+                overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+            }
+
+            /* ── Added-to-cart confirmation ─────────────────────────── */
+            .pg-atc[hidden] { display: none; }
+            .pg-atc {
+                position: fixed; inset: 0; z-index: 99999995;
+                display: flex; align-items: center; justify-content: center; padding: 20px;
+            }
+            .pg-atc__backdrop {
+                position: absolute; inset: 0; background: rgba(23,36,48,.6);
+                opacity: 0; transition: opacity .25s ease;
+            }
+            .pg-atc.is-open .pg-atc__backdrop { opacity: 1; }
+            .pg-atc__panel {
+                position: relative; width: 100%; max-width: 420px;
+                max-height: calc(100vh - 40px); overflow-y: auto;
+                background: #fff; border-radius: 18px; padding: 24px 22px 20px;
+                box-shadow: 0 24px 60px rgba(0,0,0,.28);
+                transform: translateY(14px) scale(.96); opacity: 0;
+                transition: transform .28s cubic-bezier(.22,.68,0,1.1), opacity .2s ease;
+            }
+            .pg-atc.is-open .pg-atc__panel { transform: none; opacity: 1; }
+            .dark .pg-atc__panel { background: #172430; color: #fff; }
+            .pg-atc__close {
+                position: absolute; top: 12px; right: 12px; z-index: 2;
+                width: 40px; height: 40px; display: inline-flex;
+                align-items: center; justify-content: center;
+                background: transparent; border: 0; border-radius: 50%;
+                color: #6B6560; cursor: pointer;
+            }
+            .pg-atc__close:hover { color: #172430; background: rgba(0,0,0,.05); }
+            .pg-atc__close:focus-visible { outline: 2px solid #BB976D; outline-offset: 2px; }
+            .dark .pg-atc__close { color: #A9B2BB; }
+            .dark .pg-atc__close:hover { color: #fff; background: rgba(255,255,255,.08); }
+            .pg-atc__head { display: flex; align-items: center; gap: 10px; padding-right: 32px; }
+            .pg-atc__check {
+                flex: none; width: 34px; height: 34px; border-radius: 50%;
+                display: inline-flex; align-items: center; justify-content: center;
+                background: #E7F5EE; color: #1CB28E;
+            }
+            .dark .pg-atc__check { background: rgba(28,178,142,.15); }
+            .pg-atc__title { font-size: 17px; font-weight: 700; line-height: 1.2; color: #172430; }
+            .dark .pg-atc__title { color: #fff; }
+            .pg-atc__row {
+                display: flex; gap: 14px; align-items: center;
+                margin-top: 18px; padding: 12px; border-radius: 12px; background: #FAF7F2;
+            }
+            .dark .pg-atc__row { background: rgba(255,255,255,.05); }
+            .pg-atc__thumb {
+                flex: none; width: 62px; height: 62px; border-radius: 10px;
+                object-fit: cover; background: #ece7e0;
+            }
+            .pg-atc__name { font-weight: 600; font-size: 14px; line-height: 1.35; color: #172430; }
+            .dark .pg-atc__name { color: #fff; }
+            .pg-atc__meta { font-size: 13px; color: #6B6560; margin-top: 3px; }
+            .dark .pg-atc__meta { color: #A9B2BB; }
+            .pg-atc__summary {
+                display: flex; align-items: center; justify-content: space-between;
+                margin-top: 16px; padding-top: 14px; border-top: 1px solid #EEE8DF;
+                font-size: 13px; color: #6B6560;
+            }
+            .dark .pg-atc__summary { border-color: #2F3B45; color: #A9B2BB; }
+            .pg-atc__summary strong { color: #172430; font-weight: 700; }
+            .dark .pg-atc__summary strong { color: #fff; }
+            .pg-atc__actions { display: flex; gap: 10px; margin-top: 18px; }
+            .pg-atc__btn {
+                flex: 1; min-height: 48px; padding: 0 14px;
+                display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+                border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;
+                text-decoration: none; text-align: center;
+                transition: background .2s ease, border-color .2s ease, color .2s ease;
+            }
+            .pg-atc__btn--secondary { background: #fff; border: 1px solid #D9D2C7; color: #172430; }
+            .pg-atc__btn--secondary:hover { border-color: #BB976D; color: #BB976D; }
+            .dark .pg-atc__btn--secondary { background: transparent; border-color: #2F3B45; color: #fff; }
+            .dark .pg-atc__btn--secondary:hover { border-color: #BB976D; color: #BB976D; }
+            .pg-atc__btn--primary { background: #BB976D; border: 1px solid #BB976D; color: #fff; }
+            .pg-atc__btn--primary:hover { background: #a8845a; border-color: #a8845a; }
+            .pg-atc__btn:focus-visible { outline: 2px solid #BB976D; outline-offset: 2px; }
+            .pg-atc__link {
+                display: block; text-align: center; margin-top: 12px;
+                font-size: 13px; color: #6B6560; text-decoration: underline;
+            }
+            .pg-atc__link:hover { color: #BB976D; }
+            .dark .pg-atc__link { color: #A9B2BB; }
+            .pg-atc-loading { opacity: .65; cursor: progress; pointer-events: none; }
+            @media (prefers-reduced-motion: reduce) {
+                .pg-atc__panel, .pg-atc__backdrop { transition: none; }
+            }
         </style>
 
         <div id="pg-toasts" class="pg-toasts" role="status" aria-live="polite" aria-atomic="false"></div>
@@ -637,6 +746,41 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
                     </svg>
                 </button>
                 <div id="pg-qv-body"><p class="pg-qv__loading">Loading…</p></div>
+            </div>
+        </div>
+
+        {{-- Added-to-cart confirmation modal (populated by JS on AJAX add) --}}
+        <div id="pg-atc" class="pg-atc" hidden role="dialog" aria-modal="true" aria-labelledby="pg-atc-title">
+            <div class="pg-atc__backdrop" data-pg-atc-close></div>
+            <div class="pg-atc__panel">
+                <button type="button" class="pg-atc__close" data-pg-atc-close aria-label="Close">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+                <div class="pg-atc__head">
+                    <span class="pg-atc__check" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    </span>
+                    <h2 id="pg-atc-title" class="pg-atc__title">Added to your cart</h2>
+                </div>
+                <div class="pg-atc__row">
+                    <img id="pg-atc-thumb" class="pg-atc__thumb" src="" alt="" loading="lazy">
+                    <div>
+                        <p id="pg-atc-name" class="pg-atc__name"></p>
+                        <p id="pg-atc-meta" class="pg-atc__meta"></p>
+                    </div>
+                </div>
+                <div class="pg-atc__summary">
+                    <span id="pg-atc-count"></span>
+                    <span>Subtotal:&nbsp;<strong id="pg-atc-total"></strong></span>
+                </div>
+                <div class="pg-atc__actions">
+                    <button type="button" class="pg-atc__btn pg-atc__btn--secondary" data-pg-atc-close>Continue Shopping</button>
+                    <a href="{{ route('checkout') }}" class="pg-atc__btn pg-atc__btn--primary">
+                        Checkout
+                        <svg width="15" height="11" viewBox="0 0 24 14" fill="none" aria-hidden="true"><path d="M23.82 6.62 18.38 1.18a.77.77 0 0 0-1.09 1.09l4.13 4.13H.9a.77.77 0 0 0 0 1.54h20.52l-4.13 4.13a.77.77 0 0 0 1.09 1.09l5.44-5.44a.77.77 0 0 0 0-1.1Z" fill="currentColor"/></svg>
+                    </a>
+                </div>
+                <a href="{{ route('cart') }}" class="pg-atc__link">View cart</a>
             </div>
         </div>
 
@@ -727,6 +871,104 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
 
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') closeQv();
+            });
+        })();
+        </script>
+
+        {{-- Added-to-cart: intercept cart.add forms, POST via fetch, show the modal.
+             The <form> still works with JS off — this only enhances it. --}}
+        <script>
+        (function () {
+            var modal = document.getElementById('pg-atc');
+            if (!modal) return;
+
+            var panel  = modal.querySelector('.pg-atc__panel');
+            var elName = document.getElementById('pg-atc-name');
+            var elMeta = document.getElementById('pg-atc-meta');
+            var elThumb= document.getElementById('pg-atc-thumb');
+            var elCount= document.getElementById('pg-atc-count');
+            var elTotal= document.getElementById('pg-atc-total');
+            var csrf   = document.querySelector('meta[name="csrf-token"]')?.content || '';
+            var lastFocus = null;
+
+            function updateBadges(count) {
+                document.querySelectorAll('.js-cart-count').forEach(function (b) { b.textContent = count; });
+            }
+
+            function openModal(data) {
+                var p = data.product || {}, c = data.cart || {};
+                elThumb.src = p.image || '';
+                elThumb.alt = p.name || '';
+                elName.textContent = p.name || '';
+                var qtyTxt = p.qty ? ('Qty ' + p.qty) : '';
+                elMeta.textContent = [qtyTxt, p.price].filter(Boolean).join('  ·  ');
+                var n = c.count || 0;
+                elCount.textContent = n + (n === 1 ? ' item in cart' : ' items in cart');
+                elTotal.textContent = c.total || '';
+
+                modal.hidden = false;
+                document.body.classList.add('pg-noscroll');
+                requestAnimationFrame(function () { modal.classList.add('is-open'); });
+                var primary = modal.querySelector('.pg-atc__btn--primary');
+                if (primary) primary.focus();
+            }
+
+            function closeModal() {
+                if (modal.hidden) return;
+                modal.classList.remove('is-open');
+                document.body.classList.remove('pg-noscroll');
+                var done = function () { modal.hidden = true; panel.removeEventListener('transitionend', done); };
+                panel.addEventListener('transitionend', done);
+                setTimeout(done, 340); // fallback when motion is reduced / no transition fires
+                if (lastFocus) { try { lastFocus.focus(); } catch (e) {} }
+            }
+
+            document.addEventListener('submit', function (e) {
+                var form = e.target;
+                if (!(form instanceof HTMLFormElement)) return;
+                if (!/\/cart\/add\/?$/.test(form.getAttribute('action') || '')) return;
+
+                e.preventDefault();
+                var btn = form.querySelector('[type="submit"]');
+                lastFocus = btn || null;
+                if (btn) { btn.disabled = true; btn.classList.add('pg-atc-loading'); }
+
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrf,
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    body: new FormData(form),
+                })
+                .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+                .then(function (res) {
+                    var d = res.data || {};
+                    if (d.cart && typeof d.cart.count !== 'undefined') updateBadges(d.cart.count);
+
+                    if (d.status === 'error') {                 // nothing added (already at stock max)
+                        window.showToast?.(d.message || "Couldn't add to cart.", 'error');
+                        return;
+                    }
+                    if (d.status === 'partial') {               // added fewer than asked
+                        window.showToast?.(d.message, 'info');
+                    }
+                    openModal(d);
+                })
+                .catch(function () {
+                    window.showToast?.("Couldn't add to cart. Please try again.", 'error');
+                })
+                .finally(function () {
+                    if (btn) { btn.disabled = false; btn.classList.remove('pg-atc-loading'); }
+                });
+            });
+
+            modal.addEventListener('click', function (e) {
+                if (e.target.closest('[data-pg-atc-close]')) { e.preventDefault(); closeModal(); }
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && !modal.hidden) closeModal();
             });
         })();
         </script>

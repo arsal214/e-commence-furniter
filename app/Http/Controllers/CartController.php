@@ -35,20 +35,59 @@ class CartController extends Controller
         if ($stock > 0) {
             $inCart = $this->cart->getQty($product->id, $color, $size);
             if ($inCart >= $stock) {
-                return back()->with('error', '"' . $product->name . '" is already at the maximum stock quantity (' . $stock . ') in your cart.');
+                $message = '"' . $product->name . '" is already at the maximum stock quantity (' . $stock . ') in your cart.';
+                if ($request->wantsJson()) {
+                    return response()->json($this->cartPayload('error', $message, $product, 0), 422);
+                }
+                return back()->with('error', $message);
             }
             if ($inCart + $qty > $stock) {
                 $qty = $stock - $inCart;
                 $this->cart->add($product, $qty, $color, $size);
                 $this->trackAddToCart($product, $qty, $request);
-                return back()->with('error', 'Only ' . $qty . ' more unit(s) added — stock limit of ' . $stock . ' reached for "' . $product->name . '".');
+                $message = 'Only ' . $qty . ' more unit(s) added — stock limit of ' . $stock . ' reached for "' . $product->name . '".';
+                if ($request->wantsJson()) {
+                    return response()->json($this->cartPayload('partial', $message, $product, $qty));
+                }
+                return back()->with('error', $message);
             }
         }
 
         $this->cart->add($product, $qty, $color, $size);
         $this->trackAddToCart($product, $qty, $request);
 
-        return back()->with('success', '"' . $product->name . '" added to cart.');
+        $message = '"' . $product->name . '" added to cart.';
+        if ($request->wantsJson()) {
+            return response()->json($this->cartPayload('success', $message, $product, $qty));
+        }
+
+        return back()->with('success', $message);
+    }
+
+    /**
+     * Shape the JSON the "added to cart" modal consumes: the product just acted on
+     * plus the live cart totals for the badge and the modal summary line.
+     */
+    protected function cartPayload(string $status, string $message, Product $product, int $qty): array
+    {
+        $image = $product->image
+            ? (str_starts_with($product->image, 'assets/') ? asset($product->image) : \Storage::url($product->image))
+            : asset('assets/img/logo.svg');
+
+        return [
+            'status'  => $status,
+            'message' => $message,
+            'product' => [
+                'name'  => $product->name,
+                'image' => $image,
+                'qty'   => $qty,
+                'price' => '$' . number_format($product->effective_price, 2),
+            ],
+            'cart' => [
+                'count' => $this->cart->count(),
+                'total' => '$' . number_format($this->cart->total(), 2),
+            ],
+        ];
     }
 
     protected function trackAddToCart(Product $product, int $qty, Request $request): void
