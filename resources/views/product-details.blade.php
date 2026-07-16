@@ -556,7 +556,16 @@
                     {{-- Sizes --}}
                     @if(!empty($item->sizes) && count($item->sizes))
                     <div class="mb-4">
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Size</p>
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Size</p>
+                            @if(!empty($item->size_chart))
+                            <button type="button" id="sizeGuideBtn"
+                                    class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8A6A3F] underline underline-offset-2 hover:text-[#6e532f] cursor-pointer">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8h20v8H2z"/><path d="M6 8v3M10 8v2M14 8v3M18 8v2"/></svg>
+                                Size guide
+                            </button>
+                            @endif
+                        </div>
                         <div class="flex flex-wrap gap-2" id="size-options">
                             @foreach($item->sizes as $si => $sz)
                             <label class="cursor-pointer">
@@ -565,6 +574,15 @@
                             </label>
                             @endforeach
                         </div>
+                    </div>
+                    @elseif(!empty($item->size_chart))
+                    {{-- Product has a size chart but no size variants — still expose the guide --}}
+                    <div class="mb-4">
+                        <button type="button" id="sizeGuideBtn"
+                                class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8A6A3F] underline underline-offset-2 hover:text-[#6e532f] cursor-pointer">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8h20v8H2z"/><path d="M6 8v3M10 8v2M14 8v3M18 8v2"/></svg>
+                            Size guide
+                        </button>
                     </div>
                     @endif
 
@@ -631,15 +649,6 @@
                             </div>
                         </div>
                     </form>
-
-                    {{-- Social proof urgency --}}
-                    @php $buyCount = rand(18, 63); @endphp
-                    <div class="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3.5 py-2.5 mb-4 text-sm text-amber-700">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="#F59E0B" class="flex-shrink-0">
-                            <path d="M13 10V6l-5 6h4v4l5-6h-4z"/><circle cx="12" cy="12" r="10" fill="#F59E0B" opacity=".1" stroke="#F59E0B" stroke-width="1.5"/>
-                        </svg>
-                        <span><strong>{{ $buyCount }} people</strong> bought this in the last 24 hours</span>
-                    </div>
 
                     {{-- 3 trust tiles --}}
                     <div class="pd-trust-row">

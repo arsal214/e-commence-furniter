@@ -1,6 +1,6 @@
 @extends('layouts.main')
 @section('title', 'PeytonGhalib — Home Decor & Everyday Essentials Online')
-@section('meta_description', 'Shop home decor, kitchen gadgets, beauty, sports gear & more at PeytonGhalib. 1,000+ products, fast delivery, 30-day returns. Discover your new favourites today.')
+@section('meta_description', 'Shop home decor, kitchen gadgets, beauty, sports gear & more at PeytonGhalib. Quality products, fast delivery, 30-day returns. Discover your new favourites today.')
 
 @push('preload')
 <link rel="preload" as="image" href="{{ asset('assets/img/home-v1/home-decor.png') }}" fetchpriority="high">
@@ -13,7 +13,7 @@ $schemaWebsite = [
     '@type'           => 'WebSite',
     'name'            => 'PeytonGhalib',
     'url'             => url('/'),
-    'description'     => 'Shop home decor, kitchen gadgets, beauty, sports gear & more at PeytonGhalib. 1,000+ products, fast delivery, 30-day returns. Discover your new favourites today.',
+    'description'     => 'Shop home decor, kitchen gadgets, beauty, sports gear & more at PeytonGhalib. Quality products, fast delivery, 30-day returns. Discover your new favourites today.',
     'potentialAction' => [
         '@type'       => 'SearchAction',
         'target'      => ['@type' => 'EntryPoint', 'urlTemplate' => url('/shop') . '?search={search_term_string}'],
@@ -139,7 +139,7 @@ $schemaWebsite = [
             🚚&nbsp; Free shipping on <span class="ann-hi">all orders</span> <span class="ann-dot"></span> Delivered fast across the USA
         </div>
         <div class="ann-slide">
-            Joined by <span class="ann-hi">2,000+</span> happy customers across the USA <span class="ann-dot"></span> ⭐ <span class="ann-hi">4.9 / 5</span>
+            Loved by <span class="ann-hi">happy customers</span> across the USA <span class="ann-dot"></span> 30-day easy returns
         </div>
         <div class="ann-slide">
             Use code <span class="ann-code">WELCOME10</span> for <span class="ann-hi">10% off</span> your first order
@@ -645,21 +645,22 @@ $schemaWebsite = [
                                     <div class="pgh-avatar" style="background:linear-gradient(135deg,#d4a96a,#bb976d);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
                                     <div class="pgh-avatar" style="background:linear-gradient(135deg,#c4a070,#8b6510);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
                                     <div class="pgh-avatar" style="background:linear-gradient(135deg,#e8c48a,#c4903c);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
-                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#a07840,#6b4f20);font-size:9px;font-weight:700;">+9K</div>
                                 </div>
                                 <div>
-                                    <div class="pgh-stars">★★★★★</div>
-                                    <div style="font-size:12px;color:#a09080;margin-top:2px;">4.9 from 2k+ reviews</div>
+                                    {{-- Non-numeric claims only: ratings/counts here were fabricated
+                                         (0 reviews in DB) — a legal and trust liability. --}}
+                                    <div style="font-size:13px;font-weight:600;color:#172430;">Loved by our customers</div>
+                                    <div style="font-size:12px;color:#7d6b5a;margin-top:2px;">30-day hassle-free returns</div>
                                 </div>
                             </div>
                             <div class="pgh-stats mt-9 flex items-center gap-5 md:gap-7">
-                                <div><div class="pgh-stat-n">2,000+</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Happy Customers</div></div>
+                                <div><div class="pgh-stat-n">Free</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Shipping on All Orders</div></div>
                                 <div class="pgh-stat-sep"></div>
-                                <div><div class="pgh-stat-n">500+</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Products</div></div>
+                                <div><div class="pgh-stat-n">30-Day</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Easy Returns</div></div>
                                 <div class="pgh-stat-sep"></div>
-                                <div><div class="pgh-stat-n">4.9★</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Avg. Rating</div></div>
+                                <div><div class="pgh-stat-n">SSL</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Secure Checkout</div></div>
                                 <div class="pgh-stat-sep hidden sm:block"></div>
-                                <div class="hidden sm:block"><div class="pgh-stat-n">30D</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Free Returns</div></div>
+                                <div class="hidden sm:block"><div class="pgh-stat-n">Live</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Order Tracking</div></div>
                             </div>
                         </div>
 
@@ -712,21 +713,22 @@ $schemaWebsite = [
                                     <div class="pgh-avatar" style="background:linear-gradient(135deg,#d4a96a,#bb976d);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
                                     <div class="pgh-avatar" style="background:linear-gradient(135deg,#c4a070,#8b6510);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
                                     <div class="pgh-avatar" style="background:linear-gradient(135deg,#e8c48a,#c4903c);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
-                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#a07840,#6b4f20);font-size:9px;font-weight:700;">+9K</div>
                                 </div>
                                 <div>
-                                    <div class="pgh-stars">★★★★★</div>
-                                    <div style="font-size:12px;color:#a09080;margin-top:2px;">4.9 from 2k+ reviews</div>
+                                    {{-- Non-numeric claims only: ratings/counts here were fabricated
+                                         (0 reviews in DB) — a legal and trust liability. --}}
+                                    <div style="font-size:13px;font-weight:600;color:#172430;">Loved by our customers</div>
+                                    <div style="font-size:12px;color:#7d6b5a;margin-top:2px;">30-day hassle-free returns</div>
                                 </div>
                             </div>
                             <div class="pgh-stats mt-9 flex items-center gap-5 md:gap-7">
-                                <div><div class="pgh-stat-n">1,200+</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Fashion Styles</div></div>
+                                <div><div class="pgh-stat-n">Free</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Shipping on All Orders</div></div>
                                 <div class="pgh-stat-sep"></div>
-                                <div><div class="pgh-stat-n">50%</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Off Sale Items</div></div>
+                                <div><div class="pgh-stat-n">30-Day</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Easy Returns</div></div>
                                 <div class="pgh-stat-sep"></div>
-                                <div><div class="pgh-stat-n">4.8★</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Avg. Rating</div></div>
+                                <div><div class="pgh-stat-n">SSL</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Secure Checkout</div></div>
                                 <div class="pgh-stat-sep hidden sm:block"></div>
-                                <div class="hidden sm:block"><div class="pgh-stat-n">2-Day</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Delivery</div></div>
+                                <div class="hidden sm:block"><div class="pgh-stat-n">Live</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Order Tracking</div></div>
                             </div>
                         </div>
 
@@ -779,19 +781,20 @@ $schemaWebsite = [
                                     <div class="pgh-avatar" style="background:linear-gradient(135deg,#d4a96a,#bb976d);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
                                     <div class="pgh-avatar" style="background:linear-gradient(135deg,#c4a070,#8b6510);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
                                     <div class="pgh-avatar" style="background:linear-gradient(135deg,#e8c48a,#c4903c);"><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.9)"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
-                                    <div class="pgh-avatar" style="background:linear-gradient(135deg,#a07840,#6b4f20);font-size:9px;font-weight:700;">+9K</div>
                                 </div>
                                 <div>
-                                    <div class="pgh-stars">★★★★★</div>
-                                    <div style="font-size:12px;color:#a09080;margin-top:2px;">4.9 from 2k+ reviews</div>
+                                    {{-- Non-numeric claims only: ratings/counts here were fabricated
+                                         (0 reviews in DB) — a legal and trust liability. --}}
+                                    <div style="font-size:13px;font-weight:600;color:#172430;">Loved by our customers</div>
+                                    <div style="font-size:12px;color:#7d6b5a;margin-top:2px;">30-day hassle-free returns</div>
                                 </div>
                             </div>
                             <div class="pgh-stats mt-9 flex items-center gap-5 md:gap-7">
-                                <div><div class="pgh-stat-n">10K+</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Total Products</div></div>
+                                <div><div class="pgh-stat-n">Free</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Shipping on All Orders</div></div>
                                 <div class="pgh-stat-sep"></div>
-                                <div><div class="pgh-stat-n">24+</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Categories</div></div>
+                                <div><div class="pgh-stat-n">30-Day</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Easy Returns</div></div>
                                 <div class="pgh-stat-sep"></div>
-                                <div><div class="pgh-stat-n">4.9★</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Avg. Rating</div></div>
+                                <div><div class="pgh-stat-n">Live</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Order Tracking</div></div>
                                 <div class="pgh-stat-sep hidden sm:block"></div>
                                 <div class="hidden sm:block"><div class="pgh-stat-n">SSL</div><div class="text-xs text-paragraph dark:text-white-light mt-1.5 font-medium">Secure Checkout</div></div>
                             </div>
@@ -907,7 +910,6 @@ $schemaWebsite = [
     /* pause on hover */
     wrap.addEventListener('mouseenter', () => {
         clearInterval(timer);
-        if (fill) { fill.style.transition = 'none'; fill.style.width = fill.offsetWidth + 'px'; }
     });
     wrap.addEventListener('mouseleave', start);
 
@@ -1355,7 +1357,7 @@ $schemaWebsite = [
                 <p class="wcu-card-desc">Our experts are on call around the clock — chat, email, or phone, we're here.</p>
             </div>
 
-            {{-- 5: Trusted by Thousands --}}
+            {{-- 5: Loved by Our Customers --}}
             <div class="wcu-card" data-aos="fade-up" data-aos-delay="320">
                 <div class="wcu-icon-wrap" style="background:#FFF3E8;">
                     <span class="wcu-num">5</span>
@@ -1363,8 +1365,8 @@ $schemaWebsite = [
                         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                     </svg>
                 </div>
-                <div class="wcu-card-title">10K+ Happy Customers</div>
-                <p class="wcu-card-desc">Thousands of verified 5-star reviews from real customers who love their homes.</p>
+                <div class="wcu-card-title">Loved by Our Customers</div>
+                <p class="wcu-card-desc">We work to earn five stars on every order — and make it right when something's off.</p>
             </div>
 
         </div>
@@ -1602,8 +1604,8 @@ $schemaWebsite = [
         <!-- Section Title -->
         <div class="max-w-xl mx-auto mb-8 md:mb-12 text-center" data-aos="fade-up">
             <span class="text-xs uppercase tracking-widest text-primary font-semibold">What our customers say</span>
-            <h2 class="leading-tight mt-2 text-2xl md:text-3xl font-bold text-title dark:text-white">Loved by 2,000+ Shoppers Across the USA</h2>
-            <p class="mt-3 text-paragraph dark:text-white-light">Don't take our word for it — here's what real customers say about their PeytonGhalib shopping experience.</p>
+            <h2 class="leading-tight mt-2 text-2xl md:text-3xl font-bold text-title dark:text-white">Loved by Shoppers Across the USA</h2>
+            <p class="mt-3 text-paragraph dark:text-white-light">Don't take our word for it — here's what customers say about their PeytonGhalib shopping experience.</p>
         </div>
 
         <!-- Reviews Slider -->
@@ -1673,10 +1675,9 @@ $schemaWebsite = [
                         </div>
                         <div>
                             <h5 class="font-semibold text-sm text-title dark:text-white leading-none">{{ $review['name'] }}</h5>
-                            <span class="text-xs text-green-600 dark:text-green-400 mt-1 flex items-center gap-1">
-                                <svg class="w-3 h-3 fill-current flex-none" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                                Verified Purchase &middot; {{ $review['date'] }}
-                            </span>
+                            {{-- No "Verified Purchase" badge: these testimonials aren't pulled
+                                 from order history, so claiming verification is a legal risk. --}}
+                            <span class="text-xs text-gray-500 dark:text-white-light mt-1 block">{{ $review['date'] }}</span>
                         </div>
                         <div class="ml-auto">
                             <svg class="w-7 h-7 text-primary/20 fill-current" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
@@ -1789,44 +1790,6 @@ $schemaWebsite = [
             reviewsSlider.trigger('prev.owl.carousel', [300]);
         });
     });
-</script>
-@endpush
-
-@push('scripts')
-<script>
-$(document).ready(function () {
-    var $cat = $('.hv1-pdct-ctgry-slider');
-    if (!$cat.length) return;
-
-    // Destroy the generic init so we can reinitialize with rewind
-    $cat.trigger('destroy.owl.carousel').removeClass('owl-loaded owl-drag');
-    $cat.find('.owl-stage-outer').children().unwrap();
-
-    $cat.owlCarousel({
-        items       : 4,
-        margin      : 0,
-        loop        : false,
-        rewind      : true,
-        autoplay    : false,
-        smartSpeed  : 500,
-        mouseDrag   : true,
-        touchDrag   : true,
-        responsive  : {
-            0   : { items: 1 },
-            576 : { items: 2 },
-            768 : { items: 4 },
-            1024: { items: 4 },
-        }
-    });
-
-    // Wire nav buttons
-    $('.hv1pdct_next').off('click').on('click', function () {
-        $cat.trigger('next.owl.carousel');
-    });
-    $('.hv1pdct_prev').off('click').on('click', function () {
-        $cat.trigger('prev.owl.carousel');
-    });
-});
 </script>
 @endpush
 

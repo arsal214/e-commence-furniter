@@ -164,6 +164,22 @@
     var label    = payBtn ? payBtn.querySelector('[data-pay-label]') : null;
     var payText  = label ? label.textContent : 'Pay';
 
+    function showError(message) {
+        if (!msgBox) return;
+        if (msgText) msgText.textContent = message;
+        msgBox.classList.remove('is-hidden');
+    }
+
+    // If Stripe.js was blocked (ad blocker, network), don't leave a live-looking
+    // Pay button over an eternally shimmering skeleton — say what happened.
+    if (typeof Stripe === 'undefined') {
+        var deadSkeleton = document.querySelector('[data-stripe-skeleton]');
+        if (deadSkeleton) deadSkeleton.remove();
+        if (payBtn) payBtn.disabled = true;
+        showError('The payment form failed to load. Please refresh the page, or allow js.stripe.com if you use a content blocker. You have not been charged.');
+        return;
+    }
+
     var stripe   = Stripe(@json($stripeKey));
     var isDark   = document.documentElement.classList.contains('dark');
 
@@ -195,12 +211,6 @@
 
     paymentElement.mount('#payment-element');
 
-    function showError(message) {
-        if (!msgBox) return;
-        if (msgText) msgText.textContent = message;
-        msgBox.classList.remove('is-hidden');
-    }
-
     function clearError() {
         if (msgBox) msgBox.classList.add('is-hidden');
     }
@@ -221,10 +231,20 @@
         clearError();
         setBusy(true);   // guards against a double-charge on double-click
 
-        var result = await stripe.confirmPayment({
-            elements: elements,
-            confirmParams: { return_url: @json(route('checkout.stripe-success')) },
-        });
+        var result;
+        try {
+            result = await stripe.confirmPayment({
+                elements: elements,
+                confirmParams: { return_url: @json(route('checkout.stripe-success')) },
+            });
+        } catch (e) {
+            // confirmPayment can *reject* (network drop, element unmounted) instead of
+            // resolving with result.error — without this, the button stays stuck on
+            // "Processing…" forever.
+            showError('Something went wrong while processing your payment. No charge was made — please try again.');
+            setBusy(false);
+            return;
+        }
 
         // On success Stripe redirects, so reaching here means it failed.
         // Only card/validation errors are safe to show the customer.

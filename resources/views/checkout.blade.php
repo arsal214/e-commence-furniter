@@ -231,13 +231,13 @@
                     </label>
 
                     <div style="margin-top:18px">
-                        {{-- Ticked by default. On a redisplay after a failed submit we honour
-                             what the customer actually sent, so an intentional untick isn't
-                             silently re-ticked for them. --}}
+                        {{-- Unchecked by default: pre-ticked consent is a dark pattern and
+                             non-compliant in the EU/UK. On redisplay after a failed submit we
+                             honour what the customer actually sent. --}}
                         <label class="co-check">
                             <input class="co-check__input" type="checkbox" name="agree" value="1"
                                    id="agree" data-validate data-label="The terms" required
-                                   @checked(session()->hasOldInput() ? old('agree') : true)
+                                   @checked(old('agree'))
                                    @error('agree') aria-invalid="true" @enderror
                                    aria-describedby="agree-error">
                             <span class="co-check__box" aria-hidden="true">

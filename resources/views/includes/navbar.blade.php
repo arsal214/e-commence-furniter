@@ -43,11 +43,11 @@
         {{-- ── Center: Vertical Slider ── --}}
         <div class="pg-tb-center" id="pgTopCenter">
             <div class="pg-tb-track" id="pgTopTrack">
-                <div class="pg-tb-slide">👥&nbsp; 2,000+ Happy Customers</div>
-                <div class="pg-tb-slide">💬&nbsp; 24/7 Live Chat</div>
-                <div class="pg-tb-slide">⭐&nbsp; Trusted by Thousands</div>
+                <div class="pg-tb-slide">👥&nbsp; Loved by Our Customers</div>
+                <div class="pg-tb-slide">💬&nbsp; Friendly Customer Support</div>
+                <div class="pg-tb-slide">⭐&nbsp; Quality You Can Trust</div>
                 {{-- clone of first for seamless loop --}}
-                <div class="pg-tb-slide">👥&nbsp; 2,000+ Happy Customers</div>
+                <div class="pg-tb-slide">👥&nbsp; Loved by Our Customers</div>
             </div>
         </div>
 
