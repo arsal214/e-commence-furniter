@@ -51,6 +51,12 @@
                 <i class="mdi mdi-upload text-lg"></i>
                 Import CSV
             </a>
+            <a href="{{ route('admin.reviews.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                      {{ request()->routeIs('admin.reviews.*') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                <i class="mdi mdi-star text-lg"></i>
+                Reviews
+            </a>
             <a href="{{ route('admin.orders.index') }}"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
                       {{ request()->routeIs('admin.orders.*') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">

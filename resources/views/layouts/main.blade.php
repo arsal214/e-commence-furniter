@@ -436,7 +436,7 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
             });
 
             // Initial delay before first appearance
-            setTimeout(showNext, 4000);
+            setTimeout(showNext, 30000);
         }());
         </script>
         @endif

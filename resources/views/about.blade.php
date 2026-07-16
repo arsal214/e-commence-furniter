@@ -473,7 +473,7 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
 
                 @php
                     // "Sarah Mitchell" → "Sarah M." — full surnames don't belong on a public page.
-                    $parts    = array_values(array_filter(explode(' ', trim($review->user?->name ?? 'Customer'))));
+                    $parts    = array_values(array_filter(explode(' ', trim($review->author_name))));
                     $display  = $parts[0] ?? 'Customer';
                     if (count($parts) > 1) {
                         $display .= ' ' . strtoupper(substr(end($parts), 0, 1)) . '.';

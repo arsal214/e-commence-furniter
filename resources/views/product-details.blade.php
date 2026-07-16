@@ -895,7 +895,7 @@
                                 @include('includes.Home._stars', ['rating' => $review->rating])
                                 <span class="text-xs text-gray-400 dark:text-gray-500">{{ $review->created_at->diffForHumans() }}</span>
                             </div>
-                            <h6 class="font-semibold text-sm text-title dark:text-white">{{ $review->user->name ?? 'Customer' }}</h6>
+                            <h6 class="font-semibold text-sm text-title dark:text-white">{{ $review->author_name }}</h6>
                         </div>
                     </div>
                     @if ($review->comment)
