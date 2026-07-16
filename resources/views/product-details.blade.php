@@ -215,12 +215,27 @@
     box-shadow: 0 4px 24px rgba(0,0,0,.06);
 }
 @media (min-width: 768px) { .pd-main-wrap { aspect-ratio: 1/1; } }
-#pd-main-img {
-    width: 100%; height: 100%;
-    object-fit: cover; display: block;
-    transition: opacity .25s, transform .4s;
+/* Sliding image track. Pinned with absolute inset (not percentage heights) so
+   iOS Safari sizes it reliably — the height:100% chain collapses the image on iOS. */
+.pd-slides {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    transition: transform .35s cubic-bezier(.4, 0, .2, 1);
 }
-.pd-main-wrap:hover #pd-main-img { transform: scale(1.03); }
+.pd-slide {
+    position: relative;
+    min-width: 100%;
+    flex-shrink: 0;
+}
+.pd-slide-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
 
 /* Thumbnail strip */
 .pd-thumbs {
@@ -385,12 +400,12 @@
                         @endif
 
                         {{-- Slides --}}
-                        <div id="pd-slides" style="display:flex;width:100%;height:100%;transition:transform .35s cubic-bezier(.4,0,.2,1);">
+                        <div id="pd-slides" class="pd-slides">
                             @foreach($galleryImages as $ti => $src)
-                            <div style="min-width:100%;height:100%;flex-shrink:0;">
+                            <div class="pd-slide">
                                 <img src="{{ $src }}"
                                      alt="{{ $item->name }} image {{ $ti + 1 }}"
-                                     style="width:100%;height:100%;object-fit:contain;display:block;">
+                                     class="pd-slide-img">
                             </div>
                             @endforeach
                         </div>

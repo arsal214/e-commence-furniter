@@ -1078,10 +1078,62 @@ $schemaWebsite = [
             @include('includes.Home.new-products')
         </div>
         <div class="text-center mt-8 md:mt-12">
-            <a href="{{ url('/shop') }}" class="btn btn-outline" data-text="Shop All New Arrivals">
+            <a href="{{ url('/shop') }}" class="pgh-arrivals-btn">
                 <span>Shop All New Arrivals</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </a>
         </div>
+        <style>
+        .pgh-arrivals-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: .65rem;
+            padding: 15px 40px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #cdad82 0%, #bb976d 52%, #a8845a 100%);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            box-shadow: 0 10px 26px rgba(187, 151, 109, .34);
+            transition: transform .35s cubic-bezier(.34, 1.3, .64, 1), box-shadow .35s ease;
+        }
+        .pgh-arrivals-btn:hover {
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 16px 36px rgba(187, 151, 109, .46);
+        }
+        .pgh-arrivals-btn svg {
+            position: relative;
+            z-index: 1;
+            transition: transform .35s ease;
+        }
+        .pgh-arrivals-btn span { position: relative; z-index: 1; }
+        .pgh-arrivals-btn:hover svg { transform: translateX(5px); }
+        /* Diagonal shine sweep on hover */
+        .pgh-arrivals-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -120%;
+            width: 55%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .38), transparent);
+            transform: skewX(-20deg);
+            transition: left .6s ease;
+        }
+        .pgh-arrivals-btn:hover::before { left: 140%; }
+        .dark .pgh-arrivals-btn { box-shadow: 0 10px 26px rgba(0, 0, 0, .4); }
+        @media (prefers-reduced-motion: reduce) {
+            .pgh-arrivals-btn, .pgh-arrivals-btn svg, .pgh-arrivals-btn::before { transition: none; }
+        }
+        </style>
     </div>
 </section>
 <!-- New Arrivals Area End -->
