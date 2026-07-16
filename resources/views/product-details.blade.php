@@ -214,7 +214,7 @@
     border-radius: 16px;
     box-shadow: 0 4px 24px rgba(0,0,0,.06);
 }
-@media (min-width: 768px) { .pd-main-wrap { aspect-ratio: 5/4; } }
+@media (min-width: 768px) { .pd-main-wrap { aspect-ratio: 1/1; } }
 #pd-main-img {
     width: 100%; height: 100%;
     object-fit: cover; display: block;
@@ -390,7 +390,7 @@
                             <div style="min-width:100%;height:100%;flex-shrink:0;">
                                 <img src="{{ $src }}"
                                      alt="{{ $item->name }} image {{ $ti + 1 }}"
-                                     style="width:100%;height:100%;object-fit:cover;display:block;">
+                                     style="width:100%;height:100%;object-fit:contain;display:block;">
                             </div>
                             @endforeach
                         </div>
