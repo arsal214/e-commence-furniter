@@ -7,8 +7,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>@yield('title', 'PeytonGhalib')</title>
-        <link rel="icon" href="{{ asset('assets/img/favicon.png') }}" type="image/png" sizes="32x32">
-        <link rel="apple-touch-icon" href="{{ asset('assets/img/favicon.png') }}">
+        <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon" sizes="any">
+        <link rel="apple-touch-icon" href="{{ asset('favicon.ico') }}">
         <script>
             (function () {
                 var scheme = localStorage.getItem('colorScheme');

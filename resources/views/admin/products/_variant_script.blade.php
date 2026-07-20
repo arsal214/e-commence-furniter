@@ -9,6 +9,10 @@
 
         function syncHidden() {
             hidden.value = tags.join(',');
+            // Let colour selects (and anything else) react to the new values.
+            document.dispatchEvent(new CustomEvent('variant:change', {
+                detail: { field: hidden.name, values: tags.slice() }
+            }));
         }
 
         function updatePlaceholder() {

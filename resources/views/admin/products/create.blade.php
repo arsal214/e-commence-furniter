@@ -149,6 +149,13 @@
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
                         <p class="text-xs text-gray-400 mt-1">Max 4MB. JPG, PNG, WEBP.</p>
                         <img id="imagePreview" src="#" alt="Preview" class="mt-3 w-28 h-28 object-cover rounded-lg border border-gray-200 hidden">
+                        <div class="mt-3">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Colour this image represents <span class="font-normal">(optional)</span></label>
+                            <select name="image_color" data-selected="{{ old('image_color') }}"
+                                    class="js-color-select w-40 text-sm border border-gray-300 rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#bb976d]">
+                                <option value="">— colour —</option>
+                            </select>
+                        </div>
                     </div>
 
                     {{-- Additional Gallery Images --}}
@@ -157,7 +164,7 @@
                             Additional Gallery Images
                             <span class="text-gray-400 font-normal ml-1 text-xs">shown in the product detail image slider</span>
                         </label>
-                        <p class="text-xs text-gray-400 mb-3">Select multiple images at once. Max 4MB each.</p>
+                        <p class="text-xs text-gray-400 mb-3">Select multiple images at once. Max 4MB each. After choosing images, pick the colour each one represents below (so picking that colour on the product page shows its photo). Add your colours first under Product Variants.</p>
                         <input type="file" name="images[]" accept="image/*" id="galleryInput" multiple
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
                         <div id="galleryPreviewList" class="flex flex-wrap gap-3 mt-3"></div>
@@ -285,6 +292,7 @@
 
 @push('scripts')
 @include('admin.products._variant_script')
+@include('admin.products._color_select_script')
 <script src="https://cdn.tiny.cloud/1/{{ env('TINYMCE_API_KEY', 'no-api-key') }}/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
 tinymce.init({
@@ -315,14 +323,22 @@ document.getElementById('sizeChartInput').addEventListener('change', function ()
 document.getElementById('galleryInput').addEventListener('change', function () {
     const list = document.getElementById('galleryPreviewList');
     list.innerHTML = '';
+    // One row per file, in FileList order. The colour selects submit as
+    // image_colors_new[] in the same order, so they line up with images[].
     Array.from(this.files).forEach(function (file) {
         const wrapper = document.createElement('div');
-        wrapper.className = 'relative';
         const img = document.createElement('img');
         img.src = URL.createObjectURL(file);
         img.className = 'w-24 h-24 object-cover rounded-lg border border-gray-200';
         img.alt = file.name;
         wrapper.appendChild(img);
+
+        const select = document.createElement('select');
+        select.name = 'image_colors_new[]';
+        select.className = 'js-color-select mt-1.5 w-24 text-xs border border-gray-300 rounded px-1.5 py-1 focus:outline-none focus:border-[#bb976d]';
+        if (window.pdFillColorSelect) window.pdFillColorSelect(select);
+        wrapper.appendChild(select);
+
         list.appendChild(wrapper);
     });
 });

@@ -98,7 +98,10 @@ class ProductController extends Controller
             'price'          => ['required', 'numeric', 'min:0'],
             'sale_price'     => ['nullable', 'numeric', 'min:0'],
             'image'          => ['nullable', 'image', 'max:4096'],
+            'image_color'    => ['nullable', 'string', 'max:100'],
             'images.*'       => ['nullable', 'image', 'max:4096'],
+            'image_colors_new'   => ['nullable', 'array'],
+            'image_colors_new.*' => ['nullable', 'string', 'max:100'],
             'size_chart'     => ['nullable', 'image', 'max:8192'],
             'tag'            => ['nullable', 'in:Sale,NEW,OFF,OFF1'],
             'sku'           => ['nullable', 'string', 'max:100'],
@@ -131,7 +134,9 @@ class ProductController extends Controller
         $data['gtin'] = trim((string) $request->input('gtin')) ?: null;
         $data['mpn']  = trim((string) $request->input('mpn')) ?: null;
 
-        unset($data['colors_raw'], $data['sizes_raw'], $data['images'],
+        $data['image_color'] = trim((string) $request->input('image_color')) ?: null;
+
+        unset($data['colors_raw'], $data['sizes_raw'], $data['images'], $data['image_colors_new'],
               $data['key_feature_1'], $data['key_feature_2'], $data['key_feature_3'],
               $data['spec_label'], $data['spec_value']);
 
@@ -145,12 +150,16 @@ class ProductController extends Controller
 
         $product = Product::create($data);
 
-        // Store additional gallery images
+        // Store additional gallery images. image_colors_new[] is index-aligned
+        // with images[] (same DOM/FileList order), so $index maps a file to its
+        // chosen colour.
         if ($request->hasFile('images')) {
+            $newColors = $request->input('image_colors_new', []);
             foreach ($request->file('images') as $index => $file) {
                 $path = $file->store('products', 'public');
                 $product->productImages()->create([
                     'image'      => $path,
+                    'color'      => trim((string) ($newColors[$index] ?? '')) ?: null,
                     'sort_order' => $index,
                 ]);
             }
@@ -185,11 +194,14 @@ class ProductController extends Controller
             'price'              => ['required', 'numeric', 'min:0'],
             'sale_price'         => ['nullable', 'numeric', 'min:0'],
             'image'              => ['nullable', 'image', 'max:4096'],
+            'image_color'        => ['nullable', 'string', 'max:100'],
             'images.*'           => ['nullable', 'image', 'max:4096'],
             'size_chart'         => ['nullable', 'image', 'max:8192'],
             'remove_size_chart'  => ['nullable', 'boolean'],
             'remove_images'      => ['nullable', 'array'],
             'remove_images.*'    => ['integer'],
+            'image_colors'       => ['nullable', 'array'],
+            'image_colors.*'     => ['nullable', 'string', 'max:100'],
             'tag'                => ['nullable', 'in:Sale,NEW,OFF,OFF1'],
             'sku'           => ['nullable', 'string', 'max:100'],
             'gtin'          => ['nullable', 'string', 'max:50'],
@@ -222,8 +234,10 @@ class ProductController extends Controller
         $data['specifications'] = $this->buildSpecifications($request);
         $data['gtin'] = trim((string) $request->input('gtin')) ?: null;
         $data['mpn']  = trim((string) $request->input('mpn')) ?: null;
+        $data['image_color'] = trim((string) $request->input('image_color')) ?: null;
 
         unset($data['colors_raw'], $data['sizes_raw'], $data['remove_size_chart'], $data['remove_images'], $data['images'],
+              $data['image_colors'],
               $data['key_feature_1'], $data['key_feature_2'], $data['key_feature_3'],
               $data['spec_label'], $data['spec_value']);
 
@@ -267,6 +281,16 @@ class ProductController extends Controller
                     'image'      => $path,
                     'sort_order' => $nextOrder + $index,
                 ]);
+            }
+        }
+
+        // Assign a colour to existing gallery images (blank clears it). Only
+        // touch images that belong to this product.
+        $imageColors = $request->input('image_colors', []);
+        if (!empty($imageColors)) {
+            foreach ($imageColors as $imageId => $color) {
+                $color = trim((string) $color) ?: null;
+                $product->productImages()->where('id', $imageId)->update(['color' => $color]);
             }
         }
 

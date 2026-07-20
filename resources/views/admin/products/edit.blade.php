@@ -164,6 +164,13 @@
                         <input type="file" name="image" accept="image/*" id="imageInput"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
                         <p class="text-xs text-gray-400 mt-1">Max 4MB. JPG, PNG, WEBP.</p>
+                        <div class="mt-3">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Colour this image represents <span class="font-normal">(optional)</span></label>
+                            <select name="image_color" data-selected="{{ old('image_color', $product->image_color) }}"
+                                    class="js-color-select w-40 text-sm border border-gray-300 rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#bb976d]">
+                                <option value="">— colour —</option>
+                            </select>
+                        </div>
                     </div>
 
                     {{-- Gallery Images --}}
@@ -174,18 +181,24 @@
                         </label>
 
                         @if($product->productImages->isNotEmpty())
-                        <p class="text-xs text-gray-400 mb-3">Check the box on any image to remove it when you save.</p>
-                        <div class="flex flex-wrap gap-3 mb-4">
+                        <p class="text-xs text-gray-400 mb-3">Check the box on any image to remove it when you save. Assign a colour to an image so that picking that colour on the product page shows this photo.</p>
+                        <div class="flex flex-wrap gap-4 mb-4">
                             @foreach($product->productImages as $img)
-                            <div class="relative group">
-                                <img src="{{ Storage::url($img->image) }}"
-                                     class="w-24 h-24 object-cover rounded-lg border border-gray-200"
-                                     alt="Gallery image">
-                                <label class="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                                    <input type="checkbox" name="remove_images[]" value="{{ $img->id }}"
-                                           class="w-4 h-4 accent-red-500 mb-1">
-                                    <span class="text-white text-[10px] font-medium">Remove</span>
-                                </label>
+                            <div>
+                                <div class="relative group">
+                                    <img src="{{ Storage::url($img->image) }}"
+                                         class="w-24 h-24 object-cover rounded-lg border border-gray-200"
+                                         alt="Gallery image">
+                                    <label class="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                        <input type="checkbox" name="remove_images[]" value="{{ $img->id }}"
+                                               class="w-4 h-4 accent-red-500 mb-1">
+                                        <span class="text-white text-[10px] font-medium">Remove</span>
+                                    </label>
+                                </div>
+                                <select name="image_colors[{{ $img->id }}]" data-selected="{{ $img->color }}"
+                                        class="js-color-select mt-1.5 w-24 text-xs border border-gray-300 rounded px-1.5 py-1 focus:outline-none focus:border-[#bb976d]">
+                                    <option value="">— colour —</option>
+                                </select>
                             </div>
                             @endforeach
                         </div>
@@ -392,6 +405,7 @@
 
 @push('scripts')
 @include('admin.products._variant_script')
+@include('admin.products._color_select_script')
 <script src="https://cdn.tiny.cloud/1/{{ env('TINYMCE_API_KEY', 'no-api-key') }}/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
 tinymce.init({

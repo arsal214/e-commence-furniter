@@ -172,8 +172,21 @@
         ? (str_starts_with($item->image, 'assets/') ? asset($item->image) : Storage::url($item->image))
         : $defaultImg;
     $galleryImages = collect([$primarySrc]);
+    // Map a colour name (lowercased) to the gallery slide index that shows it,
+    // so selecting a swatch can jump the slider to that colour's photo. Slide 0
+    // is the primary image; gallery images follow. First image per colour wins.
+    $colorImageMap = [];
+    if (!empty($item->image_color)) {
+        $colorImageMap[strtolower(trim($item->image_color))] = 0;
+    }
     foreach ($item->productImages as $pi) {
         $galleryImages->push(Storage::url($pi->image));
+        if (!empty($pi->color)) {
+            $key = strtolower(trim($pi->color));
+            if (!isset($colorImageMap[$key])) {
+                $colorImageMap[$key] = $galleryImages->count() - 1;
+            }
+        }
     }
     $savingsAmt = $item->sale_price ? number_format($item->price - $item->sale_price, 2) : null;
     $activePrice = number_format($item->effective_price, 2);
@@ -822,13 +835,20 @@
         inc.addEventListener('click', function(){ var v=parseInt(qtyEl.value)||1; qtyEl.value=v+1; });
     }
 
-    // ── Color label + hidden input sync ──
+    // ── Color label + hidden input sync + image switch ──
+    var pdColorImageMap = @json($colorImageMap);
     document.querySelectorAll('.color-radio').forEach(function(r){
         r.addEventListener('change', function(){
             var lbl = document.getElementById('selected-color-label');
             if(lbl) lbl.textContent = r.value;
             var hid = document.getElementById('selected-color');
             if(hid) hid.value = r.value;
+            // Jump the slider to this colour's photo, if one is assigned.
+            var idx = pdColorImageMap[r.value.toLowerCase().trim()];
+            if(typeof idx === 'number'){
+                pauseAuto();
+                goTo(idx);
+            }
         });
     });
 
