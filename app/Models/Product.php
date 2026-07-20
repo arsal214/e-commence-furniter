@@ -85,6 +85,89 @@ class Product extends Model
         return $this->hasMany(ProductImage::class)->orderBy('sort_order');
     }
 
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class)->orderBy('sort_order');
+    }
+
+    /**
+     * The active variant for an option (case-insensitive) in a given dimension
+     * ('color' or 'size'), or null when there's no matching/active variant.
+     * Selecting an option with no variant falls back to the product's own price.
+     */
+    public function variantFor(string $type, ?string $value): ?ProductVariant
+    {
+        if (!$value) {
+            return null;
+        }
+
+        return $this->variants->first(fn ($v) => $v->is_active
+            && $v->type === $type
+            && strcasecmp((string) $v->value, $value) === 0);
+    }
+
+    /** True when the product has at least one active, priced variant (any dimension). */
+    public function getHasVariantsAttribute(): bool
+    {
+        return $this->variants->contains(fn ($v) => $v->is_active);
+    }
+
+    /**
+     * Effective price for a colour/size selection. Colour and size are priced
+     * independently; when both have a variant, SIZE takes precedence (it's the
+     * more specific physical spec). Falls back to the product's own price when
+     * neither option has a variant. Single source of truth shared by the product
+     * page, cart-add, and checkout so they can never disagree.
+     */
+    public function effectivePriceFor(?string $color, ?string $size = null): float
+    {
+        return $this->variantFor('size', $size)?->effective_price
+            ?? $this->variantFor('color', $color)?->effective_price
+            ?? $this->effective_price;
+    }
+
+    /**
+     * Stock available for a colour/size selection, using the same size-over-colour
+     * precedence as pricing. Falls back to the product's own stock.
+     */
+    public function effectiveStockFor(?string $color, ?string $size = null): int
+    {
+        $variant = $this->variantFor('size', $size) ?? $this->variantFor('color', $color);
+
+        return $variant ? (int) $variant->stock : (int) $this->stock;
+    }
+
+    /**
+     * Lowest effective price across active variants (the "From $X" figure), or the
+     * product's own effective price when there are no variants.
+     */
+    public function getFromPriceAttribute(): float
+    {
+        $prices = $this->variants
+            ->filter(fn ($v) => $v->is_active)
+            ->map(fn ($v) => $v->effective_price);
+
+        return $prices->isNotEmpty() ? (float) $prices->min() : $this->effective_price;
+    }
+
+    /**
+     * True when price varies by option — i.e. active variants exist and their
+     * prices (together with the base) aren't all identical. Listings use this to
+     * decide whether to show a single price or a "From $X" figure.
+     */
+    public function getHasPriceRangeAttribute(): bool
+    {
+        $prices = $this->variants
+            ->filter(fn ($v) => $v->is_active)
+            ->map(fn ($v) => $v->effective_price);
+
+        if ($prices->isEmpty()) {
+            return false;
+        }
+
+        return $prices->push($this->effective_price)->unique()->count() > 1;
+    }
+
     public function reviews()
     {
         return $this->hasMany(Review::class)->latest();

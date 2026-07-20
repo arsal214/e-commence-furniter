@@ -47,7 +47,7 @@ class ProductController extends Controller
 
     public function show(string $slug, Request $request)
     {
-        $item = Product::with(['category', 'productImages', 'reviews.user'])
+        $item = Product::with(['category', 'productImages', 'variants', 'reviews.user'])
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
             ->where('slug', $slug)

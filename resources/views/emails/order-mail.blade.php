@@ -230,6 +230,9 @@
                                                 </td>
                                                 <td valign="top" style="font-family:Arial,Helvetica,sans-serif;">
                                                     <div style="font-size:15px; line-height:21px; font-weight:bold; color:{{ $ink }};">{{ $item->name }}</div>
+                                                    @if($item->color || $item->size)
+                                                    <div style="font-size:13px; line-height:19px; color:{{ $muted }}; padding-top:4px;">{{ collect([$item->color ? 'Colour: '.$item->color : null, $item->size ? 'Size: '.$item->size : null])->filter()->implode(' · ') }}</div>
+                                                    @endif
                                                     <div style="font-size:13px; line-height:19px; color:{{ $muted }}; padding-top:4px;">Qty {{ $item->qty }} &middot; ${{ number_format($item->price, 2) }} each</div>
                                                 </td>
                                                 <td width="90" valign="top" align="right" style="font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:21px; font-weight:bold; color:{{ $ink }};">

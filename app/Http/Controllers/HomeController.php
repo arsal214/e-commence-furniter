@@ -310,7 +310,7 @@ class HomeController extends Controller
         $eff  = self::EFFECTIVE_PRICE;
 
         $products = $this->shopQuery($f)
-            ->with('category')
+            ->with('category', 'variants')
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
             ->when($sort === 'price_low',  fn($q) => $q->orderByRaw("{$eff} ASC"))
@@ -419,7 +419,7 @@ class HomeController extends Controller
 
     public function productCategory()
     {
-        $products   = Product::where('is_active', true)->latest()->paginate(12);
+        $products   = Product::where('is_active', true)->with('variants')->latest()->paginate(12);
         $categories = Category::where('is_active', true)->has('activeProducts')->orderBy('name')->get();
         return view('product-category', compact('products', 'categories'));
     }

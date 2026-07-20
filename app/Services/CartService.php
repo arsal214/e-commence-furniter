@@ -28,12 +28,18 @@ class CartService
         if (isset($cart[$key])) {
             $cart[$key]['qty'] += $qty;
         } else {
+            // Price the exact colour/size chosen — variant price when one exists,
+            // else the product's base price (Product::effectivePriceFor). The SKU
+            // of the resolved variant is snapshotted for the order later.
+            $variant = $product->variantFor('size', $size) ?? $product->variantFor('color', $color);
+
             $cart[$key] = [
                 'key'   => $key,
                 'id'    => $product->id,
                 'name'  => $product->name,
                 'slug'  => $product->slug,
-                'price' => $product->effective_price,
+                'price' => $product->effectivePriceFor($color, $size),
+                'sku'   => $variant?->sku ?? $product->sku,
                 'image' => $product->image,
                 'qty'   => $qty,
                 'color' => $color,

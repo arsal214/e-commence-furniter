@@ -208,6 +208,28 @@
                     <input type="hidden" name="sizes_raw" class="variant-hidden" value="{{ old('sizes_raw') }}">
                 </div>
 
+                {{-- Per-colour pricing / stock / SKU / image --}}
+                @include('admin.products._variants_repeater', [
+                    'dimension'   => 'color',
+                    'label'       => 'Colour Pricing & Stock',
+                    'optionLabel' => 'Colour',
+                    'selectClass' => 'js-color-select',
+                    'fillFn'      => 'pdFillColorSelect',
+                    'sourceLabel' => 'Colors',
+                    'existingVariants' => collect(),
+                ])
+
+                {{-- Per-size pricing / stock / SKU / image --}}
+                @include('admin.products._variants_repeater', [
+                    'dimension'   => 'size',
+                    'label'       => 'Size Pricing & Stock',
+                    'optionLabel' => 'Size',
+                    'selectClass' => 'js-size-select',
+                    'fillFn'      => 'pdFillSizeSelect',
+                    'sourceLabel' => 'Sizes',
+                    'existingVariants' => collect(),
+                ])
+
                 {{-- Size Chart --}}
                 <div class="border-t border-gray-100 pt-5 mt-5">
                     <label class="block text-sm font-medium text-gray-700 mb-1">

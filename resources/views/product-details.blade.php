@@ -190,6 +190,25 @@
     }
     $savingsAmt = $item->sale_price ? number_format($item->price - $item->sale_price, 2) : null;
     $activePrice = number_format($item->effective_price, 2);
+
+    // Per-option pricing/stock the storefront JS uses to update price & availability
+    // when a colour/size is picked. Keyed by lowercased value within each dimension.
+    // 'base' is the product's own price/stock, used when a selection has no variant.
+    $pdVariants = ['color' => [], 'size' => [], 'base' => [
+        'now'   => (float) $item->effective_price,
+        'was'   => $item->has_strike ? (float) $item->price : null,
+        'stock' => (int) $item->stock,
+    ]];
+    foreach ($item->variants as $v) {
+        if (!$v->is_active || !in_array($v->type, ['color', 'size'], true)) {
+            continue;
+        }
+        $pdVariants[$v->type][strtolower(trim($v->value))] = [
+            'now'   => (float) $v->effective_price,
+            'was'   => $v->has_strike ? (float) $v->price : null,
+            'stock' => (int) $v->stock,
+        ];
+    }
 @endphp
 
 <style>
@@ -479,13 +498,13 @@
                             {{ $item->category->name }}
                         </a>
                         @endif
-                        @if(($item->stock ?? 1) > 0)
-                        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
-                            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full inline-block"></span> In Stock
+                        @php $pdInStock = ($item->stock ?? 1) > 0; @endphp
+                        <span id="pd-stock-badge"
+                              data-in="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full"
+                              data-out="text-[10px] font-bold text-red-600 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full"
+                              class="{{ $pdInStock ? 'inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full' : 'text-[10px] font-bold text-red-600 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full' }}">
+                            @if($pdInStock)<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full inline-block"></span> In Stock @else Out of Stock @endif
                         </span>
-                        @else
-                        <span class="text-[10px] font-bold text-red-600 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full">Out of Stock</span>
-                        @endif
                     </div>
 
                     {{-- Product Name H1 --}}
@@ -526,28 +545,20 @@
                     </div>
                     @endif
 
-                    {{-- Price block --}}
+                    {{-- Price block — stable DOM updated by the variant JS when a
+                         colour/size with its own price is selected. Initialised with
+                         the product's base price. --}}
+                    @php
+                        $baseNow = (float) $item->effective_price;
+                        $baseWas = $item->has_strike ? (float) $item->price : null;
+                    @endphp
                     <div class="pd-price-block mb-2">
-                        @if($item->sale_price)
-                        @php
-                            $savePct = $item->price > 0 ? round((($item->price - $item->sale_price) / $item->price) * 100) : 0;
-                            $saveAmt = number_format($item->price - $item->sale_price, 2);
-                        @endphp
                         <div class="flex items-center gap-3 flex-wrap mb-1">
-                            <span class="text-[2rem] font-extrabold text-[#172430] leading-none">${{ number_format($item->sale_price, 2) }}</span>
-                            <span class="text-base text-gray-400 line-through font-medium">${{ number_format($item->price, 2) }}</span>
-                            @if($savePct > 0)
-                            <span class="text-sm font-bold text-white rounded-full px-3 py-1" style="background:#E13939;">{{ $savePct }}% OFF</span>
-                            @endif
+                            <span id="pd-price-now" class="text-[2rem] font-extrabold text-[#172430] leading-none">${{ number_format($baseNow, 2) }}</span>
+                            <span id="pd-price-was" class="text-base text-gray-400 line-through font-medium" style="{{ $baseWas ? '' : 'display:none' }}">${{ number_format($baseWas ?? 0, 2) }}</span>
+                            <span id="pd-price-badge" class="text-sm font-bold text-white rounded-full px-3 py-1" style="background:#E13939;{{ $baseWas ? '' : 'display:none' }}"></span>
                         </div>
-                        @if($savePct > 0)
-                        <p class="text-xs font-semibold" style="color:#1CB28E;">
-                            You save ${{ $saveAmt }} on this product
-                        </p>
-                        @endif
-                        @else
-                        <span class="text-[2rem] font-extrabold text-[#172430] leading-none">${{ number_format($item->price, 2) }}</span>
-                        @endif
+                        <p id="pd-price-save" class="text-xs font-semibold" style="color:#1CB28E;{{ $baseWas ? '' : 'display:none' }}"></p>
                     </div>
 
                     {{-- Key Features --}}
@@ -640,11 +651,11 @@
 
                         <div class="flex items-center gap-3 mb-4">
                             <div class="flex-1">
-                                <button type="submit" class="pd-btn-cart w-full">
+                                <button type="submit" id="pd-add-btn" class="pd-btn-cart w-full">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:8px;margin-top:-2px">
                                         <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                                     </svg>
-                                    Add to Cart
+                                    <span id="pd-add-btn-label">Add to Cart</span>
                                 </button>
                             </div>
                             <div class="flex-1">
@@ -747,21 +758,16 @@
      size / colour carry over) and triggers the same confirmation modal. --}}
 <div class="pd-sticky-bar" aria-hidden="false">
     <div class="pd-sticky-bar__price">
-        <span class="pd-sticky-bar__now">${{ $activePrice }}</span>
-        @if($item->sale_price)
-            <span class="pd-sticky-bar__was">${{ number_format($item->price, 2) }}</span>
-        @endif
+        <span id="pd-sticky-now" class="pd-sticky-bar__now">${{ $activePrice }}</span>
+        <span id="pd-sticky-was" class="pd-sticky-bar__was" style="{{ $baseWas ? '' : 'display:none' }}">${{ number_format($baseWas ?? 0, 2) }}</span>
     </div>
-    @if(($item->stock ?? 1) > 0)
-        <button type="submit" form="pd-cart-form" class="pd-sticky-bar__btn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-            </svg>
-            Add to Cart
-        </button>
-    @else
-        <button type="button" class="pd-sticky-bar__btn" disabled aria-disabled="true">Out of Stock</button>
-    @endif
+    <button type="submit" form="pd-cart-form" id="pd-sticky-btn" class="pd-sticky-bar__btn"
+            {{ $pdInStock ? '' : 'disabled aria-disabled=true' }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <span id="pd-sticky-btn-label">{{ $pdInStock ? 'Add to Cart' : 'Out of Stock' }}</span>
+    </button>
 </div>
 
 <script>
@@ -1146,6 +1152,74 @@ document.addEventListener('keydown', function(e) {
             if(myPill) myPill.classList.add('active');
         });
     });
+})();
+</script>
+
+{{-- Variant pricing & availability: when a colour/size with its own price/stock
+     is selected, update the displayed price, the sticky bar, the stock badge and
+     the Add-to-Cart buttons. Size price takes precedence over colour (mirrors
+     Product::effectivePriceFor on the server). --}}
+<script>
+(function () {
+    var V = @json($pdVariants);
+    if (!V) return;
+
+    function money(n) { return '$' + Number(n).toFixed(2); }
+    function checkedVal(sel) { var r = document.querySelector(sel + ':checked'); return r ? r.value : null; }
+    function lookup(type, val) { return val ? (V[type][val.toLowerCase().trim()] || null) : null; }
+
+    function set(id, fn) { var el = document.getElementById(id); if (el) fn(el); }
+    function show(el, on) { el.style.display = on ? '' : 'none'; }
+
+    function resolve() {
+        // Size wins over colour when both have a variant; else base.
+        return lookup('size', checkedVal('.size-radio'))
+            || lookup('color', checkedVal('.color-radio'))
+            || V.base;
+    }
+
+    function apply() {
+        var r = resolve();
+        var was = r.was && r.was > r.now ? r.was : null;
+        var pct = was ? Math.round((was - r.now) / was * 100) : 0;
+
+        // Main price block
+        set('pd-price-now', function (el) { el.textContent = money(r.now); });
+        set('pd-price-was', function (el) { show(el, !!was); if (was) el.textContent = money(was); });
+        set('pd-price-badge', function (el) { show(el, pct > 0); if (pct > 0) el.textContent = pct + '% OFF'; });
+        set('pd-price-save', function (el) {
+            show(el, !!was); if (was) el.textContent = 'You save ' + money(was - r.now) + ' on this product';
+        });
+
+        // Sticky bar
+        set('pd-sticky-now', function (el) { el.textContent = money(r.now); });
+        set('pd-sticky-was', function (el) { show(el, !!was); if (was) el.textContent = money(was); });
+
+        // Stock badge
+        var inStock = r.stock > 0;
+        set('pd-stock-badge', function (el) {
+            el.className = inStock ? el.dataset.in : el.dataset.out;
+            el.innerHTML = inStock
+                ? '<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full inline-block"></span> In Stock'
+                : 'Out of Stock';
+        });
+
+        // Add-to-Cart buttons (main + sticky)
+        [['pd-add-btn', 'pd-add-btn-label'], ['pd-sticky-btn', 'pd-sticky-btn-label']].forEach(function (pair) {
+            var btn = document.getElementById(pair[0]);
+            var lbl = document.getElementById(pair[1]);
+            if (!btn) return;
+            btn.disabled = !inStock;
+            btn.style.opacity = inStock ? '' : '.5';
+            btn.style.cursor  = inStock ? '' : 'not-allowed';
+            if (lbl) lbl.textContent = inStock ? 'Add to Cart' : 'Out of Stock';
+        });
+    }
+
+    document.querySelectorAll('.color-radio, .size-radio').forEach(function (r) {
+        r.addEventListener('change', apply);
+    });
+    apply(); // reflect the initially-selected options
 })();
 </script>
 

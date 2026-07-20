@@ -1,22 +1,30 @@
 <script>
 /*
- | Keeps every colour <select class="js-color-select"> in sync with the colours
- | typed into the Colors variant box. Options are (re)built from the live colour
- | list; each select preserves its own current selection when still valid.
+ | Keeps option <select>s in sync with the values typed into the variant boxes:
+ |   .js-color-select  <- Colors box (colors_raw)
+ |   .js-size-select   <- Sizes box  (sizes_raw)
+ | Options are (re)built from the live list; each select preserves its own
+ | current selection when still valid.
  |
- | Also exposes window.pdFillColorSelect(select) so dynamically-created selects
- | (e.g. per-file gallery rows) can be populated the moment they are added.
+ | Exposes window.pdFillColorSelect(select) and window.pdFillSizeSelect(select)
+ | so dynamically-created selects (variant repeater rows, per-file gallery rows)
+ | can be populated the moment they are added.
  */
 (function () {
-    function currentColors() {
-        var hidden = document.querySelector('input[name="colors_raw"]');
+    // Each dimension: which hidden field feeds it and which selects it targets.
+    var DIMENSIONS = [
+        { field: 'colors_raw', cls: 'js-color-select', fill: 'pdFillColorSelect' },
+        { field: 'sizes_raw',  cls: 'js-size-select',  fill: 'pdFillSizeSelect'  },
+    ];
+
+    function valuesFrom(field) {
+        var hidden = document.querySelector('input[name="' + field + '"]');
         if (!hidden || !hidden.value.trim()) return [];
         return hidden.value.split(',').map(function (v) { return v.trim(); })
                                       .filter(function (v) { return v !== ''; });
     }
 
-    function fill(select, colors) {
-        colors = colors || currentColors();
+    function fill(select, values) {
         // Preserve the intended selection: explicit data-selected wins on first
         // fill, otherwise keep whatever is currently chosen.
         var want = select.dataset.selected != null && select.dataset.selected !== ''
@@ -26,10 +34,10 @@
 
         var blank = document.createElement('option');
         blank.value = '';
-        blank.textContent = '— colour —';
+        blank.textContent = '— select —';
         select.appendChild(blank);
 
-        colors.forEach(function (c) {
+        values.forEach(function (c) {
             var opt = document.createElement('option');
             opt.value = c;
             opt.textContent = c;
@@ -37,20 +45,22 @@
             select.appendChild(opt);
         });
 
-        // Once applied, clear data-selected so later user changes aren't overridden.
         select.removeAttribute('data-selected');
     }
-    window.pdFillColorSelect = fill;
 
-    function fillAll() {
-        var colors = currentColors();
-        document.querySelectorAll('.js-color-select').forEach(function (s) { fill(s, colors); });
-    }
+    DIMENSIONS.forEach(function (dim) {
+        // Expose a per-dimension fill helper for dynamically-created selects.
+        window[dim.fill] = function (select) { fill(select, valuesFrom(dim.field)); };
 
-    // Populate on load, then whenever the colours change.
-    document.addEventListener('DOMContentLoaded', fillAll);
-    document.addEventListener('variant:change', function (e) {
-        if (e.detail && e.detail.field === 'colors_raw') fillAll();
+        function fillAll() {
+            var values = valuesFrom(dim.field);
+            document.querySelectorAll('.' + dim.cls).forEach(function (s) { fill(s, values); });
+        }
+
+        document.addEventListener('DOMContentLoaded', fillAll);
+        document.addEventListener('variant:change', function (e) {
+            if (e.detail && e.detail.field === dim.field) fillAll();
+        });
     });
 })();
 </script>

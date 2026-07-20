@@ -103,9 +103,14 @@
             {{-- Price. display_price / was_price come from the model, which is also what
                  the cart charges — deriving it here is how the two drifted apart before. --}}
             <div class="mt-2.5 flex items-baseline gap-2 flex-wrap">
-                <span class="text-base font-bold text-title dark:text-white tabular-nums">{{ $item->display_price }}</span>
-                @if ($item->was_price)
-                    <span class="text-xs text-paragraph dark:text-white-light line-through tabular-nums">{{ $item->was_price }}</span>
+                @if ($item->has_price_range)
+                    {{-- Price varies by colour/size — show the lowest as a "From" figure. --}}
+                    <span class="text-base font-bold text-title dark:text-white tabular-nums">From ${{ number_format($item->from_price, 2) }}</span>
+                @else
+                    <span class="text-base font-bold text-title dark:text-white tabular-nums">{{ $item->display_price }}</span>
+                    @if ($item->was_price)
+                        <span class="text-xs text-paragraph dark:text-white-light line-through tabular-nums">{{ $item->was_price }}</span>
+                    @endif
                 @endif
             </div>
 

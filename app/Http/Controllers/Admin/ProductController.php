@@ -102,6 +102,15 @@ class ProductController extends Controller
             'images.*'       => ['nullable', 'image', 'max:4096'],
             'image_colors_new'   => ['nullable', 'array'],
             'image_colors_new.*' => ['nullable', 'string', 'max:100'],
+            'variants'                => ['nullable', 'array'],
+            'variants.*'              => ['nullable', 'array'],
+            'variants.*.*.id'         => ['nullable', 'integer'],
+            'variants.*.*.value'      => ['nullable', 'string', 'max:100'],
+            'variants.*.*.price'      => ['nullable', 'numeric', 'min:0'],
+            'variants.*.*.sale_price' => ['nullable', 'numeric', 'min:0'],
+            'variants.*.*.stock'      => ['nullable', 'integer', 'min:0'],
+            'variants.*.*.sku'        => ['nullable', 'string', 'max:100'],
+            'variants.*.*.image'      => ['nullable', 'image', 'max:4096'],
             'size_chart'     => ['nullable', 'image', 'max:8192'],
             'tag'            => ['nullable', 'in:Sale,NEW,OFF,OFF1'],
             'sku'           => ['nullable', 'string', 'max:100'],
@@ -136,7 +145,7 @@ class ProductController extends Controller
 
         $data['image_color'] = trim((string) $request->input('image_color')) ?: null;
 
-        unset($data['colors_raw'], $data['sizes_raw'], $data['images'], $data['image_colors_new'],
+        unset($data['colors_raw'], $data['sizes_raw'], $data['images'], $data['image_colors_new'], $data['variants'],
               $data['key_feature_1'], $data['key_feature_2'], $data['key_feature_3'],
               $data['spec_label'], $data['spec_value']);
 
@@ -165,6 +174,8 @@ class ProductController extends Controller
             }
         }
 
+        $this->syncVariants($product, $request);
+
         return redirect()->route('admin.products.index')
                          ->with('success', 'Product created successfully.');
     }
@@ -172,7 +183,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::where('is_active', true)->orderBy('name')->get();
-        $product->load('productImages');
+        $product->load('productImages', 'variants');
         return view('admin.products.edit', compact('product', 'categories'));
     }
 
@@ -196,6 +207,15 @@ class ProductController extends Controller
             'image'              => ['nullable', 'image', 'max:4096'],
             'image_color'        => ['nullable', 'string', 'max:100'],
             'images.*'           => ['nullable', 'image', 'max:4096'],
+            'variants'                => ['nullable', 'array'],
+            'variants.*'              => ['nullable', 'array'],
+            'variants.*.*.id'         => ['nullable', 'integer'],
+            'variants.*.*.value'      => ['nullable', 'string', 'max:100'],
+            'variants.*.*.price'      => ['nullable', 'numeric', 'min:0'],
+            'variants.*.*.sale_price' => ['nullable', 'numeric', 'min:0'],
+            'variants.*.*.stock'      => ['nullable', 'integer', 'min:0'],
+            'variants.*.*.sku'        => ['nullable', 'string', 'max:100'],
+            'variants.*.*.image'      => ['nullable', 'image', 'max:4096'],
             'size_chart'         => ['nullable', 'image', 'max:8192'],
             'remove_size_chart'  => ['nullable', 'boolean'],
             'remove_images'      => ['nullable', 'array'],
@@ -237,7 +257,7 @@ class ProductController extends Controller
         $data['image_color'] = trim((string) $request->input('image_color')) ?: null;
 
         unset($data['colors_raw'], $data['sizes_raw'], $data['remove_size_chart'], $data['remove_images'], $data['images'],
-              $data['image_colors'],
+              $data['image_colors'], $data['variants'],
               $data['key_feature_1'], $data['key_feature_2'], $data['key_feature_3'],
               $data['spec_label'], $data['spec_value']);
 
@@ -296,6 +316,8 @@ class ProductController extends Controller
 
         $product->update($data);
 
+        $this->syncVariants($product, $request);
+
         return redirect()->route('admin.products.index')
                          ->with('success', 'Product updated successfully.');
     }
@@ -353,6 +375,83 @@ class ProductController extends Controller
         }
 
         return $specs ?: null;
+    }
+
+    /**
+     * Create/update/delete a product's option variants (colour AND size) from the
+     * repeater input, which is grouped by dimension: variants[color][], variants[size][].
+     * A row persists only when it has both a value and a numeric price (matching the
+     * specs-repeater "blank rows are ignored" behaviour). Rows with an id are updated;
+     * rows without are created; existing variants absent from the submit are deleted
+     * (with their images). Duplicate values within a dimension are skipped to respect
+     * the unique(product_id, type, value) constraint.
+     */
+    private function syncVariants(Product $product, Request $request): void
+    {
+        $grouped = $request->input('variants', []);
+        $files   = $request->file('variants', []);
+        $keptIds = [];
+
+        foreach (['color', 'size'] as $type) {
+            $rows = $grouped[$type] ?? [];
+            $seen = [];
+
+            foreach ((array) $rows as $i => $row) {
+                $value = trim((string) ($row['value'] ?? ''));
+                $price = $row['price'] ?? '';
+
+                if ($value === '' || $price === '' || !is_numeric($price)) {
+                    continue; // incomplete row — ignore
+                }
+
+                $valueKey = mb_strtolower($value);
+                if (isset($seen[$valueKey])) {
+                    continue; // one variant per value within a dimension
+                }
+                $seen[$valueKey] = true;
+
+                $sale  = $row['sale_price'] ?? '';
+                $attrs = [
+                    'type'       => $type,
+                    'value'      => $value,
+                    'price'      => (float) $price,
+                    'sale_price' => ($sale !== '' && is_numeric($sale)) ? (float) $sale : null,
+                    'stock'      => (int) ($row['stock'] ?? 0),
+                    'sku'        => trim((string) ($row['sku'] ?? '')) ?: null,
+                    'sort_order' => (int) $i,
+                    'is_active'  => true,
+                ];
+
+                // Reuse the existing row when an id is supplied and belongs to this product.
+                $variant = !empty($row['id'])
+                    ? $product->variants()->whereKey($row['id'])->first()
+                    : null;
+                $variant = $variant ?: $product->variants()->make();
+
+                // Per-row image upload replaces any previous one.
+                $file = data_get($files, "$type.$i.image");
+                if ($file) {
+                    if ($variant->image && \Storage::disk('public')->exists($variant->image)) {
+                        \Storage::disk('public')->delete($variant->image);
+                    }
+                    $attrs['image'] = $file->store('products', 'public');
+                }
+
+                $variant->fill($attrs);
+                $variant->product_id = $product->id;
+                $variant->save();
+                $keptIds[] = $variant->id;
+            }
+        }
+
+        // Remove variants dropped from the form (and their images).
+        $stale = $product->variants()->whereNotIn('id', $keptIds ?: [0])->get();
+        foreach ($stale as $v) {
+            if ($v->image && \Storage::disk('public')->exists($v->image)) {
+                \Storage::disk('public')->delete($v->image);
+            }
+            $v->delete();
+        }
     }
 
     private function parseVariants(?string $raw): ?array

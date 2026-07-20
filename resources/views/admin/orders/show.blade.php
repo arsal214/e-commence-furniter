@@ -61,6 +61,13 @@ $paymentColors = [
                                 @endif
                                 <div>
                                     <p class="font-medium text-gray-800">{{ $item->name }}</p>
+                                    @if($item->color || $item->size || $item->sku)
+                                        <p class="text-xs text-gray-500">
+                                            @if($item->color)<span>Colour: <span class="font-medium text-gray-700">{{ $item->color }}</span></span>@endif
+                                            @if($item->size)<span class="ml-2">Size: <span class="font-medium text-gray-700">{{ $item->size }}</span></span>@endif
+                                            @if($item->sku)<span class="ml-2">SKU: <span class="font-medium text-gray-700">{{ $item->sku }}</span></span>@endif
+                                        </p>
+                                    @endif
                                     @if($item->product)
                                         <a href="{{ route('admin.products.edit', $item->product) }}" class="text-xs text-[#bb976d] hover:underline">Edit product</a>
                                     @endif

@@ -71,34 +71,36 @@ class CartController extends Controller
         $color   = $request->input('color') ?: null;
         $size    = $request->input('size')  ?: null;
 
-        $stock = (int) $product->stock;
+        // Price and stock follow the chosen colour/size (variant when one exists).
+        $unitPrice = $product->effectivePriceFor($color, $size);
+        $stock     = $product->effectiveStockFor($color, $size);
         if ($stock > 0) {
             $inCart = $this->cart->getQty($product->id, $color, $size);
             if ($inCart >= $stock) {
                 $message = '"' . $product->name . '" is already at the maximum stock quantity (' . $stock . ') in your cart.';
                 if ($request->wantsJson()) {
-                    return response()->json($this->cartPayload('error', $message, $product, 0), 422);
+                    return response()->json($this->cartPayload('error', $message, $product, 0, $unitPrice), 422);
                 }
                 return back()->with('error', $message);
             }
             if ($inCart + $qty > $stock) {
                 $qty = $stock - $inCart;
                 $this->cart->add($product, $qty, $color, $size);
-                $this->trackAddToCart($product, $qty, $request);
+                $this->trackAddToCart($product, $qty, $request, $unitPrice);
                 $message = 'Only ' . $qty . ' more unit(s) added — stock limit of ' . $stock . ' reached for "' . $product->name . '".';
                 if ($request->wantsJson()) {
-                    return response()->json($this->cartPayload('partial', $message, $product, $qty));
+                    return response()->json($this->cartPayload('partial', $message, $product, $qty, $unitPrice));
                 }
                 return back()->with('error', $message);
             }
         }
 
         $this->cart->add($product, $qty, $color, $size);
-        $this->trackAddToCart($product, $qty, $request);
+        $this->trackAddToCart($product, $qty, $request, $unitPrice);
 
         $message = '"' . $product->name . '" added to cart.';
         if ($request->wantsJson()) {
-            return response()->json($this->cartPayload('success', $message, $product, $qty));
+            return response()->json($this->cartPayload('success', $message, $product, $qty, $unitPrice));
         }
 
         return back()->with('success', $message);
@@ -108,11 +110,13 @@ class CartController extends Controller
      * Shape the JSON the "added to cart" modal consumes: the product just acted on
      * plus the live cart totals for the badge and the modal summary line.
      */
-    protected function cartPayload(string $status, string $message, Product $product, int $qty): array
+    protected function cartPayload(string $status, string $message, Product $product, int $qty, ?float $unitPrice = null): array
     {
         $image = $product->image
             ? (str_starts_with($product->image, 'assets/') ? asset($product->image) : \Storage::url($product->image))
             : asset('assets/img/logo.svg');
+
+        $unitPrice ??= $product->effective_price;
 
         return [
             'status'  => $status,
@@ -121,7 +125,7 @@ class CartController extends Controller
                 'name'  => $product->name,
                 'image' => $image,
                 'qty'   => $qty,
-                'price' => '$' . number_format($product->effective_price, 2),
+                'price' => '$' . number_format($unitPrice, 2),
             ],
             'cart' => [
                 'count' => $this->cart->count(),
@@ -130,9 +134,9 @@ class CartController extends Controller
         ];
     }
 
-    protected function trackAddToCart(Product $product, int $qty, Request $request): void
+    protected function trackAddToCart(Product $product, int $qty, Request $request, ?float $unitPrice = null): void
     {
-        $unitPrice  = $product->effective_price;
+        $unitPrice ??= $product->effective_price;
         $eventId    = $this->tiktok->newEventId('AddToCart');
         $properties = [
             'content_type' => 'product',
@@ -168,10 +172,14 @@ class CartController extends Controller
         $cartItems = $this->cart->items();
 
         if ($qty > 0 && isset($cartItems[$request->cart_key])) {
-            $product = Product::find($cartItems[$request->cart_key]['id']);
-            $stock   = (int) ($product->stock ?? 0);
-            if ($stock > 0 && $qty > $stock) {
-                return back()->with('error', 'Only ' . $stock . ' unit(s) of "' . $product->name . '" are in stock.');
+            $line    = $cartItems[$request->cart_key];
+            $product = Product::find($line['id']);
+            if ($product) {
+                // Respect the stock of the exact colour/size in this cart line.
+                $stock = $product->effectiveStockFor($line['color'] ?? null, $line['size'] ?? null);
+                if ($stock > 0 && $qty > $stock) {
+                    return back()->with('error', 'Only ' . $stock . ' unit(s) of "' . $product->name . '" are in stock.');
+                }
             }
         }
 
