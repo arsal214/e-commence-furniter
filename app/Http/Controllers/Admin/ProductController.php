@@ -426,6 +426,15 @@ class ProductController extends Controller
                 $variant = !empty($row['id'])
                     ? $product->variants()->whereKey($row['id'])->first()
                     : null;
+                // If no id resolved, fall back to an existing row with the same
+                // dimension+value so a re-submit updates it rather than inserting a
+                // duplicate (which would violate the unique product_id/type/value key).
+                if (!$variant) {
+                    $variant = $product->variants()
+                        ->where('type', $type)
+                        ->whereRaw('LOWER(value) = ?', [$valueKey])
+                        ->first();
+                }
                 $variant = $variant ?: $product->variants()->make();
 
                 // Per-row image upload replaces any previous one.

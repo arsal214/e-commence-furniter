@@ -37,7 +37,13 @@
         blank.textContent = '— select —';
         select.appendChild(blank);
 
-        values.forEach(function (c) {
+        // Ensure the current selection is always an option, even if it isn't in
+        // the live list — otherwise editing a product would silently blank (and
+        // on save drop) a variant whose value was removed from Colors/Sizes.
+        var opts = values.slice();
+        if (want && opts.indexOf(want) === -1) opts.unshift(want);
+
+        opts.forEach(function (c) {
             var opt = document.createElement('option');
             opt.value = c;
             opt.textContent = c;
