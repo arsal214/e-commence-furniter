@@ -49,4 +49,11 @@ return [
         'enabled'      => env('TIKTOK_EVENTS_ENABLED', true),
     ],
 
+    'meta' => [
+        'pixel_id' => env('META_PIXEL_ID', '1675737636873475'),
+        // Every fbq event that carries a value must declare the same currency the
+        // ad account is billed in, or Meta rejects the conversion.
+        'currency' => env('META_CURRENCY', 'USD'),
+    ],
+
 ];

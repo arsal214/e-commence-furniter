@@ -126,6 +126,11 @@ class CartController extends Controller
                 'image' => $image,
                 'qty'   => $qty,
                 'price' => '$' . number_format($unitPrice, 2),
+                // Raw numbers for the Meta AddToCart pixel. The formatted `price`
+                // above is display-only ("$1,299.00") and cannot be fed to fbq.
+                'id'         => (string) $product->id,
+                'unit_price' => round((float) $unitPrice, 2),
+                'value'      => round((float) $unitPrice * $qty, 2),
             ],
             'cart' => [
                 'count' => $this->cart->count(),

@@ -350,17 +350,33 @@
                 'item_price' => (float) $item->price,
             ])->values()->all()
             : [];
+
+        // Meta matches the catalog on content_ids; contents[].id alone is not
+        // enough for Advantage+ / dynamic ads to resolve the product.
+        $pixelContentIds = array_column($pixelContents, 'id');
     @endphp
+{{-- A zero or negative value is rejected by Meta exactly like a missing one, and
+     a rejected Purchase counts against the pixel's error rate. Skipping the call
+     keeps the campaign clean; the server log tells us an order slipped through
+     without a usable total so the root cause can be chased. --}}
+@if ($pixelValue > 0)
 <script>
     if (typeof fbq === 'function') {
         fbq('track', 'Purchase', {
             value: {{ number_format($pixelValue, 2, '.', '') }},
-            currency: 'USD',
+            currency: @json(config('services.meta.currency', 'USD')),
             content_type: 'product',
+            content_ids: {!! json_encode($pixelContentIds, JSON_UNESCAPED_SLASHES) !!},
             contents: {!! json_encode($pixelContents, JSON_UNESCAPED_SLASHES) !!},
             num_items: {{ (int) ($order ? $order->items->sum('qty') : 0) }}
         }@if ($order), { eventID: @json('Purchase.order-' . $order->id) }@endif);
     }
 </script>
+@else
+    @php \Log::warning('Meta Purchase pixel skipped: non-positive order value', [
+        'order_id' => $order?->id,
+        'flashed'  => session('order_total'),
+    ]) @endphp
+@endif
 @endif
 @endpush

@@ -813,6 +813,12 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
                     if (d.status === 'partial') {               // added fewer than asked
                         window.showToast?.(d.message, 'info');
                     }
+                    // Meta AddToCart fires here rather than on submit, because only the
+                    // response knows the variant-resolved price and the quantity that
+                    // actually made it past the stock cap. Meta rejects the event when
+                    // value/currency are absent, so a bare fbq('track','AddToCart') on
+                    // submit was being counted as a malformed conversion.
+                    trackMetaAddToCart(d.product);
                     openModal(d);
                 })
                 .catch(function () {
@@ -833,15 +839,50 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
         </script>
 
         <!-- Meta Pixel Add to Cart Tracking -->
-        {{-- Hooks the actual /cart/add form submits (capture phase, so it fires even when
-             the fetch interceptor preventDefault()s) instead of matching button text,
-             which silently broke whenever a label changed ("Adding…", icon-only, etc.). --}}
+        {{-- Meta requires value + currency on AddToCart; without them the event is
+             logged as a malformed conversion and drags the whole pixel's error rate
+             down. Prices are variant-dependent and stock can clip the quantity, so
+             the numbers come from the /cart/add JSON response (fetch path) or from
+             data attributes on the form (data-full-submit path, which never gets a
+             response because the browser navigates away). --}}
         <script>
+        window.trackMetaAddToCart = function (p) {
+            if (typeof fbq !== 'function' || !p) return;
+            var value = Number(p.value);
+            if (!isFinite(value) || value <= 0) return;   // a 0-value event is rejected too
+
+            fbq('track', 'AddToCart', {
+                value: Number(value.toFixed(2)),
+                currency: @json(config('services.meta.currency', 'USD')),
+                content_type: 'product',
+                content_ids: [String(p.id)],
+                contents: [{
+                    id: String(p.id),
+                    quantity: Number(p.qty) || 1,
+                    item_price: Number(p.unit_price) || 0
+                }]
+            });
+        };
+
+        {{-- Capture phase so it still runs where a listener calls preventDefault(). --}}
         document.addEventListener('submit', function (event) {
             var form = event.target;
-            if (form && form.action && form.action.indexOf('/cart/add') !== -1 && typeof fbq === 'function') {
-                fbq('track', 'AddToCart');
-            }
+            if (!(form instanceof HTMLFormElement)) return;
+            if (!/\/cart\/add\/?$/.test(form.getAttribute('action') || '')) return;
+            // The fetch path reports from the response instead — firing here as well
+            // would double-count every add.
+            if (!form.hasAttribute('data-full-submit')) return;
+
+            var price = Number(form.dataset.atcPrice);
+            var qty   = Number(form.querySelector('[name="qty"]')?.value) || 1;
+            if (!isFinite(price) || price <= 0) return;
+
+            window.trackMetaAddToCart({
+                id: form.dataset.atcId,
+                qty: qty,
+                unit_price: price,
+                value: price * qty
+            });
         }, true);
         </script>
     </body>

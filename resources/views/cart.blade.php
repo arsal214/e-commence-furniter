@@ -191,7 +191,10 @@
                         </a>
                         <a href="{{ route('product-details', $p->slug) }}" class="co-xsell__name">{{ $p->name }}</a>
                         <div class="co-xsell__price">{{ $p->display_price }}</div>
-                        <form method="POST" action="{{ route('cart.add') }}" data-full-submit class="co-xsell__form">
+                        {{-- data-atc-*: this form does a full POST, so the Meta AddToCart
+                             pixel has no JSON response to read its value from. --}}
+                        <form method="POST" action="{{ route('cart.add') }}" data-full-submit class="co-xsell__form"
+                              data-atc-id="{{ $p->id }}" data-atc-price="{{ number_format($p->effective_price, 2, '.', '') }}">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $p->id }}">
                             <input type="hidden" name="qty" value="1">

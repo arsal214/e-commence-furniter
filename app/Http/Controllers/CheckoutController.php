@@ -233,8 +233,12 @@ class CheckoutController extends Controller
                 session()->put('recent_order', $order->tracking_number);
             }
 
+            // The order row is the preferred source, but if the lookup missed we
+            // still have an authoritative amount on the succeeded intent. Falling
+            // back to 0 here used to hand the Meta pixel a zero-value Purchase,
+            // which Meta rejects as a malformed conversion.
             return redirect()->route('thank-you')
-                ->with('order_total', $order?->total ?? 0);
+                ->with('order_total', $order?->total ?? ($intent->amount / 100));
         }
 
         return redirect()->route('checkout')->with('error', 'Payment was not completed. Please try again.');
