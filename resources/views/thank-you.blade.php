@@ -330,12 +330,37 @@
 </script>
 @endif
 
-@if (session('order_total'))
+{{-- ── Meta Pixel Purchase ──────────────────────────────────────────────
+     Gated on the flashed order_total, so refreshing /thank-you cannot register
+     the same purchase twice. The payload is built from the order row while it
+     is still in session; the flashed total is the fallback so a sale is never
+     reported without a value. eventID follows the TikTok convention
+     (deterministic on the order id) so a Conversions API twin added later
+     deduplicates against this browser event. --}}
+@if (session()->has('order_total'))
+    @php
+        $pixelValue = (float) ($order?->total ?? session('order_total'));
+
+        // This store carries no catalog SKUs (see TikTokEventsService::contents),
+        // so content ids fall back to the product id the feed is keyed on.
+        $pixelContents = $order
+            ? $order->items->map(fn ($item) => [
+                'id'         => (string) ($item->sku ?: $item->product_id),
+                'quantity'   => (int) $item->qty,
+                'item_price' => (float) $item->price,
+            ])->values()->all()
+            : [];
+    @endphp
 <script>
-    fbq('track', 'Purchase', {
-        value: {{ number_format((float) session('order_total'), 2, '.', '') }},
-        currency: 'USD'
-    });
+    if (typeof fbq === 'function') {
+        fbq('track', 'Purchase', {
+            value: {{ number_format($pixelValue, 2, '.', '') }},
+            currency: 'USD',
+            content_type: 'product',
+            contents: {!! json_encode($pixelContents, JSON_UNESCAPED_SLASHES) !!},
+            num_items: {{ (int) ($order ? $order->items->sum('qty') : 0) }}
+        }@if ($order), { eventID: @json('Purchase.order-' . $order->id) }@endif);
+    }
 </script>
 @endif
 @endpush
