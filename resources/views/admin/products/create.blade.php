@@ -315,11 +315,12 @@
 @push('scripts')
 @include('admin.products._variant_script')
 @include('admin.products._color_select_script')
-<script src="https://cdn.tiny.cloud/1/{{ env('TINYMCE_API_KEY', 'no-api-key') }}/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="{{ asset('assets/js/vendor/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
 <script>
 tinymce.init({
     selector: '.tinymce-editor',
-    plugins: 'lists link image table code wordcount',oh
+    license_key: 'gpl',
+    plugins: 'lists link image table code wordcount',
     toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link image | table | code',
     menubar: false,
     height: 300,
