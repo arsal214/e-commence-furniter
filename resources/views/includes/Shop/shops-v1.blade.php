@@ -27,6 +27,7 @@
                 @if ($img)
                     {{-- aspect-ratio box + explicit dimensions: the image can't shift layout as it loads --}}
                     <img src="{{ $img }}" alt="{{ $item->name }}" width="400" height="500" loading="lazy"
+                         data-card-image data-default-src="{{ $img }}"
                          class="w-full h-full object-cover transform group-hover:scale-105 duration-500">
                 @else
                     <span class="w-full h-full flex items-center justify-center text-sm text-paragraph dark:text-white-light">
@@ -115,7 +116,7 @@
             </div>
 
             @php
-                $colors = collect($item->colors ?? [])->filter()->values();
+                $colors = collect($item->colorSwatches());
                 $sizes  = collect($item->sizes ?? [])->filter()->values();
                 $bits   = [];
                 if ($colors->count()) $bits[] = $colors->count() . ' ' . \Str::plural('colour', $colors->count());
@@ -128,14 +129,21 @@
                 <p class="mt-2 text-xs text-paragraph dark:text-white-light">{{ implode(' · ', $bits) }}</p>
             @endif
 
+            {{-- Swatches. Each one that has its own photo swaps the card image on click,
+                 so a shopper can compare finishes without opening the product. --}}
             @if ($colors->count())
-                <ul class="mt-2 flex items-center gap-1.5" aria-label="Available colours">
+                <ul class="mt-2 flex items-center gap-1.5 pg-swatches" aria-label="Available colours">
                     @foreach ($colors->take(5) as $color)
-                        <li class="w-4 h-4 rounded-full border border-black/15"
-                            style="background: {{ \App\Models\Product::colorHex($color) }}"
-                            title="{{ $color }}">
-                            {{-- Name in text: the swatch alone never carries the meaning --}}
-                            <span class="sr-only">{{ $color }}</span>
+                        <li>
+                            <button type="button"
+                                    class="pg-swatch block w-5 h-5 rounded-full border border-black/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 {{ $color['image'] ? 'cursor-pointer' : 'cursor-default' }}"
+                                    style="background: {{ $color['hex'] }}"
+                                    title="{{ $color['name'] }}"
+                                    aria-pressed="false"
+                                    @if ($color['image']) data-swatch-image="{{ $color['image'] }}" @endif>
+                                {{-- Name in text: the swatch alone never carries the meaning --}}
+                                <span class="sr-only">{{ $color['name'] }}</span>
+                            </button>
                         </li>
                     @endforeach
                     @if ($colors->count() > 5)
@@ -169,3 +177,40 @@
         </div>
     </article>
 @endforeach
+
+{{-- Swatch → card image. Delegated once for the whole grid, so it keeps working
+     for cards added by pagination or filtering. --}}
+@once
+<style>
+    .pg-swatch { transition: box-shadow .15s, transform .15s; }
+    .pg-swatch[data-swatch-image]:hover { transform: scale(1.15); }
+    .pg-swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #bb976d; }
+    .dark .pg-swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px #172430, 0 0 0 3.5px #bb976d; }
+</style>
+<script>
+document.addEventListener('click', function (e) {
+    var swatch = e.target.closest('.pg-swatch[data-swatch-image]');
+    if (!swatch) return;
+
+    var card = swatch.closest('article');
+    var img  = card && card.querySelector('[data-card-image]');
+    if (!img) return;
+
+    var src      = swatch.dataset.swatchImage;
+    var isActive = swatch.getAttribute('aria-pressed') === 'true';
+
+    card.querySelectorAll('.pg-swatch').forEach(function (s) {
+        s.setAttribute('aria-pressed', 'false');
+    });
+
+    // Clicking the active swatch again returns the card to the product's own photo
+    if (isActive) {
+        img.src = img.dataset.defaultSrc;
+        return;
+    }
+
+    swatch.setAttribute('aria-pressed', 'true');
+    img.src = src;
+});
+</script>
+@endonce

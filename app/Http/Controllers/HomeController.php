@@ -310,7 +310,7 @@ class HomeController extends Controller
         $eff  = self::EFFECTIVE_PRICE;
 
         $products = $this->shopQuery($f)
-            ->with('category', 'variants')
+            ->with('category', 'variants', 'productImages')
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
             ->when($sort === 'price_low',  fn($q) => $q->orderByRaw("{$eff} ASC"))
