@@ -32,6 +32,7 @@
                 </button>
             @endforeach
             <p id="product-empty" class="hidden px-3 py-2 text-sm text-gray-400">No products match your search.</p>
+            <p id="product-hint" class="hidden px-3 py-2 mt-1 border-t border-gray-100 text-xs text-gray-400"></p>
         </div>
     </div>
 
@@ -49,6 +50,7 @@
     var hidden  = document.getElementById('product-id');
     var list    = document.getElementById('product-options');
     var empty   = document.getElementById('product-empty');
+    var hint    = document.getElementById('product-hint');
     var error   = document.getElementById('product-error');
     var clear   = document.getElementById('product-clear');
     var caret   = document.getElementById('product-caret');
@@ -66,15 +68,29 @@
             activeEl.scrollIntoView({ block: 'nearest' });
         }
     }
+    // With a big catalogue, dumping every product on screen is useless — show at most
+    // LIMIT at a time and let the search reach the rest.
+    var LIMIT = 10;
+
     function filter(term) {
         term = (term || '').trim().toLowerCase();
-        var visible = 0;
+        var matches = 0, visible = 0;
         options.forEach(function (o) {
             var match = !term || o.dataset.name.toLowerCase().indexOf(term) !== -1;
-            o.classList.toggle('hidden', !match);
-            if (match) visible++;
+            if (match) matches++;
+            // The current selection stays visible even when it falls past the cap.
+            var show = match && (visible < LIMIT || o.dataset.id === hidden.value);
+            o.classList.toggle('hidden', !show);
+            if (show) visible++;
         });
-        empty.classList.toggle('hidden', visible > 0);
+        empty.classList.toggle('hidden', matches > 0);
+        if (matches > visible) {
+            hint.textContent = 'Showing ' + visible + ' of ' + matches
+                             + (term ? ' matches' : ' products') + ' — type to narrow the list.';
+            hint.classList.remove('hidden');
+        } else {
+            hint.classList.add('hidden');
+        }
         setActive(null);
     }
     function isOpen() { return !list.classList.contains('hidden'); }
