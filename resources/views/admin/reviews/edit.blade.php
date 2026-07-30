@@ -19,16 +19,10 @@
         <form method="POST" action="{{ route('admin.reviews.update', $review) }}" class="space-y-5">
             @csrf @method('PUT')
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Product <span class="text-red-500">*</span></label>
-                <select name="product_id" required
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-[#bb976d] transition-colors">
-                    <option value="">Select a product…</option>
-                    @foreach ($products as $product)
-                        <option value="{{ $product->id }}" @selected((string) old('product_id', $review->product_id) === (string) $product->id)>{{ $product->name }}</option>
-                    @endforeach
-                </select>
-            </div>
+            @include('admin.reviews._product_select', [
+                'products' => $products,
+                'selected' => old('product_id', $review->product_id),
+            ])
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Reviewer Name <span class="text-red-500">*</span></label>
