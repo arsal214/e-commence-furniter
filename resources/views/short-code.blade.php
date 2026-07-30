@@ -304,7 +304,7 @@
                         <h3 class="font-semibold dark:text-white text-2xl md:text-3xl text-center">Pagination</h3>
                         <!-- Pagination -->
                         <div class="mt-5 md:mt-7 flex items-center justify-center gap-[10px]">
-                            <a href="#" class="text-title dark:text-white text-xl"><span class="lnr lnr-arrow-left"></span></a>         
+                            <a href="#" class="text-title dark:text-white text-xl"><span class="mdi mdi-arrow-left"></span></a>         
                             <a href="#" class="w-8 sm:w-10 h-8 sm:h-10 bg-title bg-opacity-5 flex items-center justify-center leading-none text-base sm:text-lg font-medium text-title transition-all duration-300 hover:bg-opacity-100 hover:text-white dark:bg-white dark:bg-opacity-5 dark:text-white dark:hover:bg-opacity-100 dark:hover:text-title">01</a>        
                             <a href="#" class="w-8 sm:w-10 h-8 sm:h-10 bg-title bg-opacity-5 flex items-center justify-center leading-none text-base sm:text-lg font-medium text-title transition-all duration-300 hover:bg-opacity-100 hover:text-white dark:bg-white dark:bg-opacity-5 dark:text-white dark:hover:bg-opacity-100 dark:hover:text-title">02</a>        
                             <a href="#" class="w-8 sm:w-10 h-8 sm:h-10 bg-title bg-opacity-5 flex items-center justify-center leading-none text-base sm:text-lg font-medium text-title transition-all duration-300 hover:bg-opacity-100 hover:text-white dark:bg-white dark:bg-opacity-5 dark:text-white dark:hover:bg-opacity-100 dark:hover:text-title">03</a> 
@@ -312,18 +312,18 @@
                             <a href="#" class="w-8 sm:w-10 h-8 sm:h-10 bg-title bg-opacity-5 flex items-center justify-center leading-none text-base sm:text-lg font-medium text-title transition-all duration-300 hover:bg-opacity-100 hover:text-white dark:bg-white dark:bg-opacity-5 dark:text-white dark:hover:bg-opacity-100 dark:hover:text-title">09</a>        
                             <a href="#" class="w-8 sm:w-10 h-8 sm:h-10 bg-title bg-opacity-5 flex items-center justify-center leading-none text-base sm:text-lg font-medium text-title transition-all duration-300 hover:bg-opacity-100 hover:text-white dark:bg-white dark:bg-opacity-5 dark:text-white dark:hover:bg-opacity-100 dark:hover:text-title">10</a>        
                                   
-                            <a href="#" class="text-title dark:text-white text-xl"><span class="lnr lnr-arrow-right"></span></a>         
+                            <a href="#" class="text-title dark:text-white text-xl"><span class="mdi mdi-arrow-right"></span></a>         
                         </div>
 
                         <div class="mt-3 md:mt-5 flex items-center gap-[10px] justify-center">
-                            <a href="#" class="text-title dark:text-white text-xl"><span class="lnr lnr-arrow-left"></span></a>         
+                            <a href="#" class="text-title dark:text-white text-xl"><span class="mdi mdi-arrow-left"></span></a>         
                             <a href="#" class="w-8 sm:w-10 h-8 sm:h-10 bg-title bg-opacity-5 flex items-center justify-center leading-none text-base sm:text-lg font-medium text-title transition-all duration-300 hover:bg-opacity-100 hover:text-white dark:bg-white dark:bg-opacity-5 dark:text-white dark:hover:bg-opacity-100 dark:hover:text-title">01</a>        
                             <a href="#" class="text-title dark:text-white text-3xl sm:text-4xl transform -translate-y-2">...</a>       
                             <a href="#" class="w-8 sm:w-10 h-8 sm:h-10 bg-title bg-opacity-5 flex items-center justify-center leading-none text-base sm:text-lg font-medium text-title transition-all duration-300 hover:bg-opacity-100 hover:text-white dark:bg-white dark:bg-opacity-5 dark:text-white dark:hover:bg-opacity-100 dark:hover:text-title">05</a> 
                             <a href="#" class="text-title dark:text-white text-3xl sm:text-4xl transform -translate-y-2">...</a>       
                             <a href="#" class="w-8 sm:w-10 h-8 sm:h-10 bg-title bg-opacity-5 flex items-center justify-center leading-none text-base sm:text-lg font-medium text-title transition-all duration-300 hover:bg-opacity-100 hover:text-white dark:bg-white dark:bg-opacity-5 dark:text-white dark:hover:bg-opacity-100 dark:hover:text-title">10</a>        
                             <a href="#" class="text-title dark:text-white text-3xl sm:text-4xl transform -translate-y-2">...</a>
-                            <a href="#" class="text-title dark:text-white text-xl"><span class="lnr lnr-arrow-right"></span></a>         
+                            <a href="#" class="text-title dark:text-white text-xl"><span class="mdi mdi-arrow-right"></span></a>         
                         </div>
                     </div>
                 </div>
@@ -433,10 +433,10 @@
                             <div class=" lg:absolute lg:top-[64%] lg:left-0 transform lg:-translate-y-2/4 mt-6 xl:mt-0 w-full">
                                 <div class="flex gap-2 md:gap-4 justify-center lg:justify-between">
                                     <button class="crslSlider02_prev w-9 md:w-11 h-9 md:h-11 border border-tertiary flex items-center justify-center text-tertiary hover:bg-primary hover:text-title hover:border-transparent transition-all duration-300">
-                                        <span class="lnr lnr-arrow-left"></span>
+                                        <span class="mdi mdi-arrow-left"></span>
                                     </button>
                                     <button class="crslSlider02_next w-9 md:w-11 h-9 md:h-11 border border-tertiary flex items-center justify-center text-tertiary hover:bg-primary hover:text-title hover:border-transparent transition-all duration-300">
-                                        <span class="lnr lnr-arrow-right"></span>
+                                        <span class="mdi mdi-arrow-right"></span>
                                     </button>
                                 </div>
                             </div>
@@ -659,10 +659,10 @@
                             <div class="md:absolute md:top-[72%] md:right-0 transform md:-translate-y-2/4 mt-6 md:mt-0">
                                 <div class="flex gap-4">
                                     <button class="icon ptnrSlider01_prev w-9 h-9 border border-white flex items-center justify-center text-white">
-                                        <span class="lnr lnr-arrow-left"></span>
+                                        <span class="mdi mdi-arrow-left"></span>
                                     </button>
                                     <button class="icon ptnrSlider01_next w-9 h-9 border border-white flex items-center justify-center text-white">
-                                        <span class="lnr lnr-arrow-right"></span>
+                                        <span class="mdi mdi-arrow-right"></span>
                                     </button>
                                 </div>
                             </div>
@@ -679,10 +679,10 @@
                             <div class="md:absolute md:top-[74%] md:left-0 transform md:-translate-y-2/4 mt-6 md:mt-0 w-full">
                                 <div class="flex gap-2 md:gap-4 justify-center md:justify-between">
                                     <button class="icon ptnrSlider02_prev w-9 h-9 border dark:border-white flex items-center justify-center text-title border-title dark:text-white">
-                                        <span class="lnr lnr-arrow-left"></span>
+                                        <span class="mdi mdi-arrow-left"></span>
                                     </button>
                                     <button class="icon ptnrSlider02_next w-9 h-9 border border-title dark:border-white flex items-center justify-center text-title dark:text-white">
-                                        <span class="lnr lnr-arrow-right"></span>
+                                        <span class="mdi mdi-arrow-right"></span>
                                     </button>
                                 </div>
                             </div>

@@ -34,7 +34,10 @@ Table of Content
 ==================
 4. New Update
 -------------------------------------------------------------------*/
-@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap");
+/* Josefin Sans (the site's base body font) is loaded via a <link> in the layout
+   <head> instead of @import here — an @import inside this stylesheet is only
+   discovered after the browser downloads and parses this whole file first,
+   adding a hidden serial hop before the font request even starts. */
 @font-face {
   font-family: "July it";
   src: url("../fonts/Julyit.woff2") format("woff2"), url("../fonts/Julyit.woff") format("woff"), url("../fonts/Julyit.ttf") format("truetype");
@@ -547,19 +550,11 @@ Table of Content
     opacity: 0;
   }
 }
-/*
-Linearicons Free v1.0.0 - https://linearicons.com/free
-By Perxis - https://perxis.com
-(c) 2014-2015 Perxis.com
-License: https://linearicons.com/free/license
-*/
-@font-face {
-  font-family: Linearicons-Free;
-  src: url(https://cdn.linearicons.com/free/1.0.0/Linearicons-Free.eot);
-  src: url(https://cdn.linearicons.com/free/1.0.0/Linearicons-Free.eot?#iefix) format("embedded-opentype"), url(https://cdn.linearicons.com/free/1.0.0/Linearicons-Free.woff2) format("woff2"), url(https://cdn.linearicons.com/free/1.0.0/Linearicons-Free.ttf) format("truetype"), url(https://cdn.linearicons.com/free/1.0.0/Linearicons-Free.woff) format("woff"), url(https://cdn.linearicons.com/free/1.0.0/Linearicons-Free.svg#Linearicons-Free) format("svg");
-  font-weight: 400;
-  font-style: normal;
-}
+/* Linearicons @font-face removed: no template uses .lnr-* anymore (swapped for
+   MDI icons already loaded site-wide), and the declaration alone was enough for
+   Chrome to fetch the font from cdn.linearicons.com, tripping the CSP font-src
+   allowlist. The .lnr-*:before glyph rules below are dead but harmless — left
+   alone since deleting them buys nothing once the @font-face is gone. */
 .lnr {
   font-family: Linearicons-Free;
   speak: none;

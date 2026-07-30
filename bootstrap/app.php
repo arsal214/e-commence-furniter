@@ -20,8 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\RedirectTrailingSlash::class,
         ]);
         // SEO: noindex header on utility / private / search pages.
+        // Security: CSP, HSTS, clickjacking (X-Frame-Options), COOP.
         $middleware->web(append: [
             \App\Http\Middleware\SeoNoindex::class,
+            \App\Http\Middleware\SecurityHeaders::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -56,9 +56,9 @@
         </div>
         <div class="pt-4 px-1">
             <p class="text-xs text-[#bb976d] font-semibold uppercase tracking-widest mb-1">{{ $product->category->name ?? '' }}</p>
-            <h5 class="text-sm font-semibold text-title dark:text-white leading-snug mb-2 line-clamp-2">
+            <h3 class="text-sm font-semibold text-title dark:text-white leading-snug mb-2 line-clamp-2">
                 <a href="{{ route('product-details', $product->slug) }}" class="hover:text-[#bb976d] transition-colors duration-200">{{ $product->name }}</a>
-            </h5>
+            </h3>
             @include('includes.Home._stars', ['rating' => $product->avgRating(), 'count' => $product->reviewCount()])
             <div class="flex items-center gap-2 mt-2">
                 <span class="text-base font-bold text-title dark:text-white">{{ $product->display_price }}</span>

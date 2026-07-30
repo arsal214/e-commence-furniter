@@ -1453,29 +1453,33 @@ window.addEventListener('load',function() {
             });
               
             dotcount = 1;
-            
-            jQuery('.owl-dot').each(function() {
+
+            jQuery('.about-slider .owl-dot').each(function() {
                 jQuery( this ).addClass( 'dotnumber' + dotcount);
                 jQuery( this ).attr('data-info', dotcount);
                 dotcount=dotcount+1;
             });
-            
+
             slidecount = 1;
-            
-            jQuery('.owl-item').not('.cloned').each(function() {
+
+            jQuery('.about-slider .owl-item').not('.cloned').each(function() {
                 jQuery( this ).addClass( 'slidenumber' + slidecount);
                 slidecount=slidecount+1;
             });
-            
-            jQuery('.owl-dot').each(function() {  
-                grab = jQuery(this).data('info');   
+
+            jQuery('.about-slider .owl-dot').each(function() {
+                grab = jQuery(this).data('info');
                 slidegrab = jQuery('.slidenumber'+ grab +' img').attr('src');
-                jQuery(this).css("background-image", "url("+slidegrab+")");   
+                if (slidegrab) {
+                    jQuery(this).css("background-image", "url("+slidegrab+")");
+                }
             });
-            
-            amount = $('.owl-dot').length;
-            gotowidth = 100/amount;
-            jQuery('.owl-dot').css("height", gotowidth+"%");
+
+            amount = $('.about-slider .owl-dot').length;
+            if (amount > 0) {
+                gotowidth = 100/amount;
+                jQuery('.about-slider .owl-dot').css("height", gotowidth+"%");
+            }
 
 
 
@@ -1696,28 +1700,32 @@ $("#user-nav-tabs li").on('click', function(e) {
 });
 
 
-// Dark Mode Activation 
+// Dark Mode Activation
+// Dark mode is retired site-wide (see layout head script), so the .switcher toggle
+// no longer exists in the markup — guard so this legacy block doesn't throw on load.
 const toggleSwitch = document.querySelector('.switcher');
 const toggleInput =  document.querySelector('.switcher input');
 
-if(localStorage.colorScheme === 'dark') {
-    document.documentElement.setAttribute('class', 'dark');
-    toggleInput.checked = true;
-}else {
-    document.documentElement.setAttribute('class', 'light');
-    toggleInput.checked = false;
-}
+if (toggleSwitch && toggleInput) {
+    if(localStorage.colorScheme === 'dark') {
+        document.documentElement.setAttribute('class', 'dark');
+        toggleInput.checked = true;
+    }else {
+        document.documentElement.setAttribute('class', 'light');
+        toggleInput.checked = false;
+    }
 
-function switchTheme(e) {
-  if(e.target.checked) {
-    document.documentElement.setAttribute('class', 'dark');
-    localStorage.setItem('colorScheme', 'dark');
-  } else {
-    document.documentElement.setAttribute('class', 'light');
-    localStorage.setItem('colorScheme', 'light');
-  }
+    function switchTheme(e) {
+      if(e.target.checked) {
+        document.documentElement.setAttribute('class', 'dark');
+        localStorage.setItem('colorScheme', 'dark');
+      } else {
+        document.documentElement.setAttribute('class', 'light');
+        localStorage.setItem('colorScheme', 'light');
+      }
+    }
+    toggleSwitch.addEventListener('change', switchTheme, false);
 }
-toggleSwitch.addEventListener('change', switchTheme, false);
 
 
 

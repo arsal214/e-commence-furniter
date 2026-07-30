@@ -37,7 +37,7 @@
 
                 {{-- ── Col 2 · Quick Links ── --}}
                 <div>
-                    <h4 class="font-bold text-white text-base mb-5 uppercase tracking-wider">Quick Links</h4>
+                    <h3 class="font-bold text-white text-base mb-5 uppercase tracking-wider">Quick Links</h3>
                     <ul class="text-white-light text-sm flex flex-col gap-3">
                         <li class="hover:text-primary duration-150"><a href="{{ url('/') }}">Home</a></li>
                         <li class="hover:text-primary duration-150"><a href="{{ url('/shop') }}">Shop All Products</a></li>
@@ -52,7 +52,7 @@
 
                 {{-- ── Col 3 · Customer Support ── --}}
                 <div>
-                    <h4 class="font-bold text-white text-base mb-5 uppercase tracking-wider">Customer Support</h4>
+                    <h3 class="font-bold text-white text-base mb-5 uppercase tracking-wider">Customer Support</h3>
                     <ul class="text-white-light text-sm flex flex-col gap-3">
                         <li class="hover:text-primary duration-150"><a href="{{ route('shipping-policy') }}">Shipping Policy</a></li>
                         <li class="hover:text-primary duration-150"><a href="{{ route('return-policy') }}">30-Day Returns</a></li>
@@ -66,7 +66,7 @@
 
                 {{-- ── Col 4 · Newsletter + Contact ── --}}
                 <div>
-                    <h4 class="font-bold text-white text-base mb-5 uppercase tracking-wider">Stay Updated</h4>
+                    <h3 class="font-bold text-white text-base mb-5 uppercase tracking-wider">Stay Updated</h3>
                     <p class="text-white-light text-sm mb-4 leading-relaxed">Subscribe for exclusive offers, new arrivals, and interior inspiration.</p>
 
                     <form action="{{ route('newsletter.subscribe') }}" method="POST" class="mb-6">
@@ -79,7 +79,7 @@
                                    class="w-full h-11 bg-white/5 border border-white/25 text-white placeholder:text-white/40 text-sm px-4 outline-none focus:border-primary duration-300">
                             <button type="submit"
                                     onclick="fbq('track', 'Lead');"
-                                    class="w-full h-11 bg-primary text-white text-sm font-semibold tracking-wider uppercase hover:bg-[#a8845a] duration-300">
+                                    class="w-full h-11 bg-[#8a6a45] text-white text-sm font-semibold tracking-wider uppercase hover:bg-[#755a3a] duration-300">
                                 Subscribe
                             </button>
                         </div>
@@ -111,11 +111,11 @@
                     &copy; {{ date('Y') }} PeytonGhalib. All rights reserved.
                 </p>
                 <div class="flex items-center gap-4 flex-wrap justify-center">
-                    <span class="flex items-center gap-1.5 text-white/40 text-xs">
+                    <span class="flex items-center gap-1.5 text-[#8b96a0] text-xs">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                         Visa
                     </span>
-                    <span class="flex items-center gap-1.5 text-white/40 text-xs">
+                    <span class="flex items-center gap-1.5 text-[#8b96a0] text-xs">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                         Mastercard
                     </span>
@@ -123,8 +123,8 @@
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                         <span class="text-primary">SSL Secured</span>
                     </span>
-                    <a href="{{ route('privacy-policy') }}" class="text-white/40 text-xs hover:text-white/70 duration-200">Privacy</a>
-                    <a href="{{ route('return-policy') }}" class="text-white/40 text-xs hover:text-white/70 duration-200">Returns</a>
+                    <a href="{{ route('privacy-policy') }}" class="!text-[#8b96a0] text-xs hover:text-white/70 duration-200">Privacy</a>
+                    <a href="{{ route('return-policy') }}" class="!text-[#8b96a0] text-xs hover:text-white/70 duration-200">Returns</a>
                 </div>
             </div>
         </div>

@@ -48,7 +48,7 @@ $blogs = [
                 <li class="text-[15px] leading-none dark:text-white">{{ $item['date'] }}</li>
                 <li><a href="{{ url('/blog-tag') }}" class="inline-block text-title font-medium text-[15px] leading-none py-2 px-[10px] rounded-md bg-primary-midum">{{ $item['tag'] }}</a></li>
             </ul>
-            <h5 class="text-xl mt-3 font-medium dark:text-white leading-[1.5]"><a href="{{ route('blog-details-v1', ['title' => Str::slug($item['title'])]) }}" class="text-underline">{{ $item['title'] }} </a></h5>
+            <h3 class="text-xl mt-3 font-medium dark:text-white leading-[1.5]"><a href="{{ route('blog-details-v1', ['title' => Str::slug($item['title'])]) }}" class="text-underline">{{ $item['title'] }} </a></h3>
         </div>
     </div>
 @endforeach

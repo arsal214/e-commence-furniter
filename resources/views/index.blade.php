@@ -3,7 +3,7 @@
 @section('meta_description', 'Shop home decor, kitchen gadgets, beauty, sports gear & more at PeytonGhalib. Quality products, fast delivery, 30-day returns. Discover your new favourites today.')
 
 @push('preload')
-<link rel="preload" as="image" href="{{ asset('assets/img/home-v1/home-decor.png') }}" fetchpriority="high">
+<link rel="preload" as="image" href="{{ asset('assets/img/home-v1/home-decor.webp') }}" fetchpriority="high">
 @endpush
 
 @push('schema')
@@ -127,10 +127,10 @@ $schemaWebsite = [
 
     {{-- Dot nav --}}
     <div class="ann-dots" id="annDots">
-        <button class="ann-nav-dot ann-nav-dot--on" data-ann="0"></button>
-        <button class="ann-nav-dot" data-ann="1"></button>
-        <button class="ann-nav-dot" data-ann="2"></button>
-        <button class="ann-nav-dot" data-ann="3"></button>
+        <button class="ann-nav-dot ann-nav-dot--on" data-ann="0" aria-label="Show announcement 1 of 4"></button>
+        <button class="ann-nav-dot" data-ann="1" aria-label="Show announcement 2 of 4"></button>
+        <button class="ann-nav-dot" data-ann="2" aria-label="Show announcement 3 of 4"></button>
+        <button class="ann-nav-dot" data-ann="3" aria-label="Show announcement 4 of 4"></button>
     </div>
 
     {{-- Slides --}}
@@ -668,7 +668,7 @@ $schemaWebsite = [
                         <div class="pgh-collage pgh-row-right">
 
                             <div class="pgh-img-shell">
-                                <img src="{{ asset('assets/img/home-v1/home-decor.png') }}" alt="Home Decor Collection" loading="eager" fetchpriority="high" decoding="async">
+                                <img src="{{ asset('assets/img/home-v1/home-decor.webp') }}" alt="Home Decor Collection" width="577" height="433" loading="eager" fetchpriority="high" decoding="async">
                                 <div class="pgh-card-footer">
                                     <div class="pgh-card-footer-dots"><span></span><span></span><span></span></div>
                                     <span class="pgh-card-footer-text">Home Decor Collection</span>
@@ -736,7 +736,7 @@ $schemaWebsite = [
                         <div class="pgh-collage pgh-row-right">
 
                             <div class="pgh-img-shell">
-                                <img src="{{ asset('assets/img/home-v1/electronics.png') }}" alt="Fashion & Beauty Collection" loading="lazy">
+                                <img src="{{ asset('assets/img/home-v1/electronics.webp') }}" alt="Fashion & Beauty Collection" width="577" height="433" loading="lazy">
                                 <div class="pgh-card-footer">
                                     <div class="pgh-card-footer-dots"><span></span><span></span><span></span></div>
                                     <span class="pgh-card-footer-text">Fashion & Beauty</span>
@@ -804,7 +804,7 @@ $schemaWebsite = [
                         <div class="pgh-collage pgh-row-right">
 
                             <div class="pgh-img-shell">
-                                <img src="{{ asset('assets/img/home-v1/electronics.png') }}" alt="Electronics & Gadgets" loading="lazy">
+                                <img src="{{ asset('assets/img/home-v1/electronics.webp') }}" alt="Electronics & Gadgets" width="577" height="433" loading="lazy">
                                 <div class="pgh-card-footer">
                                     <div class="pgh-card-footer-dots"><span></span><span></span><span></span></div>
                                     <span class="pgh-card-footer-text">Electronics & Gadgets</span>
@@ -1674,7 +1674,7 @@ $schemaWebsite = [
                             <span class="text-primary font-bold text-base leading-none">{{ strtoupper(substr($review['name'], 0, 1)) }}</span>
                         </div>
                         <div>
-                            <h5 class="font-semibold text-sm text-title dark:text-white leading-none">{{ $review['name'] }}</h5>
+                            <h3 class="font-semibold text-sm text-title dark:text-white leading-none">{{ $review['name'] }}</h3>
                             {{-- No "Verified Purchase" badge: these testimonials aren't pulled
                                  from order history, so claiming verification is a legal risk. --}}
                             <span class="text-xs text-gray-500 dark:text-white-light mt-1 block">{{ $review['date'] }}</span>

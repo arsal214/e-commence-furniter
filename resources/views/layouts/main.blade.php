@@ -31,6 +31,10 @@
              font request until the browser parses that far. A <link> here is discovered
              immediately, cutting a full serial round-trip off the header's Poppins text. --}}
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+        {{-- Moved out of style.css's @import for the same reason as Poppins above —
+             this is the site's base body font, so it's worth discovering as early
+             as possible. --}}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap">
         <!-- Primary Meta Tags -->
         <meta name="description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
 <meta name="author" content="PeytonGhalib">
@@ -170,9 +174,9 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
         </div>
         @endif
         <!-- Main Content -->
-        <div class="content">
+        <main class="content">
             @yield('content')
-        </div>
+        </main>
         <!-- Back to top -->
         <a href="#" onclick="topFunction()" id="back-to-top" class="back-to-top fixed hidden text-lg rectangle-full z-10 bottom-5 end-5 h-9 w-9 text-center bg-[#bb976d] text-white leading-9"><i class="mdi mdi-arrow-up"></i></a>
         <!-- Back to top -->
@@ -198,7 +202,7 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
                 <!-- Right content panel -->
                 <div class="sm:w-7/12 p-8 sm:p-10 flex flex-col justify-between">
                     <!-- Close button -->
-                    <button id="welcome-popup-close"
+                    <button id="welcome-popup-close" aria-label="Close"
                             class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-gray-100 dark:bg-gray-700 hover:bg-primary hover:text-white text-title dark:text-white duration-200">
                         <svg class="fill-current w-3 h-3" viewBox="0 0 12 12"><path d="M0.546875 1.70822L1.70481 0.550293L5.98646 4.83195L10.2681 0.550293L11.3991 1.6813L7.11746 5.96295L11.453 10.2985L10.295 11.4564L5.95953 7.12088L1.67788 11.4025L0.546875 10.2715L4.82853 5.98988L0.546875 1.70822Z"/></svg>
                     </button>
@@ -297,6 +301,27 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
         <!-- Welcome Sales Popup End -->
 
         <script src="{{ asset('assets/js/scripts.js') }}"></script>
+        {{-- Owl Carousel builds its pagination dots/nav buttons at runtime with no
+             accessible name of their own — label them the moment each carousel finishes
+             initializing, rather than patching the vendor bundle itself. --}}
+        <script>
+            if (window.jQuery) {
+                var labelOwlControls = function () {
+                    jQuery('.owl-dot:not([aria-label])').each(function (i) {
+                        jQuery(this).attr('aria-label', 'Go to slide ' + (i + 1));
+                    });
+                    jQuery('.owl-prev:not([aria-label])').attr('aria-label', 'Previous slide');
+                    jQuery('.owl-next:not([aria-label])').attr('aria-label', 'Next slide');
+                };
+                // The carousel's own init can fire its "initialized" event before this
+                // listener is registered (exact timing depends on the vendor bundle's
+                // internal ready-handler order), so re-check on load/resize too rather
+                // than rely on the event alone.
+                jQuery(document).on('initialized.owl.carousel changed.owl.carousel refreshed.owl.carousel', '.owl-carousel', labelOwlControls);
+                jQuery(window).on('load', labelOwlControls);
+                setTimeout(labelOwlControls, 1500);
+            }
+        </script>
         {{-- Light mode is forced by the inline head script; no post-load cleanup needed. --}}
         <script src="{{ asset('assets/js/base.js') }}"></script>
         <script>

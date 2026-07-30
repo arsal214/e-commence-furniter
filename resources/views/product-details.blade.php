@@ -441,7 +441,7 @@
                             @foreach($galleryImages as $ti => $slide)
                             <div class="pd-slide">
                                 @if($slide['type'] === 'video')
-                                <video src="{{ $slide['src'] }}" class="pd-slide-img" controls playsinline preload="metadata"></video>
+                                <video src="{{ $slide['src'] }}" class="pd-slide-img" controls playsinline muted loop preload="metadata"></video>
                                 @else
                                 <img src="{{ $slide['src'] }}"
                                      alt="{{ $item->name }} image {{ $ti + 1 }}"
@@ -800,9 +800,21 @@
         current = (idx + total) % total;
         if(slides) slides.style.transform = 'translateX(-' + (current * 100) + '%)';
 
-        // Pause any gallery video left behind so it doesn't keep playing off-screen.
+        // Pause any gallery video left behind so it doesn't keep playing off-screen,
+        // then autoplay the one on the slide we just landed on (if any). Muted, since
+        // the 3s auto-swipe timer isn't a user gesture and unmuted autoplay would be
+        // blocked by the browser without one.
         if(slides) {
-            slides.querySelectorAll('video').forEach(function(v){ v.pause(); });
+            Array.prototype.forEach.call(slides.children, function(slideEl, i){
+                var v = slideEl.querySelector('video');
+                if (!v) return;
+                if (i === current) {
+                    var playPromise = v.play();
+                    if (playPromise && playPromise.catch) playPromise.catch(function(){});
+                } else {
+                    v.pause();
+                }
+            });
         }
 
         // sync thumbs
