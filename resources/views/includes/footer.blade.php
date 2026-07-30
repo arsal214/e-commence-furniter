@@ -10,7 +10,7 @@
                 {{-- ── Col 1 · Brand ── --}}
                 <div>
                     <a href="{{ url('/') }}">
-                        <img class="w-[140px] mb-5" src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib">
+                        <img class="w-[140px] mb-5" src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" width="140" height="27" loading="lazy">
                     </a>
                     <p class="text-white-light text-sm leading-relaxed">
                         Your trusted online store for home decor, lifestyle products, kitchen gadgets, sports gear, beauty and more — curated for quality, delivered fast across the USA.

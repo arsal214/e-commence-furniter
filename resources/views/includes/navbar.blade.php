@@ -113,7 +113,8 @@
      PREMIUM HEADER
 ═══════════════════════════════════════════════ -->
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+{{-- Poppins is loaded via a <link> in the layout's <head> (main.blade.php / no-header.blade.php)
+     so the request is discovered immediately instead of after parsing down to this inline style. --}}
 
 /* ── Base ── */
 #pg-hdr {
@@ -674,7 +675,7 @@
         </div>
         <div class="pg-mega-feat">
             <p class="pg-mega-col-label">Featured</p>
-            <img src="{{ asset('assets/img/home-v1/pdct-cgry-01.jpg') }}" alt="New Arrivals" class="pg-mega-feat-img">
+            <img src="{{ asset('assets/img/home-v1/pdct-cgry-01.jpg') }}" alt="New Arrivals" class="pg-mega-feat-img" width="400" height="300" loading="lazy">
             <p class="pg-mega-feat-title">New Arrivals</p>
             <p class="pg-mega-feat-desc">Discover the latest pieces crafted for modern living spaces.</p>
             <a href="{{ url('/shop') }}?sort=newest" class="pg-mega-feat-cta">
@@ -693,7 +694,7 @@
         </svg>
     </button>
     <a href="{{ url('/') }}" style="flex:1;display:flex;justify-content:center;" aria-label="PeytonGhalib">
-        <img src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" height="34">
+        <img src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" width="175" height="34">
     </a>
     <div style="display:flex;align-items:center;gap:2px;flex-shrink:0;">
         <button class="pg-act-btn" id="pg-mob-srch-btn" aria-label="Search" style="width:38px;height:38px;">
@@ -710,7 +711,7 @@
 <div id="pg-mob-ovl"></div>
 <div id="pg-mob-drw" role="dialog" aria-modal="true" aria-label="Navigation">
     <div class="pg-mob-drw-hd">
-        <a href="{{ url('/') }}"><img src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" height="30"></a>
+        <a href="{{ url('/') }}"><img src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" width="155" height="30"></a>
         <button id="pg-mob-drw-close" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1.5px solid #e8e2da;background:transparent;cursor:pointer;color:#555;transition:all .18s;" onmouseover="this.style.background='#bb976d';this.style.borderColor='#bb976d';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.borderColor='#e8e2da';this.style.color='#555'" aria-label="Close">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="1" y1="1" x2="12" y2="12"/><line x1="12" y1="1" x2="1" y2="12"/></svg>
         </button>

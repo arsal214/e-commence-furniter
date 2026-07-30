@@ -23,8 +23,14 @@
             gtag('js', new Date());
             gtag('config', 'G-X57MYCJ0B8');
         </script>
-        {{-- Warm up CDN connection so the icon font doesn't add a DNS round-trip --}}
+        {{-- Warm up CDN connections so the icon font / webfont don't add a DNS round-trip --}}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        {{-- Moved out of navbar's inline @import: an @import discovered mid-body delays the
+             font request until the browser parses that far. A <link> here is discovered
+             immediately, cutting a full serial round-trip off the header's Poppins text. --}}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
         <!-- Primary Meta Tags -->
         <meta name="description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
 <meta name="author" content="PeytonGhalib">
@@ -56,7 +62,11 @@
         <!-- Main Stylesheet -->
         @vite('resources/css/app.css')
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
-        <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+        {{-- Icon font is decorative and not needed for first paint, so load it without
+             blocking rendering (classic preload+swap async-CSS pattern). --}}
+        <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css"></noscript>
         {{-- AOS FOUC fix: style.css hides [data-aos] elements (opacity:0) as soon as it loads,
              but AOS.init() in scripts.js runs much later. Keep elements visible until AOS sets
              its data-aos-easing attribute on <body> (the exact moment AOS.init() fires). --}}
@@ -176,7 +186,8 @@ src="https://www.facebook.com/tr?id=1675737636873475&ev=PageView&noscript=1"
                 <div class="sm:w-5/12 hidden sm:block relative min-h-[320px]">
                     <img src="{{ asset('assets/img/home-v1/pdct-cgry-01.jpg') }}"
                          alt="Special Offer"
-                         class="w-full h-full object-cover">
+                         class="w-full h-full object-cover"
+                         width="400" height="320" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
                         <div>
                             <span class="text-xs uppercase tracking-widest text-primary font-semibold">Limited Time</span>

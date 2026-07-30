@@ -16,6 +16,9 @@
             })();
         </script>
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
 
         <!-- Do not index auth/utility pages -->
         <meta name="robots" content="noindex, nofollow">
@@ -24,7 +27,11 @@
         <!-- Main Stylesheet -->
         @vite('resources/css/app.css')
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
-        <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+        {{-- Icon font is decorative and not needed for first paint, so load it without
+             blocking rendering (classic preload+swap async-CSS pattern). --}}
+        <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css"></noscript>
         @stack('styles')
         <!-- TikTok Pixel Code Start -->
         <script>

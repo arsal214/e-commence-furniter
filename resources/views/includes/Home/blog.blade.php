@@ -41,7 +41,7 @@ $blogs = [
 @foreach ($blogs as $item)
     <div class="group">
         <a href="{{ route('blog-details-v1', ['title' => Str::slug($item['title'])]) }}" class="overflow-hidden block">
-            <img class="duration-300 transform scale-100 group-hover:scale-110 w-full" src="{{ asset($item['img']) }}" alt="blog">
+            <img class="duration-300 transform scale-100 group-hover:scale-110 w-full" src="{{ asset($item['img']) }}" alt="blog" loading="lazy">
         </a>
         <div class="text-center mt-4 px-3">
             <ul class="flex items-center justify-center gap-[10px] flex-wrap">
