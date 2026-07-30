@@ -27,14 +27,21 @@
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        {{-- Moved out of navbar's inline @import: an @import discovered mid-body delays the
-             font request until the browser parses that far. A <link> here is discovered
-             immediately, cutting a full serial round-trip off the header's Poppins text. --}}
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
-        {{-- Moved out of style.css's @import for the same reason as Poppins above —
-             this is the site's base body font, so it's worth discovering as early
-             as possible. --}}
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap">
+        {{-- Moved out of navbar's inline @import (an @import discovered mid-body delays the
+             font request until the browser parses that far) and loaded non-blocking the same
+             way as the MDI icon font below: preload warms the connection/cache immediately,
+             the media="print" swap trick keeps it off the critical rendering path, and
+             &display=swap (already in the URL) means text still paints instantly with the
+             fallback font and swaps in place once these load — no invisible-text wait either
+             way, just less time blocked on the font request before first paint. --}}
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" media="print" onload="this.media='all'">
+        <noscript>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap">
+        </noscript>
         <!-- Primary Meta Tags -->
         <meta name="description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
 <meta name="author" content="PeytonGhalib">
