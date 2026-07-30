@@ -102,6 +102,8 @@ class ProductController extends Controller
             'images.*'       => ['nullable', 'image', 'max:4096'],
             'image_colors_new'   => ['nullable', 'array'],
             'image_colors_new.*' => ['nullable', 'string', 'max:100'],
+            'videos'         => ['nullable', 'array'],
+            'videos.*'       => ['nullable', 'file', 'mimes:mp4,mov,webm,ogg,m4v', 'max:51200'],
             'variants'                => ['nullable', 'array'],
             'variants.*'              => ['nullable', 'array'],
             'variants.*.*.id'         => ['nullable', 'integer'],
@@ -145,7 +147,7 @@ class ProductController extends Controller
 
         $data['image_color'] = trim((string) $request->input('image_color')) ?: null;
 
-        unset($data['colors_raw'], $data['sizes_raw'], $data['images'], $data['image_colors_new'], $data['variants'],
+        unset($data['colors_raw'], $data['sizes_raw'], $data['images'], $data['image_colors_new'], $data['videos'], $data['variants'],
               $data['key_feature_1'], $data['key_feature_2'], $data['key_feature_3'],
               $data['spec_label'], $data['spec_value']);
 
@@ -161,7 +163,8 @@ class ProductController extends Controller
 
         // Store additional gallery images. image_colors_new[] is index-aligned
         // with images[] (same DOM/FileList order), so $index maps a file to its
-        // chosen colour.
+        // chosen colour. Gallery order continues sequentially into any videos.
+        $gallerySort = 0;
         if ($request->hasFile('images')) {
             $newColors = $request->input('image_colors_new', []);
             foreach ($request->file('images') as $index => $file) {
@@ -169,7 +172,19 @@ class ProductController extends Controller
                 $product->productImages()->create([
                     'image'      => $path,
                     'color'      => trim((string) ($newColors[$index] ?? '')) ?: null,
-                    'sort_order' => $index,
+                    'type'       => 'image',
+                    'sort_order' => $gallerySort++,
+                ]);
+            }
+        }
+
+        if ($request->hasFile('videos')) {
+            foreach ($request->file('videos') as $file) {
+                $path = $file->store('products/videos', 'public');
+                $product->productImages()->create([
+                    'image'      => $path,
+                    'type'       => 'video',
+                    'sort_order' => $gallerySort++,
                 ]);
             }
         }
@@ -207,6 +222,8 @@ class ProductController extends Controller
             'image'              => ['nullable', 'image', 'max:4096'],
             'image_color'        => ['nullable', 'string', 'max:100'],
             'images.*'           => ['nullable', 'image', 'max:4096'],
+            'videos'             => ['nullable', 'array'],
+            'videos.*'           => ['nullable', 'file', 'mimes:mp4,mov,webm,ogg,m4v', 'max:51200'],
             'variants'                => ['nullable', 'array'],
             'variants.*'              => ['nullable', 'array'],
             'variants.*.*.id'         => ['nullable', 'integer'],
@@ -256,7 +273,7 @@ class ProductController extends Controller
         $data['mpn']  = trim((string) $request->input('mpn')) ?: null;
         $data['image_color'] = trim((string) $request->input('image_color')) ?: null;
 
-        unset($data['colors_raw'], $data['sizes_raw'], $data['remove_size_chart'], $data['remove_images'], $data['images'],
+        unset($data['colors_raw'], $data['sizes_raw'], $data['remove_size_chart'], $data['remove_images'], $data['images'], $data['videos'],
               $data['image_colors'], $data['variants'],
               $data['key_feature_1'], $data['key_feature_2'], $data['key_feature_3'],
               $data['spec_label'], $data['spec_value']);
@@ -292,14 +309,28 @@ class ProductController extends Controller
             }
         }
 
-        // Add new gallery images
+        // Add new gallery images and videos, continuing the sort order sequentially.
+        $nextOrder = $product->productImages()->max('sort_order');
+        $nextOrder = $nextOrder !== null ? $nextOrder + 1 : 0;
+
         if ($request->hasFile('images')) {
-            $nextOrder = $product->productImages()->max('sort_order') + 1;
-            foreach ($request->file('images') as $index => $file) {
+            foreach ($request->file('images') as $file) {
                 $path = $file->store('products', 'public');
                 $product->productImages()->create([
                     'image'      => $path,
-                    'sort_order' => $nextOrder + $index,
+                    'type'       => 'image',
+                    'sort_order' => $nextOrder++,
+                ]);
+            }
+        }
+
+        if ($request->hasFile('videos')) {
+            foreach ($request->file('videos') as $file) {
+                $path = $file->store('products/videos', 'public');
+                $product->productImages()->create([
+                    'image'      => $path,
+                    'type'       => 'video',
+                    'sort_order' => $nextOrder++,
                 ]);
             }
         }

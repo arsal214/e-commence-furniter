@@ -171,17 +171,18 @@
     $primarySrc  = !empty($item->image)
         ? (str_starts_with($item->image, 'assets/') ? asset($item->image) : Storage::url($item->image))
         : $defaultImg;
-    $galleryImages = collect([$primarySrc]);
+    $galleryImages = collect([['src' => $primarySrc, 'type' => 'image']]);
     // Map a colour name (lowercased) to the gallery slide index that shows it,
     // so selecting a swatch can jump the slider to that colour's photo. Slide 0
     // is the primary image; gallery images follow. First image per colour wins.
+    // Video slides are never matched to a colour.
     $colorImageMap = [];
     if (!empty($item->image_color)) {
         $colorImageMap[strtolower(trim($item->image_color))] = 0;
     }
     foreach ($item->productImages as $pi) {
-        $galleryImages->push(Storage::url($pi->image));
-        if (!empty($pi->color)) {
+        $galleryImages->push(['src' => Storage::url($pi->image), 'type' => $pi->isVideo() ? 'video' : 'image']);
+        if (!$pi->isVideo() && !empty($pi->color)) {
             $key = strtolower(trim($pi->color));
             if (!isset($colorImageMap[$key])) {
                 $colorImageMap[$key] = $galleryImages->count() - 1;
@@ -288,6 +289,10 @@
 }
 .pd-thumb:hover { opacity: .9; border-color: #d1b896; outline-color: #d1b896; }
 .pd-thumb.active { border-color: #bb976d; outline-color: #bb976d; opacity: 1; }
+.pd-thumb-video {
+    display: flex; align-items: center; justify-content: center;
+    background: #172430; color: #fff; font-size: 22px;
+}
 
 /* Right: info card */
 .pd-info-col {
@@ -433,11 +438,15 @@
 
                         {{-- Slides --}}
                         <div id="pd-slides" class="pd-slides">
-                            @foreach($galleryImages as $ti => $src)
+                            @foreach($galleryImages as $ti => $slide)
                             <div class="pd-slide">
-                                <img src="{{ $src }}"
+                                @if($slide['type'] === 'video')
+                                <video src="{{ $slide['src'] }}" class="pd-slide-img" controls playsinline preload="metadata"></video>
+                                @else
+                                <img src="{{ $slide['src'] }}"
                                      alt="{{ $item->name }} image {{ $ti + 1 }}"
                                      class="pd-slide-img">
+                                @endif
                             </div>
                             @endforeach
                         </div>
@@ -478,11 +487,18 @@
 
                     {{-- Thumbnail strip --}}
                     <div class="pd-thumbs">
-                        @foreach($galleryImages as $ti => $src)
-                        <img src="{{ $src }}"
+                        @foreach($galleryImages as $ti => $slide)
+                        @if($slide['type'] === 'video')
+                        <div class="pd-thumb pd-thumb-video {{ $ti === 0 ? 'active' : '' }}"
+                             data-index="{{ $ti }}" role="button" aria-label="Play video">
+                            <i class="mdi mdi-play"></i>
+                        </div>
+                        @else
+                        <img src="{{ $slide['src'] }}"
                              class="pd-thumb {{ $ti === 0 ? 'active' : '' }}"
                              data-index="{{ $ti }}"
                              alt="{{ $item->name }} image {{ $ti + 1 }}">
+                        @endif
                         @endforeach
                     </div>
                 </div>
@@ -783,6 +799,11 @@
         if(total === 0) return;
         current = (idx + total) % total;
         if(slides) slides.style.transform = 'translateX(-' + (current * 100) + '%)';
+
+        // Pause any gallery video left behind so it doesn't keep playing off-screen.
+        if(slides) {
+            slides.querySelectorAll('video').forEach(function(v){ v.pause(); });
+        }
 
         // sync thumbs
         thumbs.forEach(function(t, i){

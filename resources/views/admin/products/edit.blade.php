@@ -181,24 +181,35 @@
                         </label>
 
                         @if($product->productImages->isNotEmpty())
-                        <p class="text-xs text-gray-400 mb-3">Check the box on any image to remove it when you save. Assign a colour to an image so that picking that colour on the product page shows this photo.</p>
+                        <p class="text-xs text-gray-400 mb-3">Check the box on any item to remove it when you save. Assign a colour to an image so that picking that colour on the product page shows this photo.</p>
                         <div class="flex flex-wrap gap-4 mb-4">
                             @foreach($product->productImages as $img)
                             <div>
                                 <div class="relative group">
-                                    <img src="{{ Storage::url($img->image) }}"
-                                         class="w-24 h-24 object-cover rounded-lg border border-gray-200"
-                                         alt="Gallery image">
+                                    @if($img->isVideo())
+                                        <video src="{{ Storage::url($img->image) }}"
+                                               class="w-24 h-24 object-cover rounded-lg border border-gray-200 bg-black"
+                                               muted preload="metadata"></video>
+                                        <span class="absolute top-1 left-1 bg-black/60 text-white text-[9px] font-medium px-1.5 py-0.5 rounded pointer-events-none">
+                                            <i class="mdi mdi-play"></i> Video
+                                        </span>
+                                    @else
+                                        <img src="{{ Storage::url($img->image) }}"
+                                             class="w-24 h-24 object-cover rounded-lg border border-gray-200"
+                                             alt="Gallery image">
+                                    @endif
                                     <label class="absolute inset-0 flex flex-col items-center justify-center bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                                         <input type="checkbox" name="remove_images[]" value="{{ $img->id }}"
                                                class="w-4 h-4 accent-red-500 mb-1">
                                         <span class="text-white text-[10px] font-medium">Remove</span>
                                     </label>
                                 </div>
+                                @unless($img->isVideo())
                                 <select name="image_colors[{{ $img->id }}]" data-selected="{{ $img->color }}"
                                         class="js-color-select mt-1.5 w-24 text-xs border border-gray-300 rounded px-1.5 py-1 focus:outline-none focus:border-[#bb976d]">
                                     <option value="">— colour —</option>
                                 </select>
+                                @endunless
                             </div>
                             @endforeach
                         </div>
@@ -208,6 +219,18 @@
                         <input type="file" name="images[]" accept="image/*" id="galleryInput" multiple
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
                         <div id="galleryPreviewList" class="flex flex-wrap gap-3 mt-3"></div>
+                    </div>
+
+                    {{-- Additional Gallery Video --}}
+                    <div class="sm:col-span-2 border-t border-gray-100 pt-5">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Gallery Video
+                            <span class="text-gray-400 font-normal ml-1 text-xs">optional — plays as a slide in the product detail slider</span>
+                        </label>
+                        <p class="text-xs text-gray-400 mb-3">MP4, WebM, MOV, or OGG. Max 50MB each. You can add more than one.</p>
+                        <input type="file" name="videos[]" accept="video/*" id="galleryVideoInput" multiple
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
+                        <div id="galleryVideoPreviewList" class="flex flex-wrap gap-3 mt-3"></div>
                     </div>
                 </div>
             </div>
@@ -461,6 +484,18 @@ document.getElementById('galleryInput').addEventListener('change', function () {
         img.alt = file.name;
         wrapper.appendChild(img);
         list.appendChild(wrapper);
+    });
+});
+document.getElementById('galleryVideoInput').addEventListener('change', function () {
+    const list = document.getElementById('galleryVideoPreviewList');
+    list.innerHTML = '';
+    Array.from(this.files).forEach(function (file) {
+        const video = document.createElement('video');
+        video.src = URL.createObjectURL(file);
+        video.className = 'w-24 h-24 object-cover rounded-lg border border-gray-200';
+        video.muted = true;
+        video.controls = true;
+        list.appendChild(video);
     });
 });
 

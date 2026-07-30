@@ -6,10 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductImage extends Model
 {
-    protected $fillable = ['product_id', 'image', 'color', 'sort_order'];
+    protected $fillable = ['product_id', 'image', 'color', 'type', 'sort_order'];
 
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function isVideo(): bool
+    {
+        return $this->type === 'video';
     }
 }

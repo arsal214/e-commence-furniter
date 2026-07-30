@@ -169,6 +169,18 @@
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
                         <div id="galleryPreviewList" class="flex flex-wrap gap-3 mt-3"></div>
                     </div>
+
+                    {{-- Additional Gallery Video --}}
+                    <div class="sm:col-span-2 border-t border-gray-100 pt-5">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Gallery Video
+                            <span class="text-gray-400 font-normal ml-1 text-xs">optional — plays as a slide in the product detail slider</span>
+                        </label>
+                        <p class="text-xs text-gray-400 mb-3">MP4, WebM, MOV, or OGG. Max 50MB each. You can add more than one.</p>
+                        <input type="file" name="videos[]" accept="video/*" id="galleryVideoInput" multiple
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
+                        <div id="galleryVideoPreviewList" class="flex flex-wrap gap-3 mt-3"></div>
+                    </div>
                 </div>
             </div>
 
@@ -363,6 +375,18 @@ document.getElementById('galleryInput').addEventListener('change', function () {
         wrapper.appendChild(select);
 
         list.appendChild(wrapper);
+    });
+});
+document.getElementById('galleryVideoInput').addEventListener('change', function () {
+    const list = document.getElementById('galleryVideoPreviewList');
+    list.innerHTML = '';
+    Array.from(this.files).forEach(function (file) {
+        const video = document.createElement('video');
+        video.src = URL.createObjectURL(file);
+        video.className = 'w-24 h-24 object-cover rounded-lg border border-gray-200';
+        video.muted = true;
+        video.controls = true;
+        list.appendChild(video);
     });
 });
 </script>
