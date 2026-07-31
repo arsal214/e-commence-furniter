@@ -1781,7 +1781,10 @@ $schemaWebsite = [
 
 @push('scripts')
 <script>
-    $(document).ready(function () {
+    // scripts.js (which supplies jQuery and Owl) is deferred, so it has not run
+    // when this inline block is parsed. DOMContentLoaded fires after deferred
+    // scripts execute, which is the earliest point jQuery is guaranteed to exist.
+    document.addEventListener('DOMContentLoaded', function () {
         var reviewsSlider = $('.reviews-slider');
         $('.reviews_next').on('click', function () {
             reviewsSlider.trigger('next.owl.carousel');

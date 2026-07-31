@@ -15,6 +15,25 @@
                 try { localStorage.removeItem('colorScheme'); } catch (e) {}
             })();
         </script>
+        {{-- ── Critical path first ──────────────────────────────────────────
+             Everything the browser needs to paint goes above the analytics, the
+             meta tags and the social cards. The preload scanner reads <head> top
+             to bottom, so when the stylesheets sat below ~60 lines of metadata it
+             discovered them late and the render-blocking fetch started later than
+             it had to. Order here is: connection warm-ups, then the LCP image,
+             then the blocking CSS. Nothing below this block blocks first paint. --}}
+        {{-- Warm up CDN connections so the icon font / webfont don't add a DNS round-trip --}}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        {{-- Per-page LCP image preload (pushed only where a known hero image exists) --}}
+        @stack('preload')
+        <!-- Main Stylesheet -->
+        @vite('resources/css/app.css')
+        <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/style.css')">
+
+        {{-- Analytics is async and never blocks the parser, but it still competes
+             for bandwidth with the CSS above — so it is requested after it. --}}
         <!-- Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-X57MYCJ0B8"></script>
         <script>
@@ -23,10 +42,6 @@
             gtag('js', new Date());
             gtag('config', 'G-X57MYCJ0B8');
         </script>
-        {{-- Warm up CDN connections so the icon font / webfont don't add a DNS round-trip --}}
-        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         {{-- Moved out of navbar's inline @import (an @import discovered mid-body delays the
              font request until the browser parses that far) and loaded non-blocking the same
              way as the MDI icon font below: preload warms the connection/cache immediately,
@@ -68,11 +83,8 @@
         @endauth
         <meta name="is-logged-in" content="{{ auth()->check() ? 'true' : 'false' }}">
         <meta name="wishlist-toggle-url" content="{{ auth()->check() ? route('wishlist.toggle') : url('/login') }}">
-        {{-- Per-page LCP image preload (pushed only where a known hero image exists) --}}
-        @stack('preload')
-        <!-- Main Stylesheet -->
-        @vite('resources/css/app.css')
-        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
+        {{-- The LCP preload and the blocking stylesheets moved to the top of <head>
+             so the preload scanner finds them first; see the critical-path block. --}}
         {{-- Icon font is decorative and not needed for first paint, so load it without
              blocking rendering (classic preload+swap async-CSS pattern). --}}
         <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css">
@@ -307,11 +319,21 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
         </script>
         <!-- Welcome Sales Popup End -->
 
-        <script src="{{ asset('assets/js/scripts.js') }}"></script>
+        {{-- defer, not sync: this bundle is 899 KB of jQuery + vendor plugins and
+             parsing it synchronously is the single biggest main-thread task on the
+             page. Deferring lets the parser finish and paint first.
+
+             The catch is ordering — a deferred script runs AFTER every inline
+             <script> on the page, so anything below that touches jQuery has to
+             wait for DOMContentLoaded, which fires only once deferred scripts have
+             executed. Every jQuery-dependent block below is wrapped accordingly;
+             if you add another, wrap it the same way or it will run too early. --}}
+        <script defer src="@versionedAsset('assets/js/scripts.js')"></script>
         {{-- Owl Carousel builds its pagination dots/nav buttons at runtime with no
              accessible name of their own — label them the moment each carousel finishes
              initializing, rather than patching the vendor bundle itself. --}}
         <script>
+            document.addEventListener('DOMContentLoaded', function () {
             if (window.jQuery) {
                 var labelOwlControls = function () {
                     jQuery('.owl-dot:not([aria-label])').each(function (i) {
@@ -328,9 +350,10 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
                 jQuery(window).on('load', labelOwlControls);
                 setTimeout(labelOwlControls, 1500);
             }
+            });
         </script>
         {{-- Light mode is forced by the inline head script; no post-load cleanup needed. --}}
-        <script src="{{ asset('assets/js/base.js') }}"></script>
+        <script defer src="@versionedAsset('assets/js/base.js')"></script>
         <script>
             ['flash-success','flash-error'].forEach(function(id){
                 var el = document.getElementById(id);

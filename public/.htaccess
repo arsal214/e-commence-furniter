@@ -18,8 +18,96 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
+    # ── Serve WebP in place of JPEG/PNG ──────────────────────────────────
+    # The template ships ~1.5 MB of product/blog JPEGs. Rather than rewrite
+    # every <img> across 134 blade files, swap in a .webp twin transparently
+    # whenever the browser advertises support AND the twin actually exists
+    # (php artisan images:webp generates them). Any image without a twin, or
+    # any client that does not send the Accept header, falls through to the
+    # original untouched — so this can never serve a broken image.
+    RewriteCond %{HTTP_ACCEPT} image/webp
+    RewriteCond %{REQUEST_FILENAME} \.(jpe?g|png)$ [NC]
+    RewriteCond %{REQUEST_FILENAME}.webp -f
+    RewriteRule ^(.+)\.(jpe?g|png)$ /$1.$2.webp [T=image/webp,L]
+
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+# Proxies must key their cache on Accept, or a WebP response gets replayed to a
+# client that cannot decode it (and vice versa).
+<IfModule mod_headers.c>
+    <FilesMatch "\.(jpe?g|png|webp)$">
+        Header append Vary Accept
+    </FilesMatch>
+</IfModule>
+
+# ── Compression ──────────────────────────────────────────────────────────
+# style.css is 445 KB and scripts.js is 899 KB on the wire uncompressed;
+# gzip takes them to roughly a tenth of that. Declared explicitly rather than
+# left to the host's default so a server-config change cannot silently
+# regress the render-blocking CSS back to its full size.
+<IfModule mod_deflate.c>
+    <IfModule mod_filter.c>
+        AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+        AddOutputFilterByType DEFLATE text/javascript application/javascript application/x-javascript
+        AddOutputFilterByType DEFLATE application/json application/ld+json
+        AddOutputFilterByType DEFLATE application/xml application/rss+xml
+        AddOutputFilterByType DEFLATE image/svg+xml
+        AddOutputFilterByType DEFLATE font/ttf font/otf application/vnd.ms-fontobject
+    </IfModule>
+</IfModule>
+
+# Already-compressed formats (webp/jpg/png/woff2) are left alone — re-deflating
+# them burns CPU for no size win.
+<IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/xml text/css
+    AddOutputFilterByType BROTLI_COMPRESS text/javascript application/javascript
+    AddOutputFilterByType BROTLI_COMPRESS application/json application/ld+json
+    AddOutputFilterByType BROTLI_COMPRESS image/svg+xml
+</IfModule>
+
+# ── Cache lifetimes ──────────────────────────────────────────────────────
+# Nothing here previously sent Cache-Control or Expires, so every repeat
+# visitor re-fetched all ~370 KiB of static assets. Safe to cache hard because
+# every static URL is fingerprinted: Vite hashes its own filenames, and
+# style.css / scripts.js go out through @versionedAsset (?v=filemtime), so a
+# deploy changes the URL and busts the cache on its own.
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/ttf "access plus 1 year"
+
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType text/javascript "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+
+    # HTML is the one thing that must stay fresh — it carries the CSRF token and
+    # the fingerprinted URLs of everything above.
+    ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+<IfModule mod_headers.c>
+    # immutable tells the browser not to even send a revalidation request on
+    # reload, which is only honest because every one of these URLs is
+    # fingerprinted by hash or ?v=filemtime.
+    <FilesMatch "\.(css|js|jpe?g|png|gif|webp|svg|ico|woff2?|ttf|otf|eot)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    <FilesMatch "\.(html|php)$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
 </IfModule>

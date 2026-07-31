@@ -33,7 +33,7 @@
 
         <!-- Main Stylesheet -->
         @vite('resources/css/app.css')
-        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
+        <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/style.css')">
         {{-- Icon font is decorative and not needed for first paint, so load it without
              blocking rendering (classic preload+swap async-CSS pattern). --}}
         <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css">
@@ -98,7 +98,11 @@
             @yield('content')
         </main>
 
-        <script src="{{ asset('assets/js/scripts.js') }}"></script>
+        {{-- Deferred for the same reason as in layouts/main.blade.php: 899 KB of
+             jQuery + plugins should not block the parser. No view on this layout
+             calls into jQuery inline; anything added later must wrap itself in a
+             DOMContentLoaded listener. --}}
+        <script defer src="@versionedAsset('assets/js/scripts.js')"></script>
         @stack('scripts')
     </body>
 </html>
