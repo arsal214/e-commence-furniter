@@ -1,6 +1,7 @@
 <!-- Footer Start -->
 <footer style="background:#0F1E2E;">
-    @php $footerCategories = \App\Models\Category::where('is_active', true)->orderBy('name')->get(); @endphp
+    {{-- Shares the navbar's cached list; this used to be a second identical query. --}}
+    @php $footerCategories = \App\Models\Category::navigation(); @endphp
 
     <div class="container-fluid">
         <div class="max-w-[1722px] mx-auto pt-16 pb-10">

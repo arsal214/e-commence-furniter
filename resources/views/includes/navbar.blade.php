@@ -102,11 +102,11 @@
 <!-- Topbar End -->
 
 @php
-    $navCategories = \App\Models\Category::where('is_active', true)->orderBy('name')->get();
+    $navCategories = \App\Models\Category::navigation();
     $cart          = app(\App\Services\CartService::class);
-    $navWishlistCount = auth()->check()
-        ? \App\Models\Wishlist::where('user_id', auth()->id())->count()
-        : 0;
+    // Counts the same memoised list the layout renders into <meta wishlist-ids>,
+    // rather than issuing a second COUNT query for it.
+    $navWishlistCount = count(\App\Models\Wishlist::productIdsForCurrentUser());
 @endphp
 
 <!-- ═══════════════════════════════════════════════

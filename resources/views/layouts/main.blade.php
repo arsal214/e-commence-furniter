@@ -15,6 +15,42 @@
                 try { localStorage.removeItem('colorScheme'); } catch (e) {}
             })();
         </script>
+        {{-- ── Third-party fetch scheduler ──────────────────────────────────
+             Analytics and pixel libraries were already async, so they never
+             blocked rendering — but they still competed with the LCP image for
+             bandwidth on mobile. pgDefer holds back only the network fetch; each
+             vendor's stub (fbq / ttq / dataLayer) is still defined synchronously
+             below, so any event fired during page load queues and flushes the
+             moment its library arrives. Nothing is dropped.
+
+             The trigger is window.load (LCP is already decided by then, so this
+             costs nothing measurable) or the first real interaction, whichever
+             comes first. The only visitors whose events could be lost are those
+             who leave before onload — the same ones async loading would already
+             have missed. --}}
+        <script>
+            (function () {
+                var fired = false, queue = [];
+                function run() {
+                    if (fired) return;
+                    fired = true;
+                    for (var i = 0; i < queue.length; i++) { try { queue[i](); } catch (e) {} }
+                    queue = [];
+                }
+                window.pgDefer = function (fn) { fired ? fn() : queue.push(fn); };
+
+                function schedule() {
+                    // requestIdleCallback keeps it off a busy main thread, but the
+                    // timeout guarantees it runs even if the thread never idles.
+                    window.requestIdleCallback ? requestIdleCallback(run, { timeout: 2000 }) : setTimeout(run, 200);
+                }
+                document.readyState === 'complete' ? schedule() : window.addEventListener('load', schedule);
+
+                ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (evt) {
+                    window.addEventListener(evt, run, { once: true, passive: true });
+                });
+            })();
+        </script>
         {{-- ── Critical path first ──────────────────────────────────────────
              Everything the browser needs to paint goes above the analytics, the
              meta tags and the social cards. The preload scanner reads <head> top
@@ -22,41 +58,45 @@
              discovered them late and the render-blocking fetch started later than
              it had to. Order here is: connection warm-ups, then the LCP image,
              then the blocking CSS. Nothing below this block blocks first paint. --}}
-        {{-- Warm up CDN connections so the icon font / webfont don't add a DNS round-trip --}}
+        {{-- Warm up the CDN connection for the icon font (the only remaining
+             third-party asset on the critical path). --}}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         {{-- Per-page LCP image preload (pushed only where a known hero image exists) --}}
         @stack('preload')
+        {{-- Fonts are self-hosted (php artisan fonts:self-host). Preload only the
+             two faces that render above the fold — the body/heading font and the
+             navbar font, latin subset. Preloading more would compete with the LCP
+             image for bandwidth; preloading none would delay the swap. --}}
+        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/josefin-sans-400-normal-latin.woff2') }}" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/poppins-500-normal-latin.woff2') }}" crossorigin>
         <!-- Main Stylesheet -->
         @vite('resources/css/app.css')
         <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/style.css')">
+        <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/fonts.css')">
 
         {{-- Analytics is async and never blocks the parser, but it still competes
              for bandwidth with the CSS above — so it is requested after it. --}}
         <!-- Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-X57MYCJ0B8"></script>
         <script>
+            // dataLayer + gtag() stay synchronous so the pageview is recorded
+            // immediately; only gtag.js itself waits for pgDefer.
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-X57MYCJ0B8');
+            window.pgDefer(function () {
+                var s = document.createElement('script');
+                s.async = true;
+                s.src = 'https://www.googletagmanager.com/gtag/js?id=G-X57MYCJ0B8';
+                document.head.appendChild(s);
+            });
         </script>
-        {{-- Moved out of navbar's inline @import (an @import discovered mid-body delays the
-             font request until the browser parses that far) and loaded non-blocking the same
-             way as the MDI icon font below: preload warms the connection/cache immediately,
-             the media="print" swap trick keeps it off the critical rendering path, and
-             &display=swap (already in the URL) means text still paints instantly with the
-             fallback font and swaps in place once these load — no invisible-text wait either
-             way, just less time blocked on the font request before first paint. --}}
-        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
-        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" media="print" onload="this.media='all'">
-        <noscript>
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap">
-        </noscript>
+        {{-- Poppins and Josefin Sans now come from assets/css/fonts.css above,
+             served from our own origin with the same font-display:swap Google
+             emitted. That removes two cross-origin round-trips (googleapis for
+             the CSS, then gstatic for the files it points at) from the critical
+             path, and no <noscript> fallback is needed because a plain
+             <link rel="stylesheet"> works without JavaScript. --}}
         <!-- Primary Meta Tags -->
         <meta name="description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
 <meta name="author" content="PeytonGhalib">
@@ -76,11 +116,7 @@
         <meta name="twitter:title" content="@yield('title', 'PeytonGhalib — Home Decor & Everyday Essentials Online')">
         <meta name="twitter:description" content="@yield('meta_description', 'PeytonGhalib — Your one-stop online destination for quality furniture, home decor, ceramics, and more at unbeatable prices with fast delivery.')">
         <meta name="twitter:image" content="@yield('og_image', asset('assets/img/logo.svg'))">
-        @auth
-        <meta name="wishlist-ids" content="{{ json_encode(\App\Models\Wishlist::where('user_id', auth()->id())->pluck('product_id')) }}">
-        @else
-        <meta name="wishlist-ids" content="[]">
-        @endauth
+        <meta name="wishlist-ids" content="{{ json_encode(\App\Models\Wishlist::productIdsForCurrentUser()) }}">
         <meta name="is-logged-in" content="{{ auth()->check() ? 'true' : 'false' }}">
         <meta name="wishlist-toggle-url" content="{{ auth()->check() ? route('wishlist.toggle') : url('/login') }}">
         {{-- The LCP preload and the blocking stylesheets moved to the top of <head>
@@ -114,7 +150,15 @@
             }
         </style>
         <!-- Ahrefs Analytics -->
-        <script src="https://analytics.ahrefs.com/analytics.js" data-key="QlGio/G4Sr1krD5aawauYg" async></script>
+        <script>
+            window.pgDefer(function () {
+                var s = document.createElement('script');
+                s.async = true;
+                s.src = 'https://analytics.ahrefs.com/analytics.js';
+                s.setAttribute('data-key', 'QlGio/G4Sr1krD5aawauYg');
+                document.head.appendChild(s);
+            });
+        </script>
         <!-- TikTok Pixel Code Start -->
         <script>
         !function (w, d, t) {
@@ -123,7 +167,12 @@
         ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
 
 
-          ttq.load(@json(config('services.tiktok.pixel_id', 'D95OHCRC77UFCF7AKUBG')));
+          // ttq.load() is what injects events.js, so it is the only part held
+          // back. ttq.page() still runs now and queues on the ttq array, which
+          // the SDK drains once it loads.
+          window.pgDefer(function () {
+            ttq.load(@json(config('services.tiktok.pixel_id', 'D95OHCRC77UFCF7AKUBG')));
+          });
           ttq.page();
         }(window, document, 'ttq');
         </script>
@@ -164,14 +213,26 @@
 
         <!-- Meta Pixel Code -->
 <script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
+// Meta's standard snippet, expanded so the stub half stays synchronous and only
+// the fbevents.js fetch is deferred. fbq() therefore exists immediately and any
+// call made before the SDK lands — including the Purchase event on
+// /thank-you — accumulates in n.queue and is replayed when it executes.
+// Do not collapse this back into the one-line snippet: that version injects the
+// script inline, and its `if(f.fbq)return` guard means a pre-defined stub would
+// stop fbevents.js from ever loading.
+!function (f, b, e, v) {
+  if (f.fbq) return;
+  var n = f.fbq = function () {
+    n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+  };
+  if (!f._fbq) f._fbq = n;
+  n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
+  window.pgDefer(function () {
+    var t = b.createElement(e); t.async = !0; t.src = v;
+    var s = b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t, s);
+  });
+}(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 fbq('init', @json(config('services.meta.pixel_id')));
 fbq('track', 'PageView');
 </script>

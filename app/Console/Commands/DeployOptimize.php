@@ -35,10 +35,16 @@ class DeployOptimize extends Command
             ['config:clear', [], 'Clearing stale config cache'],
             ['route:clear', [], 'Clearing stale route cache'],
             ['view:clear', [], 'Clearing stale compiled views'],
+            ['event:clear', [], 'Clearing stale event cache'],
 
             ['config:cache', [], 'Caching config'],
             ['route:cache', [], 'Caching routes'],
             ['view:cache', [], 'Precompiling all Blade templates'],
+            ['event:cache', [], 'Caching event/listener discovery'],
+
+            // Categories are cached for 6h and busted on admin writes; a deploy
+            // may ship different rendering, so start from a clean slate.
+            ['cache:clear', [], 'Flushing application cache'],
 
             ['assets:split-vendor', [], 'Splitting DataTables out of the theme bundle'],
         ];
@@ -59,6 +65,12 @@ class DeployOptimize extends Command
 
         $this->newLine();
         $this->info('Deploy optimisation complete.');
+
+        // Not run automatically: composer is frequently unavailable or an old
+        // version on shared hosting, and a failed autoload dump mid-deploy is
+        // worse than not having the optimised classmap.
+        $this->line('Also run once per deploy, if composer is available on the server:');
+        $this->line('  composer install --no-dev --optimize-autoloader --classmap-authoritative');
 
         // storage:link is deliberately not run here: it fails on hosts that
         // disallow symlinks, and it only needs doing once per server, not per

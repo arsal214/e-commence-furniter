@@ -16,16 +16,10 @@
             })();
         </script>
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'">
-        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" media="print" onload="this.media='all'">
-        <noscript>
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap">
-        </noscript>
+        {{-- Self-hosted fonts (see layouts/main.blade.php) — no googleapis or
+             gstatic round-trips on the critical path. --}}
+        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/josefin-sans-400-normal-latin.woff2') }}" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/poppins-500-normal-latin.woff2') }}" crossorigin>
 
         <!-- Do not index auth/utility pages -->
         <meta name="robots" content="noindex, nofollow">
@@ -34,6 +28,7 @@
         <!-- Main Stylesheet -->
         @vite('resources/css/app.css')
         <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/style.css')">
+        <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/fonts.css')">
         {{-- Icon font is decorative and not needed for first paint, so load it without
              blocking rendering (classic preload+swap async-CSS pattern). --}}
         <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css">
