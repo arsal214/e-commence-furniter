@@ -102,7 +102,7 @@
              jQuery + plugins should not block the parser. No view on this layout
              calls into jQuery inline; anything added later must wrap itself in a
              DOMContentLoaded listener. --}}
-        <script defer src="@versionedAsset('assets/js/scripts.js')"></script>
+        <script defer src="@versionedAsset('assets/js/scripts.slim.js')"></script>
         @stack('scripts')
     </body>
 </html>

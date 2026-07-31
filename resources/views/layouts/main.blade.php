@@ -328,7 +328,7 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
              wait for DOMContentLoaded, which fires only once deferred scripts have
              executed. Every jQuery-dependent block below is wrapped accordingly;
              if you add another, wrap it the same way or it will run too early. --}}
-        <script defer src="@versionedAsset('assets/js/scripts.js')"></script>
+        <script defer src="@versionedAsset('assets/js/scripts.slim.js')"></script>
         {{-- Owl Carousel builds its pagination dots/nav buttons at runtime with no
              accessible name of their own — label them the moment each carousel finishes
              initializing, rather than patching the vendor bundle itself. --}}
