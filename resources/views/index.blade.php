@@ -511,8 +511,12 @@ $schemaWebsite = [
                                     Shop home decor
                                     <svg width="15" height="11" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                 </a>
-                                <a href="{{ url('/shop') }}" class="pgh-btn-b">
-                                    See what's new
+                                {{-- Secondary points at /categories, not /shop. Both hero
+                                     buttons used to land on the same page, so the choice was
+                                     no choice — one committed path and one lower-commitment
+                                     path is the whole reason a secondary CTA exists. --}}
+                                <a href="{{ url('/categories') }}" class="pgh-btn-b">
+                                    Browse categories
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                                 </a>
                             </div>
@@ -590,8 +594,8 @@ $schemaWebsite = [
                                     Shop kitchen gadgets
                                     <svg width="15" height="11" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                 </a>
-                                <a href="{{ url('/shop') }}" class="pgh-btn-b">
-                                    Browse beauty
+                                <a href="{{ url('/categories') }}" class="pgh-btn-b">
+                                    Browse categories
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                                 </a>
                             </div>
@@ -658,8 +662,8 @@ $schemaWebsite = [
                                     Shop sports
                                     <svg width="15" height="11" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                 </a>
-                                <a href="{{ url('/shop') }}" class="pgh-btn-b">
-                                    View car accessories
+                                <a href="{{ url('/categories') }}" class="pgh-btn-b">
+                                    Browse categories
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
                                 </a>
                             </div>
@@ -947,9 +951,9 @@ $schemaWebsite = [
 @endpush
 
 <!-- New Arrivals Area Start -->
-<section class="s-py-50-100">
+<section class="s-py-50">
     <div class="container-fluid">
-        <div class="flex items-end justify-between gap-4 mb-8 md:mb-12 max-w-[1720px] mx-auto" data-aos="fade-up">
+        <div class="flex items-end justify-between gap-4 mb-6 md:mb-8 max-w-[1720px] mx-auto" data-aos="fade-up">
             <div>
                 <span class="text-xs uppercase tracking-widest text-primary font-semibold">Just landed</span>
                 <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">New Arrivals</h2>
@@ -966,7 +970,7 @@ $schemaWebsite = [
         <div class="max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8" data-aos="fade-up" data-aos-delay="100">
             @include('includes.Home.new-products')
         </div>
-        <div class="text-center mt-8 md:mt-12">
+        <div class="text-center mt-6 md:mt-8">
             <a href="{{ url('/shop') }}" class="pgh-arrivals-btn">
                 <span>Shop All New Arrivals</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -1032,7 +1036,9 @@ $schemaWebsite = [
 <style>
 /* ── Why Choose Us ─────────────────────────────────────────── */
 .wcu-section {
-    padding: 80px 0 90px;
+    /* Was 80/90px. This block sits between two product rails, so its padding is
+       pure distance between the things people came to buy. */
+    padding: 52px 0 56px;
     background: #FAF9F7;
     position: relative;
     overflow: hidden;
@@ -1265,9 +1271,9 @@ $schemaWebsite = [
      it duplicated the "Why Choose Us" section above. --}}
 
 <!-- Best Selling Products Start -->
-<section class="s-py-100-50 bg-[#FAFAF8] dark:bg-dark-secondary">
+<section class="s-py-50 bg-[#FAFAF8] dark:bg-dark-secondary">
     <div class="container-fluid">
-        <div class="flex items-end justify-between gap-4 mb-8 md:mb-12 max-w-[1720px] mx-auto" data-aos="fade-up">
+        <div class="flex items-end justify-between gap-4 mb-6 md:mb-8 max-w-[1720px] mx-auto" data-aos="fade-up">
             <div>
                 <span class="text-xs uppercase tracking-widest text-primary font-semibold">Customer favourites</span>
                 <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Our Best-Selling Products</h2>
@@ -1284,7 +1290,7 @@ $schemaWebsite = [
         <div class="max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8" data-aos="fade-up" data-aos-delay="100">
             @include('includes.Home.best-sellers')
         </div>
-        <div class="text-center mt-8 md:mt-12">
+        <div class="text-center mt-6 md:mt-8">
             <a href="{{ url('/shop') }}" class="btn btn-outline" data-text="Shop All Best Sellers">
                 <span>Shop All Best Sellers</span>
             </a>
@@ -1486,7 +1492,7 @@ $schemaWebsite = [
 <!-- Flash Deal End -->
 
 <!-- Customer Reviews Start -->
-<div class="s-py-50-100 bg-[#F8F6F3] dark:bg-title">
+<div class="s-py-50 bg-[#F8F6F3] dark:bg-title">
     <div class="container-fluid">
         <!-- Section Title -->
         <div class="max-w-xl mx-auto mb-8 md:mb-12 text-center" data-aos="fade-up">
