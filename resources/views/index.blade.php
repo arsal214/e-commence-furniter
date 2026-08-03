@@ -69,15 +69,19 @@ $schemaWebsite = [
 .pgh-row {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 24px;
     align-items: center;
-    margin-bottom: 80px;
+    /* Was 80/112px. This is trailing space between the hero content and the
+       marquee strip below it — the tallest single block of nothing on the page,
+       and it pushed every product rail further out of reach. Trimmed to what
+       still clears the absolutely-positioned slide counter. */
+    margin-bottom: 40px;
 }
 @media (min-width: 768px) {
     .pgh-row {
         flex-direction: row;
         gap: 48px;
-        margin-bottom: 112px;
+        margin-bottom: 64px;
         align-items: center;
     }
     .pgh-row-left  { flex: 0 0 54%; max-width: 54%; }
@@ -85,6 +89,21 @@ $schemaWebsite = [
 }
 .pgh-row-left  { width: 100%; }
 .pgh-row-right { width: 100%; }
+
+/* ── Mobile: get the product image above the fold ──────────────
+   The column stacks text-then-image, so everything between the headline and
+   the photo decides whether the photo is ever seen. The stats row is the
+   cheapest thing to cut: it repeats the topbar almost word for word (free
+   shipping, 30-day returns, secure checkout), so nothing is actually lost.
+   The remaining gaps are tightened rather than removed.
+   Selectors are parent-qualified to outrank the Tailwind mt-* utilities in
+   the markup without resorting to !important. */
+@media (max-width: 767px) {
+    .pgh-row-left .pgh-stats   { display: none; }
+    .pgh-row-left .pgh-body    { margin-top: 12px; }
+    .pgh-row-left .pgh-cta-wrap{ margin-top: 20px; }
+    .pgh-row-left .pgh-proof   { margin-top: 20px; }
+}
 
 /* Mesh gradient orbs */
 .pgh-orb {
