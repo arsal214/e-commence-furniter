@@ -701,7 +701,7 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
             .pg-atc__btn {
                 flex: 1; min-height: 48px; padding: 0 14px;
                 display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-                border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;
+                border-radius: 999px; font-size: 14px; font-weight: 600; cursor: pointer;
                 text-decoration: none; text-align: center;
                 transition: background .2s ease, border-color .2s ease, color .2s ease;
             }

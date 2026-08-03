@@ -384,6 +384,27 @@ class Product extends Model
     }
 
     /**
+     * Whole-number discount off the list price, or null when there is no genuine
+     * saving.
+     *
+     * Exists because both homepage rails hardcoded "15% OFF" as the fallback
+     * label for any product whose tag was not 'Sale' or 'NEW' — a discount
+     * figure invented at render time with no relationship to the actual prices,
+     * shown on products that were not discounted at all.
+     */
+    public function getDiscountPercentAttribute(): ?int
+    {
+        $list = (float) $this->price;
+        $now  = (float) $this->effective_price;
+
+        if ($list <= 0 || $now >= $list) {
+            return null;
+        }
+
+        return (int) round((1 - $now / $list) * 100);
+    }
+
+    /**
      * Products most often bought in the same order as this one.
      *
      * Real co-purchase data out of order_items — a self-join on order_id counting

@@ -12832,6 +12832,12 @@ input[type=number] {
   display: inline-block;
   cursor: pointer;
   overflow: hidden;
+  /* Pill, matching every other button on the site. The theme shipped these
+     square, which left 11 sharp-cornered buttons on the product page alone
+     sitting beside the rounded ones. Safe to round here because overflow is
+     already hidden above — that clips the ::before hover fill to the same
+     curve, so the sliding background cannot poke square corners through. */
+  border-radius: 999px;
   border-width: 1px;
   --tw-border-opacity: 1;
   border-color: rgb(23 36 48 / var(--tw-border-opacity));

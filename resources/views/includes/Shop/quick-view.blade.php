@@ -41,7 +41,7 @@
     .pg-qv-actions { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
     .pg-qv-btn {
         min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-        border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
+        border-radius: 999px; font-size: 14px; font-weight: 600; cursor: pointer;
         border: 1px solid transparent; text-decoration: none; width: 100%;
         transition: opacity .2s ease, border-color .2s ease, color .2s ease;
         touch-action: manipulation;

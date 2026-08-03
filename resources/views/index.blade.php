@@ -129,7 +129,7 @@ $schemaWebsite = [
 /* ── Live trust badge ──────────────────────────────────────── */
 .pgh-badge {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 18px; border-radius: 100px;
+    padding: 8px 18px; border-radius: 999px;
     background: rgba(187,151,109,.1);
     border: 1px solid rgba(187,151,109,.25);
     font-size: 12px; font-weight: 700; letter-spacing: .35px; color: #8a6a30;
@@ -177,7 +177,11 @@ $schemaWebsite = [
 .pgh-cta-wrap { animation: pgh-up .65s .32s ease both; }
 .pgh-btn-a {
     display: inline-flex; align-items: center; gap: 10px;
-    padding: 15px 30px; border-radius: 14px;
+    /* Pill, matching every other button on the page (the two "View All" links,
+       Shop All New Arrivals, Show More categories). These two were the only
+       14px rounded-rectangles left, which read as a different design language
+       sitting right at the top of the page. */
+    padding: 15px 30px; border-radius: 999px;
     background: linear-gradient(135deg, #c4a070 0%, #bb976d 50%, #a07840 100%);
     background-size: 200% auto;
     color: #fff; font-size: 14px; font-weight: 700; letter-spacing: .4px;
@@ -195,7 +199,7 @@ $schemaWebsite = [
 
 .pgh-btn-b {
     display: inline-flex; align-items: center; gap: 10px;
-    padding: 14px 26px; border-radius: 14px;
+    padding: 14px 26px; border-radius: 999px;
     background: #fff; color: #3d2e20;
     font-size: 14px; font-weight: 600;
     border: 1.5px solid #e8ddd4;
@@ -315,7 +319,7 @@ $schemaWebsite = [
     background: linear-gradient(135deg, #bb976d, #d4a96a);
     color: #fff; font-size: 9px; font-weight: 800;
     letter-spacing: 1px; text-transform: uppercase;
-    padding: 5px 13px; border-radius: 100px;
+    padding: 5px 13px; border-radius: 999px;
     box-shadow: 0 4px 16px rgba(187,151,109,.5);
     pointer-events: none;
 }
@@ -378,7 +382,10 @@ $schemaWebsite = [
     background: #bb976d;
     color: #fff;
     border: 2px solid #bb976d;
-    border-radius: 50px;
+    /* 50px already rendered as a pill at this height; stated as 999px so every
+       button on the page carries the same value rather than three that happen
+       to look alike. */
+    border-radius: 999px;
     font-size: 13px;
     font-weight: 600;
     letter-spacing: .06em;
@@ -1070,7 +1077,7 @@ $schemaWebsite = [
     background: rgba(187,151,109,.1);
     border: 1px solid rgba(187,151,109,.25);
     padding: 5px 16px;
-    border-radius: 100px;
+    border-radius: 999px;
     margin-bottom: 14px;
 }
 .wcu-title {
@@ -1277,7 +1284,11 @@ $schemaWebsite = [
             <div>
                 <span class="text-xs uppercase tracking-widest text-primary font-semibold">Customer favourites</span>
                 <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Our Best-Selling Products</h2>
-                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">These are the products our customers keep coming back for — top-rated, fast-selling, and loved by thousands of shoppers across the USA.</p>
+                {{-- "loved by thousands of shoppers" was an invented count, same
+                     class of claim as the ratings already stripped out of the hero
+                     for being fabricated against an empty reviews table. Kept
+                     non-numeric so it stays true whatever the order volume is. --}}
+                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">These are the products our customers keep coming back for — the ones that sell fastest and get re-ordered most.</p>
             </div>
             <a href="{{ url('/shop') }}"
                class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-title dark:text-white

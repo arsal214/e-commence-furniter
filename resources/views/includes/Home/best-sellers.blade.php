@@ -20,11 +20,18 @@
                 Best Seller
             </div>
 
-            @if ($product->tag)
-                @php
-                    $tagClasses = match($product->tag) { 'Sale' => 'bg-[#1CB28E]', 'NEW' => 'bg-[#9739E1]', default => 'bg-[#E13939]' };
-                    $tagLabel   = match($product->tag) { 'Sale' => 'Hot Sale', 'NEW' => 'NEW', default => '15% OFF' };
-                @endphp
+            @php
+                // See new-products.blade.php: a discount tag with no real discount
+                // renders nothing rather than a bare "OFF".
+                $tagClasses = match($product->tag) { 'Sale' => 'bg-[#1CB28E]', 'NEW' => 'bg-[#9739E1]', default => 'bg-[#E13939]' };
+                $tagLabel   = match($product->tag) {
+                    null, ''=> null,
+                    'Sale'  => 'Hot Sale',
+                    'NEW'   => 'NEW',
+                    default => $product->discount_percent ? $product->discount_percent . '% OFF' : null,
+                };
+            @endphp
+            @if ($tagLabel)
                 <div class="absolute z-10 top-3 right-3 pt-[10px] pb-2 px-3 {{ $tagClasses }} rounded-[30px] text-[13px] text-white font-semibold leading-none">
                     {{ $tagLabel }}
                 </div>
@@ -64,8 +71,15 @@
                 <span class="text-base font-bold text-title dark:text-white">{{ $product->display_price }}</span>
                 @if ($product->was_price)
                     <span class="text-xs text-gray-400 line-through">{{ $product->was_price }}</span>
+                    @if ($product->discount_percent)
+                        <span class="text-[11px] font-bold text-[#1CB28E]">Save {{ $product->discount_percent }}%</span>
+                    @endif
                 @endif
             </div>
+            {{-- Genuine scarcity only, straight off the stock column. --}}
+            @if ($product->stock > 0 && $product->stock <= 5)
+                <p class="mt-1.5 text-[11px] font-semibold text-[#E13939]">Only {{ $product->stock }} left</p>
+            @endif
         </div>
     </div>
 @empty

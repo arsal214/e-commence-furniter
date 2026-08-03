@@ -15,11 +15,21 @@
                 @endif
             </a>
 
-            @if ($product->tag)
-                @php
-                    $tagClasses = match($product->tag) { 'Sale' => 'bg-[#1CB28E]', 'NEW' => 'bg-[#9739E1]', default => 'bg-[#E13939]' };
-                    $tagLabel   = match($product->tag) { 'Sale' => 'Hot Sale', 'NEW' => 'NEW', default => '15% OFF' };
-                @endphp
+            @php
+                // Discount tags ('OFF', 'OFF1', …) used to print a hardcoded
+                // '15% OFF' regardless of price — an invented discount. They now
+                // print the real saving, and render NOTHING when there is no
+                // saving to state: falling back to the raw tag produced a badge
+                // reading just "OFF", which is worse than no badge at all.
+                $tagClasses = match($product->tag) { 'Sale' => 'bg-[#1CB28E]', 'NEW' => 'bg-[#9739E1]', default => 'bg-[#E13939]' };
+                $tagLabel   = match($product->tag) {
+                    null, ''=> null,
+                    'Sale'  => 'Hot Sale',
+                    'NEW'   => 'NEW',
+                    default => $product->discount_percent ? $product->discount_percent . '% OFF' : null,
+                };
+            @endphp
+            @if ($tagLabel)
                 <div class="absolute z-10 top-7 left-7 pt-[10px] pb-2 px-3 {{ $tagClasses }} rounded-[30px] font-primary text-[14px] text-white font-semibold leading-none">
                     {{ $tagLabel }}
                 </div>
@@ -69,8 +79,17 @@
                      sale_price above price can't render a "was" that undercuts it --}}
                 @if ($product->was_price)
                     <span class="text-xs text-gray-400 line-through">{{ $product->was_price }}</span>
+                    @if ($product->discount_percent)
+                        <span class="text-[11px] font-bold text-[#1CB28E]">Save {{ $product->discount_percent }}%</span>
+                    @endif
                 @endif
             </div>
+            {{-- Genuine scarcity only: printed from the stock column, and only when it
+                 is actually low. Stock is maintained by hand in the admin, so this
+                 reflects a real number rather than a countdown invented to pressure. --}}
+            @if ($product->stock > 0 && $product->stock <= 5)
+                <p class="mt-1.5 text-[11px] font-semibold text-[#E13939]">Only {{ $product->stock }} left</p>
+            @endif
         </div>
     </div>
 @empty

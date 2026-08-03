@@ -203,7 +203,7 @@
     font-size: 14px; font-weight: 700;
     color: #0a0806;
     background: linear-gradient(135deg, #d4a96a 0%, #bb976d 55%, #a9855c 100%);
-    border: 0; border-radius: 11px;
+    border: 0; border-radius: 999px;
     text-decoration: none; cursor: pointer;
     box-shadow: 0 6px 18px -8px rgba(187, 151, 109, .6);
     transition: transform .18s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s ease, opacity .2s ease;
@@ -453,7 +453,7 @@
     font-size: 13.5px; font-weight: 700;
     color: #0a0806;
     background: linear-gradient(135deg, #d4a96a 0%, #bb976d 55%, #a9855c 100%);
-    border: 0; border-radius: 11px;
+    border: 0; border-radius: 999px;
     cursor: pointer;
     transition: transform .18s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s ease, opacity .2s ease;
 }

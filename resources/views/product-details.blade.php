@@ -352,7 +352,10 @@ img.pd-slide-img:focus-visible {
 .pd-qty-wrap {
     display: flex; align-items: center;
     border: 1.5px solid #e5e7eb;
-    border-radius: 50px;
+    /* 50px already rendered as a pill at this height; stated as 999px so every
+       button and control on the site carries one value. overflow:hidden below
+       is what keeps the inner buttons' hover fill inside the curve. */
+    border-radius: 999px;
     overflow: hidden; width: fit-content;
 }
 .pd-qty-btn {
@@ -370,7 +373,7 @@ img.pd-slide-img:focus-visible {
     background: #172430;
     color: #fff; font-weight: 700;
     font-size: .85rem; letter-spacing: .08em; text-transform: uppercase;
-    border: none; border-radius: 10px; cursor: pointer;
+    border: none; border-radius: 999px; cursor: pointer;
     transition: background .2s, transform .15s, box-shadow .2s;
     box-shadow: 0 4px 14px rgba(23,36,48,.25);
 }
@@ -381,7 +384,7 @@ img.pd-slide-img:focus-visible {
     width: 100%; height: 46px;
     background: transparent;
     color: #555; font-size: .8rem; font-weight: 600;
-    border: 1.5px solid #e5e7eb; border-radius: 10px; cursor: pointer;
+    border: 1.5px solid #e5e7eb; border-radius: 999px; cursor: pointer;
     display: flex; align-items: center; justify-content: center; gap: 8px;
     transition: border-color .2s, color .2s, background .2s;
 }
@@ -458,7 +461,7 @@ img.pd-slide-img:focus-visible {
     .dark .pd-sticky-bar__now { color: #fff; }
     .pd-sticky-bar__was { font-size: 12px; color: #9aa0a6; text-decoration: line-through; }
     .pd-sticky-bar__btn {
-        flex: 1; min-height: 50px; border: 0; border-radius: 10px; cursor: pointer;
+        flex: 1; min-height: 50px; border: 0; border-radius: 999px; cursor: pointer;
         background: #172430; color: #fff; font-weight: 700; font-size: 14px;
         letter-spacing: .04em; text-transform: uppercase;
         display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -479,10 +482,20 @@ img.pd-slide-img:focus-visible {
                         {{-- Badge --}}
                         @if($item->tag)
                             @php
+                                // 'OFF' => '10% OFF' and 'OFF1' => '15% OFF' were fixed
+                                // strings unrelated to the product's actual prices, so a
+                                // product at full price could still advertise 15% off.
+                                // Real figure now, and no badge when there is no discount.
                                 $badgeBg    = match($item->tag) { 'Sale'=>'#1CB28E','NEW'=>'#9739E1', default=>'#E13939' };
-                                $badgeLabel = match($item->tag) { 'Sale'=>'Hot Sale','NEW'=>'NEW','OFF'=>'10% OFF','OFF1'=>'15% OFF', default=>$item->tag };
+                                $badgeLabel = match($item->tag) {
+                                    'Sale'  => 'Hot Sale',
+                                    'NEW'   => 'NEW',
+                                    default => $item->discount_percent ? $item->discount_percent.'% OFF' : null,
+                                };
                             @endphp
+                            @if($badgeLabel)
                             <span class="pd-badge absolute top-4 left-4 z-10" style="background:{{ $badgeBg }}">{{ $badgeLabel }}</span>
+                            @endif
                         @elseif($item->sale_price)
                             <span class="pd-badge absolute top-4 left-4 z-10" style="background:#E13939">Sale</span>
                         @endif

@@ -20,29 +20,36 @@ class HomeController extends Controller
     {
         $sliders     = Slider::active()->get();
         $categories  = Category::where('is_active', true)->has('activeProducts')->withCount(['activeProducts as products_count'])->get();
+        // The rail is headed "New Arrivals / Just landed / added every week", so it
+        // shows the newest eight. It used to pull 20 and shuffle down to 8, which
+        // meant the section promised recency and delivered a random sample of the
+        // last 20 — a genuinely new product could be shuffled out on any given
+        // load. Also 20 rows fetched with two aggregates to display 8.
+        // stock > 0 on both rails: every card carries a working Add to Cart button,
+        // and the cart now rejects out-of-stock lines outright. Without this filter
+        // the homepage advertises products whose only possible outcome is an error
+        // toast — the same hole that was just closed on the cart cross-sell tray.
         $newProducts = Product::where('is_active', true)
-                              ->with('category')
-                              ->withAvg('reviews', 'rating')
-                              ->withCount('reviews')
-                              ->latest()
-                              ->take(20)
-                              ->get()
-                              ->shuffle()
-                              ->take(8);
-        $bestSellers = Product::where('is_active', true)
-                              ->where('is_best_seller', true)
+                              ->where('stock', '>', 0)
                               ->with('category')
                               ->withAvg('reviews', 'rating')
                               ->withCount('reviews')
                               ->latest()
                               ->take(8)
                               ->get();
-        $featuredProducts = Product::where('is_active', true)
-                                   ->where('is_featured', true)
-                                   ->with('category')
-                                   ->latest()
-                                   ->take(6)
-                                   ->get();
+        $bestSellers = Product::where('is_active', true)
+                              ->where('is_best_seller', true)
+                              ->where('stock', '>', 0)
+                              ->with('category')
+                              ->withAvg('reviews', 'rating')
+                              ->withCount('reviews')
+                              ->latest()
+                              ->take(8)
+                              ->get();
+        // $featuredProducts removed: includes/Home/featured-products.blade.php is
+        // not included anywhere in index.blade.php, so this query ran on every
+        // homepage request and its result was discarded. The two live rails above
+        // (New Arrivals, Best Sellers) are what the homepage actually renders.
         $flashDeal = FlashDeal::current();
 
         // Homepage reviews come from product_reviews, same as /about. The slider
@@ -50,7 +57,7 @@ class HomeController extends Controller
         [$customerReviews, $reviewsVerified] = $this->publishedReviews(8);
 
         return view('index', compact(
-            'sliders', 'featuredProducts', 'newProducts', 'bestSellers',
+            'sliders', 'newProducts', 'bestSellers',
             'categories', 'flashDeal', 'customerReviews', 'reviewsVerified',
         ));
     }
