@@ -124,7 +124,30 @@
             <div class="co-summary">
                 <section class="co-panel" aria-labelledby="co-sum-title">
                     <h2 class="co-panel__title" id="co-sum-title">Summary</h2>
-                    <p class="co-panel__hint">Shipping is calculated at the next step.</p>
+                    {{-- Was "Shipping is calculated at the next step", which implied a
+                         cost that never materialises — CheckoutController exposes only
+                         the free option, so nothing is ever calculated. --}}
+                    <p class="co-panel__hint">Shipping is free on every order.</p>
+
+                    {{-- Free shipping status.
+                         A completed bar, not a "you're $X away" counter: shipping is
+                         genuinely free on every order with no minimum, so a countdown
+                         would be counting toward a threshold that does not exist.
+                         Stating it as already earned is both true and the stronger
+                         message — most stores can only promise this above a spend. --}}
+                    <div class="co-ship" role="status">
+                        <div class="co-ship__head">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M20 6 9 17l-5-5"/>
+                            </svg>
+                            <span>Free shipping unlocked</span>
+                        </div>
+                        <div class="co-ship__track" aria-hidden="true"><div class="co-ship__fill"></div></div>
+                        <p class="co-ship__note">
+                            Applies to every order — no minimum spend. Estimated
+                            {{ \App\Support\DeliveryEstimate::minDays() }}–{{ \App\Support\DeliveryEstimate::maxDays() }} business days.
+                        </p>
+                    </div>
 
                     <div class="co-sum__row">
                         <span>Subtotal ({{ $itemCount }} item{{ $itemCount === 1 ? '' : 's' }})</span>
@@ -312,6 +335,14 @@
 
 @push('styles')
 <style>
+/* ── Free shipping status ── */
+.co-ship { background:#f2f9f4; border:1px solid #cfe8d6; border-radius:12px; padding:12px 14px; margin-bottom:16px; }
+.co-ship__head { display:flex; align-items:center; gap:7px; font-size:13.5px; font-weight:700; color:#15803d; }
+.co-ship__head svg { flex:none; }
+.co-ship__track { height:6px; border-radius:50px; background:#dcefe1; margin-top:9px; overflow:hidden; }
+.co-ship__fill { height:100%; width:100%; border-radius:50px; background:linear-gradient(90deg,#22a55b,#15803d); }
+.co-ship__note { font-size:11.5px; color:#4b7a58; line-height:1.45; margin:7px 0 0; }
+
 /* ── Cart cross-sell tray ── */
 .co-xsell { margin-top: 20px; }
 .co-xsell__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 14px; }

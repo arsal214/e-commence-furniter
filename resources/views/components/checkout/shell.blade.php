@@ -239,6 +239,28 @@
 .co-check__text a { color: var(--co-gold-ink); font-weight: 600; text-decoration: none; }
 .co-check__text a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
+/* ── Order bump ────────────────────────────────────────────────
+   Gold-tinted so it reads as an offer rather than another required field, but
+   deliberately quieter than .co-submit — it must never compete with the button
+   that completes the order. Reuses .co-check__input / .co-check__box for the
+   tick so the control is identical to the terms checkbox. */
+.co-bump { border-color: rgba(187, 151, 109, .45); background: rgba(187, 151, 109, .05); }
+.co-bump__row {
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    padding: 12px;
+    border: 1px solid var(--co-border);
+    border-radius: 12px;
+    background: var(--co-surface);
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+.co-bump__row:hover { border-color: rgba(187, 151, 109, .55); }
+.co-bump__row:focus-within { border-color: var(--co-gold); box-shadow: 0 0 0 4px rgba(187, 151, 109, .18); }
+.co-bump__img { width: 52px; height: 52px; flex: none; border-radius: 9px; object-fit: cover; }
+.co-bump__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.co-bump__name { font-size: 14px; font-weight: 600; color: var(--co-text); }
+.co-bump__price { font-size: 13.5px; font-weight: 700; color: var(--co-gold-ink); }
+
 /* ── Actions ───────────────────────────────────────────────── */
 .co-submit {
     position: relative;

@@ -1389,6 +1389,109 @@ function switchTab(panelId, btn) {
 </script>
 <!-- Tabs End -->
 
+{{-- ── Frequently bought together ──────────────────────────────────────────
+     Companions come from real co-purchase history where the store has enough
+     orders for it, and from nearest-priced items in the same category where it
+     does not (ProductController::bundleFor). Every tile is in-stock and active,
+     because the add posts straight to the cart and out-of-stock lines are now
+     rejected there.
+
+     The current product is shown as a fixed, non-removable member of the bundle
+     so the total reads as "this plus these", which is the whole point — a
+     checkbox list that lets you deselect the item you are looking at is just a
+     second recommendations rail. --}}
+@if($boughtTogether->isNotEmpty())
+<div class="s-py-50 pt-0">
+    <div class="container-fluid">
+        <div class="max-w-[985px] mx-auto">
+            <h2 class="text-xl sm:text-2xl leading-none font-bold dark:text-white mb-6">Frequently bought together</h2>
+
+            <form method="POST" action="{{ route('cart.add-many') }}" id="fbt-form"
+                  class="border border-gray-200 dark:border-white/10 rounded-xl p-5 sm:p-6">
+                @csrf
+
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-3 flex-wrap">
+                    {{-- Anchor product --}}
+                    <div class="flex items-center gap-3 flex-1 min-w-[200px]">
+                        <img src="{{ $ogImg }}" alt="" class="w-16 h-16 object-cover rounded-lg flex-none border border-gray-100 dark:border-white/10" loading="lazy" decoding="async">
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-title dark:text-white truncate">{{ $item->name }}</p>
+                            <p class="text-xs text-gray-500 dark:text-white-light">This item · {{ $item->display_price }}</p>
+                        </div>
+                    </div>
+
+                    @foreach($boughtTogether as $bundleItem)
+                        <span class="hidden sm:block text-2xl text-primary/40 font-light select-none" aria-hidden="true">+</span>
+                        <label class="flex items-center gap-3 flex-1 min-w-[200px] cursor-pointer">
+                            <input type="checkbox" name="product_ids[]" value="{{ $bundleItem->id }}" checked
+                                   class="fbt-check w-4 h-4 accent-[#bb976d] flex-none"
+                                   data-price="{{ number_format($bundleItem->effective_price, 2, '.', '') }}"
+                                   aria-label="Include {{ $bundleItem->name }} in this bundle">
+                            <img src="{{ $bundleItem->image ? (str_starts_with($bundleItem->image, 'assets/') ? asset($bundleItem->image) : \Storage::url($bundleItem->image)) : asset('assets/img/logo.svg') }}"
+                                 alt="" class="w-16 h-16 object-cover rounded-lg flex-none border border-gray-100 dark:border-white/10" loading="lazy" decoding="async">
+                            <div class="min-w-0">
+                                <a href="{{ route('product-details', $bundleItem->slug) }}"
+                                   class="text-sm font-medium text-title dark:text-white hover:text-primary duration-200 line-clamp-2">{{ $bundleItem->name }}</a>
+                                <p class="text-xs text-gray-500 dark:text-white-light">{{ $bundleItem->display_price }}</p>
+                            </div>
+                        </label>
+                    @endforeach
+                </div>
+
+                <div class="flex items-center justify-between gap-4 flex-wrap mt-5 pt-5 border-t border-gray-100 dark:border-white/10">
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-white-light">Total for <span id="fbt-count">{{ $boughtTogether->count() + 1 }}</span> items</p>
+                        <p class="text-xl font-bold text-title dark:text-white" id="fbt-total">$0.00</p>
+                    </div>
+                    {{-- The anchor product is not a checkbox, so it is submitted here.
+                         Without it the bundle would add only the companions. --}}
+                    <input type="hidden" name="product_ids[]" value="{{ $item->id }}">
+                    <button type="submit" class="pd-btn-cart" id="fbt-submit" style="width:auto;padding-inline:28px">
+                        Add selected to cart
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+(function () {
+    var form = document.getElementById('fbt-form');
+    if (!form) return;
+
+    // The anchor product is always in the bundle, so its price is the floor the
+    // total counts up from.
+    var BASE   = {{ number_format((float) $item->effective_price, 2, '.', '') }};
+    var checks = Array.prototype.slice.call(form.querySelectorAll('.fbt-check'));
+    var totalEl = document.getElementById('fbt-total');
+    var countEl = document.getElementById('fbt-count');
+    var submit  = document.getElementById('fbt-submit');
+
+    function refresh() {
+        var total = BASE, count = 1;
+
+        checks.forEach(function (c) {
+            if (!c.checked) return;
+            var p = parseFloat(c.dataset.price);
+            if (isFinite(p)) { total += p; count++; }
+        });
+
+        if (totalEl) totalEl.textContent = '$' + total.toFixed(2);
+        if (countEl) countEl.textContent = count;
+        // The anchor alone is still a valid add, so the button never disables —
+        // unchecking everything just makes this an ordinary add-to-cart.
+        if (submit) submit.textContent = count === 1 ? 'Add this item to cart' : 'Add ' + count + ' items to cart';
+    }
+
+    checks.forEach(function (c) { c.addEventListener('change', refresh); });
+    refresh();
+})();
+</script>
+@endpush
+@endif
+
 <!-- Related Product Start -->
 <div class="s-py-50-100">
     <div class="container-fluid">

@@ -128,6 +128,61 @@ class CartController extends Controller
     }
 
     /**
+     * Add several products in one request — the "Frequently bought together"
+     * bundle on the product page.
+     *
+     * Adds one unit of each, with no colour/size: the bundle offers whole products
+     * rather than configured variants, so base stock is the right thing to check
+     * and matches what the tile displayed.
+     *
+     * Partial success is the expected outcome, not an error. If one line went out
+     * of stock while the page was open, the rest still go in and the message says
+     * which did not — failing the whole bundle over one item would cost the sale
+     * on everything else in it.
+     */
+    public function addMany(Request $request)
+    {
+        $data = $request->validate([
+            'product_ids'   => 'required|array|min:1|max:10',
+            'product_ids.*' => 'integer|exists:products,id',
+        ]);
+
+        $products = Product::whereIn('id', $data['product_ids'])
+            ->where('is_active', true)
+            ->get();
+
+        $added   = [];
+        $skipped = [];
+
+        foreach ($products as $product) {
+            $stock  = $product->effectiveStockFor(null, null);
+            $inCart = $this->cart->getQty($product->id, null, null);
+
+            if ($stock <= 0 || $inCart >= $stock) {
+                $skipped[] = $product->name;
+                continue;
+            }
+
+            $this->cart->add($product, 1, null, null);
+            $this->trackAddToCart($product, 1, $request, $product->effectivePriceFor(null, null));
+            $added[] = $product->name;
+        }
+
+        if ($added === []) {
+            return back()->with('error', $skipped
+                ? 'Those items are out of stock right now.'
+                : 'Nothing was added to your cart.');
+        }
+
+        $message = count($added) . ' item' . (count($added) === 1 ? '' : 's') . ' added to cart.';
+        if ($skipped) {
+            $message .= ' Unavailable: ' . implode(', ', $skipped) . '.';
+        }
+
+        return back()->with('success', $message);
+    }
+
+    /**
      * Shape the JSON the "added to cart" modal consumes: the product just acted on
      * plus the live cart totals for the badge and the modal summary line.
      */

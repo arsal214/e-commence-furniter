@@ -84,9 +84,45 @@ class ProductController extends Controller
 
         $this->trackViewContent($item, $request);
 
-        $delivery = DeliveryEstimate::window();
+        $delivery      = DeliveryEstimate::window();
+        $boughtTogether = $this->bundleFor($item);
 
-        return view('product-details', compact('item', 'newProducts', 'delivery'));
+        return view('product-details', compact('item', 'newProducts', 'delivery', 'boughtTogether'));
+    }
+
+    /**
+     * Companions for the "Frequently bought together" bundle.
+     *
+     * Real co-purchase history first (Product::frequentlyBoughtWith). When the
+     * store has not sold enough for that to return anything — which is the normal
+     * state of a young catalogue — it is topped up with in-stock items from the
+     * same category, priced nearest the one being viewed so the bundle total stays
+     * plausible rather than pairing a $9 accessory with a $900 centrepiece.
+     *
+     * Only in-stock, active products are ever offered: the bundle's add button
+     * posts straight to the cart, and CartController now rejects out-of-stock
+     * lines, so suggesting one would produce an error instead of an add.
+     */
+    protected function bundleFor(Product $item, int $limit = 2)
+    {
+        $picks = $item->frequentlyBoughtWith($limit);
+
+        if ($picks->count() < $limit) {
+            $eff     = 'COALESCE(NULLIF(sale_price, 0), price)';
+            $exclude = $picks->pluck('id')->push($item->id);
+
+            $picks = $picks->merge(
+                Product::where('is_active', true)
+                    ->where('stock', '>', 0)
+                    ->whereNotIn('id', $exclude)
+                    ->when($item->category_id, fn ($q) => $q->where('category_id', $item->category_id))
+                    ->orderByRaw("ABS($eff - ?) ASC", [(float) $item->effective_price])
+                    ->take($limit - $picks->count())
+                    ->get()
+            );
+        }
+
+        return $picks->values();
     }
 
     protected function trackViewContent(Product $item, Request $request): void

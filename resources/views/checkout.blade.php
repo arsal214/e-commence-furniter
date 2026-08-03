@@ -262,7 +262,13 @@
 
                     <div class="co-sum__row">
                         <span>Subtotal</span>
-                        <span>${{ number_format($cartTotal, 2) }}</span>
+                        <span id="co-subtotal">${{ number_format($cartTotal, 2) }}</span>
+                    </div>
+                    {{-- Only rendered once the bump is actually ticked, so the summary
+                         never shows a line for something the customer has not chosen. --}}
+                    <div class="co-sum__row" id="co-bump-row" hidden>
+                        <span id="co-bump-label">Added extra</span>
+                        <span id="co-bump-amount">$0.00</span>
                     </div>
                     <div class="co-sum__row">
                         <span>Shipping</span>
@@ -276,6 +282,41 @@
                         <b id="co-total">${{ number_format($cartTotal, 2) }}</b>
                     </div>
                 </section>
+
+                {{-- ── Order bump ──────────────────────────────────────────────
+                     One add-on, unchecked by default. A pre-ticked box that adds a
+                     charge is a dark pattern and, for a purchase rather than a
+                     consent, a worse one than the terms checkbox below — so it
+                     opts in, never out. The price is stated plainly and the total
+                     updates live, so nothing about the cost is a surprise at the
+                     moment of payment. --}}
+                @if($orderBump)
+                <section class="co-panel co-bump" aria-labelledby="co-bump-title">
+                    <h2 class="co-panel__title" id="co-bump-title">Add to your order</h2>
+                    <p class="co-panel__hint">A popular extra — ships free with everything else.</p>
+
+                    {{-- .co-check__input is visually hidden and its tick is drawn by the
+                         adjacent .co-check__box via a `+` sibling selector, so that span
+                         must stay immediately after the input — without it the checkbox
+                         renders invisible and the offer looks like plain text. --}}
+                    <label class="co-bump__row">
+                        <input class="co-check__input" type="checkbox" name="order_bump"
+                               id="co-bump-input" value="{{ $orderBump->id }}"
+                               data-price="{{ number_format($orderBump->effective_price, 2, '.', '') }}"
+                               data-name="{{ $orderBump->name }}"
+                               @checked(old('order_bump'))>
+                        <span class="co-check__box" aria-hidden="true">
+                            <svg width="12" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                        </span>
+                        <img src="{{ $orderBump->image ? (str_starts_with($orderBump->image, 'assets/') ? asset($orderBump->image) : \Storage::url($orderBump->image)) : asset('assets/img/logo.svg') }}"
+                             alt="" class="co-bump__img" loading="lazy" decoding="async">
+                        <span class="co-bump__body">
+                            <span class="co-bump__name">{{ $orderBump->name }}</span>
+                            <span class="co-bump__price">{{ $orderBump->display_price }}</span>
+                        </span>
+                    </label>
+                </section>
+                @endif
 
                 <section class="co-panel" aria-labelledby="co-pay-title">
                     <h2 class="co-panel__title" id="co-pay-title">Payment</h2>
@@ -367,12 +408,39 @@
 
     function money(n) { return '$' + n.toFixed(2); }
 
+    /* Order bump: folded into the same total the shipping radios drive, so the
+       figure the customer authorises always includes everything they ticked.
+       The server re-adds the bump to the cart and recomputes independently — this
+       is display only and is never what gets charged. */
+    var bumpInput  = document.getElementById('co-bump-input');
+    var bumpRow    = document.getElementById('co-bump-row');
+    var bumpAmount = document.getElementById('co-bump-amount');
+    var bumpLabel  = document.getElementById('co-bump-label');
+
+    function bumpCost() {
+        if (!bumpInput || !bumpInput.checked) return 0;
+        var p = parseFloat(bumpInput.dataset.price);
+        return isFinite(p) ? p : 0;
+    }
+
     function refreshTotals() {
         var checked = form.querySelector('input[name="shipping"]:checked');
         var cost    = checked ? parseFloat(checked.dataset.cost || '0') : 0;
+        var extra   = bumpCost();
 
         if (shippingEl) shippingEl.textContent = cost > 0 ? money(cost) : 'Free';
-        if (totalEl)    totalEl.textContent    = money(SUBTOTAL + cost);
+
+        if (bumpRow) {
+            bumpRow.hidden = extra <= 0;
+            if (extra > 0 && bumpAmount) bumpAmount.textContent = money(extra);
+        }
+
+        if (totalEl) totalEl.textContent = money(SUBTOTAL + cost + extra);
+    }
+
+    if (bumpInput) {
+        if (bumpLabel && bumpInput.dataset.name) bumpLabel.textContent = bumpInput.dataset.name;
+        bumpInput.addEventListener('change', refreshTotals);
     }
 
     form.querySelectorAll('input[name="shipping"]').forEach(function (radio) {

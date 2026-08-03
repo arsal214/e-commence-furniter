@@ -383,6 +383,52 @@ class Product extends Model
         return $prices->push($this->effective_price)->unique()->count() > 1;
     }
 
+    /**
+     * Products most often bought in the same order as this one.
+     *
+     * Real co-purchase data out of order_items — a self-join on order_id counting
+     * how often each other product shared a basket with this one. Not "same
+     * category" wearing a "frequently bought together" label, which is the usual
+     * fake and gives itself away the moment it recommends a near-duplicate of the
+     * thing you are already looking at.
+     *
+     * A young catalogue has little order history, so this legitimately returns
+     * fewer than $limit — often none. Callers pad from elsewhere rather than
+     * letting the section render empty.
+     *
+     * @return \Illuminate\Support\Collection<int, Product>
+     */
+    public function frequentlyBoughtWith(int $limit = 2)
+    {
+        $ids = \DB::table('order_items as a')
+            ->join('order_items as b', function ($join) {
+                $join->on('a.order_id', '=', 'b.order_id')
+                     ->whereColumn('a.product_id', '!=', 'b.product_id');
+            })
+            ->where('a.product_id', $this->id)
+            ->groupBy('b.product_id')
+            // DISTINCT order_id: an order listing the same companion twice
+            // (two colours of it) is one basket, not two votes.
+            ->orderByRaw('COUNT(DISTINCT a.order_id) DESC')
+            ->limit($limit)
+            ->pluck('b.product_id');
+
+        if ($ids->isEmpty()) {
+            return collect();
+        }
+
+        $ranking = $ids->values()->all();
+
+        return static::whereIn('id', $ids)
+            ->where('is_active', true)
+            ->where('stock', '>', 0)
+            ->get()
+            // whereIn returns rows in whatever order the DB likes; restore the
+            // co-purchase ranking the query just established.
+            ->sortBy(fn ($p) => array_search($p->id, $ranking))
+            ->values();
+    }
+
     public function reviews()
     {
         return $this->hasMany(Review::class)->latest();

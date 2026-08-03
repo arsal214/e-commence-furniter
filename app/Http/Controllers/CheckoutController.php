@@ -6,6 +6,7 @@ use App\Mail\AccountCreatedMail;
 use App\Mail\OrderConfirmationMail;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\User;
 use App\Services\CartService;
 use App\Services\TikTokEventsService;
@@ -74,7 +75,32 @@ class CheckoutController extends Controller
             'countries'       => config('checkout.countries', []),
             'defaultCountry'  => config('checkout.default_country', 'US'),
             'countryRules'    => $this->countryRulesForJs(),
+            'orderBump'       => $this->orderBump(),
         ]);
+    }
+
+    /**
+     * A single low-friction add-on offered at checkout.
+     *
+     * The cheapest in-stock item the buyer does not already have, so the ask is
+     * small next to a basket they have already decided on. Deliberately one
+     * product, not a rail: an order bump works because it is a yes/no decision at
+     * the moment of purchase, and a grid of choices reintroduces the browsing the
+     * customer just finished.
+     *
+     * Returns null on an empty catalogue or when everything is already in the
+     * cart, and the section then does not render at all.
+     */
+    protected function orderBump(): ?Product
+    {
+        $cartIds = collect($this->cart->items())->pluck('id')->filter()->values();
+        $eff     = 'COALESCE(NULLIF(sale_price, 0), price)';
+
+        return Product::where('is_active', true)
+            ->where('stock', '>', 0)
+            ->when($cartIds->isNotEmpty(), fn ($q) => $q->whereNotIn('id', $cartIds))
+            ->orderByRaw("$eff ASC")
+            ->first();
     }
 
     /**
@@ -185,6 +211,7 @@ class CheckoutController extends Controller
             'payment_method' => 'required|in:cod,stripe',
             'shipping'       => 'required|in:free,fast,local',
             'agree'          => 'accepted',
+            'order_bump'     => 'nullable|integer|exists:products,id',
         ], [
             'state.in'       => 'Choose a valid ' . strtolower($country['subdivision_label'] ?? 'state') . ' for the selected country.',
             'state.required' => 'Please choose a ' . strtolower($country['subdivision_label'] ?? 'state') . '.',
@@ -197,6 +224,21 @@ class CheckoutController extends Controller
         $data['country'] = strtoupper($data['country']);
         if (! empty($data['state'])) {
             $data['state'] = strtoupper($data['state']);
+        }
+
+        // Order bump: added to the cart before any total is computed, so it flows
+        // through pricing, the stock check and the order lines exactly like a
+        // normally-added product. Re-checked server-side rather than trusted from
+        // the form — the posted id is user input, and the item may have sold out
+        // while the checkout page sat open.
+        if (! empty($data['order_bump'])) {
+            $bump = Product::where('id', $data['order_bump'])
+                ->where('is_active', true)
+                ->first();
+
+            if ($bump && $bump->effectiveStockFor(null, null) > $this->cart->getQty($bump->id, null, null)) {
+                $this->cart->add($bump, 1, null, null);
+            }
         }
 
         $shippingCosts = ['free' => 0, 'fast' => 10, 'local' => 15];

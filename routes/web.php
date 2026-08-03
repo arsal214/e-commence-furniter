@@ -113,6 +113,8 @@ Route::get('/product-details/{slug}',  [ProductController::class, 'show'])->name
 
 Route::get('/cart',          [CartController::class, 'index'])->name('cart');
 Route::post('/cart/add',     [CartController::class, 'add'])->name('cart.add');
+// Bundle add ("Frequently bought together" on the product page).
+Route::post('/cart/add-many', [CartController::class, 'addMany'])->name('cart.add-many');
 Route::post('/cart/update',  [CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove',  [CartController::class, 'remove'])->name('cart.remove');
 Route::post('/cart/clear',   [CartController::class, 'clear'])->name('cart.clear');

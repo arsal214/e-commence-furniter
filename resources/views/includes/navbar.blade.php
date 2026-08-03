@@ -36,18 +36,36 @@
                     <circle cx="4.75" cy="13.25" r="1.65"/>
                     <circle cx="17.5" cy="13.25" r="1.65"/>
                 </svg>
-                <span>Free Shipping</span>
+                {{-- "No Minimum" is the whole point: shipping is genuinely free on
+                     every order, so this is a real differentiator rather than the
+                     usual "free over $X" that most stores mean by it. --}}
+                <span>Free Shipping &middot; No Minimum</span>
             </a>
         </div>
 
         {{-- ── Center: Vertical Slider ── --}}
         <div class="pg-tb-center" id="pgTopCenter">
+            {{-- Exactly 3 real slides + 1 clone: the script below hardcodes REAL = 3
+                 and relies on the clone matching slide 1 for the seamless loop.
+                 Adding a slide without bumping REAL desynchronises the rotation.
+
+                 The delivery line is built once and printed twice. The clone has to
+                 be byte-identical to slide 1 or the loop visibly jumps, so composing
+                 it by hand in both places would be one careless edit away from a
+                 broken rotation. The window itself reads from
+                 config('checkout.delivery'), so this strip cannot contradict the
+                 product page, the policy or the FAQ. --}}
+            @php
+                $pgDeliverySlide = '🚚&nbsp; Free delivery in '
+                    . \App\Support\DeliveryEstimate::minDays() . '–'
+                    . \App\Support\DeliveryEstimate::maxDays() . ' business days';
+            @endphp
             <div class="pg-tb-track" id="pgTopTrack">
-                <div class="pg-tb-slide">👥&nbsp; Loved by Our Customers</div>
-                <div class="pg-tb-slide">💬&nbsp; Friendly Customer Support</div>
+                <div class="pg-tb-slide">{!! $pgDeliverySlide !!}</div>
+                <div class="pg-tb-slide">↩️&nbsp; 30-Day Easy Returns</div>
                 <div class="pg-tb-slide">⭐&nbsp; Quality You Can Trust</div>
-                {{-- clone of first for seamless loop --}}
-                <div class="pg-tb-slide">👥&nbsp; Loved by Our Customers</div>
+                {{-- clone of slide 1 for the seamless loop --}}
+                <div class="pg-tb-slide">{!! $pgDeliverySlide !!}</div>
             </div>
         </div>
 
