@@ -87,9 +87,9 @@
                     </form>
 
                     <div class="space-y-2.5">
-                        <a href="mailto:support@peytonghalib.com" class="flex items-center gap-2.5 text-white-light hover:text-primary duration-200 text-sm">
+                        <a href="mailto:info@peytonghalib.com" class="flex items-center gap-2.5 text-white-light hover:text-primary duration-200 text-sm">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                            support@peytonghalib.com
+                            info@peytonghalib.com
                         </a>
                         <a href="tel:+19294699864" class="flex items-center gap-2.5 text-white-light hover:text-primary duration-200 text-sm">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>

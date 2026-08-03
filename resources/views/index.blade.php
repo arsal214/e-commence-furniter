@@ -2,9 +2,19 @@
 @section('title', 'PeytonGhalib — Home Decor & Everyday Essentials Online')
 @section('meta_description', 'Shop home decor, kitchen gadgets, beauty, sports gear & more at PeytonGhalib. Quality products, fast delivery, 30-day returns. Discover your new favourites today.')
 
-@push('preload')
-<link rel="preload" as="image" href="{{ asset('assets/img/home-v1/home-decor.webp') }}" fetchpriority="high">
-@endpush
+{{-- No hero image preload on purpose.
+
+     PageSpeed reports the LCP element as the hero <h1>, not this image. A
+     `preload as=image fetchpriority=high` would therefore put a ~40 KB
+     non-LCP asset ahead of josefin-sans-700 — the font the LCP text actually
+     needs — on a bandwidth-constrained mobile connection, delaying the metric
+     it was meant to help.
+
+     The image still loads promptly: it sits in the initial HTML with
+     loading="eager", so the preload scanner finds it immediately; it just no
+     longer outranks the LCP font. If the hero art is ever changed such that
+     the image becomes the LCP, restore the preload with imagesrcset and
+     imagesizes byte-identical to the srcset/sizes on the <img>. --}}
 
 @push('schema')
 @php
@@ -279,8 +289,16 @@ $schemaWebsite = [
     font-size: clamp(2.4rem, 4.5vw, 4rem);
     font-weight: 800; line-height: 1.08;
     letter-spacing: -.02em; color: #1c1410;
-    animation: pgh-up .65s .12s ease both;
+    /* This heading is the LCP element. It used to run `pgh-up` which starts at
+       opacity:0 after a .12s delay — and an element at zero opacity is not
+       painted, so LCP could not fire until the fade had begun, adding ~120ms+
+       of pure delay on top of the font wait. pgh-rise keeps the same 28px
+       slide-up so the entrance still reads the same, but starts fully opaque
+       and with no delay, letting the text paint on the first frame.
+       Everything else on the slide keeps pgh-up. */
+    animation: pgh-rise .65s ease both;
 }
+@keyframes pgh-rise { from{transform:translateY(28px)} to{transform:translateY(0)} }
 .dark .pgh-h1 { color: #f5f0ea; }
 .pgh-h1-grad {
     background: linear-gradient(135deg, #bb976d 0%, #e8c48a 40%, #8b6510 100%);
@@ -668,7 +686,18 @@ $schemaWebsite = [
                         <div class="pgh-collage pgh-row-right">
 
                             <div class="pgh-img-shell">
-                                <img src="{{ asset('assets/img/home-v1/home-decor.webp') }}" alt="Home Decor Collection" width="577" height="433" loading="eager" fetchpriority="high" decoding="async">
+                                {{-- Above the fold but NOT the LCP element (that is the <h1>),
+                                     so this stays eager — it must not be lazy — but no longer
+                                     claims fetchpriority=high, which would push it ahead of the
+                                     LCP font. Explicit width/height keep the box reserved, and
+                                     the srcset serves DPR-1 and narrow viewports a smaller file.
+                                     The source art is only 577x433, so there is deliberately no
+                                     2x candidate: upscaling would add bytes and no detail. --}}
+                                <img src="{{ asset('assets/img/home-v1/home-decor.webp') }}"
+                                     srcset="{{ asset('assets/img/home-v1/home-decor-320w.webp') }} 320w, {{ asset('assets/img/home-v1/home-decor-448w.webp') }} 448w, {{ asset('assets/img/home-v1/home-decor.webp') }} 577w"
+                                     sizes="(min-width: 768px) 45vw, 88vw"
+                                     alt="Home Decor Collection" width="577" height="433"
+                                     loading="eager" decoding="async">
                                 <div class="pgh-card-footer">
                                     <div class="pgh-card-footer-dots"><span></span><span></span><span></span></div>
                                     <span class="pgh-card-footer-text">Home Decor Collection</span>
@@ -1622,48 +1651,41 @@ $schemaWebsite = [
                  data-carousel-autoplay="true"
                  data-carousel-dots="true">
 
-                @php
-                // Products referenced here are real, live catalogue items (name + slug),
-                // and each links to its product page below — a real internal link, not a
-                // testimonial for something the store doesn't sell.
-                $reviews = [
-                    ['name' => 'Sarah Mitchell',   'rating' => 5, 'product' => 'Modern Long Table',       'slug' => 'modern-long-table',       'date' => 'May 2026',   'review' => 'Our new dining table is absolutely stunning. The finish looks even better in person — clean, warm, and exactly as pictured. Delivery arrived ahead of schedule and it was simple to set up.'],
-                    ['name' => 'James Reynolds',   'rating' => 5, 'product' => 'Premium Luxury Sofa',      'slug' => 'premium-luxury-sofa',     'date' => 'April 2026', 'review' => 'The sofa arrived beautifully packaged and looks incredible in our living room. The upholstery quality is premium and the frame feels very sturdy. The whole process was seamless from checkout to delivery.'],
-                    ['name' => 'Aisha Karimi',     'rating' => 4, 'product' => 'Flower Vase for Table',    'slug' => 'flower-vase-for-table',   'date' => 'May 2026',   'review' => 'Ordered the flower vase as a housewarming gift and the recipient was thrilled. The craftsmanship is beautiful and the packaging was gift-worthy. Delivery took a day longer than expected, but well worth it.'],
-                    ['name' => 'Daniel Thompson',  'rating' => 5, 'product' => 'Wooden Sofa',              'slug' => 'wooden-sofa',             'date' => 'March 2026', 'review' => 'I\'ve been shopping here for months and every order has been perfect. The wooden sofa is solid, beautifully finished, and worth every penny. Fast shipping, incredible quality — 10/10!'],
-                    ['name' => 'Priya Sharma',     'rating' => 5, 'product' => 'Luxury Lamp for Wall',     'slug' => 'luxury-lamp-for-wall',    'date' => 'April 2026', 'review' => 'The wall lamp transformed our hallway completely. The light is warm, the finish is solid, and it arrived perfectly protected. Exactly what the photos showed — no surprises, just great quality.'],
-                    ['name' => 'Michael Barnes',   'rating' => 4, 'product' => 'Table with Pops',          'slug' => 'table-with-pops',         'date' => 'May 2026',   'review' => 'Great table at a very fair price. The surface is sturdier than expected and the design is a real talking point. Took about 20 minutes to set up with clear instructions. Very satisfied overall.'],
-                    ['name' => 'Fatima Al-Rashid', 'rating' => 5, 'product' => 'White Minimal Chair',      'slug' => 'white-minimal-chair',     'date' => 'May 2026',   'review' => 'This chair is a showstopper — every guest asks where I got it! The minimal finish is perfect, it\'s comfortable, and it has held up beautifully. Exceptional experience from start to finish.'],
-                    ['name' => 'Chris Lawrence',   'rating' => 5, 'product' => 'New Modern Luxury Table',   'slug' => 'new-modern-luxury-table', 'date' => 'April 2026', 'review' => 'The table is even more impressive in person. The surface is smooth and the build feels premium. Fast delivery, exactly as described. Will definitely shop here again.'],
-                ];
-                @endphp
-
-                @foreach($reviews as $review)
+                {{-- Real rows from product_reviews (HomeController::publishedReviews).
+                     The eight invented testimonials that used to be hardcoded here —
+                     invented names, invented cities, invented purchase stories — were
+                     removed: presenting in-house copy as customer opinion is a
+                     deceptive endorsement under the FTC endorsement guides, and it is
+                     the fastest way to lose the trust this section exists to build.
+                     With no reviews yet, the empty state below says so plainly. --}}
+                @forelse($customerReviews as $review)
                 <div class="bg-white dark:bg-[#1a1a2e] rounded-sm p-6 md:p-8 shadow-sm flex flex-col h-full border border-transparent hover:border-primary duration-300">
 
                     <!-- Stars -->
                     <div class="flex items-center gap-1 mb-4">
                         @for($s = 1; $s <= 5; $s++)
-                            @if($s <= $review['rating'])
+                            @if($s <= $review->rating)
                                 <svg class="w-4 h-4 text-[#F5A623] fill-current" viewBox="0 0 20 20"><path d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z"/></svg>
                             @else
                                 <svg class="w-4 h-4 text-gray-300 fill-current" viewBox="0 0 20 20"><path d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z"/></svg>
                             @endif
                         @endfor
-                        <span class="ml-1 text-xs text-gray-400 dark:text-white-light font-medium">{{ $review['rating'] }}.0</span>
+                        <span class="ml-1 text-xs text-gray-400 dark:text-white-light font-medium">{{ number_format($review->rating, 1) }}</span>
                     </div>
 
                     <!-- Review Text -->
-                    <p class="text-paragraph dark:text-white-light text-sm leading-relaxed flex-1">&ldquo;{{ $review['review'] }}&rdquo;</p>
+                    <p class="text-paragraph dark:text-white-light text-sm leading-relaxed flex-1">&ldquo;{{ $review->comment }}&rdquo;</p>
 
                     <!-- Product Reference (links to the real product page) -->
+                    @if($review->product)
                     <div class="mt-4">
-                        <a href="{{ route('product-details', $review['slug']) }}"
+                        <a href="{{ route('product-details', $review->product->slug) }}"
                            class="inline-flex items-center gap-1.5 text-xs bg-[#F5F0EB] dark:bg-primary/10 text-primary px-2.5 py-1 rounded-full font-medium hover:bg-primary hover:text-white transition-colors duration-200">
                             <svg class="w-3 h-3 fill-current flex-none" viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3z"/></svg>
-                            {{ $review['product'] }}
+                            {{ $review->product->name }}
                         </a>
                     </div>
+                    @endif
 
                     <!-- Divider -->
                     <div class="my-5 border-t border-[#E3E5E6] dark:border-bdr-clr-drk"></div>
@@ -1671,13 +1693,17 @@ $schemaWebsite = [
                     <!-- Customer Info -->
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-none">
-                            <span class="text-primary font-bold text-base leading-none">{{ strtoupper(substr($review['name'], 0, 1)) }}</span>
+                            <span class="text-primary font-bold text-base leading-none">{{ strtoupper(substr($review->author_name, 0, 1)) }}</span>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-sm text-title dark:text-white leading-none">{{ $review['name'] }}</h3>
-                            {{-- No "Verified Purchase" badge: these testimonials aren't pulled
-                                 from order history, so claiming verification is a legal risk. --}}
-                            <span class="text-xs text-gray-500 dark:text-white-light mt-1 block">{{ $review['date'] }}</span>
+                            <h3 class="font-semibold text-sm text-title dark:text-white leading-none">{{ $review->author_name }}</h3>
+                            {{-- The badge is shown only where an order actually links this
+                                 customer to this product ($reviewsVerified), so the claim
+                                 is always backed by order history. --}}
+                            @if(isset($reviewsVerified[$review->user_id . '-' . $review->product_id]))
+                                <span class="text-[11px] text-green-600 dark:text-green-400 font-medium mt-1 block">Verified Purchase</span>
+                            @endif
+                            <span class="text-xs text-gray-500 dark:text-white-light mt-1 block">{{ $review->created_at?->format('F Y') }}</span>
                         </div>
                         <div class="ml-auto">
                             <svg class="w-7 h-7 text-primary/20 fill-current" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
@@ -1685,7 +1711,15 @@ $schemaWebsite = [
                     </div>
 
                 </div>
-                @endforeach
+                @empty
+                <div class="bg-white dark:bg-[#1a1a2e] rounded-sm p-8 md:p-10 shadow-sm text-center">
+                    <svg class="w-10 h-10 mx-auto text-primary/30 fill-current mb-4" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                    <h3 class="font-semibold text-lg text-title dark:text-white">No customer reviews yet</h3>
+                    <p class="text-paragraph dark:text-white-light text-sm leading-relaxed mt-2">
+                        Be the first to share your experience — every review we publish comes from a real order.
+                    </p>
+                </div>
+                @endforelse
 
             </div>
 

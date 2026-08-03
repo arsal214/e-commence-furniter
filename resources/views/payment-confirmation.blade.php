@@ -47,7 +47,7 @@
                         </tr>
                         <tr class="two-td-item text-lg sm:text-xl text-title dark:text-white font-medium">
                             <th class='font-medium'>**** **** **** 1234</th>
-                            <td class='font-medium'>demomail@gmail.com</td>
+                            <td class='font-medium'>info@peytonghalib.com</td>
                             <td class='font-medium'>(+11) 01234 56789</td>
                         </tr>
                     </tbody>

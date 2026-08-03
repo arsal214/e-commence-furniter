@@ -22,8 +22,13 @@
             'title' => 'Shipping & Delivery',
             'icon'  => 'truck',
             'items' => [
+                {{-- Day counts read from config('checkout.delivery') via
+                     DeliveryEstimate — same source as the shipping policy, the
+                     category FAQ and the product-page estimate. This was the last
+                     page still hardcoding the window, so changing the promise used
+                     to leave it quietly contradicting the other three. --}}
                 ['q' => 'How long does delivery take?',
-                 'a' => 'Standard delivery takes 3–7 business days, depending on your location. You will receive a tracking link by email as soon as your order has been dispatched, and you can follow it from your account at any time.'],
+                 'a' => 'Standard delivery takes '.\App\Support\DeliveryEstimate::minDays().'–'.\App\Support\DeliveryEstimate::maxDays().' business days, depending on your location. You will receive a tracking link by email as soon as your order has been dispatched, and you can follow it from your account at any time.'],
                 ['q' => 'Do you offer free shipping?',
                  'a' => 'Yes — shipping is free on every order, with no minimum spend. It is applied automatically at checkout, so there is nothing for you to do.'],
                 ['q' => 'Can I track my order?',

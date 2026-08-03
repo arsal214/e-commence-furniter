@@ -416,7 +416,7 @@ $schemaContact = ['@context'=>'https://schema.org','@type'=>'ContactPage','name'
                         <span style="min-width:0">
                             <span class="ct-channel__k">Email us</span>
                             <span class="ct-channel__v">
-                                <a href="mailto:peytonexpress44@gmail.com">peytonexpress44@gmail.com</a>
+                                <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a>
                             </span>
                             <span class="ct-channel__note">We reply within 24 hours</span>
                         </span>

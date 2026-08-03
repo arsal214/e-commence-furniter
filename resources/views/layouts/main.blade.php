@@ -63,10 +63,16 @@
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
         {{-- Per-page LCP image preload (pushed only where a known hero image exists) --}}
         @stack('preload')
-        {{-- Fonts are self-hosted (php artisan fonts:self-host). Preload only the
-             two faces that render above the fold — the body/heading font and the
-             navbar font, latin subset. Preloading more would compete with the LCP
-             image for bandwidth; preloading none would delay the swap. --}}
+        {{-- Fonts are self-hosted (php artisan fonts:self-host), latin subset.
+             Order matters — the preload scanner queues these in document order,
+             so the LCP font goes first.
+
+             700 leads because the hero <h1> (the measured LCP element) is
+             font-weight:800, and Josefin Sans tops out at 700 — so it resolves
+             to the 700 file and synthesises the extra weight. Preloading 400
+             instead, as this did originally, left the actual LCP font to be
+             discovered from the stylesheet ~600ms later. --}}
+        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/josefin-sans-700-normal-latin.woff2') }}" crossorigin>
         <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/josefin-sans-400-normal-latin.woff2') }}" crossorigin>
         <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/poppins-500-normal-latin.woff2') }}" crossorigin>
         <!-- Main Stylesheet -->
@@ -978,7 +984,7 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
             var value = Number(p.value);
             if (!isFinite(value) || value <= 0) return;   // a 0-value event is rejected too
 
-            fbq('track', 'AddToCart', {
+            var payload = {
                 value: Number(value.toFixed(2)),
                 currency: @json(config('services.meta.currency', 'USD')),
                 content_type: 'product',
@@ -988,7 +994,12 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
                     quantity: Number(p.qty) || 1,
                     item_price: Number(p.unit_price) || 0
                 }]
-            });
+            };
+            // content_name is what Events Manager and the Advantage+ breakdown label
+            // the row with; without it every add reads as a bare numeric id.
+            if (p.name) payload.content_name = String(p.name);
+
+            fbq('track', 'AddToCart', payload);
         };
 
         {{-- Capture phase so it still runs where a listener calls preventDefault(). --}}
@@ -1006,6 +1017,7 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
 
             window.trackMetaAddToCart({
                 id: form.dataset.atcId,
+                name: form.dataset.atcName,
                 qty: qty,
                 unit_price: price,
                 value: price * qty

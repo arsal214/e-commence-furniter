@@ -112,15 +112,78 @@
                         </div>
 
                         <div class="co-field">
-                            <label class="co-field__label" for="city">Town / City</label>
+                            <label class="co-field__label" for="city">
+                                Town / City <span class="co-field__req" aria-hidden="true">*</span><span class="co-sr">(required)</span>
+                            </label>
                             <input class="co-field__input" id="city" name="city" type="text"
-                                   value="{{ old('city') }}" placeholder="Your city" autocomplete="address-level2">
+                                   value="{{ old('city') }}" placeholder="Your city" autocomplete="address-level2"
+                                   data-validate data-label="Town / City" required
+                                   @error('city') aria-invalid="true" @enderror
+                                   aria-describedby="city-error">
+                            <p class="co-field__error @error('city') is-visible @enderror" id="city-error" role="alert">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                                <span data-error-text>@error('city'){{ $message }}@enderror</span>
+                            </p>
+                        </div>
+
+                        {{-- Country first: it decides what the state field is called,
+                             which options it holds, and how the ZIP is validated. --}}
+                        <div class="co-field">
+                            <label class="co-field__label" for="country">
+                                Country <span class="co-field__req" aria-hidden="true">*</span><span class="co-sr">(required)</span>
+                            </label>
+                            <select class="co-field__input co-field__select" id="country" name="country"
+                                    autocomplete="country" data-validate data-label="Country" required
+                                    @error('country') aria-invalid="true" @enderror
+                                    aria-describedby="country-error">
+                                @foreach ($countries as $code => $country)
+                                    <option value="{{ $code }}" @selected(old('country', $defaultCountry) === $code)>{{ $country['label'] }}</option>
+                                @endforeach
+                            </select>
+                            <p class="co-field__error @error('country') is-visible @enderror" id="country-error" role="alert">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                                <span data-error-text>@error('country'){{ $message }}@enderror</span>
+                            </p>
+                        </div>
+
+                        {{-- Options are rewritten by JS whenever country changes. The
+                             full initial list is still rendered server-side so the
+                             field works, and keeps its old() value on a validation
+                             bounce, before any script runs. --}}
+                        <div class="co-field" data-state-field>
+                            <label class="co-field__label" for="state" data-state-label>
+                                {{ $countries[$defaultCountry]['subdivision_label'] ?? 'State' }} <span class="co-field__req" aria-hidden="true">*</span><span class="co-sr">(required)</span>
+                            </label>
+                            <select class="co-field__input co-field__select" id="state" name="state"
+                                    autocomplete="address-level1" data-validate data-label="State" required
+                                    @error('state') aria-invalid="true" @enderror
+                                    aria-describedby="state-error">
+                                <option value="">Choose…</option>
+                                @foreach (($countries[old('country', $defaultCountry)]['subdivisions'] ?? []) as $code => $name)
+                                    <option value="{{ $code }}" @selected(old('state') === $code)>{{ $name }}</option>
+                                @endforeach
+                            </select>
+                            <p class="co-field__error @error('state') is-visible @enderror" id="state-error" role="alert">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                                <span data-error-text>@error('state'){{ $message }}@enderror</span>
+                            </p>
                         </div>
 
                         <div class="co-field">
-                            <label class="co-field__label" for="zip">ZIP / Postcode</label>
+                            <label class="co-field__label" for="zip" data-zip-label>
+                                ZIP / Postcode <span class="co-field__req" aria-hidden="true">*</span><span class="co-sr">(required)</span>
+                            </label>
                             <input class="co-field__input" id="zip" name="zip" type="text"
-                                   value="{{ old('zip') }}" placeholder="1217" autocomplete="postal-code">
+                                   value="{{ old('zip') }}"
+                                   placeholder="{{ $countries[$defaultCountry]['postal_example'] ?? '' }}"
+                                   autocomplete="postal-code" inputmode="text"
+                                   data-validate data-label="ZIP / Postcode" required
+                                   @error('zip') aria-invalid="true" @enderror
+                                   aria-describedby="zip-error">
+                            <p class="co-field__error @error('zip') is-visible @enderror" id="zip-error" role="alert">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                                <span data-error-text>@error('zip'){{ $message }}@enderror</span>
+                            </p>
                         </div>
                     </div>
                 </section>
@@ -317,6 +380,115 @@
     });
     refreshTotals();
 
+    /* ── Address: country → state → ZIP ─────────────────────────
+       One source of truth, rendered from config/checkout.php. The server
+       re-validates all of it against the same config, so this is a fast
+       correction for the buyer, never the thing standing between a bad
+       address and the database. */
+    var COUNTRIES   = @json($countryRules);
+    var countryEl   = document.getElementById('country');
+    var stateEl     = document.getElementById('state');
+    var zipEl       = document.getElementById('zip');
+    var stateField  = form.querySelector('[data-state-field]');
+    var stateLabel  = form.querySelector('[data-state-label]');
+    var zipLabel    = form.querySelector('[data-zip-label]');
+
+    function currentCountry() {
+        return (countryEl && COUNTRIES[countryEl.value]) || null;
+    }
+
+    /* Rebuild the state options for the selected country, preserving the current
+       choice when that code exists in the new country too (US "NY" has no
+       Canadian counterpart, so it is dropped rather than silently kept). */
+    function syncStateOptions(keepValue) {
+        var rules = currentCountry();
+        if (!stateEl || !rules) return;
+
+        var previous = keepValue ? stateEl.value : '';
+        var subs     = rules.subdivisions || {};
+        var codes    = Object.keys(subs);
+
+        // A country with no subdivisions hides the field instead of showing an
+        // empty dropdown the buyer cannot satisfy.
+        if (!codes.length) {
+            if (stateField) stateField.hidden = true;
+            stateEl.required = false;
+            stateEl.value = '';
+            setError(stateEl, '');
+            return;
+        }
+
+        if (stateField) stateField.hidden = false;
+        stateEl.required = true;
+
+        var label = rules.subdivision_label || 'State';
+        if (stateLabel) {
+            stateLabel.childNodes[0].nodeValue = label + ' ';
+        }
+        stateEl.dataset.label = label;
+
+        stateEl.innerHTML = '';
+        var blank = document.createElement('option');
+        blank.value = '';
+        blank.textContent = 'Choose…';
+        stateEl.appendChild(blank);
+
+        codes.forEach(function (code) {
+            var opt = document.createElement('option');
+            opt.value = code;
+            opt.textContent = subs[code];
+            stateEl.appendChild(opt);
+        });
+
+        stateEl.value = Object.prototype.hasOwnProperty.call(subs, previous) ? previous : '';
+    }
+
+    function syncZipField() {
+        var rules = currentCountry();
+        if (!zipEl || !rules) return;
+
+        zipEl.placeholder = rules.postal_example || '';
+        zipEl.required    = !!rules.postal_required;
+
+        if (zipLabel) {
+            zipLabel.childNodes[0].nodeValue = (rules.postal_label || 'ZIP / Postcode') + ' ';
+        }
+        // A US ZIP is digits-only, so the numeric keypad is right there; a
+        // Canadian code is alphanumeric and needs the full keyboard.
+        zipEl.setAttribute('inputmode', rules.postal_numeric ? 'numeric' : 'text');
+    }
+
+    function zipMessage(value) {
+        var rules = currentCountry();
+        if (!rules || !rules.postal_regex) return '';
+
+        var re;
+        try {
+            re = new RegExp(rules.postal_regex, rules.postal_flags || '');
+        } catch (e) {
+            return '';   // a bad pattern must not block checkout; the server still checks
+        }
+
+        return re.test(value)
+            ? ''
+            : 'Enter a valid ' + (rules.postal_label || 'postcode') + ', e.g. ' + rules.postal_example;
+    }
+
+    if (countryEl) {
+        countryEl.addEventListener('change', function () {
+            syncStateOptions(true);
+            syncZipField();
+            // Re-check a ZIP already typed: switching US → CA can invalidate it.
+            if (zipEl && zipEl.value.trim()) setError(zipEl, messageFor(zipEl));
+        });
+    }
+
+    // Initial paint. The server already rendered the correct options, but the
+    // ZIP inputmode/placeholder and the hide-when-no-subdivisions case still
+    // have to be applied — and a validation bounce must keep its selection.
+    syncStateOptions(true);
+    syncZipField();
+
     /* ── Validation ─────────────────────────────────────────── */
     var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -330,7 +502,11 @@
         }
 
         var value = input.value.trim();
-        if (input.required && !value) return label + ' is required.';
+        if (input.required && !value) {
+            return input.tagName === 'SELECT'
+                ? 'Please choose a ' + label.toLowerCase() + '.'
+                : label + ' is required.';
+        }
         if (!value) return '';
         if (input.type === 'email' && !EMAIL_RE.test(value)) {
             return 'Enter a valid email address, e.g. name@example.com';
@@ -338,6 +514,7 @@
         if (input.type === 'tel' && value.replace(/\D/g, '').length < 6) {
             return 'Enter a phone number we can reach you on.';
         }
+        if (input === zipEl) return zipMessage(value);
         return '';
     }
 
@@ -403,4 +580,52 @@
     });
 })();
 </script>
+
+{{-- ── Meta Pixel InitiateCheckout ──────────────────────────────────────────
+     Fires on /checkout only. The Stripe step (checkout-stripe.blade.php) is the
+     second half of the same checkout, so firing there as well would report two
+     initiations for every card payment and halve the measured checkout→purchase
+     rate.
+
+     value is the cart subtotal, which is what the visitor has committed to at
+     this point — shipping has not been chosen yet (it defaults to free), so
+     folding it in would report a number the buyer never saw.
+
+     content_ids uses product ids to match ViewContent and Purchase. A cart can
+     hold the same product in two colours as separate lines, so the ids are
+     de-duplicated for content_ids while contents[] keeps each line intact —
+     Meta rejects a content_ids array with repeats.
+
+     Per-page-load flag, not sessionStorage: returning to checkout after
+     abandoning is a genuine second initiation and should be counted. --}}
+@php
+    $icContents = collect($cartItems)->map(fn ($line) => [
+        'id'         => (string) $line['id'],
+        'quantity'   => (int) $line['qty'],
+        'item_price' => round((float) $line['price'], 2),
+    ])->values()->all();
+
+    $icContentIds = array_values(array_unique(array_column($icContents, 'id')));
+    $icNames      = collect($cartItems)->pluck('name')->filter()->unique()->values()->all();
+    $icNumItems   = array_sum(array_column($icContents, 'quantity'));
+@endphp
+@if (!empty($icContents) && (float) $cartTotal > 0)
+<script>
+(function () {
+    if (typeof fbq !== 'function') return;
+    if (window.__pgMetaInitiateCheckoutFired) return;
+    window.__pgMetaInitiateCheckoutFired = true;
+
+    fbq('track', 'InitiateCheckout', {
+        content_type: 'product',
+        content_ids:  {!! json_encode($icContentIds, JSON_UNESCAPED_SLASHES) !!},
+        content_name: @json(implode(', ', $icNames)),
+        contents:     {!! json_encode($icContents, JSON_UNESCAPED_SLASHES) !!},
+        num_items:    {{ (int) $icNumItems }},
+        value:        {{ number_format((float) $cartTotal, 2, '.', '') }},
+        currency:     @json(config('services.meta.currency', 'USD'))
+    });
+})();
+</script>
+@endif
 @endpush

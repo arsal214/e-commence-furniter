@@ -44,18 +44,37 @@ class HomeController extends Controller
                                    ->take(6)
                                    ->get();
         $flashDeal = FlashDeal::current();
-        return view('index', compact('sliders', 'featuredProducts', 'newProducts', 'bestSellers', 'categories', 'flashDeal'));
+
+        // Homepage reviews come from product_reviews, same as /about. The slider
+        // renders an empty state when there are none — it never invents any.
+        [$customerReviews, $reviewsVerified] = $this->publishedReviews(8);
+
+        return view('index', compact(
+            'sliders', 'featuredProducts', 'newProducts', 'bestSellers',
+            'categories', 'flashDeal', 'customerReviews', 'reviewsVerified',
+        ));
     }
 
-    public function about()
+    /**
+     * Real customer reviews worth showing, plus a lookup of which ones came from
+     * a genuine purchase.
+     *
+     * Shared by the homepage slider and the about page so the two cannot drift
+     * into telling different stories about the same reviews — and so there is
+     * exactly one definition of what the site is willing to present as a
+     * customer opinion. Nothing here is fabricated: an empty result renders an
+     * empty state rather than filler.
+     *
+     * @return array{0: \Illuminate\Support\Collection, 1: array<string, int>}
+     */
+    protected function publishedReviews(int $limit = 8): array
     {
-        // Real reviews with something to say — no fabricated testimonials.
         $reviews = Review::with(['user:id,name', 'product:id,name,slug'])
             ->whereNotNull('comment')
             ->where('comment', '!=', '')
             ->where('rating', '>=', 4)
             ->latest()
-            ->take(6)
+            ->take($limit)
             ->get();
 
         // A review is only "verified" if that customer actually bought that product.
@@ -72,6 +91,13 @@ class HomeController extends Controller
                 ->flip()
                 ->toArray();
         }
+
+        return [$reviews, $verified];
+    }
+
+    public function about()
+    {
+        [$reviews, $verified] = $this->publishedReviews(6);
 
         return view('about', [
             // Counts are stated as fact on the page, so read them, don't hardcode them.
@@ -207,11 +233,6 @@ class HomeController extends Controller
         }
 
         return view('track-order', compact('order'));
-    }
-
-    public function shippingMethod()
-    {
-        return view('shipping-method');  
     }
 
     public function paymentMethod()

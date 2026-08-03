@@ -23,7 +23,7 @@ $services = [
         'title' => "Customer Support",
         'desc' => "Our dedicated customer support team is here to assist you every step of the way. Reach out to us anytime for prompt, friendly help.",
         'data' => "400",
-        'email' => "support@peytonghalib.com",
+        'email' => "info@peytonghalib.com",
     ]
 ];
 @endphp

@@ -47,11 +47,11 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Priv
         <h3>Data Security</h3>
         <p>All transactions are protected by SSL encryption. We do not store your full card details. Payments are processed securely via Stripe, a PCI-DSS certified provider.</p>
         <h3>Your Rights</h3>
-        <p>You have the right to access, correct, or delete your personal data at any time. Email <a href="mailto:support@peytonghalib.com">support@peytonghalib.com</a> to make a request.</p>
+        <p>You have the right to access, correct, or delete your personal data at any time. Email <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a> to make a request.</p>
         <h3>Cookies</h3>
         <p>We use essential cookies for the shopping cart and authentication. Analytics cookies are used (anonymised) to improve site performance.</p>
         <h3>Contact</h3>
-        <p>For privacy concerns, contact our Data Protection Officer at <a href="mailto:support@peytonghalib.com">support@peytonghalib.com</a>.</p>
+        <p>For privacy concerns, contact our Data Protection Officer at <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a>.</p>
         <p class="text-sm text-gray-400">Last updated: June 2026</p>
     </div></div>
 </section>

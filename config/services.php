@@ -49,6 +49,9 @@ return [
         'enabled'      => env('TIKTOK_EVENTS_ENABLED', true),
     ],
 
+    // Browser pixel only — there is no server-side Conversions API integration.
+    // These two keys are all the fbq() snippets in layouts/main, layouts/no-header
+    // and the event templates read.
     'meta' => [
         'pixel_id' => env('META_PIXEL_ID', '1675737636873475'),
         // Every fbq event that carries a value must declare the same currency the

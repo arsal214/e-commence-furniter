@@ -5,40 +5,68 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 
 /**
- * Splits DataTables out of the concatenated theme bundle.
+ * Rebuilds public/assets/js/scripts.js without the vendor libraries nothing on
+ * this site uses.
  *
- * public/assets/js/scripts.js ships jQuery, Bootstrap, DataTables (+9 of its
- * extensions), imagesLoaded, Magnific Popup, Owl, AOS, Isotope, slick and the
- * theme's own init code as one 899 KB file loaded on every page. DataTables
- * alone is 328 KB of that, and the only thing on the entire site that touches
- * it is one call against #cart-table — a selector that matches nothing. It is
- * a leftover from the purchased template's demo markup: the real cart view
- * (resources/views/cart.blade.php) has no table with that id, so the call has
- * always been a no-op and the library has always been dead weight.
+ * The purchased theme ships one hand-concatenated 899 KB bundle on every page.
+ * Auditing every library's init selector against all 134 blade templates showed
+ * that most of it is never reachable:
  *
- * The block is therefore lifted out to vendor-datatables.js, which no layout
- * loads. The file is kept rather than deleted so that reinstating DataTables is
- * a one-line <script> tag if a future admin grid ever wants it.
+ *   Bootstrap 4 + Popper   ~50 KB   zero data-toggle hooks, zero component calls
+ *   DataTables + 9 exts    ~329 KB  only call is #cart-table, which does not exist
+ *   imagesLoaded + Isotope  ~40 KB  .portfolio1/2-isotope, .shop-isotope, .bestSeller-isotope: none exist
+ *   Magnific Popup          ~20 KB  .popup-image / .popup-video: neither exists
+ *   jQuery UI 1.11.2       ~233 KB  only call is #slider-container, which does not exist
  *
- * This is generated rather than hand-edited so that re-running it after a theme
- * update reproduces the split exactly. The cut points are located by unique
- * string markers, never by byte offset, and the command refuses to write
- * anything if a marker is missing or ambiguous.
+ * They are removed as two contiguous banner-delimited ranges. What survives is
+ * jQuery, Nice Select (9 templates have <select>), Owl Carousel (6 templates),
+ * AOS, slick and the theme's own init code.
+ *
+ * The theme's init object still calls the removed plugins unconditionally, so
+ * no-op shims are appended rather than patching each call site — one small
+ * addition is far less fragile than string-matching a dozen minified callers,
+ * and it keeps working if the theme adds another dead call later.
+ *
+ * Generated, never hand-edited: re-running after a theme update reproduces the
+ * result exactly. Cut points are located by unique string markers and the
+ * command aborts if any marker is missing or ambiguous.
  */
 class SplitVendorScripts extends Command
 {
-    protected $signature = 'assets:split-vendor {--check : Verify the outputs are current without rewriting them}';
+    protected $signature = 'assets:split-vendor {--check : Verify the output is current without rewriting it}';
 
-    protected $description = 'Split DataTables out of scripts.js into a cart-only bundle';
+    protected $description = 'Rebuild scripts.slim.js without unused vendor libraries';
 
-    /** Start of the DataTables core UMD block (its first SpryMedia banner). */
-    private const DT_START = "/*!\n   Copyright 2008-2021 SpryMedia Ltd.";
+    /**
+     * Contiguous [start, end) ranges to drop. Each end marker is the start of
+     * the next library that is kept, so every cut lands on a banner boundary
+     * immediately after a complete statement.
+     */
+    private const DEAD_RANGES = [
+        // Bootstrap -> DataTables -> imagesLoaded/Isotope -> Magnific Popup.
+        // Ends at Nice Select, which is kept.
+        'Bootstrap, DataTables, Isotope, Magnific' => [
+            "/*!\n  * Bootstrap v4.1.1",
+            '/*  jQuery Nice Select - v1.0',
+        ],
+        // jQuery UI, ending at Owl Carousel, which is kept.
+        'jQuery UI' => [
+            '/*! jQuery UI - v1.11.2',
+            "/**\n * Owl Carousel v2.3.3",
+        ],
+    ];
 
-    /** First thing after the last DataTables extension. */
-    private const DT_END = "/*!\n * imagesLoaded PACKAGED v5.0.0";
-
-    /** The one site call into DataTables, in the theme's init object. */
-    private const CART_INIT = "\$('#cart-table', ).DataTable(";
+    /**
+     * jQuery plugins the theme calls but that no longer exist.
+     *
+     * imagesLoaded is special-cased: the theme chains .progress() off its
+     * return value, so a plain `return this` shim would throw where the others
+     * would not.
+     */
+    private const SHIMMED_PLUGINS = [
+        'DataTable', 'dataTable', 'isotope', 'magnificPopup', 'slider',
+        'modal', 'tooltip', 'popover', 'collapse', 'dropdown', 'carousel', 'tab',
+    ];
 
     public function handle(): int
     {
@@ -51,76 +79,131 @@ class SplitVendorScripts extends Command
         }
 
         $js = file_get_contents($source);
+        $original = strlen($js);
 
-        foreach ([
-            'DataTables block start' => self::DT_START,
-            'DataTables block end' => self::DT_END,
-            'cart DataTable init' => self::CART_INIT,
-        ] as $label => $marker) {
-            $hits = substr_count($js, $marker);
+        // Resolve every range against the untouched source first, so removing
+        // one range cannot shift the offsets used to find another.
+        $cuts = [];
 
-            if ($hits !== 1) {
-                $this->error("Expected exactly 1 occurrence of the {$label} marker, found {$hits}.");
-                $this->line('The theme bundle has changed shape — re-derive the markers before splitting.');
+        foreach (self::DEAD_RANGES as $label => [$startMarker, $endMarker]) {
+            foreach ([[$startMarker, 'start'], [$endMarker, 'end']] as [$marker, $which]) {
+                $hits = substr_count($js, $marker);
+
+                if ($hits !== 1) {
+                    $this->error("{$label}: expected 1 occurrence of the {$which} marker, found {$hits}.");
+                    $this->line('The theme bundle has changed shape — re-derive the markers before stripping.');
+
+                    return self::FAILURE;
+                }
+            }
+
+            $start = strpos($js, $startMarker);
+            $end = strpos($js, $endMarker);
+
+            if ($start >= $end) {
+                $this->error("{$label}: end marker precedes start marker.");
 
                 return self::FAILURE;
             }
+
+            $cuts[] = ['label' => $label, 'start' => $start, 'end' => $end];
         }
 
-        $start = strpos($js, self::DT_START);
-        $end = strpos($js, self::DT_END);
+        // Apply back to front so earlier offsets stay valid.
+        usort($cuts, fn ($a, $b) => $b['start'] <=> $a['start']);
 
-        if ($start >= $end) {
-            $this->error('DataTables end marker precedes its start marker.');
+        $slim = $js;
+        $report = [];
 
-            return self::FAILURE;
+        foreach ($cuts as $cut) {
+            $report[] = sprintf('  -%s KB  %s', number_format(($cut['end'] - $cut['start']) / 1024), $cut['label']);
+            $slim = substr($slim, 0, $cut['start']).substr($slim, $cut['end']);
         }
 
-        $dataTables = substr($js, $start, $end - $start);
-        $slim = substr($js, 0, $start).substr($js, $end);
-
-        // With DataTables gone, $.fn.DataTable is undefined on every page except
-        // the cart. An unguarded call would throw inside the theme's init chain
-        // and take every init after it down with it, so gate the call rather
-        // than remove it — the cart still loads DataTables and still sorts.
-        $slim = str_replace(
-            self::CART_INIT,
-            '$.fn.DataTable && '.self::CART_INIT,
-            $slim
-        );
+        // The shims must be defined before any theme code runs, not appended at
+        // EOF: the theme's init chain executes partway through this bundle, so a
+        // shim at the end is only reached if the chain did not throw — exactly
+        // the case it exists to prevent. The earliest cut sits immediately after
+        // jQuery core, which is the first point where $.fn is available.
+        $insertAt = end($cuts)['start'];
+        $slim = substr($slim, 0, $insertAt).$this->shims().substr($slim, $insertAt);
 
         $slimPath = public_path('assets/js/scripts.slim.js');
-        $dtPath = public_path('assets/js/vendor-datatables.js');
 
         if ($this->option('check')) {
-            $current = is_file($slimPath) && file_get_contents($slimPath) === $slim
-                && is_file($dtPath) && file_get_contents($dtPath) === $dataTables;
-
-            if ($current) {
-                $this->info('Split outputs are up to date.');
+            if (is_file($slimPath) && file_get_contents($slimPath) === $slim) {
+                $this->info('scripts.slim.js is up to date.');
 
                 return self::SUCCESS;
             }
 
-            $this->error('Split outputs are stale — run: php artisan assets:split-vendor');
+            $this->error('scripts.slim.js is stale — run: php artisan assets:split-vendor');
 
             return self::FAILURE;
         }
 
         file_put_contents($slimPath, $slim);
-        file_put_contents($dtPath, $dataTables);
 
+        // The DataTables-only artefact from the previous iteration of this
+        // command is now covered by the ranges above.
+        $stale = public_path('assets/js/vendor-datatables.js');
+
+        if (is_file($stale)) {
+            unlink($stale);
+        }
+
+        foreach (array_reverse($report) as $line) {
+            $this->line($line);
+        }
+
+        $this->newLine();
         $this->info(sprintf(
-            'scripts.js %s KB  ->  scripts.slim.js %s KB  +  vendor-datatables.js %s KB',
-            number_format(strlen($js) / 1024),
+            'scripts.js %s KB  ->  scripts.slim.js %s KB  (%s%% smaller)',
+            number_format($original / 1024),
             number_format(strlen($slim) / 1024),
-            number_format(strlen($dataTables) / 1024)
-        ));
-        $this->line(sprintf(
-            '  %s KB removed from every non-cart page.',
-            number_format((strlen($js) - strlen($slim)) / 1024)
+            number_format((1 - strlen($slim) / $original) * 100, 1)
         ));
 
         return self::SUCCESS;
+    }
+
+    private function shims(): string
+    {
+        $plugins = json_encode(self::SHIMMED_PLUGINS);
+
+        return <<<JS
+
+
+/* ── Removed-plugin shims (generated by `php artisan assets:split-vendor`) ──
+   Bootstrap, DataTables, Isotope, Magnific Popup and jQuery UI were stripped
+   from this bundle because nothing on the site uses them. The theme's init
+   object still calls them unconditionally, and an undefined jQuery plugin
+   throws — which would abort the whole init chain and take the carousels and
+   AOS down with it. These no-ops keep every call harmless and chainable. */
+(function (\$) {
+    if (!\$ || !\$.fn) return;
+
+    {$plugins}.forEach(function (name) {
+        if (!\$.fn[name]) {
+            \$.fn[name] = function () { return this; };
+        }
+    });
+
+    // The theme chains .progress() off imagesLoaded(), so this one has to
+    // return a thenable-shaped object rather than the jQuery set.
+    if (!\$.fn.imagesLoaded) {
+        \$.fn.imagesLoaded = function () {
+            var chain = {
+                progress: function () { return chain; },
+                always: function (fn) { if (typeof fn === 'function') { fn(); } return chain; },
+                done: function (fn) { if (typeof fn === 'function') { fn(); } return chain; },
+                fail: function () { return chain; }
+            };
+            return chain;
+        };
+    }
+})(window.jQuery);
+
+JS;
     }
 }

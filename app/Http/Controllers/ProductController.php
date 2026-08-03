@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Services\TikTokEventsService;
+use App\Support\DeliveryEstimate;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -83,7 +84,9 @@ class ProductController extends Controller
 
         $this->trackViewContent($item, $request);
 
-        return view('product-details', compact('item', 'newProducts'));
+        $delivery = DeliveryEstimate::window();
+
+        return view('product-details', compact('item', 'newProducts', 'delivery'));
     }
 
     protected function trackViewContent(Product $item, Request $request): void

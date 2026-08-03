@@ -270,6 +270,31 @@
     display: block;
 }
 
+/* ── Zoom ──
+   The scale goes on the <img>, never on .pd-slides: that track carries the
+   translateX the carousel animates, and a second transform on the same element
+   would overwrite it. .pd-main-wrap already clips (overflow:hidden), so the
+   magnified image stays inside the frame.
+   Only <img> is targeted — a <video> shares .pd-slide-img but must not zoom,
+   since scaling it would put its own controls out of reach. */
+img.pd-slide-img {
+    transition: transform .25s ease;
+    cursor: zoom-in;
+}
+img.pd-slide-img.is-zoomed {
+    cursor: zoom-out;
+    will-change: transform;
+}
+/* Inset offset: .pd-main-wrap clips with overflow:hidden, so an outward ring
+   on an inset:0 image would be cut off and invisible. */
+img.pd-slide-img:focus-visible {
+    outline: 3px solid #bb976d;
+    outline-offset: -3px;
+}
+@media (prefers-reduced-motion: reduce) {
+    img.pd-slide-img { transition: none; }
+}
+
 /* Thumbnail strip */
 .pd-thumbs {
     display: flex; gap: 10px;
@@ -278,21 +303,32 @@
     -webkit-overflow-scrolling: touch;
 }
 .pd-thumbs::-webkit-scrollbar { display: none; }
+/* Thumbs are <button> now rather than bare <img>/<div>, so the strip is
+   reachable by keyboard. The box is reset to look exactly as it did before —
+   the visual design is unchanged, only the semantics are. */
 .pd-thumb {
     width: 76px; height: 76px; min-width: 76px;
-    object-fit: cover; cursor: pointer;
+    cursor: pointer;
     border-radius: 10px;
     border: 2.5px solid transparent;
     outline: 1px solid #e5e7eb;
     transition: border-color .2s, outline-color .2s, opacity .2s;
     opacity: .7;
+    padding: 0;
+    background: none;
+    overflow: hidden;
 }
+.pd-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pd-thumb:hover { opacity: .9; border-color: #d1b896; outline-color: #d1b896; }
 .pd-thumb.active { border-color: #bb976d; outline-color: #bb976d; opacity: 1; }
+/* Without this the strip is tabbable but gives no sign of where focus is. */
+.pd-thumb:focus-visible { outline: 2px solid #bb976d; outline-offset: 2px; opacity: 1; }
 .pd-thumb-video {
     display: flex; align-items: center; justify-content: center;
     background: #172430; color: #fff; font-size: 22px;
 }
+.pd-dot { border: none; padding: 0; }
+.pd-dot:focus-visible { outline: 2px solid #bb976d; outline-offset: 3px; }
 
 /* Right: info card */
 .pd-info-col {
@@ -364,6 +400,21 @@
     display: flex; flex-direction: column; align-items: center; gap: 6px;
 }
 .pd-trust-item span { font-size: 10.5px; color: #666; line-height: 1.35; }
+
+/* Delivery estimate — same cream tile language as .pd-trust-item, laid out as a
+   row because the date needs room to breathe and must not wrap mid-range. */
+.pd-delivery {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: #f9f7f4;
+    border: 1px solid #ede8e0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 16px;
+}
+.pd-delivery svg { flex: none; margin-top: 1px; }
+.pd-delivery__head { font-size: 13px; color: #2b2b2b; line-height: 1.45; margin: 0; }
+.pd-delivery__head strong { color: #8a6a3f; font-weight: 600; white-space: nowrap; }
+.pd-delivery__sub  { font-size: 11.5px; color: #777; line-height: 1.4; margin: 3px 0 0; }
 
 /* Variant pills */
 .pd-variant-pill {
@@ -439,17 +490,42 @@
                         {{-- Slides --}}
                         <div id="pd-slides" class="pd-slides">
                             @foreach($galleryImages as $ti => $slide)
-                            <div class="pd-slide">
+                            <div class="pd-slide" role="group" aria-roledescription="slide"
+                                 aria-label="Image {{ $ti + 1 }} of {{ $galleryImages->count() }}">
                                 @if($slide['type'] === 'video')
                                 <video src="{{ $slide['src'] }}" class="pd-slide-img" controls playsinline muted loop preload="metadata"></video>
                                 @else
+                                {{-- Slide 0 is this page's LCP element: never lazy, and flagged
+                                     high so it is fetched ahead of everything else. Every other
+                                     slide sits off-screen behind a transform, so eager-loading
+                                     them only stole bandwidth from the one image the customer
+                                     can actually see. --}}
+                                {{-- role/tabindex rather than a <button> wrapper: the image is
+                                     position:absolute inset:0 inside the slide, so wrapping it
+                                     would break that layout. The label keeps the product name
+                                     so nothing the alt conveyed is lost, and adds the action.
+                                     Only the visible slide is in the tab order — goTo() moves
+                                     the 0 as slides change (roving tabindex), otherwise Tab
+                                     would walk through images nobody can see. --}}
                                 <img src="{{ $slide['src'] }}"
                                      alt="{{ $item->name }} image {{ $ti + 1 }}"
-                                     class="pd-slide-img">
+                                     class="pd-slide-img"
+                                     role="button"
+                                     tabindex="{{ $ti === 0 ? '0' : '-1' }}"
+                                     aria-pressed="false"
+                                     aria-label="Zoom {{ $item->name }} image {{ $ti + 1 }}"
+                                     @if($ti === 0) fetchpriority="high" @else loading="lazy" @endif
+                                     decoding="async">
                                 @endif
                             </div>
                             @endforeach
                         </div>
+
+                        {{-- Screen readers get no notice of a transform-based slide change,
+                             so the current position is announced here instead. --}}
+                        <p id="pd-slide-status" class="sr-only" role="status" aria-live="polite">
+                            Image 1 of {{ $galleryImages->count() }}
+                        </p>
 
                         {{-- Prev arrow --}}
                         <button id="pd-prev" aria-label="Previous image"
@@ -477,28 +553,35 @@
                         @if($galleryImages->count() > 1)
                         <div id="pd-dots" style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:10;">
                             @foreach($galleryImages as $ti => $src)
-                            <span class="pd-dot" data-index="{{ $ti }}"
-                                  style="width:{{ $ti===0?'20px':'8px' }};height:8px;border-radius:50px;cursor:pointer;transition:all .3s;
-                                         background:{{ $ti===0?'#bb976d':'rgba(255,255,255,.7)' }};"></span>
+                            <button type="button" class="pd-dot" data-index="{{ $ti }}"
+                                    aria-label="Show image {{ $ti + 1 }}"
+                                    @if($ti === 0) aria-current="true" @endif
+                                    style="width:{{ $ti===0?'20px':'8px' }};height:8px;border-radius:50px;cursor:pointer;transition:all .3s;
+                                           background:{{ $ti===0?'#bb976d':'rgba(255,255,255,.7)' }};"></button>
                             @endforeach
                         </div>
                         @endif
                     </div>
 
-                    {{-- Thumbnail strip --}}
-                    <div class="pd-thumbs">
+                    {{-- Thumbnail strip.
+                         Real <button>s: these were an <img> and a <div> with click
+                         handlers, so a keyboard user could never reach them — the
+                         prev/next arrows were the only way through the gallery.
+                         The alt is empty because the button already carries the
+                         label; leaving both makes screen readers say it twice. --}}
+                    <div class="pd-thumbs" aria-label="Product image thumbnails">
                         @foreach($galleryImages as $ti => $slide)
-                        @if($slide['type'] === 'video')
-                        <div class="pd-thumb pd-thumb-video {{ $ti === 0 ? 'active' : '' }}"
-                             data-index="{{ $ti }}" role="button" aria-label="Play video">
-                            <i class="mdi mdi-play"></i>
-                        </div>
-                        @else
-                        <img src="{{ $slide['src'] }}"
-                             class="pd-thumb {{ $ti === 0 ? 'active' : '' }}"
-                             data-index="{{ $ti }}"
-                             alt="{{ $item->name }} image {{ $ti + 1 }}">
-                        @endif
+                        <button type="button"
+                                class="pd-thumb {{ $slide['type'] === 'video' ? 'pd-thumb-video' : '' }} {{ $ti === 0 ? 'active' : '' }}"
+                                data-index="{{ $ti }}"
+                                @if($ti === 0) aria-current="true" @endif
+                                aria-label="{{ $slide['type'] === 'video' ? 'Show product video' : 'Show image ' . ($ti + 1) }}">
+                            @if($slide['type'] === 'video')
+                            <i class="mdi mdi-play" aria-hidden="true"></i>
+                            @else
+                            <img src="{{ $slide['src'] }}" alt="" loading="lazy" decoding="async">
+                            @endif
+                        </button>
                         @endforeach
                     </div>
                 </div>
@@ -690,6 +773,30 @@
                         </div>
                     </form>
 
+                    {{-- Delivery estimate.
+                         Dates are computed from config('checkout.delivery') — the
+                         same numbers the shipping policy page renders — so the
+                         window quoted here can never contradict the policy.
+                         Worded as an estimate, not a guarantee: business days skip
+                         weekends but not public holidays (see DeliveryEstimate). --}}
+                    <div class="pd-delivery">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                        </svg>
+                        <div>
+                            <p class="pd-delivery__head">
+                                Free delivery, estimated
+                                <strong>{{ $delivery['earliest']->format('D j M') }}</strong>
+                                @unless($delivery['earliest']->isSameDay($delivery['latest']))
+                                    – <strong>{{ $delivery['latest']->format('D j M') }}</strong>
+                                @endunless
+                            </p>
+                            <p class="pd-delivery__sub">
+                                {{ $delivery['min_days'] }}–{{ $delivery['max_days'] }} business days · Free on every order, no minimum
+                            </p>
+                        </div>
+                    </div>
+
                     {{-- 3 trust tiles --}}
                     <div class="pd-trust-row">
                         <div class="pd-trust-item">
@@ -792,20 +899,36 @@
     var slides   = document.getElementById('pd-slides');
     var thumbs   = document.querySelectorAll('.pd-thumb');
     var dots     = document.querySelectorAll('.pd-dot');
-    var total    = thumbs.length;
+    var status   = document.getElementById('pd-slide-status');
+    // Counted from the slides themselves rather than the thumbs: the slides are
+    // what goTo actually moves, so anything that changes one strip without the
+    // other can no longer put the index out of range.
+    var total    = slides ? slides.children.length : 0;
     var current  = 0;
 
     function goTo(idx) {
         if(total === 0) return;
+
+        // Drop any zoom before moving. Without this a magnified image stays
+        // magnified as the track slides, so the next photo arrives already
+        // scaled and off-centre — and on touch it would stay that way with no
+        // hover-out to release it.
+        clearAllZoom();
+
         current = (idx + total) % total;
         if(slides) slides.style.transform = 'translateX(-' + (current * 100) + '%)';
 
         // Pause any gallery video left behind so it doesn't keep playing off-screen,
         // then autoplay the one on the slide we just landed on (if any). Muted, since
-        // the 3s auto-swipe timer isn't a user gesture and unmuted autoplay would be
-        // blocked by the browser without one.
+        // autoplay without a user gesture is blocked by the browser otherwise.
         if(slides) {
             Array.prototype.forEach.call(slides.children, function(slideEl, i){
+                // Roving tabindex: only the visible slide's image is reachable by
+                // Tab. Leaving every image at 0 would make a keyboard user tab
+                // through each off-screen photo to get past the gallery.
+                var im = slideEl.querySelector('img.pd-slide-img');
+                if (im) im.tabIndex = (i === current) ? 0 : -1;
+
                 var v = slideEl.querySelector('video');
                 if (!v) return;
                 if (i === current) {
@@ -820,13 +943,19 @@
         // sync thumbs
         thumbs.forEach(function(t, i){
             t.classList.toggle('active', i === current);
+            if (i === current) { t.setAttribute('aria-current', 'true'); }
+            else               { t.removeAttribute('aria-current'); }
         });
 
         // sync dots
         dots.forEach(function(d, i){
             d.style.width       = i === current ? '20px' : '8px';
             d.style.background  = i === current ? '#bb976d' : 'rgba(255,255,255,.7)';
+            if (i === current) { d.setAttribute('aria-current', 'true'); }
+            else               { d.removeAttribute('aria-current'); }
         });
+
+        if (status) status.textContent = 'Image ' + (current + 1) + ' of ' + total;
     }
 
     var prevBtn = document.getElementById('pd-prev');
@@ -848,22 +977,183 @@
     var startX = 0;
     var carousel = document.getElementById('pd-carousel');
     if(carousel){
-        carousel.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; pauseAuto(); }, {passive:true});
+        carousel.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; }, {passive:true});
         carousel.addEventListener('touchend', function(e){
             var diff = startX - e.changedTouches[0].clientX;
             if(Math.abs(diff) > 40) goTo(diff > 0 ? current + 1 : current - 1);
-            resumeAuto();
         }, {passive:true});
-        carousel.addEventListener('mouseenter', pauseAuto);
-        carousel.addEventListener('mouseleave', resumeAuto);
     }
 
-    // ── Auto-swipe every 3 seconds ──
-    var autoTimer;
-    function startAuto(){ autoTimer = setInterval(function(){ goTo(current + 1); }, 3000); }
-    function pauseAuto(){ clearInterval(autoTimer); }
-    function resumeAuto(){ pauseAuto(); startAuto(); }
-    if(total > 1) startAuto();
+    // Arrow keys once focus is anywhere in the gallery. Bound to the thumb strip
+    // as well as the carousel: the strip is a sibling of the carousel, not a
+    // child, so a keydown on a focused thumbnail never reaches the carousel.
+    function onGalleryKey(e){
+        var img    = currentZoomable();
+        var zoomed = !!(img && img.classList.contains('is-zoomed'));
+
+        // Enter/Space toggles zoom, but only while the image itself has focus —
+        // otherwise Space on a focused thumbnail would zoom instead of
+        // activating that thumbnail.
+        if ((e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') && e.target === img) {
+            e.preventDefault();
+            if (zoomed) {
+                clearZoom(img);
+                announce('Zoom off.');
+            } else {
+                // Centre, because there is no pointer to take a position from.
+                setZoom(img, 50, 50);
+                announce('Zoomed in. Arrow keys pan, Escape exits.');
+            }
+            return;
+        }
+
+        if (e.key === 'Escape' && zoomed) {
+            e.preventDefault();
+            clearZoom(img);
+            announce('Zoom off.');
+            return;
+        }
+
+        // While zoomed the arrows pan the magnified image rather than changing
+        // slide — moving to another photo mid-inspection is never what someone
+        // examining detail is asking for. Escape or toggling off returns the
+        // arrows to slide navigation.
+        if (zoomed) {
+            var STEP = 10;
+            switch (e.key) {
+                case 'ArrowLeft':  e.preventDefault(); panZoom(img, -STEP, 0); return;
+                case 'ArrowRight': e.preventDefault(); panZoom(img,  STEP, 0); return;
+                case 'ArrowUp':    e.preventDefault(); panZoom(img, 0, -STEP); return;
+                case 'ArrowDown':  e.preventDefault(); panZoom(img, 0,  STEP); return;
+            }
+        }
+
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(current - 1); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); goTo(current + 1); }
+    }
+    var thumbStrip = document.querySelector('.pd-thumbs');
+    if (carousel)   carousel.addEventListener('keydown', onGalleryKey);
+    if (thumbStrip) thumbStrip.addEventListener('keydown', onGalleryKey);
+
+    // ── Zoom ──
+    // Desktop pans the magnified image under the cursor; touch has no hover, so
+    // there it is a tap-to-toggle instead. Both drive the same scale/origin pair,
+    // so there is one behaviour to reason about rather than two.
+    var ZOOM_SCALE  = 2.5;
+    var finePointer = window.matchMedia
+        ? window.matchMedia('(hover: hover) and (pointer: fine)').matches
+        : false;
+
+    // <video> is excluded by the selector, not by a branch — a zoomed video
+    // would push its own controls outside the frame.
+    function currentZoomable(){
+        var slide = slides && slides.children[current];
+        return slide ? slide.querySelector('img.pd-slide-img') : null;
+    }
+
+    // Spoken feedback for actions that change nothing visible to a screen reader.
+    // Only the keyboard path calls this: hover-zoom fires on every mousemove and
+    // would turn the live region into a stream of noise.
+    function announce(msg){
+        if (status) status.textContent = msg;
+    }
+
+    function clampPct(n){ return Math.max(0, Math.min(100, n)); }
+
+    // The one place zoom is switched on. Pointer, touch and keyboard all end up
+    // here, so there is a single definition of "zoomed" rather than three that
+    // can drift. The origin is stashed on the element because keyboard panning
+    // needs somewhere to read the current position back from — a pointer always
+    // supplies a fresh coordinate, a key press does not.
+    function setZoom(img, xPct, yPct){
+        if (!img) return;
+        var x = clampPct(xPct);
+        var y = clampPct(yPct);
+
+        img.style.transformOrigin = x + '% ' + y + '%';
+        img.style.transform       = 'scale(' + ZOOM_SCALE + ')';
+        img.classList.add('is-zoomed');
+        img.setAttribute('aria-pressed', 'true');
+        img.dataset.zx = x;
+        img.dataset.zy = y;
+    }
+
+    function applyZoom(img, clientX, clientY){
+        if (!img || !carousel) return;
+        var rect = carousel.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+
+        // Clamped inside setZoom: a pointer leaving the box mid-drag would
+        // otherwise produce an origin outside 0–100% and throw the image off.
+        setZoom(
+            img,
+            ((clientX - rect.left) / rect.width)  * 100,
+            ((clientY - rect.top)  / rect.height) * 100
+        );
+    }
+
+    // Keyboard has no pointer to follow, so it nudges the stored origin instead.
+    function panZoom(img, dx, dy){
+        if (!img) return;
+        setZoom(img, Number(img.dataset.zx || 50) + dx, Number(img.dataset.zy || 50) + dy);
+    }
+
+    function clearZoom(img){
+        if (!img) return;
+        img.style.transform       = '';
+        img.style.transformOrigin = '';
+        img.classList.remove('is-zoomed');
+        img.setAttribute('aria-pressed', 'false');
+        delete img.dataset.zx;
+        delete img.dataset.zy;
+    }
+
+    function clearAllZoom(){
+        if (!slides) return;
+        Array.prototype.forEach.call(
+            slides.querySelectorAll('img.pd-slide-img'), clearZoom
+        );
+    }
+
+    if (carousel && finePointer) {
+        carousel.addEventListener('mousemove', function(e){
+            applyZoom(currentZoomable(), e.clientX, e.clientY);
+        });
+        carousel.addEventListener('mouseleave', clearAllZoom);
+    }
+
+    if (carousel && !finePointer) {
+        carousel.addEventListener('click', function(e){
+            // The arrows and dots live inside the carousel; a tap on one of them
+            // is navigation, not a zoom request.
+            if (e.target.closest('button')) return;
+
+            var img = currentZoomable();
+            if (!img) return;
+            if (img.classList.contains('is-zoomed')) clearZoom(img);
+            else applyZoom(img, e.clientX, e.clientY);
+        });
+    }
+
+    // Losing focus releases the zoom. The pointer path has mouseleave to undo
+    // itself; the keyboard path has nothing, so tabbing onward would strand the
+    // image magnified behind the user.
+    if (slides) {
+        Array.prototype.forEach.call(slides.querySelectorAll('img.pd-slide-img'), function(im){
+            im.addEventListener('blur', function(){ clearZoom(im); });
+        });
+    }
+
+    // ── No auto-swipe ──
+    // The gallery used to advance itself every 3 seconds. Two things were wrong
+    // with that. It defeated the colour swatches: picking a colour jumps to that
+    // colour's photo, but the timer resumed on mouseleave and rotated away from
+    // it within seconds, so the feature only worked if the cursor never left the
+    // image. And it moved a product's photos out from under the customer while
+    // they were looking at them — on a page whose entire job is letting someone
+    // examine the thing before buying it. Hover-pause was the only stop control,
+    // which is no help to keyboard or touch users (WCAG 2.2.2).
+    // The gallery now moves only when the customer moves it.
 
     // ── Qty +/- ──
     var qtyEl = document.getElementById('pd-qty');
@@ -882,10 +1172,11 @@
             if(lbl) lbl.textContent = r.value;
             var hid = document.getElementById('selected-color');
             if(hid) hid.value = r.value;
-            // Jump the slider to this colour's photo, if one is assigned.
+            // Jump the slider to this colour's photo, if one is assigned. No
+            // pause call needed now that nothing moves the gallery on its own —
+            // the chosen colour's photo stays on screen.
             var idx = pdColorImageMap[r.value.toLowerCase().trim()];
             if(typeof idx === 'number'){
-                pauseAuto();
                 goTo(idx);
             }
         });
@@ -1205,10 +1496,24 @@ document.addEventListener('keydown', function(e) {
     function show(el, on) { el.style.display = on ? '' : 'none'; }
 
     function resolve() {
-        // Size wins over colour when both have a variant; else base.
-        return lookup('size', checkedVal('.size-radio'))
-            || lookup('color', checkedVal('.color-radio'))
-            || V.base;
+        var sizeV  = lookup('size',  checkedVal('.size-radio'));
+        var colorV = lookup('color', checkedVal('.color-radio'));
+
+        // PRICE: size wins over colour when both have a variant, else base.
+        // Mirrors Product::effectivePriceFor on the server.
+        var priced = sizeV || colorV || V.base;
+
+        // STOCK: the MINIMUM across every dimension that has a variant — not the
+        // first match. Mirrors Product::effectiveStockFor. Using price's
+        // first-match rule here meant an out-of-stock colour on a product that
+        // also had sizes reported the size's stock, so the badge read "In Stock"
+        // and the button stayed enabled for something with none left.
+        var stocks = [];
+        if (sizeV)  stocks.push(Number(sizeV.stock));
+        if (colorV) stocks.push(Number(colorV.stock));
+        var stock = stocks.length ? Math.min.apply(null, stocks) : Number(V.base.stock);
+
+        return { now: priced.now, was: priced.was, stock: stock };
     }
 
     function apply() {
@@ -1257,4 +1562,45 @@ document.addEventListener('keydown', function(e) {
 </script>
 
 @endsection
+
+{{-- ── Meta Pixel ViewContent ───────────────────────────────────────────────
+     content_ids carries the product id, not the SKU: this store has no catalog
+     SKUs (see TikTokEventsService::contents) and the product feed is keyed on
+     the id, so a SKU here would fail to resolve against the catalog and break
+     dynamic-ads attribution. AddToCart and Purchase use the same id for the
+     same reason — the three events have to agree or Meta cannot follow one
+     product through the funnel.
+
+     The value is the price the page rendered with. The variant picker rewrites
+     the displayed price after load, but ViewContent describes the catalog entry
+     the visitor landed on, not whichever option they click next.
+
+     The guard is a per-page-load flag rather than a sessionStorage lock: a
+     visitor genuinely returning to this product later in the same tab is a real
+     second view, and persisting the lock would silently undercount it. This
+     only stops the same page load from reporting twice. --}}
+@push('scripts')
+<script>
+(function () {
+    if (typeof fbq !== 'function') return;
+    if (window.__pgMetaViewContentFired) return;
+    window.__pgMetaViewContentFired = true;
+
+    var payload = {
+        content_type: 'product',
+        content_ids:  [@json((string) $item->id)],
+        content_name: @json($item->name),
+        value:        {{ number_format((float) $item->effective_price, 2, '.', '') }},
+        currency:     @json(config('services.meta.currency', 'USD'))
+    };
+    @if ($item->category)
+    payload.content_category = @json($item->category->name);
+    @endif
+
+    {{-- Deterministic on the product id so a Conversions API twin added later
+         collapses into this event instead of counting a second view. --}}
+    fbq('track', 'ViewContent', payload, { eventID: @json('ViewContent.product-' . $item->id) });
+})();
+</script>
+@endpush
 

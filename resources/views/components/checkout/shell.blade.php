@@ -119,6 +119,22 @@
 .co-field__input:focus-visible, .co-field__area:focus-visible { border-color: var(--co-gold); box-shadow: 0 0 0 4px rgba(187, 151, 109, .18); }
 .co-field__input[aria-invalid="true"], .co-field__area[aria-invalid="true"] { border-color: var(--co-danger); background: rgba(180, 35, 24, .04); }
 
+/* Selects reuse .co-field__input wholesale so they cannot drift from the text
+   inputs; this only strips the native control and draws the chevron. The arrow
+   is an inline data-URI — the checkout CSP blocks external image hosts. */
+.co-field__select {
+    -webkit-appearance: none; -moz-appearance: none; appearance: none;
+    padding-right: 38px;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%236b7280' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+}
+.co-field__select::-ms-expand { display: none; }
+/* A select renders its options in the OS palette, so the dark-mode fix has to
+   land on the option elements too or the list is white-on-white. */
+.dark .co-field__select option { background: var(--co-field); color: var(--co-text); }
+
 .co-field__error {
     display: none; align-items: center; gap: 5px;
     font-size: 12.5px; font-weight: 500; color: var(--co-danger); margin-top: 6px;

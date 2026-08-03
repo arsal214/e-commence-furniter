@@ -46,7 +46,7 @@ class DeployOptimize extends Command
             // may ship different rendering, so start from a clean slate.
             ['cache:clear', [], 'Flushing application cache'],
 
-            ['assets:split-vendor', [], 'Splitting DataTables out of the theme bundle'],
+            ['assets:split-vendor', [], 'Stripping unused vendor libraries from the theme bundle'],
         ];
 
         if (! $this->option('skip-images')) {

@@ -38,7 +38,13 @@ class CartController extends Controller
         $eff    = 'COALESCE(NULLIF(sale_price, 0), price)';
         $catIds = Product::whereIn('id', $cartIds)->pluck('category_id')->filter()->unique()->values();
 
+        // Only offer what can actually be bought. The tray's "Add" button posts
+        // straight to cart/add with no colour/size, so the stock that governs it
+        // is the product's own — filtering on it here is exactly the check the
+        // add will apply. Without this the tray advertised out-of-stock items and
+        // the add came back as an error, which reads as a broken cart.
         $picks = Product::where('is_active', true)
+            ->where('stock', '>', 0)
             ->whereNotIn('id', $cartIds)
             ->when($catIds->isNotEmpty(), fn ($q) => $q->whereIn('category_id', $catIds))
             ->orderByRaw("$eff ASC")
@@ -49,6 +55,7 @@ class CartController extends Controller
             $exclude = $picks->pluck('id')->merge($cartIds);
             $picks = $picks->merge(
                 Product::where('is_active', true)
+                    ->where('stock', '>', 0)
                     ->whereNotIn('id', $exclude)
                     ->orderByRaw("$eff ASC")
                     ->take(4 - $picks->count())
@@ -74,25 +81,39 @@ class CartController extends Controller
         // Price and stock follow the chosen colour/size (variant when one exists).
         $unitPrice = $product->effectivePriceFor($color, $size);
         $stock     = $product->effectiveStockFor($color, $size);
-        if ($stock > 0) {
-            $inCart = $this->cart->getQty($product->id, $color, $size);
-            if ($inCart >= $stock) {
-                $message = '"' . $product->name . '" is already at the maximum stock quantity (' . $stock . ') in your cart.';
-                if ($request->wantsJson()) {
-                    return response()->json($this->cartPayload('error', $message, $product, 0, $unitPrice), 422);
-                }
-                return back()->with('error', $message);
+
+        // Out of stock is a hard stop, checked before anything else.
+        //
+        // Every cap below used to sit inside an `if ($stock > 0)` wrapper, which
+        // inverted the intent: at exactly zero stock the checks were all skipped
+        // and execution fell straight through to cart->add(). The one case the
+        // cap exists to catch was the one case that bypassed it, so a zero-stock
+        // item could be added in unlimited quantity.
+        if ($stock <= 0) {
+            $message = '"' . $product->name . '" is out of stock.';
+            if ($request->wantsJson()) {
+                return response()->json($this->cartPayload('error', $message, $product, 0, $unitPrice), 422);
             }
-            if ($inCart + $qty > $stock) {
-                $qty = $stock - $inCart;
-                $this->cart->add($product, $qty, $color, $size);
-                $this->trackAddToCart($product, $qty, $request, $unitPrice);
-                $message = 'Only ' . $qty . ' more unit(s) added — stock limit of ' . $stock . ' reached for "' . $product->name . '".';
-                if ($request->wantsJson()) {
-                    return response()->json($this->cartPayload('partial', $message, $product, $qty, $unitPrice));
-                }
-                return back()->with('error', $message);
+            return back()->with('error', $message);
+        }
+
+        $inCart = $this->cart->getQty($product->id, $color, $size);
+        if ($inCart >= $stock) {
+            $message = '"' . $product->name . '" is already at the maximum stock quantity (' . $stock . ') in your cart.';
+            if ($request->wantsJson()) {
+                return response()->json($this->cartPayload('error', $message, $product, 0, $unitPrice), 422);
             }
+            return back()->with('error', $message);
+        }
+        if ($inCart + $qty > $stock) {
+            $qty = $stock - $inCart;
+            $this->cart->add($product, $qty, $color, $size);
+            $this->trackAddToCart($product, $qty, $request, $unitPrice);
+            $message = 'Only ' . $qty . ' more unit(s) added — stock limit of ' . $stock . ' reached for "' . $product->name . '".';
+            if ($request->wantsJson()) {
+                return response()->json($this->cartPayload('partial', $message, $product, $qty, $unitPrice));
+            }
+            return back()->with('error', $message);
         }
 
         $this->cart->add($product, $qty, $color, $size);
@@ -181,8 +202,13 @@ class CartController extends Controller
             $product = Product::find($line['id']);
             if ($product) {
                 // Respect the stock of the exact colour/size in this cart line.
+                // Same inversion as add() had: `$stock > 0 &&` meant a zero-stock
+                // line accepted any quantity at all.
                 $stock = $product->effectiveStockFor($line['color'] ?? null, $line['size'] ?? null);
-                if ($stock > 0 && $qty > $stock) {
+                if ($stock <= 0) {
+                    return back()->with('error', '"' . $product->name . '" is out of stock.');
+                }
+                if ($qty > $stock) {
                     return back()->with('error', 'Only ' . $stock . ' unit(s) of "' . $product->name . '" are in stock.');
                 }
             }

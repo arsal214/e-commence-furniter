@@ -328,14 +328,28 @@ class Product extends Model
     }
 
     /**
-     * Stock available for a colour/size selection, using the same size-over-colour
-     * precedence as pricing. Falls back to the product's own stock.
+     * Stock available for a colour/size selection.
+     *
+     * Deliberately does NOT use the size-over-colour precedence that pricing
+     * uses. Price can reasonably have a winner; availability cannot. A selection
+     * is only available if EVERY dimension of it is, so this takes the minimum
+     * across each dimension that has a matching variant.
+     *
+     * The old first-match version returned the size variant's stock and never
+     * looked at the colour, so picking an out-of-stock colour on a product that
+     * also had sizes reported the size's stock — the page showed "In Stock" and
+     * the colour could be sold while it had none.
+     *
+     * Falls back to the product's own stock when no dimension has a variant.
      */
     public function effectiveStockFor(?string $color, ?string $size = null): int
     {
-        $variant = $this->variantFor('size', $size) ?? $this->variantFor('color', $color);
+        $stocks = collect([
+            $this->variantFor('size', $size),
+            $this->variantFor('color', $color),
+        ])->filter()->map(fn ($v) => (int) $v->stock);
 
-        return $variant ? (int) $variant->stock : (int) $this->stock;
+        return $stocks->isNotEmpty() ? (int) $stocks->min() : (int) $this->stock;
     }
 
     /**

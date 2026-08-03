@@ -342,18 +342,32 @@
         $pixelValue = (float) ($order?->total ?? session('order_total'));
 
         // This store carries no catalog SKUs (see TikTokEventsService::contents),
-        // so content ids fall back to the product id the feed is keyed on.
+        // so content ids are the product id the feed is keyed on. Always the
+        // product id, never the SKU: an order line that happens to carry a SKU
+        // used to emit one here, which matched nothing in the catalog and broke
+        // attribution for exactly the orders that converted. ViewContent,
+        // AddToCart and Purchase must all send the same id for the same product.
         $pixelContents = $order
             ? $order->items->map(fn ($item) => [
-                'id'         => (string) ($item->sku ?: $item->product_id),
+                'id'         => (string) $item->product_id,
                 'quantity'   => (int) $item->qty,
                 'item_price' => (float) $item->price,
             ])->values()->all()
             : [];
 
         // Meta matches the catalog on content_ids; contents[].id alone is not
-        // enough for Advantage+ / dynamic ads to resolve the product.
-        $pixelContentIds = array_column($pixelContents, 'id');
+        // enough for Advantage+ / dynamic ads to resolve the product. Two lines
+        // of the same product (different colour/size) collapse to one id —
+        // a repeated id in content_ids is rejected.
+        $pixelContentIds = array_values(array_unique(array_column($pixelContents, 'id')));
+
+        $pixelNames = $order
+            ? $order->items->pluck('product.name')->filter()->unique()->values()->all()
+            : [];
+
+        // Meta de-duplicates Purchases on transaction_id across browser and
+        // Conversions API, and across a repeat delivery of the same event.
+        $pixelTransactionId = $order?->tracking_number ?: ($order?->id ? 'order-' . $order->id : null);
     @endphp
 {{-- A zero or negative value is rejected by Meta exactly like a missing one, and
      a rejected Purchase counts against the pixel's error rate. Skipping the call
@@ -361,16 +375,33 @@
      without a usable total so the root cause can be chased. --}}
 @if ($pixelValue > 0)
 <script>
-    if (typeof fbq === 'function') {
-        fbq('track', 'Purchase', {
-            value: {{ number_format($pixelValue, 2, '.', '') }},
-            currency: @json(config('services.meta.currency', 'USD')),
-            content_type: 'product',
-            content_ids: {!! json_encode($pixelContentIds, JSON_UNESCAPED_SLASHES) !!},
-            contents: {!! json_encode($pixelContents, JSON_UNESCAPED_SLASHES) !!},
-            num_items: {{ (int) ($order ? $order->items->sum('qty') : 0) }}
-        }@if ($order), { eventID: @json('Purchase.order-' . $order->id) }@endif);
-    }
+(function () {
+    if (typeof fbq !== 'function') return;
+
+    @if ($pixelTransactionId)
+    {{-- Second line of defence behind the flashed-session gate above. That gate
+         stops a refresh, but a restore from bfcache or a browser that replays
+         the document can run this script again against the same order. Revenue
+         double-counted here corrupts ROAS for the whole campaign, so the lock is
+         persisted per order id rather than per page load. --}}
+    var lock = 'pg_fb_purchase_' + @json($pixelTransactionId);
+    try {
+        if (sessionStorage.getItem(lock)) return;
+        sessionStorage.setItem(lock, '1');
+    } catch (e) { /* private mode: the session gate above still covers refresh */ }
+    @endif
+
+    fbq('track', 'Purchase', {
+        value: {{ number_format($pixelValue, 2, '.', '') }},
+        currency: @json(config('services.meta.currency', 'USD')),
+        content_type: 'product',
+        content_ids: {!! json_encode($pixelContentIds, JSON_UNESCAPED_SLASHES) !!},
+        contents: {!! json_encode($pixelContents, JSON_UNESCAPED_SLASHES) !!},
+        num_items: {{ (int) ($order ? $order->items->sum('qty') : 0) }}@if (!empty($pixelNames)),
+        content_name: @json(implode(', ', $pixelNames))@endif
+        @if ($pixelTransactionId), transaction_id: @json((string) $pixelTransactionId)@endif
+    }@if ($order), { eventID: @json('Purchase.order-' . $order->id) }@endif);
+})();
 </script>
 @else
     @php \Log::warning('Meta Purchase pixel skipped: non-positive order value', [

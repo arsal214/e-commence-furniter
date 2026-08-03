@@ -14,12 +14,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 
 class CheckoutController extends Controller
 {
-    public function __construct(protected CartService $cart, protected TikTokEventsService $tiktok) {}
+    public function __construct(
+        protected CartService $cart,
+        protected TikTokEventsService $tiktok,
+    ) {}
 
     /**
      * Fire CompletePayment for a paid order.
@@ -67,7 +71,83 @@ class CheckoutController extends Controller
             'cartTotal'       => $this->cart->total(),
             'shippingOptions' => $shippingOptions,
             'stripeKey'       => config('services.stripe.key'),
+            'countries'       => config('checkout.countries', []),
+            'defaultCountry'  => config('checkout.default_country', 'US'),
+            'countryRules'    => $this->countryRulesForJs(),
         ]);
+    }
+
+    /**
+     * The country table in a shape the checkout script can use.
+     *
+     * PCRE patterns cannot be handed to `new RegExp()` as-is — the delimiters and
+     * trailing flags are PHP syntax and would be read as part of the pattern — so
+     * each one is split into source + flags here. Config stays the single source
+     * of truth: the client hint and the server rule are compiled from the same
+     * string, and cannot drift into disagreeing about what a valid ZIP is.
+     */
+    protected function countryRulesForJs(): array
+    {
+        return collect(config('checkout.countries', []))
+            ->map(function (array $country) {
+                [$source, $flags] = $this->splitPattern($country['postal_regex'] ?? null);
+
+                return [
+                    'subdivision_label' => $country['subdivision_label'] ?? 'State',
+                    'subdivisions'      => $country['subdivisions'] ?? [],
+                    'postal_regex'      => $source,
+                    // 'u' is valid in PHP but changes meaning in JS; only the
+                    // case-insensitivity flag is meaningful to both.
+                    'postal_flags'      => str_contains($flags, 'i') ? 'i' : '',
+                    'postal_example'    => $country['postal_example'] ?? '',
+                    'postal_required'   => (bool) ($country['postal_required'] ?? true),
+                    'postal_label'      => $country['postal_label'] ?? 'ZIP / Postcode',
+                    // Drives inputmode: a digits-only pattern gets the numeric keypad.
+                    'postal_numeric'    => $source !== null && ! preg_match('/[a-z]/i', preg_replace('/\\\\[a-z]/i', '', $source)),
+                ];
+            })
+            ->all();
+    }
+
+    /**
+     * ZIP rules for a country: presence from `postal_required`, format from
+     * `postal_regex`. A country with no pattern is length-checked only, rather
+     * than having a US format silently imposed on it.
+     */
+    protected function zipRules(?array $country): array
+    {
+        $rules = ($country['postal_required'] ?? true)
+            ? ['required', 'string', 'max:20']
+            : ['nullable', 'string', 'max:20'];
+
+        if (! empty($country['postal_regex'])) {
+            $rules[] = 'regex:' . $country['postal_regex'];
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Split a delimited PCRE into [source, flags]. Returns [null, ''] when the
+     * pattern is missing or malformed, which makes the caller skip ZIP format
+     * checking for that country rather than reject every address in it.
+     *
+     * @return array{0: ?string, 1: string}
+     */
+    protected function splitPattern(?string $pattern): array
+    {
+        if (! is_string($pattern) || strlen($pattern) < 2) {
+            return [null, ''];
+        }
+
+        $delimiter = $pattern[0];
+        $end       = strrpos($pattern, $delimiter);
+
+        if ($end === false || $end === 0) {
+            return [null, ''];
+        }
+
+        return [substr($pattern, 1, $end - 1), substr($pattern, $end + 1)];
     }
 
     public function store(Request $request)
@@ -76,19 +156,48 @@ class CheckoutController extends Controller
             return redirect()->route('cart')->with('error', 'Your cart is empty.');
         }
 
+        $countries = config('checkout.countries', []);
+
+        // Resolved before validation so the state and ZIP rules can be built for
+        // the country actually submitted. An unknown code falls back to the
+        // default, and the `in:` rule below still rejects the submission — this
+        // only keeps rule construction from blowing up on garbage input.
+        $countryCode = $request->input('country');
+        $country     = $countries[$countryCode] ?? $countries[config('checkout.default_country', 'US')] ?? null;
+
+        $subdivisions = array_keys($country['subdivisions'] ?? []);
+
         $data = $request->validate([
             'name'           => 'required|string|max:255',
             'email'          => 'required|email|max:255',
             'phone'          => 'required|string|max:30',
-            'city'           => 'nullable|string|max:100',
-            'zip'            => 'nullable|string|max:20',
+            'city'           => 'required|string|max:100',
+            'country'        => ['required', 'string', 'size:2', Rule::in(array_keys($countries))],
+            // Required only where the country actually has subdivisions, so a
+            // future country without them is not blocked by an unanswerable field.
+            'state'          => $subdivisions
+                ? ['required', 'string', Rule::in($subdivisions)]
+                : ['nullable', 'string', 'max:64'],
+            'zip'            => $this->zipRules($country),
             'address'        => 'required|string|max:255',
             'address2'       => 'nullable|string|max:255',
             'notes'          => 'nullable|string',
             'payment_method' => 'required|in:cod,stripe',
             'shipping'       => 'required|in:free,fast,local',
             'agree'          => 'accepted',
+        ], [
+            'state.in'       => 'Choose a valid ' . strtolower($country['subdivision_label'] ?? 'state') . ' for the selected country.',
+            'state.required' => 'Please choose a ' . strtolower($country['subdivision_label'] ?? 'state') . '.',
+            'country.in'     => 'We do not currently ship to that country.',
+            'zip.regex'      => 'Enter a valid postcode for the selected country, e.g. ' . ($country['postal_example'] ?? ''),
         ]);
+
+        // Store codes uppercase regardless of how they arrived, so 'nj' and 'NJ'
+        // are one value in reporting and in the Meta payload.
+        $data['country'] = strtoupper($data['country']);
+        if (! empty($data['state'])) {
+            $data['state'] = strtoupper($data['state']);
+        }
 
         $shippingCosts = ['free' => 0, 'fast' => 10, 'local' => 15];
         $shippingCost  = $shippingCosts[$data['shipping']];
@@ -129,7 +238,9 @@ class CheckoutController extends Controller
             'email'           => $data['email'],
             'phone'           => $data['phone'],
             'city'            => $data['city'] ?? null,
+            'state'           => $data['state'] ?? null,
             'zip'             => $data['zip'] ?? null,
+            'country'         => $data['country'],
             'address'         => $data['address'],
             'address2'        => $data['address2'] ?? null,
             'notes'           => $data['notes'] ?? null,

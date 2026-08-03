@@ -38,7 +38,7 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Retu
         </ul>
         <h3>How to Return</h3>
         <ol>
-            <li>Email <a href="mailto:support@peytonghalib.com">support@peytonghalib.com</a> with your order number and reason for return.</li>
+            <li>Email <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a> with your order number and reason for return.</li>
             <li>Our team will respond within 1–2 business days with a return authorisation and instructions.</li>
             <li>Pack the item securely and attach the return label provided.</li>
             <li>Drop off at your nearest courier or schedule a collection.</li>
