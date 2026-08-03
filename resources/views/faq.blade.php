@@ -22,11 +22,11 @@
             'title' => 'Shipping & Delivery',
             'icon'  => 'truck',
             'items' => [
-                {{-- Day counts read from config('checkout.delivery') via
-                     DeliveryEstimate — same source as the shipping policy, the
-                     category FAQ and the product-page estimate. This was the last
-                     page still hardcoding the window, so changing the promise used
-                     to leave it quietly contradicting the other three. --}}
+                // Day counts read from config('checkout.delivery') via
+                // DeliveryEstimate — same source as the shipping policy, the
+                // category FAQ and the product-page estimate. This was the last
+                // page still hardcoding the window, so changing the promise used
+                // to leave it quietly contradicting the other three.
                 ['q' => 'How long does delivery take?',
                  'a' => 'Standard delivery takes '.\App\Support\DeliveryEstimate::minDays().'–'.\App\Support\DeliveryEstimate::maxDays().' business days, depending on your location. You will receive a tracking link by email as soon as your order has been dispatched, and you can follow it from your account at any time.'],
                 ['q' => 'Do you offer free shipping?',

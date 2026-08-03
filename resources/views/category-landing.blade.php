@@ -459,11 +459,11 @@
     $faqs = [
         ['q'=>'What materials are used in your '.$category->name.'?',
          'a'=>'All PeytonGhalib '.$category->name.' products are made from premium, sustainably sourced materials. Each product page lists exact material details, finishes, and care instructions.'],
-        {{-- Day counts read from config('checkout.delivery') via DeliveryEstimate,
-             the same source the shipping policy and the product-page estimate use.
-             The old copy offered "white-glove delivery with in-room placement" for
-             "large furniture items" — a service the checkout has no way to select
-             and the shipping policy no longer claims. --}}
+        // Day counts read from config('checkout.delivery') via DeliveryEstimate,
+        // the same source the shipping policy and the product-page estimate use.
+        // The old copy offered "white-glove delivery with in-room placement" for
+        // "large furniture items" — a service the checkout has no way to select
+        // and the shipping policy no longer claims.
         ['q'=>'How long does delivery take for '.$category->name.'?',
          'a'=>'Standard delivery takes '.\App\Support\DeliveryEstimate::minDays().'–'.\App\Support\DeliveryEstimate::maxDays().' business days. Free delivery on all orders, with no minimum spend. Larger items ship with extra protective packaging and may be delivered on a scheduled window rather than a standard parcel round — we will email you to arrange a convenient time if your order qualifies.'],
         ['q'=>'Can I return a '.$category->name.' item if it doesn\'t fit?',
