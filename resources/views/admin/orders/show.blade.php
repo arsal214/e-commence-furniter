@@ -114,12 +114,40 @@ $paymentColors = [
                     <p class="text-gray-800">{{ $order->phone }}</p>
                 </div>
                 <div>
-                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">City / Zip</p>
-                    <p class="text-gray-800">{{ $order->city ?? '—' }} {{ $order->zip ? '· ' . $order->zip : '' }}</p>
+                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Country</p>
+                    <p class="text-gray-800">{{ $order->country_label ?? '—' }}</p>
                 </div>
+
                 <div class="sm:col-span-2">
-                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Address</p>
-                    <p class="text-gray-800">{{ $order->address }}{{ $order->address2 ? ', ' . $order->address2 : '' }}</p>
+                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Shipping Address</p>
+                    {{-- Label layout, ready to paste straight into the supplier's checkout. --}}
+                    <p class="text-gray-800 whitespace-pre-line leading-relaxed">{{ $order->formatted_address ?: '—' }}</p>
+                </div>
+
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Street</p>
+                    <p class="text-gray-800">{{ $order->address ?: '—' }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">Apt / Suite</p>
+                    <p class="text-gray-800">{{ $order->address2 ?: '—' }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">City</p>
+                    <p class="text-gray-800">{{ $order->city ?: '—' }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">State / Province</p>
+                    <p class="text-gray-800">
+                        {{ $order->state_label ?? '—' }}
+                        @if($order->state && $order->state_label !== $order->state)
+                            <span class="text-xs text-gray-400">({{ $order->state }})</span>
+                        @endif
+                    </p>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-1">ZIP / Postal Code</p>
+                    <p class="text-gray-800">{{ $order->zip ?: '—' }}</p>
                 </div>
                 @if($order->notes)
                 <div class="sm:col-span-2">
