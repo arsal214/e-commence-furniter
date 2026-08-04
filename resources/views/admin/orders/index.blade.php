@@ -51,7 +51,12 @@ $currentStatus = request('status');
         <tbody class="divide-y divide-gray-100">
             @forelse ($orders as $order)
             <tr class="hover:bg-gray-50 transition-colors">
-                <td class="px-5 py-3 font-medium text-gray-800">#{{ $order->id }}</td>
+                <td class="px-5 py-3 font-medium text-gray-800">
+                    #{{ $order->id }}
+                    @if($order->isStripeTestOrder())
+                        <span class="ml-1 inline-flex px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 align-middle">TEST</span>
+                    @endif
+                </td>
                 <td class="px-5 py-3">
                     <p class="font-medium text-gray-800">{{ $order->name }}</p>
                     <p class="text-xs text-gray-400">{{ $order->email }}</p>

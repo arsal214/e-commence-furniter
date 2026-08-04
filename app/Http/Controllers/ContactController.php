@@ -47,6 +47,7 @@ class ContactController extends Controller
             Mail::to($recipient)->send(new Contactus($data));
         } catch (\Exception $e) {
             Log::error('Contact form send failed: ' . $e->getMessage());
+            \App\Models\EmailLog::recordFailure($recipient ?? '', Contactus::class, $e->getMessage());
 
             return response()->json([
                 'success' => false,

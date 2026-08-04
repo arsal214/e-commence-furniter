@@ -9,15 +9,57 @@ class Order extends Model
     protected $fillable = [
         'user_id', 'name', 'email', 'phone', 'city', 'state', 'zip', 'country',
         'address', 'address2', 'notes', 'payment_method',
-        'payment_status', 'stripe_payment_intent', 'shipping',
+        'payment_status', 'stripe_payment_intent', 'stripe_livemode', 'shipping',
         'subtotal', 'shipping_cost', 'total', 'status',
         'tracking_number', 'supplier_name', 'supplier_order_id',
         'supplier_tracking', 'carrier', 'shipped_at',
     ];
 
     protected $casts = [
-        'shipped_at' => 'datetime',
+        'shipped_at'      => 'datetime',
+        'stripe_livemode' => 'boolean',
     ];
+
+    /** A Stripe order taken against test keys — not real money. */
+    public function isStripeTestOrder(): bool
+    {
+        return $this->payment_method === 'stripe' && $this->stripe_livemode === false;
+    }
+
+    /**
+     * 'live' | 'test' | null. Null covers COD and any Stripe order placed before
+     * the column existed, where the mode genuinely isn't known.
+     */
+    public function getStripeModeAttribute(): ?string
+    {
+        if ($this->payment_method !== 'stripe' || $this->stripe_livemode === null) {
+            return null;
+        }
+
+        return $this->stripe_livemode ? 'live' : 'test';
+    }
+
+    public function scopeStripeTest($query)
+    {
+        return $query->where('payment_method', 'stripe')->where('stripe_livemode', false);
+    }
+
+    public function scopeStripeLive($query)
+    {
+        return $query->where('payment_method', 'stripe')->where('stripe_livemode', true);
+    }
+
+    /**
+     * Real orders only — sandbox payments carry no money and must not reach the
+     * revenue figures. Null is kept in, since COD orders and pre-column Stripe
+     * orders are real; only an explicit false is excluded.
+     */
+    public function scopeExcludingStripeTest($query)
+    {
+        return $query->where(function ($q) {
+            $q->whereNull('stripe_livemode')->orWhere('stripe_livemode', true);
+        });
+    }
 
     public function items()
     {

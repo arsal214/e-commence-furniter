@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Listeners\LogSentEmail;
+use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerVersionedAssetDirective();
+
+        // Registered explicitly rather than relying on listener auto-discovery,
+        // which is not enabled in this application.
+        Event::listen(MessageSent::class, LogSentEmail::class);
     }
 
     /**

@@ -74,6 +74,9 @@ class OrderController extends Controller
                 $notified = true;
             } catch (\Exception $e) {
                 \Log::warning("Order status email ({$newStatus}) failed for order #{$order->id}: " . $e->getMessage());
+                \App\Models\EmailLog::recordFailure(
+                    $order->email, OrderStatusUpdatedMail::class, $e->getMessage(), $order->user_id, $order->id
+                );
             }
         }
 

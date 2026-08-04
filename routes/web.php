@@ -66,6 +66,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::resource('orders',     Admin\OrderController::class)->names('admin.orders')->only(['index', 'show', 'update']);
     Route::resource('reviews',    Admin\ReviewController::class)->names('admin.reviews')->except(['show']);
     Route::resource('sliders',    Admin\SliderController::class)->names('admin.sliders')->except(['show']);
+    Route::get('email-logs',     [Admin\EmailLogController::class, 'index'])->name('admin.email-logs.index');
     Route::get('flash-deal',     [Admin\FlashDealController::class, 'index'])->name('admin.flash-deal.index');
     Route::put('flash-deal',     [Admin\FlashDealController::class, 'update'])->name('admin.flash-deal.update');
 });

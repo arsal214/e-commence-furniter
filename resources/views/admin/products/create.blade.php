@@ -246,7 +246,7 @@
                 <div class="border-t border-gray-100 pt-5 mt-5">
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                         Size Chart Image
-                        <span class="text-gray-400 font-normal ml-1 text-xs">optional — shown to customers as a popup</span>
+                    <span class="text-gray-400 font-normal ml-1 text-xs">optional — shown to customers as a popup</span>
                     </label>
                     <p class="text-xs text-gray-400 mb-3">Upload a size guide image (JPG, PNG, WEBP). Max 8MB. Customers will see a "Size Guide" button on the product page.</p>
                     <input type="file" name="size_chart" accept="image/*" id="sizeChartInput"

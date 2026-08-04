@@ -44,7 +44,12 @@
                 <i class="mdi mdi-currency-usd text-green-600 text-2xl"></i>
             </div>
         </div>
-        <p class="text-xs text-gray-400 mt-3">From paid orders only</p>
+        <p class="text-xs text-gray-400 mt-3">
+            From paid orders only
+            @if($testOrders ?? 0)
+                · <span class="text-red-500">{{ $testOrders }} sandbox test order{{ $testOrders === 1 ? '' : 's' }} excluded</span>
+            @endif
+        </p>
     </div>
 
     <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">

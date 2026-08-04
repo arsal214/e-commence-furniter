@@ -24,6 +24,16 @@ $paymentColors = [
     </a>
 </div>
 
+@if($order->isStripeTestOrder())
+<div class="mb-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+    <i class="mdi mdi-flask-outline text-red-500 text-lg leading-none mt-0.5"></i>
+    <div class="text-sm">
+        <p class="font-semibold text-red-700">Sandbox test order — no real payment was taken.</p>
+        <p class="text-red-600/80 text-xs mt-0.5">Placed against Stripe test keys. Do not fulfil this order or place it with a supplier.</p>
+    </div>
+</div>
+@endif
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
     {{-- Left: Order items + summary --}}
@@ -180,8 +190,28 @@ $paymentColors = [
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-500">Method</span>
-                    <span class="font-medium text-gray-700">{{ $order->payment_method === 'cod' ? 'Cash on Delivery' : 'Stripe' }}</span>
+                    <span class="font-medium text-gray-700">
+                        {{ $order->payment_method === 'cod' ? 'Cash on Delivery' : 'Stripe' }}
+                        @if($order->stripe_mode === 'test')
+                            <span class="ml-1 inline-flex px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700 align-middle">TEST</span>
+                        @elseif($order->stripe_mode === 'live')
+                            <span class="ml-1 inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 align-middle">LIVE</span>
+                        @elseif($order->payment_method === 'stripe')
+                            <span class="ml-1 inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500 align-middle">Mode unknown</span>
+                        @endif
+                    </span>
                 </div>
+                @if($order->stripe_payment_intent)
+                <div class="flex justify-between items-center gap-2">
+                    <span class="text-gray-500 shrink-0">Payment Intent</span>
+                    {{-- Deep link into the matching Stripe dashboard; /test/ is a different account view. --}}
+                    <a href="https://dashboard.stripe.com/{{ $order->stripe_mode === 'test' ? 'test/' : '' }}payments/{{ $order->stripe_payment_intent }}"
+                       target="_blank" rel="noopener"
+                       class="text-xs text-[#bb976d] hover:underline truncate" title="{{ $order->stripe_payment_intent }}">
+                        {{ $order->stripe_payment_intent }}
+                    </a>
+                </div>
+                @endif
                 <div class="flex justify-between items-center">
                     <span class="text-gray-500">Placed</span>
                     <span class="text-gray-700">{{ $order->created_at->format('d M Y, H:i') }}</span>
@@ -216,6 +246,33 @@ $paymentColors = [
                     Save Changes
                 </button>
             </form>
+        </div>
+
+        {{-- Emails sent for this order --}}
+        @php
+            $orderEmails = \App\Models\EmailLog::where('order_id', $order->id)
+                ->orderByDesc('sent_at')->orderByDesc('id')->get();
+        @endphp
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-semibold text-gray-800">Emails Sent</h2>
+                <a href="{{ route('admin.email-logs.index', ['q' => $order->email]) }}" class="text-xs text-[#bb976d] hover:underline">View all</a>
+            </div>
+            @forelse($orderEmails as $log)
+                <div class="flex items-start gap-2 py-2 {{ ! $loop->last ? 'border-b border-gray-50' : '' }}">
+                    <i class="mdi {{ $log->failed() ? 'mdi-email-alert text-red-500' : 'mdi-email-check text-green-500' }} mt-0.5"></i>
+                    <div class="min-w-0 text-sm">
+                        <p class="font-medium text-gray-800">{{ $log->type_label }}</p>
+                        <p class="text-xs text-gray-400 truncate" title="{{ $log->to_email }}">{{ $log->to_email }}</p>
+                        <p class="text-xs text-gray-400">{{ optional($log->sent_at ?? $log->created_at)->format('d M Y, H:i') }} UTC</p>
+                        @if($log->failed() && $log->error)
+                            <p class="text-xs text-red-500 mt-0.5">{{ $log->error }}</p>
+                        @endif
+                    </div>
+                </div>
+            @empty
+                <p class="text-sm text-gray-400">No emails logged for this order yet.</p>
+            @endforelse
         </div>
 
         {{-- Supplier / Fulfillment Info (internal only) --}}

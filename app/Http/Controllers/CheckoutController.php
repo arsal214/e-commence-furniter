@@ -320,6 +320,7 @@ class CheckoutController extends Controller
                 Mail::to($newUser->email)->send(new AccountCreatedMail($newUser, $plainPassword));
             } catch (\Exception $e) {
                 \Log::warning('Account-created email failed for ' . $newUser->email . ': ' . $e->getMessage());
+                \App\Models\EmailLog::recordFailure($newUser->email, AccountCreatedMail::class, $e->getMessage(), $newUser->id);
             }
         }
 
@@ -331,6 +332,7 @@ class CheckoutController extends Controller
                 Mail::to($order->email)->send(new OrderConfirmationMail($order));
             } catch (\Exception $e) {
                 \Log::warning('Order confirmation email failed for order #' . $order->tracking_number . ': ' . $e->getMessage());
+                \App\Models\EmailLog::recordFailure($order->email, OrderConfirmationMail::class, $e->getMessage(), $order->user_id, $order->id);
             }
             // Kept in the session (not flashed) so a page refresh still shows the order.
             // The purchase pixel stays on the flashed order_total, so it fires only once.
@@ -349,13 +351,50 @@ class CheckoutController extends Controller
             'metadata' => ['order_id' => $order->id],
         ]);
 
-        $order->update(['stripe_payment_intent' => $intent->id]);
+        // Stamped here rather than derived at read time: the API keys get swapped
+        // from test to live later, and this has to stay a fact about the moment
+        // the payment was taken.
+        $order->update([
+            'stripe_payment_intent' => $intent->id,
+            'stripe_livemode'       => $this->stripeLivemode(),
+        ]);
 
         return view('checkout-stripe', [
             'order'        => $order,
             'clientSecret' => $intent->client_secret,
             'stripeKey'    => config('services.stripe.key'),
         ]);
+    }
+
+    /**
+     * Whether the configured Stripe keys are live or test, read from the key
+     * prefix (`sk_live_` / `pk_test_` and friends).
+     *
+     * A test key can only ever create test payments and a live key only live
+     * ones, so the prefix settles the question without trusting a field on the
+     * API response — where a missing value would coerce to false and label a
+     * real, paid order as a sandbox test.
+     *
+     * Returns null when no key is configured or the prefix is unrecognised, so
+     * the admin shows "Mode unknown" rather than asserting something false. The
+     * secret key is checked first because it is the key that actually takes the
+     * money; if the two were ever mismatched, that is the one that decided.
+     */
+    protected function stripeLivemode(): ?bool
+    {
+        foreach ([config('services.stripe.secret'), config('services.stripe.key')] as $key) {
+            $key = (string) $key;
+
+            if (str_contains($key, '_live_')) {
+                return true;
+            }
+
+            if (str_contains($key, '_test_')) {
+                return false;
+            }
+        }
+
+        return null;
     }
 
     public function stripeSuccess(Request $request)
@@ -369,7 +408,13 @@ class CheckoutController extends Controller
             $order = Order::with('items')->where('stripe_payment_intent', $intent->id)->first();
             if ($order) {
                 $alreadyPaid = $order->payment_status === 'paid';
-                $order->update(['payment_status' => 'paid', 'status' => 'processing']);
+                $order->update([
+                    'payment_status'  => 'paid',
+                    'status'          => 'processing',
+                    // Re-stamped so orders created before this column existed
+                    // still get labelled once they succeed.
+                    'stripe_livemode' => $this->stripeLivemode(),
+                ]);
 
                 if (! $alreadyPaid) {
                     $this->trackCompletePayment($order, $request);
@@ -378,6 +423,7 @@ class CheckoutController extends Controller
                     Mail::to($order->email)->send(new OrderConfirmationMail($order));
                 } catch (\Exception $e) {
                     \Log::warning('Stripe order confirmation email failed for order #' . $order->tracking_number . ': ' . $e->getMessage());
+                    \App\Models\EmailLog::recordFailure($order->email, OrderConfirmationMail::class, $e->getMessage(), $order->user_id, $order->id);
                 }
             }
             $this->cart->clear();

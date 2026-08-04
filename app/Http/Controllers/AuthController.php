@@ -82,6 +82,7 @@ class AuthController extends Controller
             Mail::to($user->email)->send(new WelcomeMail($user));
         } catch (\Exception $e) {
             \Log::warning('Welcome email failed: ' . $e->getMessage());
+            \App\Models\EmailLog::recordFailure($user->email, WelcomeMail::class, $e->getMessage(), $user->id);
         }
 
         return redirect('/my-account');
