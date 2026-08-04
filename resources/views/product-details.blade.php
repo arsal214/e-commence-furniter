@@ -175,8 +175,6 @@
 .pd-rev-card__top{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem}
 .pd-rev-card__stars{display:inline-flex;align-items:center;gap:1px;font-size:.75rem}
 .pd-rev-card__date{font-size:.72rem;color:#9ca3af}
-.pd-rev-card__title{font-size:.85rem;font-weight:700;color:#1f2937;margin:0 0 .3rem;line-height:1.35}
-.dark .pd-rev-card__title{color:#fff}
 .pd-rev-card__text{font-size:.82rem;line-height:1.55;color:#374151;margin:0}
 .pd-rev-card__img{margin-top:.75rem;width:100%;max-width:150px;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:.35rem;background:#ececec}
 .pd-rev-card__foot{display:flex;align-items:center;gap:.4rem;margin-top:.85rem}
@@ -1598,10 +1596,6 @@ img.pd-slide-img:focus-visible {
                                 {{ $review->created_at->format('m/d/Y') }}
                             </time>
                         </div>
-
-                        @if ($review->title)
-                            <p class="pd-rev-card__title">{{ $review->title }}</p>
-                        @endif
 
                         @if ($review->comment)
                             <p class="pd-rev-card__text">{{ $review->comment }}</p>
