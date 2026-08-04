@@ -17923,4 +17923,6 @@ body.quick-view-popup-overlay::before{
    break the sticky product-image panel. 'clip' only clips. Fixed-position
    elements are unaffected, so the off-canvas cart drawer and mobile menu still
    slide in from off-screen exactly as before. */
-html, body { overflow-x: clip; }
+@media (max-width: 1199px) {
+  html, body { overflow-x: clip; }
+}
