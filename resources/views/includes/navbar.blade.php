@@ -257,6 +257,18 @@
 .pg-act-btn:hover { background: #f5f0e8; color: #bb976d; }
 .dark .pg-act-btn:hover { background: rgba(255,255,255,.08); color: #bb976d; }
 .pg-act-btn svg { width: 19px; height: 19px; flex-shrink: 0; }
+/* Touch targets on finger-driven devices. The header icons render at 38–42px,
+   just under a comfortable tap. Rather than enlarge them — which would grow the
+   header on every page — an invisible ::after extends only the hit area to 44px.
+   No layout change, no extra markup, and mouse users are untouched because the
+   rule is gated on a coarse pointer. */
+@media (pointer: coarse) {
+    .pg-act-btn::after {
+        content: ''; position: absolute;
+        top: 50%; left: 50%; transform: translate(-50%, -50%);
+        width: 44px; height: 44px; border-radius: 50%;
+    }
+}
 .pg-badge {
     position: absolute; top: 3px; right: 2px;
     min-width: 17px; height: 17px; padding: 0 3px;

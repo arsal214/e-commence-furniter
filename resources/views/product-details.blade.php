@@ -270,22 +270,21 @@
 
 @media (max-width:1023px){.pd-rev-grid{columns:2}}
 
-/* Mobile: one row of cards that scrolls sideways, snapping card to card. */
+/* Mobile: one full-width card per row.
+   This was a sideways snap slider. Stacking is the better call: a slider hides
+   how many reviews exist, can't be skimmed, and competes with the page's own
+   vertical scroll. Full width also means no card is ever clipped mid-sentence,
+   which is what the narrow cards were doing. The "view more" cap comes back
+   here precisely because the list is now vertical and would otherwise run long. */
 @media (max-width:767px){
-  /* Bleeds to the screen edge so cards do not look boxed in. The offsets are
-     15px, not 1rem, because that is .container-fluid's mobile padding — a 16px
-     bleed against 15px of padding overhangs the viewport by a pixel each side
-     and gives the whole page a horizontal scrollbar. */
-  .pd-rev-grid{columns:auto;display:flex;gap:.75rem;overflow-x:auto;scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;padding-bottom:.75rem;margin-inline:-15px;padding-inline:15px;scrollbar-width:thin}
-  .pd-rev-card{flex:0 0 78%;max-width:78%;scroll-snap-align:start;margin-bottom:0;display:flex;flex-direction:column}
-  /* Every card is reachable by swiping, so the desktop "view more" cap and
-     its button would only stop the slider halfway through. */
-  .pd-rev-card.is-hidden{display:flex}
-  .pd-rev-card.is-filtered{display:none}
-  .pd-rev-more-wrap{display:none}
+  .pd-rev-grid{columns:auto;display:flex;flex-direction:column;gap:.75rem;overflow:visible;margin-inline:0;padding-inline:0}
+  .pd-rev-card{width:100%;max-width:100%;margin-bottom:0;padding:16px}
+  .pd-rev-card__text{font-size:.9375rem;line-height:1.6}
+  .pd-rev-card__img{max-width:120px}
   .pd-rev-bar{gap:.75rem}
   .pd-rev-filter{flex:1 1 100%}
+  .pd-rev-head{gap:.4rem .6rem}
+  .pd-rev-head__title,.pd-rev-head__score{font-size:1rem}
 }
 @media (prefers-reduced-motion:reduce){.pd-rev-grid{scroll-behavior:auto}}
 </style>
@@ -575,6 +574,9 @@ img.pd-slide-img:focus-visible {
     transition: border-color .2s, color .2s, background .2s;
 }
 .pd-btn-wish:hover { border-color: #bb976d; color: #bb976d; background: #fdf8f2; }
+/* Height moved out of an inline style so the mobile block can override it —
+   an inline height would have needed !important to beat. */
+.wishlist-toggle-btn { height: 60px; }
 
 /* Trust row */
 .pd-trust-row {
@@ -640,6 +642,55 @@ img.pd-slide-img:focus-visible {
        edges off to fill a box is worse than a little letterboxing. */
     .pd-main-wrap { aspect-ratio: 1/1; max-height: 62vh; }
     body { padding-bottom: 74px; }              /* room so the bar never covers content */
+
+    /* ── Typography ──
+       Desktop sizes were rendering unchanged on a 371px screen. */
+    h1.font-bold { font-size: 1.375rem; line-height: 1.3; }   /* 32px → 22px */
+    .pd-info h2, .pd-sec-title, h2.text-xl { font-size: 1.125rem; }  /* 24px → 18px */
+    .pd-info p, .pd-desc { font-size: .9375rem; }             /* body 16 → 15px */
+
+    /* ── Price ── */
+    #pd-price-now { font-size: 1.625rem; }                    /* 32px → 26px */
+    .pd-price-block { padding: 8px 12px; border-radius: 0 8px 8px 0; margin-bottom: 8px; }
+
+    /* ── Rating: stars and count stay on one line ── */
+    .pd-rating-row { flex-wrap: nowrap; white-space: nowrap; gap: .4rem; }
+    .pd-rating-row > * { flex-shrink: 0; }
+
+    /* ── Buy controls ──
+       Add to Cart takes the full width, wishlist sits under it (markup stacks
+       the row at this breakpoint). Both land in the 48–52px band; the qty
+       buttons stay 44px because they are the only controls needing a precise
+       tap, and shrinking them to match would drop under a comfortable target. */
+    .pd-btn-cart {
+        height: 50px; font-size: 1rem; font-weight: 500; letter-spacing: .04em;
+        box-shadow: 0 3px 10px rgba(23,36,48,.20);
+    }
+    .wishlist-toggle-btn, .pd-btn-wish { height: 48px; font-size: 1rem; font-weight: 500; }
+    .pd-qty-wrap { border-width: 1px; }
+    .pd-qty-btn { width: 44px; height: 44px; font-size: 16px; }
+
+    /* ── Gallery: keep the arrows off the product ── */
+    .pd-nav-btn, .pd-arrow { width: 34px; height: 34px; }
+    .pd-nav-prev, .pd-arrow-prev { left: 6px; }
+    .pd-nav-next, .pd-arrow-next { right: 6px; }
+
+    /* ── Cards ── */
+    .pd-card, .pd-info-panel, .pd-write { padding: 16px; }
+
+    /* ── Frequently bought together ──
+       Rows stack (the wrapper switches to a column at this breakpoint), the
+       thumbnails come down from 64px so the name gets the width, and the submit
+       spans the card instead of sitting in a short pill beside the total. */
+    .pd-fbt-foot #fbt-submit,
+    #fbt-submit { width: 100%; padding-inline: 16px; height: 50px; font-size: 1rem; font-weight: 500; }
+    #pd-fbt img, .pd-fbt img { width: 52px; height: 52px; }
+
+    /* ── Write a review ── */
+    .pd-write__textarea { font-size: 1rem; }   /* 16px stops iOS zooming on focus */
+    .pd-write__head { gap: .7rem; margin-bottom: 1.1rem; }
+    .pd-write__icon { width: 2.2rem; height: 2.2rem; }
+    .pd-star { width: 2.35rem; height: 2.35rem; }
 
     .pd-sticky-bar {
         display: flex; align-items: center; gap: 12px;
@@ -956,8 +1007,10 @@ img.pd-slide-img:focus-visible {
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="flex-1">
+                        {{-- Stacked on phones so Add to Cart gets the full width and
+                             the secondary action sits under it, side by side from sm up. --}}
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+                            <div class="flex-1 w-full">
                                 <button type="submit" id="pd-add-btn" class="pd-btn-cart w-full">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:8px;margin-top:-2px">
                                         <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
@@ -965,10 +1018,10 @@ img.pd-slide-img:focus-visible {
                                     <span id="pd-add-btn-label">Add to Cart</span>
                                 </button>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 w-full">
                                 <button type="button"
                                         class="wishlist-toggle-btn w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl text-gray-600 text-sm font-semibold hover:border-[#bb976d] hover:text-[#bb976d] hover:bg-[#fdf8f2] transition-all duration-200"
-                                        style="background:transparent;cursor:pointer;height:60px;"
+                                        style="background:transparent;cursor:pointer;"
                                         data-product-id="{{ $item->id }}"
                                         data-text-add="Add to wishlist"
                                         data-text-remove="In Wishlist">
@@ -1714,7 +1767,12 @@ document.addEventListener('keydown', function (e) {
                   class="border border-gray-200 dark:border-white/10 rounded-xl p-5 sm:p-6">
                 @csrf
 
-                <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-3 flex-wrap">
+                {{-- flex-wrap is deliberately sm+ only. On a wrapping *column*
+                     flex container the cross axis (width) is sized to content,
+                     so a long product name stretched this row to 636px inside a
+                     299px parent and pushed the whole page sideways. Stacked and
+                     unwrapped on phones, wrapping rows from sm up. --}}
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-3 sm:flex-wrap">
                     {{-- Anchor product --}}
                     <div class="flex items-center gap-3 flex-1 min-w-[200px]">
                         <img src="{{ $ogImg }}" alt="" class="w-16 h-16 object-cover rounded-lg flex-none border border-gray-100 dark:border-white/10" loading="lazy" decoding="async">
@@ -1742,7 +1800,7 @@ document.addEventListener('keydown', function (e) {
                     @endforeach
                 </div>
 
-                <div class="flex items-center justify-between gap-4 flex-wrap mt-5 pt-5 border-t border-gray-100 dark:border-white/10">
+                <div class="pd-fbt-foot flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:flex-wrap mt-5 pt-5 border-t border-gray-100 dark:border-white/10">
                     <div>
                         <p class="text-xs text-gray-500 dark:text-white-light">Total for <span id="fbt-count">{{ $boughtTogether->count() + 1 }}</span> items</p>
                         <p class="text-xl font-bold text-title dark:text-white" id="fbt-total">$0.00</p>
