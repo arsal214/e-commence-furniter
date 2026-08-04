@@ -53,7 +53,7 @@ class ReviewController extends Controller
             'reviewer_name' => $data['reviewer_name'],
             'rating'        => $data['rating'],
             'comment'       => $data['comment'] ?? null,
-        ]);
+        ] + $this->displayFields($request, $data));
 
         return redirect()->route('admin.reviews.index')
                          ->with('success', 'Review added successfully.');
@@ -79,7 +79,7 @@ class ReviewController extends Controller
             'product_id' => $data['product_id'],
             'rating'     => $data['rating'],
             'comment'    => $data['comment'] ?? null,
-        ];
+        ] + $this->displayFields($request, $data, $review);
 
         if ($review->user_id === null) {
             $update['reviewer_name'] = $data['reviewer_name'];
@@ -106,6 +106,41 @@ class ReviewController extends Controller
             'reviewer_name' => [$requireName ? 'required' : 'nullable', 'string', 'max:100'],
             'rating'        => ['required', 'integer', 'min:1', 'max:5'],
             'comment'       => ['nullable', 'string', 'max:1000'],
+            'is_verified'   => ['nullable', 'boolean'],
+            'image'         => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'remove_image'  => ['nullable', 'boolean'],
         ]);
+    }
+
+    /**
+     * The display fields shared by store and update.
+     *
+     * The photo is only replaced when a new file actually arrives, so saving the
+     * form without touching the file input keeps the existing image rather than
+     * silently clearing it. Removal is a separate, explicit checkbox.
+     */
+    private function displayFields(Request $request, array $data, ?Review $review = null): array
+    {
+        $fields = [
+            'is_verified' => $request->boolean('is_verified'),
+        ];
+
+        if ($request->hasFile('image')) {
+            $this->deleteImage($review);
+            $fields['image'] = $request->file('image')->store('reviews', 'public');
+        } elseif ($request->boolean('remove_image')) {
+            $this->deleteImage($review);
+            $fields['image'] = null;
+        }
+
+        return $fields;
+    }
+
+    private function deleteImage(?Review $review): void
+    {
+        // Bundled template assets are shared and must never be deleted.
+        if ($review?->image && ! str_starts_with($review->image, 'assets/')) {
+            \Storage::disk('public')->delete($review->image);
+        }
     }
 }

@@ -72,7 +72,16 @@
                       {{ request()->routeIs('admin.email-logs.*') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
                 <i class="mdi mdi-email-outline text-lg"></i>
                 Email Logs
-                @php $failedEmails = \App\Models\EmailLog::where('status','failed')->count(); @endphp
+                @php
+                    // This renders on every admin page. Code reaches the server
+                    // before migrations run on a zip deploy, so a missing table
+                    // must not take the whole panel down with it.
+                    try {
+                        $failedEmails = \App\Models\EmailLog::where('status', 'failed')->count();
+                    } catch (\Throwable $e) {
+                        $failedEmails = 0;
+                    }
+                @endphp
                 @if($failedEmails > 0)
                     <span class="ml-auto bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full leading-none">{{ $failedEmails }}</span>
                 @endif

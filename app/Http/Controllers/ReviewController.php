@@ -19,7 +19,12 @@ class ReviewController extends Controller
 
         Review::updateOrCreate(
             ['product_id' => $product->id, 'user_id' => auth()->id()],
-            ['rating' => $request->rating, 'comment' => $request->comment]
+            [
+                'rating'  => $request->rating,
+                'comment' => $request->comment,
+                // Earned from the reviewer's own paid orders, never self-declared.
+                'is_verified' => Review::hasPurchased(auth()->id(), $product->id),
+            ]
         );
 
         return back()->with('success', 'Thank you! Your review has been submitted.');

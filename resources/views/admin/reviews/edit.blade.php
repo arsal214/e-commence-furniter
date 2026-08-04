@@ -16,7 +16,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('admin.reviews.update', $review) }}" class="space-y-5">
+        <form method="POST" action="{{ route('admin.reviews.update', $review) }}" class="space-y-5" enctype="multipart/form-data">
             @csrf @method('PUT')
 
             @include('admin.reviews._product_select', [
@@ -46,6 +46,8 @@
                 <textarea name="comment" rows="4" maxlength="1000"
                           class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors resize-none">{{ old('comment', $review->comment) }}</textarea>
             </div>
+
+            @include('admin.reviews._display_fields', ['review' => $review])
 
             <div class="flex items-center gap-3 pt-2">
                 <button type="submit"

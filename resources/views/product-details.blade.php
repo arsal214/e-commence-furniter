@@ -102,6 +102,77 @@
 .rich-content blockquote{border-left:4px solid #bb976d;padding:.5rem 1rem;margin:1em 0;color:#6b7280;font-style:italic}
 .rich-content img{max-width:100%;height:auto;border-radius:.25rem;margin:.5em 0}
 .rich-content hr{border:none;border-top:1px solid #e5e7eb;margin:1.5em 0}
+
+/* ── Review grid ─────────────────────────────────────────────────────────
+   Masonry on desktop via CSS columns: the cards are wildly uneven in height
+   (some carry a photo, some are two lines) and a row-based grid would leave
+   a ragged band of whitespace under every short card. Columns pack them.
+   On mobile the same markup becomes a horizontal snap slider, since three
+   narrow columns stacked would bury the rest of the page.               */
+.pd-rev-head{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem .75rem;padding-bottom:1rem;border-bottom:1px solid #e5e7eb}
+.pd-rev-head__title{font-size:1.05rem;font-weight:600;color:#1f2937}
+.pd-rev-head__sep{color:#d1d5db}
+.pd-rev-head__score{font-size:1.05rem;font-weight:700;color:#1f2937}
+.pd-rev-head__stars{display:inline-flex;align-items:center;gap:1px;font-size:.8rem}
+.pd-rev-head__count{font-size:.8rem;color:#6b7280}
+.pd-rev-head__verified{display:inline-flex;align-items:center;gap:.3rem;font-size:.8rem;color:#15803d}
+
+.pd-rev-bar{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin:1rem 0 1.25rem}
+.pd-rev-tab{display:inline-block;font-size:.85rem;font-weight:600;color:#1f2937;padding-bottom:.5rem;border-bottom:2px solid #1f2937}
+.pd-rev-filter{position:relative;flex:0 1 260px;min-width:180px}
+.pd-rev-filter__input{width:100%;font-size:.85rem;padding:.5rem 2.25rem .5rem .75rem;border:1px solid #d1d5db;border-radius:999px;outline:none;background:#fff;color:#1f2937}
+.pd-rev-filter__input:focus{border-color:#bb976d}
+.pd-rev-filter__icon{position:absolute;top:50%;right:.85rem;transform:translateY(-50%);color:#9ca3af;font-size:.8rem;pointer-events:none}
+
+.pd-rev-grid{columns:3;column-gap:1rem}
+.pd-rev-card{break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid;
+  display:inline-block;width:100%;background:#f7f7f7;border-radius:.5rem;padding:1rem;margin-bottom:1rem}
+/* is-hidden = held back by the "view more" cap (desktop only).
+   is-filtered = ruled out by the keyword search (every breakpoint). */
+.pd-rev-card.is-hidden,.pd-rev-card.is-filtered{display:none}
+.pd-rev-card__top{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem}
+.pd-rev-card__stars{display:inline-flex;align-items:center;gap:1px;font-size:.75rem}
+.pd-rev-card__date{font-size:.72rem;color:#9ca3af}
+.pd-rev-card__text{font-size:.82rem;line-height:1.55;color:#374151;margin:0}
+.pd-rev-card__img{margin-top:.75rem;width:100%;max-width:150px;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:.35rem;background:#ececec}
+.pd-rev-card__foot{display:flex;align-items:center;gap:.4rem;margin-top:.85rem}
+.pd-rev-card__avatar{display:inline-flex;align-items:center;justify-content:center;width:1.55rem;height:1.55rem;border-radius:50%;
+  color:#fff;font-size:.72rem;font-weight:600;flex-shrink:0;line-height:1}
+.pd-rev-card__name{font-size:.78rem;color:#4b5563;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pd-rev-card__flag{font-size:.8rem;line-height:1}
+.pd-rev-card__tick{font-size:.72rem;color:#15803d}
+
+.pd-rev-empty{font-size:.85rem;color:#9ca3af;font-style:italic;padding:1.5rem 0;text-align:center}
+.pd-rev-more-wrap{display:flex;justify-content:center;margin-top:1.25rem}
+.pd-rev-more{font-size:.8rem;color:#3b82f6;background:#fff;border:1px solid #93c5fd;border-radius:999px;padding:.5rem 1.25rem;cursor:pointer;transition:background .2s,color .2s}
+.pd-rev-more:hover{background:#eff6ff}
+.pd-rev-more:focus-visible{outline:2px solid #bb976d;outline-offset:2px}
+
+.dark .pd-rev-head{border-bottom-color:rgba(255,255,255,.12)}
+.dark .pd-rev-head__title,.dark .pd-rev-head__score,.dark .pd-rev-tab{color:#fff}
+.dark .pd-rev-tab{border-bottom-color:#fff}
+.dark .pd-rev-card{background:rgba(255,255,255,.05)}
+.dark .pd-rev-card__text{color:rgba(255,255,255,.75)}
+.dark .pd-rev-card__name{color:rgba(255,255,255,.6)}
+.dark .pd-rev-filter__input{background:transparent;border-color:rgba(255,255,255,.2);color:#fff}
+.dark .pd-rev-more{background:transparent}
+
+@media (max-width:1023px){.pd-rev-grid{columns:2}}
+
+/* Mobile: one row of cards that scrolls sideways, snapping card to card. */
+@media (max-width:767px){
+  .pd-rev-grid{columns:auto;display:flex;gap:.75rem;overflow-x:auto;scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;padding-bottom:.75rem;margin-inline:-1rem;padding-inline:1rem;scrollbar-width:thin}
+  .pd-rev-card{flex:0 0 78%;max-width:78%;scroll-snap-align:start;margin-bottom:0;display:flex;flex-direction:column}
+  /* Every card is reachable by swiping, so the desktop "view more" cap and
+     its button would only stop the slider halfway through. */
+  .pd-rev-card.is-hidden{display:flex}
+  .pd-rev-card.is-filtered{display:none}
+  .pd-rev-more-wrap{display:none}
+  .pd-rev-bar{gap:.75rem}
+  .pd-rev-filter{flex:1 1 100%}
+}
+@media (prefers-reduced-motion:reduce){.pd-rev-grid{scroll-behavior:auto}}
 </style>
 @endpush
 @section('content')
@@ -1262,36 +1333,92 @@ img.pd-slide-img:focus-visible {
             {{-- Reviews Panel --}}
             <div id="tab-review" class="pdtab-panel hidden">
 
-                {{-- Average rating summary --}}
-                @if ($item->reviewCount() > 0)
-                <div class="flex items-center gap-4 mb-8 p-5 bg-[#F8F5F0] dark:bg-dark-secondary rounded-sm">
-                    <div class="text-center">
-                        <div class="text-5xl font-bold text-title dark:text-white leading-none">{{ number_format($item->avgRating(), 1) }}</div>
-                        <div class="mt-1">@include('includes.Home._stars', ['rating' => $item->avgRating()])</div>
-                        <div class="text-xs text-gray-400 mt-1">{{ $item->reviewCount() }} {{ Str::plural('review', $item->reviewCount()) }}</div>
+                @php
+                    $pdReviews      = $item->reviews;
+                    $pdReviewCount  = $pdReviews->count();
+                    // Only claimable when it is true of every review shown.
+                    $pdAllVerified  = $pdReviewCount > 0 && $pdReviews->every(fn ($r) => $r->is_verified);
+                    // Cards revealed before "View more" is pressed. Two full rows
+                    // of three, which is where the grid stops looking balanced.
+                    $pdInitialShown = 6;
+                @endphp
+
+                @if ($pdReviewCount > 0)
+                {{-- Summary bar --}}
+                <div class="pd-rev-head">
+                    <span class="pd-rev-head__title">Reviews</span>
+                    <span class="pd-rev-head__sep" aria-hidden="true">|</span>
+                    <span class="pd-rev-head__score">{{ number_format($item->avgRating(), 2) }}</span>
+                    <span class="pd-rev-head__stars">@include('includes.Home._stars', ['rating' => $item->avgRating()])</span>
+                    <span class="pd-rev-head__count">{{ $pdReviewCount }} {{ Str::plural('rating', $pdReviewCount) }}</span>
+                    @if ($pdAllVerified)
+                        <span class="pd-rev-head__verified">
+                            <i class="fa-solid fa-circle-check" aria-hidden="true"></i> All from verified purchases
+                        </span>
+                    @endif
+                </div>
+
+                {{-- Section tab + keyword filter --}}
+                <div class="pd-rev-bar">
+                    <span class="pd-rev-tab" aria-current="true">Item Reviews ({{ $pdReviewCount }})</span>
+
+                    <div class="pd-rev-filter">
+                        <label for="pd-rev-search" class="sr-only">Filter reviews by keyword</label>
+                        <input type="search" id="pd-rev-search" class="pd-rev-filter__input"
+                               placeholder="Filter by keyword" autocomplete="off">
+                        <span class="pd-rev-filter__icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
                     </div>
+                </div>
+
+                {{-- Cards: masonry columns on desktop, snap slider on mobile --}}
+                <div class="pd-rev-grid" id="pd-rev-grid">
+                    @foreach ($pdReviews as $review)
+                    <article class="pd-rev-card {{ $loop->index >= $pdInitialShown ? 'is-hidden' : '' }}"
+                             data-rev-text="{{ Str::lower($review->comment . ' ' . $review->author_name) }}">
+                        <div class="pd-rev-card__top">
+                            <span class="pd-rev-card__stars">@include('includes.Home._stars', ['rating' => $review->rating])</span>
+                            <time class="pd-rev-card__date" datetime="{{ $review->created_at->toDateString() }}">
+                                {{ $review->created_at->format('m/d/Y') }}
+                            </time>
+                        </div>
+
+                        @if ($review->comment)
+                            <p class="pd-rev-card__text">{{ $review->comment }}</p>
+                        @endif
+
+                        @if ($review->image_url)
+                            <img src="{{ $review->image_url }}" alt="Photo from {{ $review->author_name }}'s review"
+                                 class="pd-rev-card__img" loading="lazy" decoding="async" width="160" height="160">
+                        @endif
+
+                        <footer class="pd-rev-card__foot">
+                            <span class="pd-rev-card__avatar" style="background:{{ $review->avatar_color }}" aria-hidden="true">{{ $review->initial }}</span>
+                            <span class="pd-rev-card__name">{{ $review->author_name }}</span>
+                            @if ($review->flag)
+                                <span class="pd-rev-card__flag" title="{{ $review->country }}">{{ $review->flag }}</span>
+                            @endif
+                            @if ($review->is_verified)
+                                <i class="fa-solid fa-circle-check pd-rev-card__tick" title="Verified purchase" aria-label="Verified purchase"></i>
+                            @endif
+                        </footer>
+                    </article>
+                    @endforeach
+                </div>
+
+                <p class="pd-rev-empty" id="pd-rev-noresult" hidden>No reviews match that keyword.</p>
+
+                @if ($pdReviewCount > $pdInitialShown)
+                <div class="pd-rev-more-wrap">
+                    <button type="button" class="pd-rev-more" id="pd-rev-more"
+                            data-more="View more reviews for this item" data-less="Show fewer reviews">
+                        View more reviews for this item
+                    </button>
                 </div>
                 @endif
 
-                {{-- Existing reviews --}}
-                @forelse ($item->reviews as $review)
-                <div class="border-b border-bdr-clr dark:border-bdr-clr-drk pb-6 mb-6">
-                    <div class="flex items-start justify-between gap-3">
-                        <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                @include('includes.Home._stars', ['rating' => $review->rating])
-                                <span class="text-xs text-gray-400 dark:text-gray-500">{{ $review->created_at->diffForHumans() }}</span>
-                            </div>
-                            <h6 class="font-semibold text-sm text-title dark:text-white">{{ $review->author_name }}</h6>
-                        </div>
-                    </div>
-                    @if ($review->comment)
-                    <p class="mt-2 text-sm text-paragraph dark:text-white/70 leading-relaxed">{{ $review->comment }}</p>
-                    @endif
-                </div>
-                @empty
+                @else
                 <p class="text-gray-400 italic text-sm mb-8">No reviews yet. Be the first to review this product!</p>
-                @endforelse
+                @endif
 
                 {{-- Submit a review --}}
                 <div class="mt-6 border-t border-bdr-clr dark:border-bdr-clr-drk pt-8">
@@ -1716,6 +1843,77 @@ document.addEventListener('keydown', function(e) {
     {{-- Deterministic on the product id so a Conversions API twin added later
          collapses into this event instead of counting a second view. --}}
     fbq('track', 'ViewContent', payload, { eventID: @json('ViewContent.product-' . $item->id) });
+})();
+</script>
+@endpush
+
+@push('scripts')
+<script>
+/* Review grid: keyword filter + "view more".
+   Both are progressive enhancement — with JS off every review is still in the
+   DOM and the mobile slider still swipes; only the cap and the filter go. */
+(function () {
+    var grid = document.getElementById('pd-rev-grid');
+    if (!grid) return;
+
+    var cards    = Array.prototype.slice.call(grid.querySelectorAll('.pd-rev-card'));
+    var search   = document.getElementById('pd-rev-search');
+    var moreBtn  = document.getElementById('pd-rev-more');
+    var noResult = document.getElementById('pd-rev-noresult');
+    var expanded = false;
+
+    function capped() {
+        // The cap is a desktop affordance; the mobile slider shows everything.
+        cards.forEach(function (card) {
+            if (card.dataset.capped === '1' && !expanded) {
+                card.classList.add('is-hidden');
+            } else {
+                card.classList.remove('is-hidden');
+            }
+        });
+    }
+
+    // Remember which cards started capped, so the state survives filtering.
+    cards.forEach(function (card) {
+        card.dataset.capped = card.classList.contains('is-hidden') ? '1' : '0';
+    });
+
+    if (moreBtn) {
+        moreBtn.addEventListener('click', function () {
+            expanded = !expanded;
+            capped();
+            moreBtn.textContent = expanded ? moreBtn.dataset.less : moreBtn.dataset.more;
+            if (!expanded) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+
+    if (search) {
+        var debounce;
+        search.addEventListener('input', function () {
+            clearTimeout(debounce);
+            debounce = setTimeout(function () {
+                var q = search.value.trim().toLowerCase();
+                var matches = 0;
+
+                cards.forEach(function (card) {
+                    var hit = !q || (card.dataset.revText || '').indexOf(q) !== -1;
+                    card.classList.toggle('is-filtered', !hit);
+                    if (hit) matches++;
+                });
+
+                // A search has to look past the cap, or matches sitting in the
+                // hidden tail would read as "no results".
+                if (q) {
+                    cards.forEach(function (c) { c.classList.remove('is-hidden'); });
+                } else {
+                    capped();
+                }
+
+                if (noResult) noResult.hidden = matches !== 0;
+                if (moreBtn) moreBtn.parentElement.style.display = q ? 'none' : '';
+            }, 150);
+        });
+    }
 })();
 </script>
 @endpush
