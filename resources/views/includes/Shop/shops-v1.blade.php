@@ -152,8 +152,11 @@
                 </ul>
             @endif
 
-            {{-- Add to cart: always visible and tappable, not hover-revealed --}}
-            <div class="mt-4">
+            {{-- Add to cart: always visible and tappable, not hover-revealed.
+                 pg-card-cta pushes this to the bottom of the card so two tiles
+                 sharing a row line their buttons up even when one has a rating
+                 and the other does not. --}}
+            <div class="mt-4 pg-card-cta">
                 @if ($inStock)
                     <form action="{{ route('cart.add') }}" method="POST">
                         @csrf

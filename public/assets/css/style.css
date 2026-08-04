@@ -17926,3 +17926,14 @@ body.quick-view-popup-overlay::before{
 @media (max-width: 1199px) {
   html, body { overflow-x: clip; }
 }
+
+/* ── Product card CTA alignment ────────────────────────────────────────────
+   Cards in a grid row stretch to equal height, but the Add to Cart button sat
+   directly after whatever content the card happened to have — so a tile with
+   no star rating put its button ~25px higher than its neighbour's. Pushing it
+   to the bottom of the flex column lines them up across the row.
+
+   Scoped below 1200px: the approved desktop layout stays exactly as it is. */
+@media (max-width: 1199px) {
+  .pg-card-cta { margin-top: auto; }
+}
