@@ -191,6 +191,68 @@
 .dark .pd-flag{box-shadow:0 0 0 1px rgba(255,255,255,.25),0 1px 2px rgba(0,0,0,.4)}
 .pd-rev-card__tick{font-size:.72rem;color:#15803d}
 
+/* ── Write a review ──────────────────────────────────────────────────────
+   Framed as a card rather than left as loose fields under a rule: asking for
+   a review is a request, and a request reads better inside something that
+   looks deliberately built for it.                                       */
+.pd-write{margin-top:2.5rem;background:linear-gradient(180deg,#FAF7F2 0%,#F4F1EC 100%);
+  border:1px solid #EAE3D9;border-radius:1rem;padding:1.75rem}
+.pd-write__head{display:flex;align-items:flex-start;gap:.9rem;margin-bottom:1.5rem}
+.pd-write__icon{display:inline-flex;align-items:center;justify-content:center;width:2.6rem;height:2.6rem;
+  flex-shrink:0;border-radius:50%;background:#bb976d;color:#fff;font-size:1rem}
+.pd-write__title{font-size:1.15rem;font-weight:700;color:#1f2937;line-height:1.2;margin:0}
+.pd-write__sub{font-size:.82rem;color:#6b7280;margin:.3rem 0 0}
+.pd-write__form{display:flex;flex-direction:column;gap:1.25rem}
+.pd-write__field{display:flex;flex-direction:column}
+.pd-write__label{display:flex;align-items:center;gap:.4rem;font-size:.85rem;font-weight:600;color:#374151;margin-bottom:.6rem}
+.pd-write__req{color:#dc2626}
+.pd-write__opt{font-size:.7rem;font-weight:500;color:#9ca3af;background:rgba(0,0,0,.05);padding:.1rem .45rem;border-radius:999px}
+
+/* Stars sized to be tapped, not aimed at — the old 32px targets were below
+   the 44px touch guidance and sat flat against the page. */
+.pd-stars{display:flex;align-items:center;gap:.15rem;flex-wrap:wrap}
+.pd-star{width:2.5rem;height:2.5rem;padding:.35rem;border:0;background:transparent;cursor:pointer;
+  color:#D8D5D0;transition:transform .15s ease,color .15s ease}
+.pd-star svg{width:100%;height:100%;display:block}
+.pd-star:hover{transform:scale(1.15)}
+.pd-star:focus-visible{outline:2px solid #bb976d;outline-offset:2px;border-radius:.35rem}
+.pd-stars__verdict{margin-left:.6rem;font-size:.82rem;font-weight:600;color:#bb976d;min-height:1.2em}
+
+.pd-write__textarea{width:100%;font-size:.875rem;line-height:1.6;color:#1f2937;background:#fff;
+  border:1px solid #E2DACE;border-radius:.6rem;padding:.85rem 1rem;outline:none;resize:vertical;min-height:7rem;
+  transition:border-color .2s ease,box-shadow .2s ease}
+.pd-write__textarea::placeholder{color:#b6b2ab}
+.pd-write__textarea:focus{border-color:#bb976d;box-shadow:0 0 0 3px rgba(187,151,109,.15)}
+.pd-write__count{align-self:flex-end;font-size:.7rem;color:#9ca3af;margin-top:.35rem}
+.pd-write__error{font-size:.75rem;color:#dc2626;margin-top:.4rem}
+
+.pd-write__submit{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;align-self:flex-start;
+  padding:.8rem 1.9rem;border:0;border-radius:999px;cursor:pointer;
+  background:#bb976d;color:#fff;font-size:.875rem;font-weight:600;text-decoration:none;
+  box-shadow:0 2px 10px rgba(187,151,109,.35);transition:background-color .2s ease,transform .15s ease,box-shadow .2s ease}
+.pd-write__submit:hover{background:#a8845a;color:#fff;transform:translateY(-1px);box-shadow:0 4px 14px rgba(187,151,109,.45)}
+.pd-write__submit:active{transform:translateY(0)}
+.pd-write__submit:focus-visible{outline:2px solid #1f2937;outline-offset:2px}
+.pd-write__gate{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.pd-write__gate-text{font-size:.875rem;color:#4b5563;margin:0}
+
+.dark .pd-write{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1)}
+.dark .pd-write__title{color:#fff}
+.dark .pd-write__label{color:rgba(255,255,255,.85)}
+.dark .pd-write__textarea{background:rgba(0,0,0,.2);border-color:rgba(255,255,255,.15);color:#fff}
+.dark .pd-write__gate-text{color:rgba(255,255,255,.7)}
+.dark .pd-star{color:rgba(255,255,255,.2)}
+
+@media (max-width:640px){
+  .pd-write{padding:1.25rem;border-radius:.75rem}
+  .pd-write__submit{width:100%;align-self:stretch}
+  .pd-stars__verdict{width:100%;margin-left:0;margin-top:.25rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .pd-star,.pd-write__submit{transition:none}
+  .pd-star:hover,.pd-write__submit:hover{transform:none}
+}
+
 .pd-rev-empty{font-size:.85rem;color:#9ca3af;font-style:italic;padding:1.5rem 0;text-align:center}
 .pd-rev-more-wrap{display:flex;justify-content:center;margin-top:1.25rem}
 .pd-rev-more{font-size:.8rem;color:#3b82f6;background:#fff;border:1px solid #93c5fd;border-radius:999px;padding:.5rem 1.25rem;cursor:pointer;transition:background .2s,color .2s}
@@ -1346,21 +1408,21 @@ img.pd-slide-img:focus-visible {
                     <button type="button" onclick="switchTab('tab-desc', this)"
                             class="pdtab-btn pd-tab is-active" role="tab"
                             aria-selected="true" aria-controls="tab-desc">
-                        <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
+                        <i class="mdi mdi-text-box-outline" aria-hidden="true"></i>
                         <span>Description</span>
                     </button>
 
                     <button type="button" onclick="switchTab('tab-shipping', this)"
                             class="pdtab-btn pd-tab" role="tab"
                             aria-selected="false" aria-controls="tab-shipping">
-                        <i class="fa-solid fa-truck-fast" aria-hidden="true"></i>
+                        <i class="mdi mdi-truck-fast-outline" aria-hidden="true"></i>
                         <span>Shipping</span>
                     </button>
                 </div>
             </div>
             @else
             <h2 class="pd-section-title">
-                <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
+                <i class="mdi mdi-text-box-outline" aria-hidden="true"></i>
                 Description
             </h2>
             @endif
@@ -1436,7 +1498,7 @@ img.pd-slide-img:focus-visible {
                     <span class="pd-rev-head__count">{{ $pdReviewCount }} {{ Str::plural('rating', $pdReviewCount) }}</span>
                     @if ($pdAllVerified)
                         <span class="pd-rev-head__verified">
-                            <i class="fa-solid fa-circle-check" aria-hidden="true"></i> All from verified purchases
+                            <i class="mdi mdi-check-circle" aria-hidden="true"></i> All from verified purchases
                         </span>
                     @endif
                 </div>
@@ -1449,7 +1511,7 @@ img.pd-slide-img:focus-visible {
                         <label for="pd-rev-search" class="sr-only">Filter reviews by keyword</label>
                         <input type="search" id="pd-rev-search" class="pd-rev-filter__input"
                                placeholder="Filter by keyword" autocomplete="off">
-                        <span class="pd-rev-filter__icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <span class="pd-rev-filter__icon" aria-hidden="true"><i class="mdi mdi-magnify"></i></span>
                     </div>
                 </div>
 
@@ -1481,7 +1543,7 @@ img.pd-slide-img:focus-visible {
                                 <span class="pd-rev-card__flag">@include('includes._flag', ['code' => $review->country])</span>
                             @endif
                             @if ($review->is_verified)
-                                <i class="fa-solid fa-circle-check pd-rev-card__tick" title="Verified purchase" aria-label="Verified purchase"></i>
+                                <i class="mdi mdi-check-circle pd-rev-card__tick" title="Verified purchase" aria-label="Verified purchase"></i>
                             @endif
                         </footer>
                     </article>
@@ -1503,85 +1565,82 @@ img.pd-slide-img:focus-visible {
                 <p class="text-gray-400 italic text-sm mb-8">No reviews yet. Be the first to review this product!</p>
                 @endif
 
-                {{-- Submit a review --}}
-                <div class="mt-6 border-t border-bdr-clr dark:border-bdr-clr-drk pt-8">
-                    <h5 class="text-lg font-semibold text-title dark:text-white mb-5">
-                        @auth
-                            @if ($item->reviews->where('user_id', auth()->id())->isNotEmpty())
-                                Update Your Review
-                            @else
-                                Write a Review
-                            @endif
-                        @else
-                            Write a Review
-                        @endauth
-                    </h5>
+                {{-- Write a review --}}
+                @php
+                    $myReview = auth()->check() ? $item->reviews->firstWhere('user_id', auth()->id()) : null;
+                    $isUpdate = (bool) $myReview;
+                @endphp
+
+                <div class="pd-write">
+                    <div class="pd-write__head">
+                        <span class="pd-write__icon" aria-hidden="true">
+                            <i class="mdi mdi-square-edit-outline"></i>
+                        </span>
+                        <div>
+                            <h3 class="pd-write__title">{{ $isUpdate ? 'Update Your Review' : 'Write a Review' }}</h3>
+                            <p class="pd-write__sub">
+                                {{ $isUpdate
+                                    ? 'Changed your mind? Update your rating below.'
+                                    : 'Tell other shoppers what you think — it only takes a minute.' }}
+                            </p>
+                        </div>
+                    </div>
 
                     @auth
-                    @php
-                        $myReview = $item->reviews->firstWhere('user_id', auth()->id());
-                    @endphp
-                    <form action="{{ route('product.review.store', $item->slug) }}" method="POST" class="space-y-4">
+                    <form action="{{ route('product.review.store', $item->slug) }}" method="POST" class="pd-write__form">
                         @csrf
+
                         {{-- Star picker --}}
-                        <div>
-                            <label class="block text-sm font-medium text-title dark:text-white mb-2">Your Rating <span class="text-red-500">*</span></label>
-                            <div class="flex items-center gap-1" id="star-picker">
+                        <div class="pd-write__field">
+                            <label class="pd-write__label" id="pd-rating-label">
+                                Your Rating <span class="pd-write__req" aria-hidden="true">*</span>
+                            </label>
+                            <div class="pd-stars" id="star-picker" role="radiogroup" aria-labelledby="pd-rating-label">
                                 @for ($s = 1; $s <= 5; $s++)
                                 <button type="button"
                                         data-value="{{ $s }}"
-                                        class="star-pick-btn w-8 h-8 text-gray-300 hover:text-[#EE9818] transition-colors duration-150"
+                                        role="radio"
+                                        aria-checked="{{ (int) ($myReview->rating ?? 0) === $s ? 'true' : 'false' }}"
+                                        aria-label="{{ $s }} {{ Str::plural('star', $s) }}"
+                                        class="star-pick-btn pd-star"
                                         onclick="setRating({{ $s }})">
-                                    <svg viewBox="0 0 15 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <svg viewBox="0 0 15 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                         <path d="M11.1622 13.6923L7.181 11.201L3.19978 13.6922C3.05515 13.7839 2.86858 13.7769 2.72931 13.6758C2.59043 13.5751 2.52673 13.4001 2.56864 13.2337L3.70764 8.67717L0.150459 5.6612C0.0189569 5.55107 -0.0324041 5.37191 0.0206119 5.2088C0.0736279 5.04526 0.220726 4.93062 0.391668 4.9187L5.03447 4.59449L6.79065 0.23853C6.91968 -0.07951 7.44233 -0.07951 7.57136 0.23853L9.32754 4.59449L13.9703 4.9187C14.1413 4.93062 14.2884 5.04526 14.3414 5.2088C14.3944 5.37191 14.3431 5.55107 14.2115 5.6612L10.6543 8.67723L11.7933 13.2337C11.8353 13.4001 11.7716 13.5752 11.6327 13.6759C11.4905 13.7791 11.3045 13.7814 11.1622 13.6923Z"/>
                                     </svg>
                                 </button>
                                 @endfor
+                                <span class="pd-stars__verdict" id="pd-rating-verdict" aria-live="polite"></span>
                             </div>
                             <input type="hidden" name="rating" id="rating-input" value="{{ $myReview->rating ?? '' }}">
-                            @error('rating') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('rating') <p class="pd-write__error">{{ $message }}</p> @enderror
                         </div>
 
                         {{-- Comment --}}
-                        <div>
-                            <label class="block text-sm font-medium text-title dark:text-white mb-2">Your Review</label>
-                            <textarea name="comment" rows="4"
-                                      placeholder="Share your experience with this product..."
-                                      class="w-full border border-[#E3E5E6] dark:border-bdr-clr-drk bg-transparent text-title dark:text-white px-4 py-3 text-sm outline-none focus:border-primary duration-200 placeholder:text-gray-400 resize-none">{{ $myReview->comment ?? '' }}</textarea>
-                            @error('comment') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        <div class="pd-write__field">
+                            <label class="pd-write__label" for="pd-review-comment">
+                                Your Review <span class="pd-write__opt">Optional</span>
+                            </label>
+                            <textarea name="comment" id="pd-review-comment" rows="4" maxlength="1000"
+                                      placeholder="What did you like about it? How was the delivery?"
+                                      class="pd-write__textarea">{{ old('comment', $myReview->comment ?? '') }}</textarea>
+                            <div class="pd-write__count"><span id="pd-review-count">0</span> / 1000</div>
+                            @error('comment') <p class="pd-write__error">{{ $message }}</p> @enderror
                         </div>
 
-                        <button type="submit" class="btn btn-solid" data-text="Submit Review">
-                            <span>Submit Review</span>
+                        <button type="submit" class="pd-write__submit">
+                            <i class="mdi mdi-send" aria-hidden="true"></i>
+                            {{ $isUpdate ? 'Update Review' : 'Submit Review' }}
                         </button>
                     </form>
 
-                    <script>
-                    (function () {
-                        var current = {{ $myReview->rating ?? 0 }};
-                        function paint(n) {
-                            document.querySelectorAll('.star-pick-btn').forEach(function (btn) {
-                                btn.style.color = parseInt(btn.dataset.value) <= n ? '#EE9818' : '#D1D5DB';
-                            });
-                        }
-                        paint(current);
-                        window.setRating = function (n) {
-                            current = n;
-                            document.getElementById('rating-input').value = n;
-                            paint(n);
-                        };
-                        document.querySelectorAll('.star-pick-btn').forEach(function (btn) {
-                            btn.addEventListener('mouseover', function () { paint(parseInt(btn.dataset.value)); });
-                            btn.addEventListener('mouseout',  function () { paint(current); });
-                        });
-                    })();
-                    </script>
-
                     @else
-                    <p class="text-sm text-gray-500 dark:text-gray-400">
-                        <a href="{{ route('login') }}" class="text-primary font-semibold hover:underline">Log in</a>
-                        to leave a review.
-                    </p>
+                    <div class="pd-write__gate">
+                        <p class="pd-write__gate-text">Sign in to share your experience with this product.</p>
+                        <a href="{{ route('login') }}" class="pd-write__submit pd-write__submit--link">
+                            <i class="mdi mdi-login" aria-hidden="true"></i>
+                            Log in to review
+                        </a>
+                    </div>
                     @endauth
                 </div>
 
@@ -1947,6 +2006,50 @@ document.addEventListener('keydown', function(e) {
 
 @push('scripts')
 <script>
+/* Write-a-review form: star picker, verdict label, character counter. */
+(function () {
+    var picker = document.getElementById('star-picker');
+    if (!picker) return;   // logged out — the form is not on the page
+
+    var input   = document.getElementById('rating-input');
+    var verdict = document.getElementById('pd-rating-verdict');
+    var stars   = Array.prototype.slice.call(picker.querySelectorAll('.star-pick-btn'));
+    var WORDS   = ['', 'Poor', 'Fair', 'Good', 'Very good', 'Excellent'];
+    var current = parseInt(input.value, 10) || 0;
+
+    function paint(n, committed) {
+        stars.forEach(function (btn) {
+            var v = parseInt(btn.dataset.value, 10);
+            btn.style.color = v <= n ? '#EE9818' : '';
+            if (committed) btn.setAttribute('aria-checked', v === n ? 'true' : 'false');
+        });
+        verdict.textContent = WORDS[n] || '';
+    }
+
+    window.setRating = function (n) {
+        current = n;
+        input.value = n;
+        paint(n, true);
+    };
+
+    stars.forEach(function (btn) {
+        btn.addEventListener('mouseover', function () { paint(parseInt(btn.dataset.value, 10), false); });
+        btn.addEventListener('focus',     function () { paint(parseInt(btn.dataset.value, 10), false); });
+        btn.addEventListener('mouseout',  function () { paint(current, false); });
+        btn.addEventListener('blur',      function () { paint(current, false); });
+    });
+
+    paint(current, true);
+
+    var box = document.getElementById('pd-review-comment');
+    var count = document.getElementById('pd-review-count');
+    if (box && count) {
+        var sync = function () { count.textContent = box.value.length; };
+        box.addEventListener('input', sync);
+        sync();
+    }
+})();
+
 /* Review grid: keyword filter + "view more".
    Both are progressive enhancement — with JS off every review is still in the
    DOM and the mobile slider still swipes; only the cap and the filter go. */
