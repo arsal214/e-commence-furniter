@@ -626,12 +626,19 @@ img.pd-slide-img:focus-visible {
 
 /* ── Mobile: above-the-fold priority ──
    The square media used to fill the first screen, pushing the title, price and
-   Add to Cart below the fold. A shorter image lifts the title into view, and a
-   fixed bottom bar keeps price + Add to Cart reachable at all times. Desktop is
-   unaffected — its two-column layout already shows everything up top. */
+   Add to Cart below the fold. The fixed bottom bar keeps price + Add to Cart
+   reachable at all times. Desktop is unaffected — its two-column layout already
+   shows everything up top. */
 .pd-sticky-bar { display: none; }
 @media (max-width: 767px) {
-    .pd-main-wrap { aspect-ratio: 4/3; }        /* shorter than 1/1 → title shows sooner */
+    /* Was 4/3 to buy vertical space, but 4/3 is landscape and product photos are
+       portrait, so object-fit:contain letterboxed them — a 310px-wide box showed
+       a 211px photo between two fat white bars. Squarer costs ~75px of scroll and
+       the sticky bar already guarantees the CTA is reachable, so the trade was
+       paying for above-fold space with a hero image that looked broken.
+       Cropping instead is not an option: this is the product, and cutting its
+       edges off to fill a box is worse than a little letterboxing. */
+    .pd-main-wrap { aspect-ratio: 1/1; max-height: 62vh; }
     body { padding-bottom: 74px; }              /* room so the bar never covers content */
 
     .pd-sticky-bar {

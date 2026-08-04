@@ -17913,3 +17913,14 @@ body.quick-view-popup-overlay::before{
   display: none;
 } */
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* ── No sideways scroll on mobile ──────────────────────────────────────────
+   Decorative, deliberately oversized elements — the homepage hero collage and
+   its blur orbs — hang past the viewport at narrow widths. Sub-pixel rounding
+   there is enough to give the whole page a horizontal scrollbar on a phone.
+
+   'clip', not 'hidden': hidden would turn <body> into a scroll container and
+   break the sticky product-image panel. 'clip' only clips. Fixed-position
+   elements are unaffected, so the off-canvas cart drawer and mobile menu still
+   slide in from off-screen exactly as before. */
+html, body { overflow-x: clip; }

@@ -374,7 +374,11 @@
                     @else
                         {{-- Arbitrary padding values: a base pt-* from style.css (loads last)
                              would override the md: variant and the bump would never apply. --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-8 pt-[24px] md:pt-[32px]">
+                        {{-- Two-up on phones. One-up made each tile ~614px tall, so
+                             20 products became a 13,800px page and a shopper saw a
+                             single item per screen. Two columns halves the scroll and
+                             lets the grid be skimmed the way phone stores are. --}}
+                        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-8 pt-[24px] md:pt-[32px]">
                             @include('includes.Shop.shops-v1')
                         </div>
                     @endif

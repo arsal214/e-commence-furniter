@@ -332,7 +332,8 @@
      4. PRODUCT GRID
 ══════════════════════════════════════ --}}
 @if($products->isNotEmpty())
-<div id="cl-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6 mb-10 md:mb-14" data-aos="fade-up">
+{{-- Two-up on phones, matching the shop grid. --}}
+<div id="cl-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 mb-10 md:mb-14" data-aos="fade-up">
     @foreach($products as $product)
     @php
         $pImg = !empty($product->image)
