@@ -103,6 +103,48 @@
 .rich-content img{max-width:100%;height:auto;border-radius:.25rem;margin:.5em 0}
 .rich-content hr{border:none;border-top:1px solid #e5e7eb;margin:1.5em 0}
 
+/* ── Product tabs ────────────────────────────────────────────────────────
+   Segmented pill control rather than the old underlined text row: the site
+   now pills every button, and a lone underline tab bar read as unfinished.
+   The track is a real element, so the active pill sits inside a defined
+   shape instead of floating on the page.                                */
+.pd-tabs-wrap{margin-bottom:2rem;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.pd-tabs-wrap::-webkit-scrollbar{display:none}
+.pd-tabs{display:inline-flex;align-items:center;gap:.25rem;padding:.3rem;background:#F4F1EC;border-radius:999px;min-width:max-content}
+.pd-tab{display:inline-flex;align-items:center;gap:.5rem;white-space:nowrap;cursor:pointer;
+  padding:.65rem 1.35rem;border-radius:999px;border:0;background:transparent;
+  font-size:.875rem;font-weight:500;line-height:1;color:#6b7280;
+  transition:background-color .25s ease,color .25s ease,box-shadow .25s ease}
+.pd-tab i{font-size:.85rem;opacity:.85}
+.pd-tab:hover{color:#bb976d;background:rgba(255,255,255,.7)}
+.pd-tab.is-active{background:#bb976d;color:#fff;box-shadow:0 2px 8px rgba(187,151,109,.35)}
+.pd-tab.is-active:hover{background:#ad8a61;color:#fff}
+.pd-tab:focus-visible{outline:2px solid #bb976d;outline-offset:2px}
+.pd-tab__badge{display:inline-flex;align-items:center;justify-content:center;min-width:1.3rem;height:1.3rem;
+  padding:0 .35rem;border-radius:999px;background:rgba(0,0,0,.07);color:inherit;font-size:.7rem;font-weight:600;line-height:1}
+.pd-tab.is-active .pd-tab__badge{background:rgba(255,255,255,.25)}
+
+.dark .pd-tabs{background:rgba(255,255,255,.06)}
+.dark .pd-tab{color:rgba(255,255,255,.6)}
+.dark .pd-tab:hover{background:rgba(255,255,255,.1);color:#fff}
+.dark .pd-tab.is-active{color:#fff}
+.dark .pd-tab__badge{background:rgba(255,255,255,.15)}
+
+@media (max-width:480px){
+  .pd-tab{padding:.6rem 1rem;font-size:.8rem}
+  .pd-tab i{font-size:.78rem}
+}
+@media (prefers-reduced-motion:reduce){.pd-tab{transition:none}}
+
+/* Heading used where a tab bar would hold a single tab. */
+.pd-section-title{display:flex;align-items:center;gap:.6rem;font-size:1.15rem;font-weight:700;color:#1f2937;margin-bottom:1.5rem}
+.pd-section-title i{color:#bb976d;font-size:1rem}
+.dark .pd-section-title{color:#fff}
+
+/* Reviews are their own section now; pull it up under the tabs so the two do
+   not read as unrelated blocks separated by a gap. */
+.pd-reviews{padding-bottom:3.125rem;scroll-margin-top:5rem}
+
 /* ── Review grid ─────────────────────────────────────────────────────────
    Masonry on desktop via CSS columns: the cards are wildly uneven in height
    (some carry a photo, some are two lines) and a row-based grid would leave
@@ -139,7 +181,13 @@
 .pd-rev-card__avatar{display:inline-flex;align-items:center;justify-content:center;width:1.55rem;height:1.55rem;border-radius:50%;
   color:#fff;font-size:.72rem;font-weight:600;flex-shrink:0;line-height:1}
 .pd-rev-card__name{font-size:.78rem;color:#4b5563;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pd-rev-card__flag{font-size:.8rem;line-height:1}
+/* The flag is a trust signal — where the reviewer is — so it is sized to be
+   read rather than squinted at, and given a light plate so it holds its own
+   against the grey card. */
+.pd-rev-card__flag{display:inline-flex;align-items:center;justify-content:center;
+  font-size:1.15rem;line-height:1;padding:.1rem .3rem;border-radius:.2rem;
+  background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.dark .pd-rev-card__flag{background:rgba(255,255,255,.9)}
 .pd-rev-card__tick{font-size:.72rem;color:#15803d}
 
 .pd-rev-empty{font-size:.85rem;color:#9ca3af;font-style:italic;padding:1.5rem 0;text-align:center}
@@ -724,7 +772,9 @@ img.pd-slide-img:focus-visible {
                         </div>
                         <span class="text-sm font-bold text-gray-700">{{ number_format($avgR,1) }}</span>
                         <span class="text-sm text-gray-400">· {{ $revC }} {{ Str::plural('review',$revC) }}</span>
-                        <a href="#tab-review" onclick="switchTab('tab-review', document.querySelectorAll('.pdtab-btn')[1])" class="text-xs text-[#bb976d] hover:underline ml-1">See all</a>
+                        {{-- Reviews are their own section now, so this is a plain
+                             anchor jump — no tab to activate first. --}}
+                        <a href="#reviews" class="text-xs text-[#bb976d] hover:underline ml-1">See all</a>
                     </div>
                     @endif
 
@@ -1281,24 +1331,34 @@ img.pd-slide-img:focus-visible {
     <div class="container-fluid">
         <div class="max-w-[985px] mx-auto">
 
-            {{-- Tab buttons --}}
-            <div class="flex gap-0 border-b border-bdr-clr dark:border-bdr-clr-drk mb-8 overflow-x-auto">
-                <button onclick="switchTab('tab-desc', this)"
-                        class="pdtab-btn px-5 py-3 text-sm sm:text-base font-medium leading-none whitespace-nowrap border-b-2 border-primary text-primary"
-                        data-active="true">
-                    Description
-                </button>
-                <button onclick="switchTab('tab-review', this)"
-                        class="pdtab-btn px-5 py-3 text-sm sm:text-base font-medium leading-none whitespace-nowrap border-b-2 border-transparent text-paragraph dark:text-white/60 hover:text-primary duration-200">
-                    Reviews ({{ $item->reviewCount() }})
-                </button>
-                @if($item->shipping_info)
-                <button onclick="switchTab('tab-shipping', this)"
-                        class="pdtab-btn px-5 py-3 text-sm sm:text-base font-medium leading-none whitespace-nowrap border-b-2 border-transparent text-paragraph dark:text-white/60 hover:text-primary duration-200">
-                    Shipping
-                </button>
-                @endif
+            {{-- A segmented pill control, matching the pill shape used by every
+                 button on the site. With Reviews promoted to its own section,
+                 a product without shipping info has only one panel left — and a
+                 lone tab is not a choice, so it renders as a heading instead. --}}
+            @if($item->shipping_info)
+            <div class="pd-tabs-wrap">
+                <div class="pd-tabs" role="tablist" aria-label="Product information">
+                    <button type="button" onclick="switchTab('tab-desc', this)"
+                            class="pdtab-btn pd-tab is-active" role="tab"
+                            aria-selected="true" aria-controls="tab-desc">
+                        <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
+                        <span>Description</span>
+                    </button>
+
+                    <button type="button" onclick="switchTab('tab-shipping', this)"
+                            class="pdtab-btn pd-tab" role="tab"
+                            aria-selected="false" aria-controls="tab-shipping">
+                        <i class="fa-solid fa-truck-fast" aria-hidden="true"></i>
+                        <span>Shipping</span>
+                    </button>
+                </div>
             </div>
+            @else
+            <h2 class="pd-section-title">
+                <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
+                Description
+            </h2>
+            @endif
 
             {{-- Description Panel --}}
             <div id="tab-desc" class="pdtab-panel">
@@ -1330,10 +1390,28 @@ img.pd-slide-img:focus-visible {
                 @endif
             </div>
 
-            {{-- Reviews Panel --}}
-            <div id="tab-review" class="pdtab-panel hidden">
+            {{-- Shipping Panel --}}
+            @if($item->shipping_info)
+            <div id="tab-shipping" class="pdtab-panel hidden">
+                <div class="rich-content leading-relaxed">
+                    {!! $item->shipping_info !!}
+                </div>
+            </div>
+            @endif
 
-                @php
+        </div>
+    </div>
+</div>
+<!-- Tabs End -->
+
+<!-- Reviews Section Start -->
+{{-- Reviews live in their own section rather than behind a tab: a tab hides
+     them behind a click, and social proof only works where it is seen. --}}
+<section id="reviews" class="pd-reviews">
+    <div class="container-fluid">
+        <div class="max-w-[985px] mx-auto">
+
+            @php
                     $pdReviews      = $item->reviews;
                     $pdReviewCount  = $pdReviews->count();
                     // Only claimable when it is true of every review shown.
@@ -1501,33 +1579,48 @@ img.pd-slide-img:focus-visible {
                     </p>
                     @endauth
                 </div>
-            </div>
-
-            {{-- Shipping Panel --}}
-            @if($item->shipping_info)
-            <div id="tab-shipping" class="pdtab-panel hidden">
-                <div class="rich-content leading-relaxed">
-                    {!! $item->shipping_info !!}
-                </div>
-            </div>
-            @endif
 
         </div>
     </div>
-</div>
+</section>
+<!-- Reviews Section End -->
+
 <script>
 function switchTab(panelId, btn) {
     document.querySelectorAll('.pdtab-panel').forEach(function(p){ p.classList.add('hidden'); });
     document.querySelectorAll('.pdtab-btn').forEach(function(b){
-        b.classList.remove('border-primary','text-primary');
-        b.classList.add('border-transparent','text-paragraph','dark:text-white/60');
+        b.classList.remove('is-active');
+        b.setAttribute('aria-selected', 'false');
     });
-    document.getElementById(panelId).classList.remove('hidden');
-    btn.classList.add('border-primary','text-primary');
-    btn.classList.remove('border-transparent','text-paragraph','dark:text-white/60');
+
+    var panel = document.getElementById(panelId);
+    if (panel) panel.classList.remove('hidden');
+
+    btn.classList.add('is-active');
+    btn.setAttribute('aria-selected', 'true');
+
+    // The bar scrolls sideways on narrow screens, so a tab activated from
+    // elsewhere on the page (the "See all" rating link) may sit off-screen.
+    if (btn.scrollIntoView) {
+        btn.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+    }
 }
+
+/* Arrow-key navigation between tabs, which role="tablist" leads a screen
+   reader to expect. */
+document.addEventListener('keydown', function (e) {
+    var current = document.activeElement;
+    if (!current || !current.classList.contains('pdtab-btn')) return;
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('.pdtab-btn'));
+    var next = tabs[(tabs.indexOf(current) + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
+
+    e.preventDefault();
+    next.focus();
+    next.click();
+});
 </script>
-<!-- Tabs End -->
 
 {{-- ── Frequently bought together ──────────────────────────────────────────
      Companions come from real co-purchase history where the store has enough
