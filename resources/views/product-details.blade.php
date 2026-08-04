@@ -182,12 +182,13 @@
   color:#fff;font-size:.72rem;font-weight:600;flex-shrink:0;line-height:1}
 .pd-rev-card__name{font-size:.78rem;color:#4b5563;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* The flag is a trust signal — where the reviewer is — so it is sized to be
-   read rather than squinted at, and given a light plate so it holds its own
-   against the grey card. */
-.pd-rev-card__flag{display:inline-flex;align-items:center;justify-content:center;
-  font-size:1.15rem;line-height:1;padding:.1rem .3rem;border-radius:.2rem;
-  background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.12)}
-.dark .pd-rev-card__flag{background:rgba(255,255,255,.9)}
+   read rather than squinted at, and outlined so it holds its own against the
+   grey card. Drawn as SVG, not emoji: Windows has no flag glyphs and would
+   render the bare letters "US" instead. */
+.pd-rev-card__flag{display:inline-flex;align-items:center;line-height:0;flex-shrink:0}
+.pd-flag{width:22px;height:15.4px;display:block;border-radius:2px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.15)}
+.dark .pd-flag{box-shadow:0 0 0 1px rgba(255,255,255,.25),0 1px 2px rgba(0,0,0,.4)}
 .pd-rev-card__tick{font-size:.72rem;color:#15803d}
 
 .pd-rev-empty{font-size:.85rem;color:#9ca3af;font-style:italic;padding:1.5rem 0;text-align:center}
@@ -209,8 +210,12 @@
 
 /* Mobile: one row of cards that scrolls sideways, snapping card to card. */
 @media (max-width:767px){
+  /* Bleeds to the screen edge so cards do not look boxed in. The offsets are
+     15px, not 1rem, because that is .container-fluid's mobile padding — a 16px
+     bleed against 15px of padding overhangs the viewport by a pixel each side
+     and gives the whole page a horizontal scrollbar. */
   .pd-rev-grid{columns:auto;display:flex;gap:.75rem;overflow-x:auto;scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;padding-bottom:.75rem;margin-inline:-1rem;padding-inline:1rem;scrollbar-width:thin}
+    -webkit-overflow-scrolling:touch;padding-bottom:.75rem;margin-inline:-15px;padding-inline:15px;scrollbar-width:thin}
   .pd-rev-card{flex:0 0 78%;max-width:78%;scroll-snap-align:start;margin-bottom:0;display:flex;flex-direction:column}
   /* Every card is reachable by swiping, so the desktop "view more" cap and
      its button would only stop the slider halfway through. */
@@ -1472,8 +1477,8 @@ img.pd-slide-img:focus-visible {
                         <footer class="pd-rev-card__foot">
                             <span class="pd-rev-card__avatar" style="background:{{ $review->avatar_color }}" aria-hidden="true">{{ $review->initial }}</span>
                             <span class="pd-rev-card__name">{{ $review->author_name }}</span>
-                            @if ($review->flag)
-                                <span class="pd-rev-card__flag" title="{{ $review->country }}">{{ $review->flag }}</span>
+                            @if ($review->country)
+                                <span class="pd-rev-card__flag">@include('includes._flag', ['code' => $review->country])</span>
                             @endif
                             @if ($review->is_verified)
                                 <i class="fa-solid fa-circle-check pd-rev-card__tick" title="Verified purchase" aria-label="Verified purchase"></i>

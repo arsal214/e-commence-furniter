@@ -72,23 +72,6 @@ class Review extends Model
     }
 
     /**
-     * Country code as a flag emoji. Each letter maps to its regional indicator
-     * symbol, which the platform renders as a flag — no image assets needed.
-     * Returns null for a missing or malformed code so nothing is drawn.
-     */
-    public function getFlagAttribute(): ?string
-    {
-        $code = strtoupper((string) $this->country);
-
-        if (! preg_match('/^[A-Z]{2}$/', $code)) {
-            return null;
-        }
-
-        return mb_chr(0x1F1E6 + ord($code[0]) - 65, 'UTF-8')
-             . mb_chr(0x1F1E6 + ord($code[1]) - 65, 'UTF-8');
-    }
-
-    /**
      * Public URL for the review photo. Mirrors the product-image convention:
      * a path under assets/ is a bundled file, anything else is an upload.
      */
