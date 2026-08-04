@@ -423,6 +423,16 @@
     top: 90px;
 }
 @media (max-width: 767px) { .pd-img-panel { position: static; } }
+/* Grid items are min-width:auto by default, so this panel would not shrink below
+   the min-content width of the thumbnail strip inside it. On a product with five
+   thumbnails that forced the single grid track to 592px inside a 341px screen and
+   pushed the whole page sideways — invisible on products with three thumbs, which
+   is why it only showed up on the live catalogue.
+
+   min-width:0 lets the track shrink; .pd-thumbs already scrolls on its own axis,
+   so the strip stays fully reachable. Scoped below 1200px because the desktop
+   grid (1fr 500px) has room for the strip at its natural width. */
+@media (max-width: 1199px) { .pd-img-panel { min-width: 0; } }
 
 .pd-main-wrap {
     position: relative;
