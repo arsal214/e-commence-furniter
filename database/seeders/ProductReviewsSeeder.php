@@ -20,6 +20,9 @@ class ProductReviewsSeeder extends Seeder
         $this->call([
             SandArtReviewSeeder::class,
             ThinkerStatueReviewSeeder::class,
+            GreenFlowerLampReviewSeeder::class,
+            ChunkyKnitThrowReviewSeeder::class,
+            FakeSucculentsReviewSeeder::class,
         ]);
     }
 }
