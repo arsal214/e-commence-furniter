@@ -17922,8 +17922,14 @@ body.quick-view-popup-overlay::before{
    'clip', not 'hidden': hidden would turn <body> into a scroll container and
    break the sticky product-image panel. 'clip' only clips. Fixed-position
    elements are unaffected, so the off-canvas cart drawer and mobile menu still
-   slide in from off-screen exactly as before. */
-@media (max-width: 1199px) {
+   slide in from off-screen exactly as before.
+
+   1199.98, not 1199: on a fractional-DPI display the viewport reports a
+   non-integer width (1199.32 at 125%/150% scaling). 'max-width: 1199px' is then
+   false while 'min-width: 1200px' is also false, leaving a sliver where neither
+   the mobile override nor the desktop rule applies. The .98 closes that gap and
+   still stops short of 1200, so desktop is untouched. */
+@media (max-width: 1199.98px) {
   html, body { overflow-x: clip; }
 }
 
@@ -17933,7 +17939,8 @@ body.quick-view-popup-overlay::before{
    no star rating put its button ~25px higher than its neighbour's. Pushing it
    to the bottom of the flex column lines them up across the row.
 
-   Scoped below 1200px: the approved desktop layout stays exactly as it is. */
-@media (max-width: 1199px) {
+   Scoped below 1200px: the approved desktop layout stays exactly as it is.
+   See the note above on why the bound is 1199.98 rather than 1199. */
+@media (max-width: 1199.98px) {
   .pg-card-cta { margin-top: auto; }
 }

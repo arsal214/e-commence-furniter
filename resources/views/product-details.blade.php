@@ -268,7 +268,7 @@
 .dark .pd-rev-filter__input{background:transparent;border-color:rgba(255,255,255,.2);color:#fff}
 .dark .pd-rev-more{background:transparent}
 
-@media (max-width:1023px){.pd-rev-grid{columns:2}}
+@media (max-width:1023.98px){.pd-rev-grid{columns:2}}
 
 /* Mobile: one full-width card per row.
    This was a sideways snap slider. Stacking is the better call: a slider hides
@@ -276,7 +276,7 @@
    vertical scroll. Full width also means no card is ever clipped mid-sentence,
    which is what the narrow cards were doing. The "view more" cap comes back
    here precisely because the list is now vertical and would otherwise run long. */
-@media (max-width:767px){
+@media (max-width:767.98px){
   .pd-rev-grid{columns:auto;display:flex;flex-direction:column;gap:.75rem;overflow:visible;margin-inline:0;padding-inline:0}
   .pd-rev-card{width:100%;max-width:100%;margin-bottom:0;padding:16px}
   .pd-rev-card__text{font-size:.9375rem;line-height:1.6}
@@ -422,7 +422,7 @@
     position: sticky;
     top: 90px;
 }
-@media (max-width: 767px) { .pd-img-panel { position: static; } }
+@media (max-width: 767.98px) { .pd-img-panel { position: static; } }
 /* Grid items are min-width:auto by default, so this panel would not shrink below
    the min-content width of the thumbnail strip inside it. On a product with five
    thumbnails that forced the single grid track to 592px inside a 341px screen and
@@ -431,8 +431,13 @@
 
    min-width:0 lets the track shrink; .pd-thumbs already scrolls on its own axis,
    so the strip stays fully reachable. Scoped below 1200px because the desktop
-   grid (1fr 500px) has room for the strip at its natural width. */
-@media (max-width: 1199px) { .pd-img-panel { min-width: 0; } }
+   grid (1fr 500px) has room for the strip at its natural width.
+
+   The .98 on every max-width bound in this file is deliberate: a fractional-DPI
+   display reports a non-integer viewport (1199.32 at 150% scaling), where a
+   plain 'max-width: 1199px' and the matching 'min-width: 1200px' are both false
+   and no rule at all applies. */
+@media (max-width: 1199.98px) { .pd-img-panel { min-width: 0; } }
 
 .pd-main-wrap {
     position: relative;
@@ -642,7 +647,7 @@ img.pd-slide-img:focus-visible {
    reachable at all times. Desktop is unaffected — its two-column layout already
    shows everything up top. */
 .pd-sticky-bar { display: none; }
-@media (max-width: 767px) {
+@media (max-width: 767.98px) {
     /* Was 4/3 to buy vertical space, but 4/3 is landscape and product photos are
        portrait, so object-fit:contain letterboxed them — a 310px-wide box showed
        a 211px photo between two fat white bars. Squarer costs ~75px of scroll and
@@ -881,12 +886,6 @@ img.pd-slide-img:focus-visible {
                     {{-- SKU --}}
                     @if($item->sku)
                     <p class="text-xs text-gray-400 mb-1">SKU: <span class="text-gray-600 font-medium">{{ $item->sku }}</span></p>
-                    @endif
-
-                    {{-- Short tagline --}}
-                    @if($item->description)
-                    @php $tagline = Str::limit(strip_tags($item->description), 110); @endphp
-                    <p class="text-sm text-gray-500 leading-relaxed mb-2">{{ $tagline }}</p>
                     @endif
 
                     {{-- Stars --}}

@@ -1436,6 +1436,7 @@ $schemaWebsite = [
                           background:linear-gradient(135deg,#bb976d 0%,#d4aa80 50%,#bb976d 100%);
                           background-size:200% auto;
                           color:#fff;padding:16px 36px;
+                          border-radius:8px;
                           font-family:'Poppins',sans-serif;
                           font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
                           text-decoration:none;
