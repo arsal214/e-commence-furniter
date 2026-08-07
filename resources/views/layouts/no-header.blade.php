@@ -35,6 +35,17 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" media="print" onload="this.media='all'">
         <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css"></noscript>
         @stack('styles')
+        <!-- Microsoft Clarity -->
+        {{-- This layout has no pgDefer scheduler, so the stock snippet is used
+             as-is; the tag is injected async and never blocks rendering. --}}
+        <script>
+        (function (c, l, a, r, i, t, y) {
+          c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+          t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+          y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+        })(window, document, "clarity", "script", @json(config('services.clarity.project_id')));
+        </script>
+        <!-- End Microsoft Clarity -->
         <!-- TikTok Pixel Code Start -->
         <script>
         !function (w, d, t) {

@@ -49,6 +49,11 @@ return [
         'enabled'      => env('TIKTOK_EVENTS_ENABLED', true),
     ],
 
+    // Microsoft Clarity — heatmaps and session recordings. Browser tag only.
+    'clarity' => [
+        'project_id' => env('CLARITY_PROJECT_ID', 'xyl7ci1v7o'),
+    ],
+
     // Browser pixel only — there is no server-side Conversions API integration.
     // These two keys are all the fbq() snippets in layouts/main, layouts/no-header
     // and the event templates read.

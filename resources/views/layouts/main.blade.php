@@ -165,6 +165,22 @@
                 document.head.appendChild(s);
             });
         </script>
+        <!-- Microsoft Clarity -->
+        <script>
+        // Clarity's own snippet, split so the stub half stays synchronous and only
+        // the tag fetch is deferred: window.clarity() therefore exists immediately
+        // and any call made before the tag lands queues on clarity.q, which the
+        // library drains once it executes.
+        (function (c, l, a, r, i) {
+          c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+          window.pgDefer(function () {
+            var t = l.createElement(r); t.async = 1;
+            t.src = "https://www.clarity.ms/tag/" + i;
+            var y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+          });
+        })(window, document, "clarity", "script", @json(config('services.clarity.project_id')));
+        </script>
+        <!-- End Microsoft Clarity -->
         <!-- TikTok Pixel Code Start -->
         <script>
         !function (w, d, t) {

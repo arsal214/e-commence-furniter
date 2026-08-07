@@ -1462,7 +1462,7 @@ img.pd-slide-img:focus-visible {
 }());
 </script>
 
-<!-- Tabs: Description / Reviews / Shipping Start -->
+<!-- Tabs: About this item / Shipping Information Start -->
 <div class="s-py-50">
     <div class="container-fluid">
         <div class="max-w-[985px] mx-auto">
@@ -1478,21 +1478,21 @@ img.pd-slide-img:focus-visible {
                             class="pdtab-btn pd-tab is-active" role="tab"
                             aria-selected="true" aria-controls="tab-desc">
                         <i class="mdi mdi-text-box-outline" aria-hidden="true"></i>
-                        <span>Description</span>
+                        <span>About this item</span>
                     </button>
 
                     <button type="button" onclick="switchTab('tab-shipping', this)"
                             class="pdtab-btn pd-tab" role="tab"
                             aria-selected="false" aria-controls="tab-shipping">
                         <i class="mdi mdi-truck-fast-outline" aria-hidden="true"></i>
-                        <span>Shipping</span>
+                        <span>Shipping Information</span>
                     </button>
                 </div>
             </div>
             @else
             <h2 class="pd-section-title">
                 <i class="mdi mdi-text-box-outline" aria-hidden="true"></i>
-                Description
+                About this item
             </h2>
             @endif
 
