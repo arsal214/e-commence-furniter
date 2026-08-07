@@ -14,7 +14,7 @@
                         <img class="w-[140px] mb-5" src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" width="140" height="27" loading="lazy">
                     </a>
                     <p class="text-white-light text-sm leading-relaxed">
-                        Your trusted online store for home decor, lifestyle products, kitchen gadgets, sports gear, beauty and more — curated for quality, delivered fast across the USA.
+                        Your trusted online store for home essentials, kitchen gadgets, electronics, car accessories, toys, garden and more — curated for quality, delivered fast across the USA.
                     </p>
                     <div class="flex items-center gap-3 mt-6">
                         <a href="https://www.facebook.com/profile.php?id=61590448962752" target="_blank" rel="noopener noreferrer nofollow"

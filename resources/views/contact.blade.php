@@ -428,8 +428,8 @@ $schemaContact = ['@context'=>'https://schema.org','@type'=>'ContactPage','name'
                         </span>
                         <span>
                             <span class="ct-channel__k">Support hours</span>
-                            <span class="ct-channel__v">Mon – Fri, 9am – 6pm</span>
-                            <span class="ct-channel__note">Limited support at weekends</span>
+                            <span class="ct-channel__v">24/7</span>
+                            <span class="ct-channel__note">Any time, any day — weekends included</span>
                         </span>
                     </div>
 

@@ -664,8 +664,11 @@ img.pd-slide-img:focus-visible {
 }
 .pd-btn-wish:hover { border-color: #bb976d; color: #bb976d; background: #fdf8f2; }
 /* Height moved out of an inline style so the mobile block can override it —
-   an inline height would have needed !important to beat. */
-.wishlist-toggle-btn { height: 60px; }
+   an inline height would have needed !important to beat.
+   The pill radius overrides the markup's `rounded-xl`: sitting directly
+   beside a 999px Add to Cart, a 12px-radius rectangle read as a control
+   borrowed from another page. Both buttons are one pair, so one shape. */
+.wishlist-toggle-btn { height: 60px; border-radius: 999px; }
 
 /* Trust row */
 .pd-trust-row {
@@ -801,6 +804,34 @@ img.pd-slide-img:focus-visible {
     }
     .pd-sticky-bar__btn:active { transform: scale(.99); }
     .pd-sticky-bar__btn[disabled] { opacity: .5; cursor: not-allowed; }
+}
+
+/* ── Buy controls: tablet ────────────────────────────────────────────────
+   Between 768px and 1200px the buy row is already side-by-side (sm:flex-row)
+   but the info column is at its narrowest, so each button gets barely half of
+   it. The desktop label — uppercase, 700 weight, .08em tracking, with a cart
+   glyph in front — filled that half edge to edge with no breathing room, and
+   the 14px drop shadow spread past the pill until the button read as a dark
+   blob rather than a control. Below 768px the buttons stack and none of this
+   applies, which is why the existing mobile block never caught it.          */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .pd-buy-row { gap: .625rem; }
+
+    /* Add to Cart is the primary action, so it takes the larger share
+       instead of splitting the row down the middle with a secondary one. */
+    .pd-buy-row .pd-buy-cart { flex: 1.45; }
+    .pd-buy-row .pd-buy-wish { flex: 1; }
+
+    .pd-btn-cart {
+        height: 54px;
+        font-size: .78rem; letter-spacing: .045em;
+        box-shadow: 0 3px 12px rgba(23,36,48,.18);
+    }
+    .wishlist-toggle-btn { height: 54px; font-size: .8125rem; }
+
+    /* Neither label may wrap to a second line inside a fixed-height pill. */
+    #pd-add-btn-label, .wishlist-btn-text { white-space: nowrap; }
+    .wishlist-toggle-btn { gap: .375rem; padding-inline: .5rem; }
 }
 </style>
 
@@ -1092,8 +1123,8 @@ img.pd-slide-img:focus-visible {
 
                         {{-- Stacked on phones so Add to Cart gets the full width and
                              the secondary action sits under it, side by side from sm up. --}}
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
-                            <div class="flex-1 w-full">
+                        <div class="pd-buy-row flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+                            <div class="pd-buy-cart flex-1 w-full">
                                 <button type="submit" id="pd-add-btn" class="pd-btn-cart w-full">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:8px;margin-top:-2px">
                                         <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
@@ -1101,9 +1132,9 @@ img.pd-slide-img:focus-visible {
                                     <span id="pd-add-btn-label">Add to Cart</span>
                                 </button>
                             </div>
-                            <div class="flex-1 w-full">
+                            <div class="pd-buy-wish flex-1 w-full">
                                 <button type="button"
-                                        class="wishlist-toggle-btn w-full flex items-center justify-center gap-2 border border-gray-200 rounded-xl text-gray-600 text-sm font-semibold hover:border-[#bb976d] hover:text-[#bb976d] hover:bg-[#fdf8f2] transition-all duration-200"
+                                        class="wishlist-toggle-btn w-full flex items-center justify-center gap-2 border border-gray-200 text-gray-600 text-sm font-semibold hover:border-[#bb976d] hover:text-[#bb976d] hover:bg-[#fdf8f2] transition-all duration-200"
                                         style="background:transparent;cursor:pointer;"
                                         data-product-id="{{ $item->id }}"
                                         data-text-add="Add to wishlist"

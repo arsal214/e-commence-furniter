@@ -348,19 +348,20 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
 
                 <div>
                     <span class="ab__eyebrow">Our story</span>
-                    <h2 class="ab__h2" id="ab-story-title">Built on one simple belief</h2>
+                    <h2 class="ab__h2" id="ab-story-title">The everyday things, done properly</h2>
 
                     <p class="ab-story__p">
-                        At PeytonGhalib, our story began with a simple belief — that everyone deserves access to
-                        quality products across every aspect of their life. From home essentials and electronics to
-                        fashion, sports, and lifestyle goods, we set out to build a one-stop destination where
-                        customers can discover thousands of products from trusted brands and independent sellers alike.
+                        PeytonGhalib started with a simple frustration: the ordinary things a home runs on — the
+                        kitchen gadget, the storage box, the phone mount, the kid's birthday present — were scattered
+                        across a dozen different shops, and hardly any of them were worth a second visit. So we built
+                        one place to keep them all.
                     </p>
                     <p class="ab-story__p">
-                        Over the years, our commitment to affordability, variety, and exceptional customer service has
-                        driven our growth. We've built a platform that connects buyers with the products they love,
-                        backed by fast shipping, easy returns, and a shopping experience designed around you. Today,
-                        PeytonGhalib serves customers nationwide — and we're just getting started.
+                        Today that's {{ number_format($productCount) }} products across
+                        {{ number_format($categoryCount) }} categories: home essentials and kitchen, electronics and
+                        car accessories, toys, garden, pet supplies, lamps, jewelry and gifts. We stock what we'd
+                        happily use ourselves, price it so you don't have to think twice, ship it free, and take it
+                        back without an argument if it isn't right.
                     </p>
 
                     {{-- Counts come from the catalogue, so they can't go stale --}}
@@ -395,8 +396,8 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
                 <span class="ab__eyebrow">Our promise</span>
                 <h2 class="ab__h2" id="ab-values-title">Why choose PeytonGhalib</h2>
                 <p class="ab__lede" style="margin:0 auto">
-                    Thousands of products across multiple categories — all in one place — with unbeatable prices,
-                    fast delivery, and a customer experience that keeps you coming back.
+                    Every category we sell, in one place — with honest prices, fast delivery, and a
+                    customer experience that keeps you coming back.
                 </p>
             </div>
 

@@ -1,6 +1,6 @@
 @extends('layouts.main')
 @section('title', 'PeytonGhalib — Home Decor & Everyday Essentials Online')
-@section('meta_description', 'Shop home decor, kitchen gadgets, beauty, sports gear & more at PeytonGhalib. Quality products, fast delivery, 30-day returns. Discover your new favourites today.')
+@section('meta_description', 'Shop home essentials, kitchen gadgets, electronics, car accessories, toys & more at PeytonGhalib. Quality products, fast delivery, 30-day returns. Discover your new favourites today.')
 
 {{-- No hero image preload on purpose.
 
@@ -23,7 +23,7 @@ $schemaWebsite = [
     '@type'           => 'WebSite',
     'name'            => 'PeytonGhalib',
     'url'             => url('/'),
-    'description'     => 'Shop home decor, kitchen gadgets, beauty, sports gear & more at PeytonGhalib. Quality products, fast delivery, 30-day returns. Discover your new favourites today.',
+    'description'     => 'Shop home essentials, kitchen gadgets, electronics, car accessories, toys & more at PeytonGhalib. Quality products, fast delivery, 30-day returns. Discover your new favourites today.',
     'potentialAction' => [
         '@type'       => 'SearchAction',
         'target'      => ['@type' => 'EntryPoint', 'urlTemplate' => url('/shop') . '?search={search_term_string}'],
@@ -580,7 +580,7 @@ $schemaWebsite = [
             </div>
         </div>{{-- /slide 1 --}}
 
-        {{-- ══ SLIDE 2 — Fashion & Beauty ══ --}}
+        {{-- ══ SLIDE 2 — Kitchen & Home ══ --}}
         <div class="pgh-slide" data-idx="1">
             <div class="container-fluid" style="position:relative;z-index:1;">
                 <div class="max-w-[1720px] mx-auto">
@@ -594,7 +594,7 @@ $schemaWebsite = [
                                 <span class="pgh-h1-grad">big difference</span>
                             </h2>
                             <p class="pgh-body mt-5 max-w-[500px]">
-                                The right kitchen tool saves you twenty minutes. The right skincare routine saves your skin. Discover products worth keeping — handpicked for quality and everyday use.
+                                The right kitchen tool saves you twenty minutes. The right storage box saves you a whole weekend. Discover products worth keeping — handpicked for quality and everyday use.
                             </p>
                             <div class="pgh-cta-wrap mt-8 flex flex-wrap gap-3 md:gap-4">
                                 <a href="{{ url('/shop') }}" class="pgh-btn-a">
@@ -634,10 +634,10 @@ $schemaWebsite = [
                         <div class="pgh-collage pgh-row-right">
 
                             <div class="pgh-img-shell">
-                                <img src="{{ asset('assets/img/home-v1/electronics.webp') }}" alt="Fashion & Beauty Collection" width="577" height="433" loading="lazy">
+                                <img src="{{ asset('assets/img/home-v1/home-decor.webp') }}" alt="Kitchen and home essentials" width="577" height="433" loading="lazy">
                                 <div class="pgh-card-footer">
                                     <div class="pgh-card-footer-dots"><span></span><span></span><span></span></div>
-                                    <span class="pgh-card-footer-text">Fashion & Beauty</span>
+                                    <span class="pgh-card-footer-text">Kitchen &amp; Home</span>
                                 </div>
                             </div>
                             <span class="pgh-new-badge">Trending Now</span>
@@ -662,11 +662,11 @@ $schemaWebsite = [
                                 <span class="pgh-h1-grad">whatever's next</span>
                             </h2>
                             <p class="pgh-body mt-5 max-w-[500px]">
-                                Whether you're hitting the gym, heading out for a drive, or somewhere in between — we've got the equipment, accessories and gear to keep you ready. Fast delivery across the USA.
+                                Whether you're kitting out your car, upgrading your tech, or somewhere in between — we've got the gadgets, accessories and gear to keep you ready. Fast delivery across the USA.
                             </p>
                             <div class="pgh-cta-wrap mt-8 flex flex-wrap gap-3 md:gap-4">
                                 <a href="{{ url('/shop') }}" class="pgh-btn-a">
-                                    Shop sports
+                                    Shop electronics
                                     <svg width="15" height="11" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                 </a>
                                 <a href="{{ url('/categories') }}" class="pgh-btn-b">
@@ -733,13 +733,13 @@ $schemaWebsite = [
             <div class="mqs-belt" aria-label="Promotions ticker">
                 @php
                 $mqItems = [
-                    ['text' => 'New Collection <span class="hi">2026</span>'],
-                    ['text' => 'Get Up To <span class="hi">50% Off</span>'],
-                    ['text' => 'Clothing &amp; Fashion'],
-                    ['text' => 'Best Fashion Picks'],
-                    ['text' => '<span class="hi">Summer</span> Collection'],
-                    ['text' => 'Shop <span class="hi">10,000+</span> Products'],
-                    ['text' => 'Beauty &amp; Skincare'],
+                    ['text' => 'New Arrivals <span class="hi">2026</span>'],
+                    ['text' => 'Save Up To <span class="hi">30% Off</span>'],
+                    ['text' => 'Kitchen &amp; Gadgets'],
+                    ['text' => 'Car Accessories'],
+                    ['text' => '<span class="hi">Garden</span> &amp; Outdoor'],
+                    ['text' => 'Shop <span class="hi">500+</span> Products'],
+                    ['text' => 'Toys &amp; Games'],
                     ['text' => 'Home &amp; <span class="hi">Decor</span>'],
                     ['text' => 'Electronics &amp; Gadgets'],
                     ['text' => 'Free Shipping <span class="hi">Always</span>'],
@@ -841,7 +841,7 @@ $schemaWebsite = [
                         All Collections →
                     </a>
                 </div>
-                <p class="mt-3 text-sm text-paragraph dark:text-white-light max-w-2xl">Browse our full range of stunning products — from home decor and kitchen gadgets to sports equipment, beauty products, and everything in between.</p>
+                <p class="mt-3 text-sm text-paragraph dark:text-white-light max-w-2xl">Browse our full range of stunning products — from home decor and kitchen gadgets to electronics, car accessories, toys, garden, and everything in between.</p>
             </div>
 
             <div class="pgh-cats-scroll" id="pgh-cat-grid" data-aos="fade-up" data-aos-delay="80">
@@ -1625,7 +1625,7 @@ $schemaWebsite = [
                 <div>
                     <span class="text-xs uppercase tracking-widest text-primary font-semibold">Everything in one place</span>
                     <h2 class="leading-tight mt-1 text-xl md:text-2xl font-bold text-title dark:text-white">Explore Our Full Range</h2>
-                    <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500">From home and garden to tech, sports, beauty and beyond — PeytonGhalib has everything you need in one place.</p>
+                    <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500">From home and garden to tech, toys, car accessories and beyond — PeytonGhalib has everything you need in one place.</p>
                 </div>
                 <a href="{{ url('/shop') }}"
                    class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">
