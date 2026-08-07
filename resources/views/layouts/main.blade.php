@@ -67,18 +67,23 @@
              Order matters — the preload scanner queues these in document order,
              so the LCP font goes first.
 
-             700 leads because the hero <h1> (the measured LCP element) is
-             font-weight:800, and Josefin Sans tops out at 700 — so it resolves
-             to the 700 file and synthesises the extra weight. Preloading 400
-             instead, as this did originally, left the actual LCP font to be
-             discovered from the stylesheet ~600ms later. --}}
-        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/josefin-sans-700-normal-latin.woff2') }}" crossorigin>
-        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/josefin-sans-400-normal-latin.woff2') }}" crossorigin>
-        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/poppins-500-normal-latin.woff2') }}" crossorigin>
+             Manrope 800 leads because the hero <h1> (the measured LCP element)
+             is font-weight:800 and Manrope ships a real 800, so unlike the
+             Josefin Sans this replaced there is no synthesised weight and no
+             reflow when the file lands. Inter 400 follows for body copy.
+             Preloading the wrong weight, as this did originally, left the
+             actual LCP font to be discovered from the stylesheet ~600ms late. --}}
+        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/manrope-800-normal-latin.woff2') }}" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/inter-400-normal-latin.woff2') }}" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/manrope-700-normal-latin.woff2') }}" crossorigin>
         <!-- Main Stylesheet -->
         @vite('resources/css/app.css')
         <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/style.css')">
         <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/fonts.css')">
+        {{-- Last in the cascade on purpose: the unified type system overrides
+             the template's Josefin Sans body font and the four competing
+             stacks that had grown around it. See the header of that file. --}}
+        <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/typography.css')">
 
         {{-- Analytics is async and never blocks the parser, but it still competes
              for bandwidth with the CSS above — so it is requested after it. --}}

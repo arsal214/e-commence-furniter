@@ -34,8 +34,20 @@ class SelfHostFonts extends Command
     /**
      * Exactly the families and weights the layouts requested from Google, so
      * self-hosting cannot change how anything renders.
+     *
+     * Manrope and Inter are the site typography system (assets/css/typography.css):
+     * Manrope for headings, Inter for body. Manrope stops at 800, which is the
+     * heaviest weight the scale asks for, so nothing is synthesised.
+     *
+     * Poppins and Josefin Sans stay listed even though the unified system has
+     * replaced them. Their files are already on disk so regenerating costs no
+     * downloads, and an unused @font-face is never fetched by the browser — but
+     * dropping them would 404 any inline stack still naming them, and there are
+     * ~40 of those scattered through the older templates.
      */
     private const FAMILIES = [
+        'Manrope' => 'family=Manrope:wght@400;500;600;700;800',
+        'Inter' => 'family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400',
         'Poppins' => 'family=Poppins:wght@300;400;500;600;700',
         'Josefin Sans' => 'family=Josefin+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700',
     ];

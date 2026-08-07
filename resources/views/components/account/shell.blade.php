@@ -50,7 +50,7 @@
         radial-gradient(900px 400px at 85% -5%, rgba(187, 151, 109, .13), transparent 60%),
         var(--ac-bg);
     padding: 40px 0 72px;
-    font-family: 'DM Sans', 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--pg-font-body);
     color: var(--ac-text);
 }
 .dark .acc {

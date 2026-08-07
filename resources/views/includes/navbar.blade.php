@@ -140,7 +140,7 @@
     width: 100%; background: #fff;
     border-bottom: 1px solid transparent;
     transition: border-color .3s, box-shadow .3s;
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--pg-font-body);
 }
 #pg-hdr.scrolled {
     border-color: #ede8e1;
@@ -251,7 +251,7 @@
     background: transparent; border: none; cursor: pointer;
     color: #172430; position: relative;
     transition: background .18s, color .18s;
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--pg-font-body);
 }
 .dark .pg-act-btn { color: rgba(255,255,255,.85); }
 .pg-act-btn:hover { background: #f5f0e8; color: #bb976d; }
@@ -276,7 +276,7 @@
     font-size: 9px; font-weight: 700; color: #fff;
     display: flex; align-items: center; justify-content: center;
     line-height: 1; pointer-events: none; box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--pg-font-body);
 }
 .pg-hdr-vdiv { width: 1px; height: 22px; background: #e8e2da; margin: 0 8px; flex-shrink: 0; }
 .dark .pg-hdr-vdiv { background: rgba(255,255,255,.12); }
@@ -292,7 +292,7 @@
     opacity: 0; visibility: hidden;
     transform: translateY(6px);
     transition: all .2s cubic-bezier(.4,0,.2,1);
-    z-index: 210; font-family: 'Poppins', sans-serif;
+    z-index: 210; font-family: var(--pg-font-body);
 }
 .dark .pg-acct-dd { background: #1c2d3e; border-color: rgba(255,255,255,.08); }
 .pg-acct-wrap:hover .pg-acct-dd { opacity: 1; visibility: visible; transform: translateY(0); }
@@ -306,7 +306,7 @@
     font-size: 12.5px; font-weight: 500; color: #555;
     text-decoration: none; background: transparent; border: none;
     text-align: left; cursor: pointer;
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--pg-font-body);
     transition: color .15s, background .15s; box-sizing: border-box;
 }
 .dark .pg-acct-dd a, .dark .pg-acct-dd button { color: rgba(255,255,255,.7); }
@@ -326,7 +326,7 @@
     transform: translateX(100%);
     transition: transform .34s cubic-bezier(.4,0,.2,1);
     box-shadow: -8px 0 52px rgba(23,36,48,.13);
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--pg-font-body);
 }
 .dark #pg-cart-drw { background: #172430; }
 #pg-cart-drw.drw-open { transform: translateX(0); }
@@ -395,7 +395,7 @@
 .pg-drw-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .pg-drw-btn {
     height: 48px; display: flex; align-items: center; justify-content: center;
-    font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 700;
+    font-family: var(--pg-font-body); font-size: 11px; font-weight: 700;
     letter-spacing: .1em; text-transform: uppercase;
     text-decoration: none; border: none; cursor: pointer; transition: all .2s;
 }
@@ -413,7 +413,7 @@
     display: flex; align-items: flex-start; padding-top: 80px;
     opacity: 0; visibility: hidden;
     transition: opacity .24s, visibility .24s;
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--pg-font-body);
 }
 #pg-srch-modal.srch-open { opacity: 1; visibility: visible; }
 .pg-srch-box {
@@ -430,7 +430,7 @@
 .dark .pg-srch-row { border-color: rgba(255,255,255,.3); }
 .pg-srch-input {
     flex: 1; background: transparent; border: none; outline: none;
-    font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 300;
+    font-family: var(--pg-font-body); font-size: 22px; font-weight: 300;
     color: #172430; caret-color: #bb976d;
 }
 .dark .pg-srch-input { color: #fff; }
@@ -500,7 +500,7 @@
     border-bottom: 1px solid #ede8e1;
     box-shadow: 0 2px 14px rgba(23,36,48,.06);
     align-items: center; padding: 0 18px; gap: 10px;
-    box-sizing: border-box; font-family: 'Poppins', sans-serif;
+    box-sizing: border-box; font-family: var(--pg-font-body);
 }
 .dark #pg-mob-hdr { background: #172430; border-color: rgba(255,255,255,.08); }
 
@@ -520,7 +520,7 @@
     transform: translateX(-100%);
     transition: transform .32s cubic-bezier(.4,0,.2,1);
     box-shadow: 8px 0 52px rgba(23,36,48,.13);
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--pg-font-body);
 }
 .dark #pg-mob-drw { background: #172430; }
 #pg-mob-drw.drw-open { transform: translateX(0); }
@@ -536,7 +536,7 @@
     color: #172430; text-decoration: none;
     background: transparent; border: none; border-bottom: 1px solid #f7f3ee;
     cursor: pointer; box-sizing: border-box;
-    font-family: 'Poppins', sans-serif; transition: color .18s, background .18s;
+    font-family: var(--pg-font-body); transition: color .18s, background .18s;
 }
 .dark .pg-mob-nav-link, .dark .pg-mob-acc-btn { color: rgba(255,255,255,.85); border-color: rgba(255,255,255,.06); }
 .pg-mob-nav-link:hover, .pg-mob-acc-btn:hover { color: #bb976d; background: #fdf8f2; }
@@ -773,7 +773,7 @@
             <a href="{{ route('track-order') }}"
                style="display:flex;align-items:center;justify-content:center;gap:8px;
                       height:44px;background:#bb976d;border:1.5px solid #bb976d;
-                      font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;
+                      font-family:var(--pg-font-body);font-size:12px;font-weight:700;
                       letter-spacing:.09em;text-transform:uppercase;
                       color:#fff;text-decoration:none;
                       transition:background .2s;"
@@ -797,8 +797,8 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><polyline points="16.5 9.4 7.55 4.24"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/><circle cx="18.5" cy="15.5" r="2.5"/><path d="M20.27 17.27 22 19"/></svg>
             </div>
             <div>
-                <div style="font-size:10px;color:#aaa;font-family:'Poppins',sans-serif;">Where's my package?</div>
-                <div style="font-size:13px;font-weight:700;color:#172430;font-family:'Poppins',sans-serif;">Track Your Order</div>
+                <div style="font-size:10px;color:#aaa;font-family:var(--pg-font-body);">Where's my package?</div>
+                <div style="font-size:13px;font-weight:700;color:#172430;font-family:var(--pg-font-body);">Track Your Order</div>
             </div>
         </a>
     </div>

@@ -39,7 +39,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'DM Sans', 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--pg-font-body);
     background:
         radial-gradient(900px 500px at 50% -10%, rgba(187, 151, 109, .16), transparent 62%),
         radial-gradient(700px 500px at 50% 110%, rgba(187, 151, 109, .10), transparent 60%),

@@ -104,24 +104,19 @@
 .rich-content hr{border:none;border-top:1px solid #e5e7eb;margin:1.5em 0}
 
 /* ── Product description prose ───────────────────────────────────────────
-   The site sets Josefin Sans on <body>. It is a geometric display face with
-   a short x-height — right for headings, tiring for a paragraph of copy, and
-   the description is the one block on this page people actually read end to
-   end. So the prose switches to Poppins (already self-hosted, no extra
-   request) and keeps Josefin for its headings: the pairing gives the block a
-   voice instead of flattening it into one font.
+   Inherits the site type system (assets/css/typography.css): Inter for the
+   copy, Manrope for the headings inside it. Only the things specific to this
+   block are set here — the measure, the lead paragraph, and the bullets.
    Measure is capped near 68ch because the panel is 985px wide and a line
    that long loses the reader on the carriage return.                     */
 .pd-prose{
-  font-family:'Poppins',ui-sans-serif,system-ui,sans-serif;
-  font-size:1.0625rem;          /* 17px — one step up from the site default */
-  line-height:1.8;
-  letter-spacing:.002em;
-  color:#4A5560;
+  font-family:var(--pg-font-body);
+  font-size:var(--pg-body-size);
+  line-height:var(--pg-lh-body);
+  color:var(--pg-c-body);
   max-width:68ch;
   text-wrap:pretty;
 }
-.dark .pd-prose{color:rgba(255,255,255,.72)}
 .pd-prose p{margin-bottom:1.15em;line-height:1.8}
 .pd-prose p:last-child{margin-bottom:0}
 /* ~80 descriptions were pasted from Google and wrap their copy in <div>
@@ -133,25 +128,22 @@
    a touch larger, darker, tighter. Everything after it settles back down.
    Description only — shipping info opens with logistics, not a pitch.    */
 #tab-desc .pd-prose > p:first-child{
-  font-size:1.1875rem;
-  line-height:1.7;
+  font-size:clamp(1.0625rem,1.02rem + .22vw,1.1875rem);
+  line-height:1.65;
   letter-spacing:-.01em;
-  color:#2B333A;
+  color:var(--pg-c-heading);
   margin-bottom:1.3em;
 }
-.dark #tab-desc .pd-prose > p:first-child{color:rgba(255,255,255,.92)}
 
 .pd-prose h1,.pd-prose h2,.pd-prose h3,.pd-prose h4,.pd-prose h5,.pd-prose h6{
-  font-family:'Josefin Sans',sans-serif;
+  font-family:var(--pg-font-heading);
   font-weight:700;
-  letter-spacing:-.01em;
-  color:#1f2937;
+  letter-spacing:var(--pg-track-heading);
+  color:var(--pg-c-heading);
   margin-top:1.8em;
   margin-bottom:.6em;
 }
 .pd-prose > :first-child{margin-top:0}
-.dark .pd-prose h1,.dark .pd-prose h2,.dark .pd-prose h3,
-.dark .pd-prose h4,.dark .pd-prose h5,.dark .pd-prose h6{color:#fff}
 
 /* Brand-coloured markers: the default disc reads as unstyled next to the
    rest of the page, and bullets are where feature copy usually lands.     */
@@ -164,18 +156,14 @@
 .pd-prose ol{padding-left:1.35rem;margin-bottom:1.15em}
 .pd-prose ol > li{margin-bottom:.55em;line-height:1.75;padding-left:.25rem}
 .pd-prose ol > li::marker{color:#bb976d;font-weight:600}
-.pd-prose strong,.pd-prose b{font-weight:600;color:#2B333A}
-.dark .pd-prose strong,.dark .pd-prose b{color:#fff}
+.pd-prose strong,.pd-prose b{font-weight:600;color:var(--pg-c-heading)}
 .pd-prose blockquote{
   border-left:3px solid #bb976d;background:#F8F5F0;border-radius:0 .5rem .5rem 0;
-  padding:.9rem 1.25rem;margin:1.5em 0;font-style:normal;color:#4A5560;
+  padding:.9rem 1.25rem;margin:1.5em 0;font-style:normal;color:var(--pg-c-body);
 }
-.dark .pd-prose blockquote{background:rgba(255,255,255,.05);color:rgba(255,255,255,.72)}
-
-@media (max-width:640px){
-  .pd-prose{font-size:1rem;line-height:1.75}
-  #tab-desc .pd-prose > p:first-child{font-size:1.0625rem}
-}
+.dark .pd-prose blockquote{background:rgba(255,255,255,.05)}
+/* Sizes are fluid via the shared clamps, so the phone-width font-size
+   override this block used to carry is no longer needed. */
 
 /* ── Product tabs ────────────────────────────────────────────────────────
    Segmented pill control rather than the old underlined text row: the site
@@ -361,6 +349,475 @@
   .pd-rev-head__title,.pd-rev-head__score{font-size:1rem}
 }
 @media (prefers-reduced-motion:reduce){.pd-rev-grid{scroll-behavior:auto}}
+</style>
+@endpush
+
+{{-- ═══════════════════════════════════════════════════════════════════════
+     PREMIUM PRODUCT INFORMATION LAYER (pdx-)
+
+     A second push so every rule here lands after the block above and wins on
+     equal specificity — the older .pd- rules stay intact for the gallery,
+     reviews and sticky bar, which are not part of this redesign.
+
+     Inter is self-hosted (php artisan fonts:self-host) and declared in
+     assets/css/fonts.css alongside Poppins/Josefin. No CDN link: the layout
+     deliberately removed cross-origin font fetches to protect LCP, and a
+     googleapis <link> here would put a DNS+TLS round-trip in front of the
+     text paint.
+     ═══════════════════════════════════════════════════════════════════════ --}}
+@push('styles')
+{{-- 700 is the product title (largest text in the column); 400 is the body.
+     Both are needed before first paint, so they are preloaded rather than
+     discovered when fonts.css parses. --}}
+<link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/inter-700-normal-latin.woff2') }}" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/inter-400-normal-latin.woff2') }}" crossorigin>
+<style>
+/* ── Tokens ─────────────────────────────────────────────────────────────
+   Scoped to .pdx so nothing here leaks into the rest of the site. Gold
+   #bb976d is the brand accent but fails 4.5:1 on white, so every gold that
+   carries text uses --pdx-gold-ink instead. */
+.pdx {
+    --pdx-ink:       #101820;
+    --pdx-body:      #4A5259;
+    --pdx-muted:     #6B7280;
+    --pdx-gold:      #bb976d;
+    --pdx-gold-ink:  #8A6A3F;
+    --pdx-gold-soft: #F7F1E8;
+    --pdx-line:      #E8E5E0;
+    --pdx-line-soft: #F1EEE9;
+    --pdx-surface:   #FBFAF8;
+    --pdx-ok:        #15803D;
+    --pdx-ok-soft:   #ECFDF3;
+
+    --pdx-ease:      cubic-bezier(.4, 0, .2, 1);
+    --pdx-lift:      cubic-bezier(.34, 1.56, .64, 1);
+
+    /* The site's unified type tokens (assets/css/typography.css): Inter for
+       body, Manrope for headings. Both are now self-hosted — before that run
+       they fell through to the system UI stack. */
+    font-family: var(--pg-font-body);
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+}
+.pdx-title, .pdx-price, .pdx-h3 { font-family: var(--pg-font-heading); }
+
+/* ── Typography scale ───────────────────────────────────────────────────
+   Sizes come straight from the brief: 36/30/26 title, 34 price, 18/600
+   section titles, 18/400 body at 1.75, 13px uppercase labels. clamp() is
+   used instead of three breakpoints so large screens scale too. */
+.pdx-title {
+    font-size: clamp(1.625rem, 1.15rem + 1.6vw, 2.25rem);   /* 26 → 36 */
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -.022em;
+    color: var(--pdx-ink);
+    margin: 0 0 .5rem;
+    text-wrap: balance;
+}
+.pdx-price {
+    font-size: clamp(1.75rem, 1.4rem + 1.1vw, 2.125rem);    /* 28 → 34 */
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -.02em;
+    color: var(--pdx-ink);
+    font-variant-numeric: tabular-nums;
+}
+.pdx-h3 {
+    font-size: 1.125rem; font-weight: 600; line-height: 1.4;
+    letter-spacing: -.01em; color: var(--pdx-ink); margin: 0;
+}
+.pdx-body { font-size: 1.125rem; font-weight: 400; line-height: 1.75; color: var(--pdx-body); }
+.pdx-label {
+    font-size: .8125rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .09em;
+    color: var(--pdx-muted); margin: 0;
+}
+
+/* ── Info column ────────────────────────────────────────────────────────
+   Generous internal rhythm: the brief's "breathing room" is mostly this
+   one value. */
+.pdx.pd-info-col {
+    background: #fff;
+    border-radius: 20px;
+    padding: 22px 20px 26px;
+    box-shadow: 0 1px 2px rgba(16, 24, 32, .04), 0 12px 40px -12px rgba(16, 24, 32, .10);
+    border: 1px solid var(--pdx-line-soft);
+}
+@media (min-width: 768px) { .pdx.pd-info-col { padding: 32px 30px 34px; } }
+
+/* Consistent vertical rhythm between blocks, with a hairline where a real
+   visual break helps scanning. */
+.pdx-block { margin-top: 26px; }
+.pdx-block--sep { padding-top: 26px; border-top: 1px solid var(--pdx-line-soft); }
+
+/* ── Eyebrow row (category + stock) ─────────────────────────────────── */
+.pdx-eyebrow {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.pdx-eyebrow__cat {
+    font-size: .8125rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .09em;
+    color: var(--pdx-gold-ink); text-decoration: none;
+}
+.pdx-eyebrow__cat:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── Social proof ───────────────────────────────────────────────────────
+   Rendered only when the product genuinely has reviews. There is no
+   fabricated rating, view counter or "N bought today" here: those numbers
+   have no source in the data and inventing them is both a trust and a
+   legal liability (FTC 16 CFR 465). */
+.pdx-social {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+.pdx-stars { display: inline-flex; align-items: center; gap: 2px; }
+.pdx-social__score { font-size: .9375rem; font-weight: 700; color: var(--pdx-ink); font-variant-numeric: tabular-nums; }
+.pdx-social__count { font-size: .9375rem; color: var(--pdx-muted); }
+.pdx-social__link {
+    font-size: .875rem; font-weight: 600; color: var(--pdx-gold-ink);
+    text-decoration: underline; text-underline-offset: 3px;
+}
+.pdx-social__link:hover { color: #6E532F; }
+
+/* ── Price ──────────────────────────────────────────────────────────── */
+.pdx.pd-price-block {
+    background: none; border-left: 0; border-radius: 0;
+    padding: 0; margin: 0 0 4px;
+}
+.pdx-price-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.pdx-was { font-size: 1.0625rem; color: #9AA0A6; text-decoration: line-through; font-weight: 500; }
+.pdx-off {
+    font-size: .8125rem; font-weight: 700; color: #fff;
+    background: #C2321F; border-radius: 999px; padding: 4px 11px;
+    letter-spacing: .01em;
+}
+.pdx-save { font-size: .875rem; font-weight: 600; color: var(--pdx-ok); margin: 8px 0 0; }
+.pdx-tax { font-size: .875rem; color: var(--pdx-muted); margin: 6px 0 0; }
+
+/* ── Variant controls ───────────────────────────────────────────────────
+   The radio itself was `display:none`, which took it out of the tab order
+   and made variants unreachable by keyboard. It is now visually hidden but
+   still focusable, and `:checked`/`:focus-visible` drive the pill styling —
+   so selection also renders correctly before the JS runs. */
+.pdx-vinput {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+.pdx-options { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* Size — premium rounded button with a check on the selected one */
+.pdx.pd-variant-pill,
+.pdx .pd-variant-pill {
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    min-height: 48px; min-width: 56px;
+    padding: 0 18px;
+    font-size: .9375rem; font-weight: 600; color: var(--pdx-ink);
+    background: #fff;
+    border: 2px solid var(--pdx-line);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: border-color .2s var(--pdx-ease), background .2s var(--pdx-ease),
+                transform .2s var(--pdx-lift), box-shadow .2s var(--pdx-ease);
+}
+.pdx .pd-variant-pill:hover {
+    border-color: var(--pdx-gold);
+    background: var(--pdx-gold-soft);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px -8px rgba(187, 151, 109, .55);
+}
+.pdx .pd-variant-pill.active,
+.pdx .pdx-vinput:checked + .pd-variant-pill {
+    border-color: var(--pdx-gold-ink);
+    background: var(--pdx-gold-soft);
+    color: var(--pdx-gold-ink);
+    box-shadow: inset 0 0 0 1px rgba(138, 106, 63, .28);
+}
+.pdx .pdx-vinput:focus-visible + .pd-variant-pill {
+    outline: 2px solid var(--pdx-ink);
+    outline-offset: 3px;
+}
+/* Check mark appears only on the selected button */
+.pdx .pd-variant-pill .pdx-check { display: none; }
+.pdx .pd-variant-pill.active .pdx-check,
+.pdx .pdx-vinput:checked + .pd-variant-pill .pdx-check { display: inline-flex; }
+
+/* Colour — a real swatch of the colour, not a text button */
+.pdx .pd-variant-pill--swatch {
+    min-width: 0; padding: 0;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border-width: 2px;
+    background: #fff;
+}
+.pdx .pd-variant-pill--swatch:hover { background: #fff; }
+.pdx .pdx-vinput:checked + .pd-variant-pill--swatch { background: #fff; }
+.pdx-swatch__dot {
+    display: block; width: 100%; height: 100%;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: inset 0 0 0 1px rgba(16, 24, 32, .14);
+    transition: transform .2s var(--pdx-lift);
+}
+.pdx .pd-variant-pill--swatch:hover .pdx-swatch__dot { transform: scale(.9); }
+.pdx .pd-variant-pill--swatch .pdx-check {
+    position: absolute; inset: 0;
+    align-items: center; justify-content: center;
+    /* Mix-blend keeps the tick legible on both a white and a black swatch */
+    color: #fff; mix-blend-mode: difference;
+}
+
+/* ── Quantity ───────────────────────────────────────────────────────── */
+.pdx.pd-qty-wrap,
+.pdx .pd-qty-wrap {
+    border: 2px solid var(--pdx-line);
+    border-radius: 14px;
+    overflow: hidden;
+    height: 52px;
+}
+.pdx .pd-qty-btn {
+    width: 52px; height: 100%;
+    color: var(--pdx-ink);
+    transition: background .18s var(--pdx-ease), color .18s var(--pdx-ease);
+}
+.pdx .pd-qty-btn:hover { background: var(--pdx-gold-soft); color: var(--pdx-gold-ink); }
+.pdx .pd-qty-btn:focus-visible { outline: 2px solid var(--pdx-ink); outline-offset: -3px; }
+.pdx .pd-qty-btn:disabled { opacity: .35; cursor: not-allowed; }
+.pdx #pd-qty {
+    width: 52px !important; height: 100% !important;
+    font-size: 1rem !important; font-weight: 700 !important;
+    font-variant-numeric: tabular-nums;
+}
+/* Chrome/Safari spinners would sit on top of the custom +/- buttons */
+.pdx #pd-qty::-webkit-outer-spin-button,
+.pdx #pd-qty::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.pdx #pd-qty { -moz-appearance: textfield; appearance: textfield; }
+
+/* ── Add to Cart — the dominant element on the page ─────────────────── */
+.pdx .pd-btn-cart {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; height: 60px;
+    font-size: 1rem; font-weight: 700;
+    letter-spacing: .02em; text-transform: none;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #1D2B39 0%, #101820 100%);
+    box-shadow: 0 1px 2px rgba(16, 24, 32, .2), 0 12px 28px -10px rgba(16, 24, 32, .55);
+    transition: transform .2s var(--pdx-lift), box-shadow .25s var(--pdx-ease), filter .2s var(--pdx-ease);
+    position: relative; overflow: hidden;
+}
+.pdx .pd-btn-cart:hover {
+    background: linear-gradient(180deg, #24354652 0%, #0A1119 100%), #101820;
+    transform: translateY(-2px) scale(1.008);
+    box-shadow: 0 2px 4px rgba(16, 24, 32, .22), 0 18px 38px -12px rgba(16, 24, 32, .6);
+}
+.pdx .pd-btn-cart:active { transform: translateY(0) scale(.995); }
+.pdx .pd-btn-cart:focus-visible { outline: 3px solid var(--pdx-gold); outline-offset: 3px; }
+.pdx .pd-btn-cart:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* Ripple — a pseudo-element scaled from the click point by the JS below */
+.pdx-ripple {
+    position: absolute; border-radius: 50%;
+    background: rgba(255, 255, 255, .35);
+    transform: scale(0); pointer-events: none;
+    animation: pdx-ripple .55s var(--pdx-ease) forwards;
+}
+@keyframes pdx-ripple { to { transform: scale(2.6); opacity: 0; } }
+
+/* Loading state: label swaps for a spinner without changing button width */
+.pdx-spin { display: none; width: 19px; height: 19px; flex: none; }
+.pdx [data-loading="true"] .pdx-spin { display: block; animation: pdx-spin .7s linear infinite; }
+.pdx [data-loading="true"] .pdx-cart-ico { display: none; }
+@keyframes pdx-spin { to { transform: rotate(360deg); } }
+
+/* ── Buy Now — outlined secondary, same height ──────────────────────── */
+.pdx-btn-buy {
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    width: 100%; height: 60px;
+    font-size: 1rem; font-weight: 700; letter-spacing: .02em;
+    color: var(--pdx-ink);
+    background: #fff;
+    border: 2px solid var(--pdx-ink);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: background .2s var(--pdx-ease), color .2s var(--pdx-ease),
+                transform .2s var(--pdx-lift), box-shadow .25s var(--pdx-ease);
+    position: relative; overflow: hidden;
+}
+.pdx-btn-buy:hover {
+    background: var(--pdx-ink); color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px -12px rgba(16, 24, 32, .5);
+}
+.pdx-btn-buy:active { transform: translateY(0) scale(.995); }
+.pdx-btn-buy:focus-visible { outline: 3px solid var(--pdx-gold); outline-offset: 3px; }
+.pdx-btn-buy:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+/* Wishlist steps back to a quiet tertiary action so it cannot compete with
+   the two primary CTAs above it. */
+.pdx .wishlist-toggle-btn {
+    height: 48px !important; border-radius: 12px !important;
+    border: 0 !important; background: transparent !important;
+    font-size: .9375rem !important; font-weight: 600 !important;
+    color: var(--pdx-muted) !important;
+}
+.pdx .wishlist-toggle-btn:hover { color: var(--pdx-gold-ink) !important; background: var(--pdx-gold-soft) !important; }
+.pdx .wishlist-toggle-btn:focus-visible { outline: 2px solid var(--pdx-ink); outline-offset: 2px; }
+
+/* ── Trust badges — compact reassurance directly under the CTAs ─────── */
+.pdx-trust {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 14px; margin-top: 18px;
+}
+.pdx-trust__i {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .875rem; font-weight: 500; color: var(--pdx-body);
+}
+.pdx-trust__i svg { flex: none; color: var(--pdx-ok); }
+
+/* ── Delivery box ───────────────────────────────────────────────────────
+   Dates come from config('checkout.delivery') via DeliveryEstimate, the same
+   source the shipping policy renders, so the two can never disagree. There
+   is deliberately no "order within HH:MM" countdown: no dispatch cutoff is
+   defined anywhere in the app, so a timer would be a fabricated deadline. */
+.pdx.pd-delivery,
+.pdx-delivery {
+    display: block;
+    background: linear-gradient(180deg, #FCFAF7 0%, var(--pdx-gold-soft) 100%);
+    border: 1px solid #EADFCD;
+    border-radius: 18px;
+    padding: 18px 18px 16px;
+    margin-top: 22px;
+}
+.pdx-delivery__top { display: flex; align-items: flex-start; gap: 13px; }
+.pdx-delivery__ico {
+    display: grid; place-items: center; flex: none;
+    width: 44px; height: 44px;
+    border-radius: 13px;
+    background: #fff;
+    border: 1px solid #EADFCD;
+    color: var(--pdx-gold-ink);
+    box-shadow: 0 2px 8px -3px rgba(138, 106, 63, .3);
+}
+.pdx-delivery__head {
+    font-size: 1rem; font-weight: 700; color: var(--pdx-ink);
+    margin: 0 0 3px; line-height: 1.35;
+}
+.pdx-delivery__head em { font-style: normal; color: var(--pdx-gold-ink); }
+.pdx-delivery__date { font-size: .9375rem; color: var(--pdx-body); margin: 0; line-height: 1.5; }
+.pdx-delivery__date strong { color: var(--pdx-ink); font-weight: 700; white-space: nowrap; }
+.pdx-delivery__meta {
+    display: flex; flex-wrap: wrap; gap: 8px 18px;
+    margin: 14px 0 0; padding-top: 13px;
+    border-top: 1px solid rgba(138, 106, 63, .16);
+}
+.pdx-delivery__meta span {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: .875rem; font-weight: 600; color: var(--pdx-gold-ink);
+}
+
+/* ── Feature cards — four equal cards ───────────────────────────────── */
+.pdx-features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px; margin-top: 22px;
+}
+@media (min-width: 480px) and (max-width: 767.98px) { .pdx-features { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .pdx-features { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+.pdx-feature {
+    background: var(--pdx-surface);
+    border: 1px solid var(--pdx-line);
+    border-radius: 16px;
+    padding: 16px 13px;
+    text-align: center;
+    transition: transform .22s var(--pdx-lift), border-color .22s var(--pdx-ease), box-shadow .22s var(--pdx-ease);
+}
+.pdx-feature:hover {
+    transform: translateY(-3px);
+    border-color: var(--pdx-gold);
+    box-shadow: 0 16px 30px -18px rgba(16, 24, 32, .35);
+}
+.pdx-feature__ico {
+    display: grid; place-items: center;
+    width: 40px; height: 40px; margin: 0 auto 10px;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid var(--pdx-line);
+    color: var(--pdx-gold-ink);
+}
+.pdx-feature__t { font-size: .875rem; font-weight: 700; color: var(--pdx-ink); margin: 0 0 3px; line-height: 1.3; }
+.pdx-feature__d { font-size: .78125rem; color: var(--pdx-muted); margin: 0; line-height: 1.45; }
+
+/* ── Payment ────────────────────────────────────────────────────────── */
+.pdx-pay { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--pdx-line-soft); }
+.pdx-pay__row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.pdx-pay__note {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    font-size: .875rem; color: var(--pdx-muted); text-align: center; margin: 0;
+}
+.pdx-pay__note svg { flex: none; color: var(--pdx-ok); }
+
+/* ── Product benefits — two columns ─────────────────────────────────── */
+.pdx-benefits {
+    display: grid; grid-template-columns: 1fr; gap: 10px 20px;
+    margin: 14px 0 0; padding: 0; list-style: none;
+}
+@media (min-width: 420px) { .pdx-benefits { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.pdx-benefits li {
+    display: flex; align-items: flex-start; gap: 9px;
+    font-size: .9375rem; line-height: 1.55; color: var(--pdx-body);
+}
+.pdx-benefits li svg { flex: none; margin-top: 3px; color: var(--pdx-ok); }
+
+/* ── Share ──────────────────────────────────────────────────────────── */
+.pdx-share { display: flex; align-items: center; gap: 10px; margin-top: 22px; }
+.pdx-share__k { font-size: .8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: .09em; color: var(--pdx-muted); }
+.pdx-share a {
+    display: grid; place-items: center;
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 1px solid var(--pdx-line); color: var(--pdx-muted);
+    transition: border-color .2s var(--pdx-ease), color .2s var(--pdx-ease), transform .2s var(--pdx-lift);
+}
+.pdx-share a:hover { border-color: var(--pdx-gold); color: var(--pdx-gold-ink); transform: translateY(-2px); }
+.pdx-share a:focus-visible { outline: 2px solid var(--pdx-ink); outline-offset: 2px; }
+
+/* ── Entrance animation ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+    .pdx-fade { animation: pdx-fade .5s var(--pdx-ease) both; }
+    @keyframes pdx-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+}
+
+/* ── Mobile ─────────────────────────────────────────────────────────────
+   16px floor on every control (below that iOS zooms the viewport on focus),
+   full-width CTAs, and nothing allowed to push the page sideways. */
+@media (max-width: 767.98px) {
+    .pdx.pd-info-col { border-radius: 16px; }
+    .pdx-body { font-size: 1rem; line-height: 1.75; }
+    .pdx .pd-variant-pill { min-height: 52px; font-size: 1rem; }
+    .pdx .pd-variant-pill--swatch { width: 52px; height: 52px; }
+    .pdx.pd-qty-wrap, .pdx .pd-qty-wrap { height: 56px; }
+    .pdx .pd-qty-btn { width: 56px; }
+    .pdx #pd-qty { width: 56px !important; font-size: 1rem !important; }
+    .pdx .pd-btn-cart, .pdx-btn-buy { height: 58px; font-size: 1rem; }
+    .pdx-features { gap: 10px; }
+    .pdx-trust { gap: 10px 12px; }
+}
+.pdx, .pdx * { min-width: 0; }
+.pdx img, .pdx svg { max-width: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+    .pdx *, .pdx *::before, .pdx *::after {
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
 </style>
 @endpush
 @section('content')
@@ -964,13 +1421,12 @@ img.pd-slide-img:focus-visible {
                 </div>
 
                 {{-- ── Right: Product Info Card ── --}}
-                <div class="pd-info-col">
+                <div class="pd-info-col pdx pdx-fade">
 
                     {{-- Category + badges row --}}
-                    <div class="flex items-center gap-2 flex-wrap mb-1">
+                    <div class="pdx-eyebrow">
                         @if($item->category)
-                        <a href="{{ route('category.landing', $item->category->slug) }}"
-                           class="text-xs font-semibold text-[#bb976d] uppercase tracking-widest hover:underline">
+                        <a href="{{ route('category.landing', $item->category->slug) }}" class="pdx-eyebrow__cat">
                             {{ $item->category->name }}
                         </a>
                         @endif
@@ -984,13 +1440,11 @@ img.pd-slide-img:focus-visible {
                     </div>
 
                     {{-- Product Name H1 --}}
-                    <h1 class="font-bold text-2xl sm:text-[1.75rem] text-[#172430] leading-snug mb-1" style="line-height:1.25">
-                        {{ $item->name }}
-                    </h1>
+                    <h1 class="pdx-title">{{ $item->name }}</h1>
 
                     {{-- SKU --}}
                     @if($item->sku)
-                    <p class="text-xs text-gray-400 mb-1">SKU: <span class="text-gray-600 font-medium">{{ $item->sku }}</span></p>
+                    <p class="text-[13px] text-[#6B7280] mb-3">SKU: <span class="text-[#101820] font-semibold">{{ $item->sku }}</span></p>
                     @endif
 
                     {{-- Stars --}}
@@ -998,22 +1452,28 @@ img.pd-slide-img:focus-visible {
                         $avgR = $item->reviews_avg_rating ?? 0;
                         $revC = $item->reviews_count ?? 0;
                     @endphp
-                    {{-- Rating row hidden until the product actually has reviews — no
-                         "0.0 · 0 reviews" placeholder. --}}
+                    {{-- Social proof.
+                         Rendered only when the product genuinely has reviews. There
+                         is deliberately no hardcoded rating, "N bought today" or
+                         "N people viewing": none of those have a source in the data,
+                         and stating them as fact would be a fabricated claim (and,
+                         for reviews specifically, actionable under FTC 16 CFR 465).
+                         When there are no reviews the trust row below the CTA
+                         carries the reassurance instead. --}}
                     @if($revC > 0)
-                    <div class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100">
-                        <div class="flex items-center gap-0.5">
+                    <div class="pdx-social">
+                        <span class="pdx-stars" role="img" aria-label="Rated {{ number_format($avgR,1) }} out of 5 from {{ $revC }} {{ Str::plural('review',$revC) }}">
                             @for($s=1;$s<=5;$s++)
-                            <svg width="15" height="15" viewBox="0 0 20 20" fill="{{ $s <= round($avgR) ? '#F59E0B' : '#E5E7EB' }}">
+                            <svg width="17" height="17" viewBox="0 0 20 20" fill="{{ $s <= round($avgR) ? '#E8A33D' : '#DEDBD6' }}" aria-hidden="true">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
                             @endfor
-                        </div>
-                        <span class="text-sm font-bold text-gray-700">{{ number_format($avgR,1) }}</span>
-                        <span class="text-sm text-gray-400">· {{ $revC }} {{ Str::plural('review',$revC) }}</span>
+                        </span>
+                        <span class="pdx-social__score">{{ number_format($avgR,1) }}</span>
+                        <span class="pdx-social__count">({{ number_format($revC) }} {{ Str::plural('review',$revC) }})</span>
                         {{-- Reviews are their own section now, so this is a plain
                              anchor jump — no tab to activate first. --}}
-                        <a href="#reviews" class="text-xs text-[#bb976d] hover:underline ml-1">See all</a>
+                        <a href="#reviews" class="pdx-social__link">Read reviews</a>
                     </div>
                     @endif
 
@@ -1024,36 +1484,25 @@ img.pd-slide-img:focus-visible {
                         $baseNow = (float) $item->effective_price;
                         $baseWas = $item->has_strike ? (float) $item->price : null;
                     @endphp
-                    <div class="pd-price-block mb-2">
-                        <div class="flex items-center gap-3 flex-wrap mb-1">
-                            <span id="pd-price-now" class="text-[2rem] font-extrabold text-[#172430] leading-none">${{ number_format($baseNow, 2) }}</span>
-                            <span id="pd-price-was" class="text-base text-gray-400 line-through font-medium" style="{{ $baseWas ? '' : 'display:none' }}">${{ number_format($baseWas ?? 0, 2) }}</span>
-                            <span id="pd-price-badge" class="text-sm font-bold text-white rounded-full px-3 py-1" style="background:#E13939;{{ $baseWas ? '' : 'display:none' }}"></span>
+                    <div class="pd-price-block pdx">
+                        <div class="pdx-price-row">
+                            <span id="pd-price-now" class="pdx-price">${{ number_format($baseNow, 2) }}</span>
+                            <span id="pd-price-was" class="pdx-was" style="{{ $baseWas ? '' : 'display:none' }}">${{ number_format($baseWas ?? 0, 2) }}</span>
+                            <span id="pd-price-badge" class="pdx-off" style="{{ $baseWas ? '' : 'display:none' }}"></span>
                         </div>
-                        <p id="pd-price-save" class="text-xs font-semibold" style="color:#1CB28E;{{ $baseWas ? '' : 'display:none' }}"></p>
+                        <p id="pd-price-save" class="pdx-save" style="{{ $baseWas ? '' : 'display:none' }}"></p>
                     </div>
 
-                    {{-- Key Features --}}
+                    {{-- Key features are rendered once, as the two-column "Why you'll
+                         like it" list further down — they were previously repeated
+                         here and there from the same source. --}}
                     @php $keyFeatures = $item->key_features ? json_decode($item->key_features, true) : []; @endphp
-                    @if(!empty($keyFeatures))
-                    <ul class="space-y-2 mb-4 pb-4 border-b border-gray-100">
-                        @foreach($keyFeatures as $feat)
-                        <li class="flex items-start gap-2.5 text-sm text-gray-600">
-                            <svg class="flex-shrink-0 mt-0.5" width="17" height="17" viewBox="0 0 20 20" fill="none">
-                                <circle cx="10" cy="10" r="10" fill="#22c55e" opacity=".15"/>
-                                <path d="M5.5 10l3 3 5.5-6" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <span>{{ $feat }}</span>
-                        </li>
-                        @endforeach
-                    </ul>
-                    @endif
 
                     {{-- Sizes --}}
                     @if(!empty($item->sizes) && count($item->sizes))
-                    <div class="mb-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Size</p>
+                    <div class="pdx-block">
+                        <div class="flex items-center justify-between mb-3 gap-3">
+                            <p class="pdx-label">Size</p>
                             @if(!empty($item->size_chart))
                             <button type="button" id="sizeGuideBtn"
                                     class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8A6A3F] underline underline-offset-2 hover:text-[#6e532f] cursor-pointer">
@@ -1062,11 +1511,21 @@ img.pd-slide-img:focus-visible {
                             </button>
                             @endif
                         </div>
-                        <div class="flex flex-wrap gap-2" id="size-options">
+                        {{-- radiogroup so the set is announced as one control and the
+                             arrow keys move between options. --}}
+                        <div class="pdx-options" id="size-options" role="radiogroup" aria-label="Size">
                             @foreach($item->sizes as $si => $sz)
                             <label class="cursor-pointer">
-                                <input class="appearance-none hidden size-radio" type="radio" name="size_display" value="{{ $sz }}" {{ $si===0?'checked':'' }}>
-                                <span class="pd-variant-pill {{ $si===0?'active':'' }}">{{ $sz }}</span>
+                                {{-- Visually hidden but NOT display:none — `hidden` took
+                                     these out of the tab order, so sizes could not be
+                                     chosen with a keyboard at all. --}}
+                                <input class="pdx-vinput size-radio" type="radio" name="size_display" value="{{ $sz }}" {{ $si===0?'checked':'' }}>
+                                <span class="pd-variant-pill {{ $si===0?'active':'' }}">
+                                    <span class="pdx-check" aria-hidden="true">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                    </span>
+                                    {{ $sz }}
+                                </span>
                             </label>
                             @endforeach
                         </div>
@@ -1084,15 +1543,25 @@ img.pd-slide-img:focus-visible {
 
                     {{-- Colors --}}
                     @if(!empty($item->colors) && count($item->colors))
-                    <div class="mb-4">
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
-                            Color: <span id="selected-color-label" class="font-semibold text-gray-600 normal-case tracking-normal">{{ $item->colors[0] }}</span>
+                    <div class="pdx-block">
+                        <p class="pdx-label mb-3">
+                            Color:
+                            <span id="selected-color-label" class="normal-case tracking-normal font-semibold text-[#101820]">{{ $item->colors[0] }}</span>
                         </p>
-                        <div class="flex flex-wrap gap-2" id="color-options">
+                        {{-- Real swatches rather than text buttons. The hex comes from
+                             Product::colorHex(), the same resolver the colour variants
+                             already use, so a name it cannot map degrades to its grey
+                             fallback instead of rendering a wrong colour. --}}
+                        <div class="pdx-options" id="color-options" role="radiogroup" aria-label="Color">
                             @foreach($item->colors as $ci => $clr)
                             <label class="cursor-pointer">
-                                <input class="appearance-none hidden color-radio" type="radio" name="color_display" value="{{ $clr }}" {{ $ci===0?'checked':'' }}>
-                                <span class="pd-variant-pill {{ $ci===0?'active':'' }}">{{ $clr }}</span>
+                                <input class="pdx-vinput color-radio" type="radio" name="color_display" value="{{ $clr }}" {{ $ci===0?'checked':'' }}>
+                                <span class="pd-variant-pill pd-variant-pill--swatch {{ $ci===0?'active':'' }}" title="{{ $clr }}">
+                                    <span class="pdx-swatch__dot" style="background:{{ \App\Models\Product::colorHex($clr) }}"></span>
+                                    <span class="pdx-check" aria-hidden="true">
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                    </span>
+                                </span>
                             </label>
                             @endforeach
                         </div>
@@ -1107,44 +1576,77 @@ img.pd-slide-img:focus-visible {
                         @if(!empty($item->colors))<input type="hidden" name="color" id="selected-color" value="{{ $item->colors[0] ?? '' }}">@endif
 
                         {{-- Qty --}}
-                        <div class="flex items-center gap-4 mb-2">
-                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Qty</p>
+                        <div class="pdx-block flex items-center gap-5">
+                            <p class="pdx-label">Qty</p>
                             <div class="pd-qty-wrap">
-                                <button type="button" id="pd-dec" class="pd-qty-btn">
-                                    <svg width="12" height="2" viewBox="0 0 12 2" fill="none"><path d="M1 1H11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                                <button type="button" id="pd-dec" class="pd-qty-btn" aria-label="Decrease quantity">
+                                    <svg width="14" height="2" viewBox="0 0 12 2" fill="none" aria-hidden="true"><path d="M1 1H11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                                 </button>
-                                <input id="pd-qty" name="qty" type="number" value="1" min="1"
-                                       style="width:40px;height:40px;text-align:center;font-weight:700;font-size:.9rem;background:transparent;border:none;outline:none;color:#172430;">
-                                <button type="button" id="pd-inc" class="pd-qty-btn">
-                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1V11M1 6H11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                                <input id="pd-qty" name="qty" type="number" value="1" min="1" aria-label="Quantity"
+                                       style="text-align:center;background:transparent;border:none;outline:none;color:#101820;">
+                                <button type="button" id="pd-inc" class="pd-qty-btn" aria-label="Increase quantity">
+                                    <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M6 1V11M1 6H11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                                 </button>
                             </div>
                         </div>
 
-                        {{-- Stacked on phones so Add to Cart gets the full width and
-                             the secondary action sits under it, side by side from sm up. --}}
-                        <div class="pd-buy-row flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
-                            <div class="pd-buy-cart flex-1 w-full">
-                                <button type="submit" id="pd-add-btn" class="pd-btn-cart w-full">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:8px;margin-top:-2px">
-                                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                                    </svg>
-                                    <span id="pd-add-btn-label">Add to Cart</span>
-                                </button>
-                            </div>
-                            <div class="pd-buy-wish flex-1 w-full">
-                                <button type="button"
-                                        class="wishlist-toggle-btn w-full flex items-center justify-center gap-2 border border-gray-200 text-gray-600 text-sm font-semibold hover:border-[#bb976d] hover:text-[#bb976d] hover:bg-[#fdf8f2] transition-all duration-200"
-                                        style="background:transparent;cursor:pointer;"
-                                        data-product-id="{{ $item->id }}"
-                                        data-text-add="Add to wishlist"
-                                        data-text-remove="In Wishlist">
-                                    <svg class="wishlist-btn-icon flex-shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                                    </svg>
-                                    <span class="wishlist-btn-text">Add to wishlist</span>
-                                </button>
-                            </div>
+                        {{-- Add to Cart is the dominant control: full width, 60px, and
+                             alone on its row so nothing competes with it. Buy Now sits
+                             directly beneath as the outlined secondary, and wishlist
+                             drops to a quiet tertiary link below both. --}}
+                        <div class="pdx-block flex flex-col gap-3">
+                            <button type="submit" id="pd-add-btn" class="pd-btn-cart">
+                                <svg class="pdx-cart-ico" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                </svg>
+                                {{-- Spinner shares the icon's slot, so the label never shifts --}}
+                                <svg class="pdx-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                                    <path d="M21 12a9 9 0 1 1-6.2-8.6" opacity=".9"/>
+                                </svg>
+                                <span id="pd-add-btn-label">Add to Cart</span>
+                            </button>
+
+                            {{-- Buy Now: adds this exact selection to the cart, then goes
+                                 straight to checkout. It posts the same form to the same
+                                 route as Add to Cart — no new endpoint, no controller
+                                 change — and falls back to a normal submit if fetch fails. --}}
+                            <button type="button" id="pdx-buy-now" class="pdx-btn-buy"
+                                    {{ $pdInStock ? '' : 'disabled aria-disabled=true' }}>
+                                <svg class="pdx-cart-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M13 2 3 14h8l-1 8 10-12h-8z"/>
+                                </svg>
+                                <svg class="pdx-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+                                    <path d="M21 12a9 9 0 1 1-6.2-8.6" opacity=".9"/>
+                                </svg>
+                                <span id="pdx-buy-now-label">Buy It Now</span>
+                            </button>
+
+                            <button type="button"
+                                    class="wishlist-toggle-btn w-full flex items-center justify-center gap-2 transition-all duration-200"
+                                    style="cursor:pointer;"
+                                    data-product-id="{{ $item->id }}"
+                                    data-text-add="Add to wishlist"
+                                    data-text-remove="In Wishlist">
+                                <svg class="wishlist-btn-icon flex-shrink-0" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                <span class="wishlist-btn-text">Add to wishlist</span>
+                            </button>
+                        </div>
+
+                        {{-- Trust badges — directly under the CTAs, where the hesitation is --}}
+                        <div class="pdx-trust">
+                            @foreach([
+                                'Secure checkout',
+                                'SSL encrypted',
+                                '30-day money back',
+                                'Free shipping',
+                            ] as $badge)
+                            <span class="pdx-trust__i">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                                {{ $badge }}
+                            </span>
+                            @endforeach
                         </div>
                     </form>
 
@@ -1154,49 +1656,78 @@ img.pd-slide-img:focus-visible {
                          window quoted here can never contradict the policy.
                          Worded as an estimate, not a guarantee: business days skip
                          weekends but not public holidays (see DeliveryEstimate). --}}
-                    <div class="pd-delivery">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-                        </svg>
-                        <div>
-                            <p class="pd-delivery__head">
-                                Free delivery, estimated
-                                <strong>{{ $delivery['earliest']->format('D j M') }}</strong>
-                                @unless($delivery['earliest']->isSameDay($delivery['latest']))
-                                    – <strong>{{ $delivery['latest']->format('D j M') }}</strong>
-                                @endunless
-                            </p>
-                            <p class="pd-delivery__sub">
-                                {{ $delivery['min_days'] }}–{{ $delivery['max_days'] }} business days · Free on every order, no minimum
-                            </p>
+                    <div class="pdx-delivery">
+                        <div class="pdx-delivery__top">
+                            <span class="pdx-delivery__ico" aria-hidden="true">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                                </svg>
+                            </span>
+                            <div>
+                                <p class="pdx-delivery__head"><em>FREE</em> delivery on this order</p>
+                                <p class="pdx-delivery__date">
+                                    Estimated
+                                    <strong>{{ $delivery['earliest']->format('D j M') }}</strong>
+                                    @unless($delivery['earliest']->isSameDay($delivery['latest']))
+                                        – <strong>{{ $delivery['latest']->format('D j M') }}</strong>
+                                    @endunless
+                                    · {{ $delivery['min_days'] }}–{{ $delivery['max_days'] }} business days
+                                </p>
+                            </div>
                         </div>
+                        <p class="pdx-delivery__meta">
+                            <span>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                                Tracking included
+                            </span>
+                            <span>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                                Free returns
+                            </span>
+                            <span>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                                No minimum spend
+                            </span>
+                        </p>
                     </div>
 
-                    {{-- 3 trust tiles --}}
-                    <div class="pd-trust-row">
-                        <div class="pd-trust-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-                            </svg>
-                            <span>Free shipping<br>on all orders</span>
+                    {{-- Four feature cards --}}
+                    @php
+                        $pdxFeatures = [
+                            ['t' => 'Free shipping',  'd' => 'On every order',      'i' => 'truck'],
+                            ['t' => '30-day returns', 'd' => 'Easy, no quibbles',   'i' => 'return'],
+                            ['t' => 'Secure checkout','d' => 'SSL encrypted',       'i' => 'lock'],
+                            ['t' => 'Quality checked','d' => 'Before it ships',     'i' => 'star'],
+                        ];
+                    @endphp
+                    <div class="pdx-features">
+                        @foreach($pdxFeatures as $f)
+                        <div class="pdx-feature">
+                            <span class="pdx-feature__ico" aria-hidden="true">
+                                @switch($f['i'])
+                                    @case('truck')
+                                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                                        @break
+                                    @case('return')
+                                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                                        @break
+                                    @case('lock')
+                                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                        @break
+                                    @case('star')
+                                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                        @break
+                                @endswitch
+                            </span>
+                            <p class="pdx-feature__t">{{ $f['t'] }}</p>
+                            <p class="pdx-feature__d">{{ $f['d'] }}</p>
                         </div>
-                        <div class="pd-trust-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/>
-                            </svg>
-                            <span>30-day returns</span>
-                        </div>
-                        <div class="pd-trust-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bb976d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                            </svg>
-                            <span>Secure checkout</span>
-                        </div>
+                        @endforeach
                     </div>
 
-                    {{-- Payment icons + SKU + Share --}}
-                    <div class="mt-4 pt-4 border-t border-gray-100">
-                        <div class="flex items-center gap-2 flex-wrap mb-3">
+                    {{-- Payment icons + benefits + Share --}}
+                    <div class="pdx-pay">
+                        <div class="pdx-pay__row">
                             {{-- Visa --}}
                             <span class="inline-flex items-center justify-center border border-gray-200 bg-white rounded-md h-8 px-3" title="Visa"
                                   style="min-width:52px">
@@ -1231,14 +1762,39 @@ img.pd-slide-img:focus-visible {
                                 <span style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Arial,sans-serif;font-weight:500;font-size:11px;color:#fff;letter-spacing:-0.2px"> Pay</span>
                             </span>
                         </div>
-                        <div class="flex items-center gap-3 text-xs text-gray-400">
-                            <span class="font-medium text-gray-500">Share:</span>
+
+                        <p class="pdx-pay__note">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            Secure payments powered by trusted providers.
+                        </p>
+
+                        {{-- Product benefits.
+                             Sourced from the product's own key_features, so the list is
+                             true of the item being viewed. Hardcoding "Handmade / No
+                             batteries" here would print it on all 503 products,
+                             including car chargers. Hidden when the product has none. --}}
+                        @if(!empty($keyFeatures))
+                        <div class="pdx-block pdx-block--sep">
+                            <h2 class="pdx-h3">Why you'll like it</h2>
+                            <ul class="pdx-benefits">
+                                @foreach($keyFeatures as $feat)
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                                    <span>{{ $feat }}</span>
+                                </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+
+                        <div class="pdx-share">
+                            <span class="pdx-share__k">Share</span>
                             <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(route('product-details', $item->slug)) }}" target="_blank" rel="noopener noreferrer nofollow" aria-label="Share on Facebook"
-                               class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-[#bb976d] hover:text-[#bb976d] transition-colors">
+                               >
                                 <svg width="8" height="15" viewBox="0 0 9 17" fill="currentColor"><path d="M6.60577 3.57091H8.06641V1.01793C7.35979 0.939731 6.64934 0.901696 5.93845 0.904012C5.44674 0.875673 4.9548 0.955623 4.49713 1.13826C4.03945 1.32089 3.6271 1.60179 3.28898 1.96127C2.95087 2.32075 2.69516 2.7501 2.5398 3.21924C2.38443 3.68838 2.33316 4.18596 2.38957 4.67708V6.92589H0.0664062V9.78076H2.38957V16.9578H5.2382V9.78076H7.46831L7.8224 6.92589H5.2382V4.95961C5.23934 4.13482 5.46065 3.57091 6.60577 3.57091Z"/></svg>
                             </a>
                             <a href="https://twitter.com/intent/tweet?text={{ urlencode($item->name.' — PeytonGhalib') }}&url={{ urlencode(route('product-details', $item->slug)) }}" target="_blank" rel="noopener noreferrer nofollow" aria-label="Share on Twitter"
-                               class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:border-[#bb976d] hover:text-[#bb976d] transition-colors">
+                               >
                                 <svg width="14" height="12" viewBox="0 0 21 17" fill="currentColor"><path d="M20.0664 2.79793C19.3139 3.12213 18.518 3.33748 17.7034 3.43737C18.5614 2.93408 19.203 2.1373 19.5067 1.19787C18.7031 1.66898 17.824 2.00078 16.9073 2.17893C16.3448 1.58655 15.6152 1.17498 14.813 0.997632C14.0109 0.820283 13.1734 0.885344 12.4092 1.18437C11.645 1.4834 10.9893 2.0026 10.5273 2.67457C10.0653 3.34654 9.81826 4.14027 9.81829 4.95275C9.8149 5.26331 9.84661 5.57327 9.91281 5.87687C8.2822 5.79842 6.68668 5.38079 5.23048 4.65126C3.77429 3.92172 2.49018 2.89669 1.46206 1.64315C0.934597 2.53471 0.771252 3.59165 1.00537 4.59822C1.23949 5.60479 1.85343 6.48508 2.72185 7.05939C2.07295 7.0421 1.43777 6.87085 0.869833 6.5601V6.6039C0.870909 7.53977 1.1981 8.4467 1.79632 9.17206C2.39455 9.89742 3.22731 10.3969 4.15443 10.5865C3.80358 10.6777 3.44202 10.7224 3.07926 10.7194C2.81857 10.7242 2.55811 10.7012 2.30241 10.6508C2.56687 11.4554 3.07741 12.1591 3.76359 12.6649C4.44978 13.1706 5.27781 13.4534 6.13346 13.4742C4.68099 14.5956 2.89006 15.2032 1.04706 15.1998C0.719312 15.202 0.391758 15.1835 0.0664062 15.1443C1.94176 16.3371 4.12647 16.9674 6.35647 16.959C7.89156 16.9693 9.41342 16.678 10.8337 16.102C12.2539 15.5261 13.5443 14.6769 14.6298 13.6039C15.7153 12.5309 16.5743 11.2554 17.1569 9.85148C17.7396 8.44756 18.0343 6.94319 18.0239 5.42576C18.0239 5.24619 18.0239 5.07392 18.0091 4.90165C18.8186 4.32993 19.5158 3.61702 20.0664 2.79793Z"/></svg>
                             </a>
                         </div>
@@ -2298,3 +2854,83 @@ document.addEventListener('keydown', function(e) {
 </script>
 @endpush
 
+
+{{-- ═══ Premium product-info behaviour (pdx) ═══
+     Additive only: nothing here rebinds or replaces an existing handler. The
+     cart form, variant sync and sticky bar keep the listeners they already had. --}}
+@push('scripts')
+<script>
+(function () {
+    var form = document.getElementById('pd-cart-form');
+    if (!form) return;
+
+    // ── Ripple ──────────────────────────────────────────────────────────
+    function ripple(btn, ev) {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var r = btn.getBoundingClientRect();
+        var d = Math.max(r.width, r.height);
+        var s = document.createElement('span');
+        s.className = 'pdx-ripple';
+        s.style.width = s.style.height = d + 'px';
+        s.style.left = ((ev.clientX || r.left + r.width / 2) - r.left - d / 2) + 'px';
+        s.style.top  = ((ev.clientY || r.top + r.height / 2) - r.top - d / 2) + 'px';
+        btn.appendChild(s);
+        setTimeout(function () { s.remove(); }, 600);
+    }
+
+    [document.getElementById('pd-add-btn'), document.getElementById('pdx-buy-now')].forEach(function (b) {
+        if (b) b.addEventListener('click', function (e) { ripple(b, e); });
+    });
+
+    // ── Buy It Now ──────────────────────────────────────────────────────
+    // Posts the SAME form to the SAME route as Add to Cart, then forwards to
+    // checkout. No new endpoint and no controller change: the server sees an
+    // ordinary cart.add request carrying the chosen qty / size / colour.
+    //
+    // If anything about the fetch fails (offline, CSRF rotation, 5xx) it falls
+    // back to a plain form submit, so the worst case is the normal add-to-cart
+    // flow rather than a dead button.
+    var buy = document.getElementById('pdx-buy-now');
+
+    if (buy) {
+        buy.addEventListener('click', function () {
+            if (buy.disabled || buy.dataset.loading === 'true') return;
+
+            buy.dataset.loading = 'true';
+            buy.disabled = true;
+            var label = document.getElementById('pdx-buy-now-label');
+            var prev  = label ? label.textContent : '';
+            if (label) label.textContent = 'Taking you to checkout…';
+
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                credentials: 'same-origin',
+                redirect: 'follow'
+            }).then(function (res) {
+                if (!res.ok) throw new Error('add failed');
+                window.location.assign(@json(route('checkout')));
+            }).catch(function () {
+                // Let the browser do it the ordinary way.
+                buy.dataset.loading = 'false';
+                buy.disabled = false;
+                if (label) label.textContent = prev;
+                form.submit();
+            });
+        });
+    }
+
+    // ── Add to Cart loading state ───────────────────────────────────────
+    // Submit is left completely alone — this only paints the spinner so the
+    // 60px button never looks inert while the POST is in flight.
+    var add = document.getElementById('pd-add-btn');
+
+    if (add) {
+        form.addEventListener('submit', function () {
+            add.dataset.loading = 'true';
+        });
+    }
+})();
+</script>
+@endpush

@@ -18,8 +18,10 @@
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
         {{-- Self-hosted fonts (see layouts/main.blade.php) — no googleapis or
              gstatic round-trips on the critical path. --}}
-        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/josefin-sans-400-normal-latin.woff2') }}" crossorigin>
-        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/poppins-500-normal-latin.woff2') }}" crossorigin>
+        {{-- Auth/utility pages are form-heavy and headline-light, so body copy
+             leads the preload here rather than the display weight. --}}
+        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/inter-400-normal-latin.woff2') }}" crossorigin>
+        <link rel="preload" as="font" type="font/woff2" href="{{ asset('assets/fonts/manrope-700-normal-latin.woff2') }}" crossorigin>
 
         <!-- Do not index auth/utility pages -->
         <meta name="robots" content="noindex, nofollow">
@@ -29,6 +31,8 @@
         @vite('resources/css/app.css')
         <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/style.css')">
         <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/fonts.css')">
+        {{-- Unified type system — must stay last (see layouts/main.blade.php). --}}
+        <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/typography.css')">
         {{-- Icon font is decorative and not needed for first paint, so load it without
              blocking rendering (classic preload+swap async-CSS pattern). --}}
         <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css">

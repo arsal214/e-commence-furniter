@@ -938,7 +938,7 @@ $schemaWebsite = [
 }
 
 .mqs-word {
-    font-family: 'DM Sans', 'Poppins', sans-serif;
+    font-family: var(--pg-font-body);
     font-size: 12.5px;
     font-weight: 700;
     letter-spacing: .7px;
@@ -1366,24 +1366,24 @@ $schemaWebsite = [
                             padding:5px 14px 5px 10px;margin-bottom:20px;">
                     <span style="width:6px;height:6px;border-radius:50%;background:#bb976d;display:inline-block;
                                  box-shadow:0 0 0 3px rgba(187,151,109,.25);animation:fd-pulse 2s infinite;"></span>
-                    <span style="font-family:'Poppins',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:.18em;
+                    <span style="font-family:var(--pg-font-body);font-size:9.5px;font-weight:700;letter-spacing:.18em;
                                  text-transform:uppercase;color:#bb976d;">{{ $flashDeal->badge_text }}</span>
                 </div>
 
                 {{-- Discount --}}
-                <div style="font-family:'Poppins',sans-serif;font-size:clamp(2.6rem,4.5vw,4.2rem);font-weight:800;
+                <div style="font-family:var(--pg-font-heading);font-size:clamp(2.6rem,4.5vw,4.2rem);font-weight:800;
                             line-height:1;letter-spacing:-.02em;color:#fff;margin-bottom:10px;">
                     {{ $flashDeal->discount_label }}
                 </div>
 
                 {{-- Title --}}
-                <div style="font-family:'Poppins',sans-serif;font-size:clamp(1rem,1.6vw,1.25rem);font-weight:500;
+                <div style="font-family:var(--pg-font-body);font-size:clamp(1rem,1.6vw,1.25rem);font-weight:500;
                             color:rgba(255,255,255,.75);letter-spacing:.01em;margin-bottom:8px;">
                     {{ $flashDeal->title }}
                 </div>
 
                 @if($flashDeal->subtitle)
-                <p style="font-family:'Poppins',sans-serif;font-size:13px;color:rgba(255,255,255,.4);
+                <p style="font-family:var(--pg-font-body);font-size:13px;color:rgba(255,255,255,.4);
                           line-height:1.6;max-width:380px;margin:0;">{{ $flashDeal->subtitle }}</p>
                 @endif
 
@@ -1395,7 +1395,7 @@ $schemaWebsite = [
             @if($flashDeal->ends_at && $flashDeal->ends_at->isFuture())
             @php $labels = ['D'=>'Days','H'=>'Hrs','M'=>'Min','S'=>'Sec']; @endphp
             <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
-                <span style="font-family:'Poppins',sans-serif;font-size:9px;font-weight:700;letter-spacing:.2em;
+                <span style="font-family:var(--pg-font-body);font-size:9px;font-weight:700;letter-spacing:.2em;
                              text-transform:uppercase;color:rgba(255,255,255,.35);">Offer Ends In</span>
 
                 <div id="fd-countdown" data-ends="{{ $flashDeal->ends_at->timestamp }}"
@@ -1407,19 +1407,19 @@ $schemaWebsite = [
                                     display:flex;align-items:center;justify-content:center;
                                     background:rgba(255,255,255,.06);
                                     border:1px solid rgba(187,151,109,.2);
-                                    font-family:'Poppins',sans-serif;
+                                    font-family:var(--pg-font-heading);
                                     font-size:2rem;font-weight:800;color:#fff;
                                     letter-spacing:-.02em;position:relative;overflow:hidden;">
                             <span style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.04) 0%,transparent 60%);pointer-events:none;"></span>
                             <span class="fd-val" style="position:relative;z-index:1;">00</span>
                         </div>
-                        <span style="font-family:'Poppins',sans-serif;font-size:8.5px;font-weight:600;
+                        <span style="font-family:var(--pg-font-body);font-size:8.5px;font-weight:600;
                                      letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);">
                             {{ $labels[$unit] }}
                         </span>
                     </div>
                     @if($unit !== 'S')
-                    <span style="font-family:'Poppins',sans-serif;font-size:1.8rem;font-weight:300;
+                    <span style="font-family:var(--pg-font-heading);font-size:1.8rem;font-weight:300;
                                  color:rgba(187,151,109,.5);margin-top:16px;line-height:1;">:</span>
                     @endif
                     @endforeach
@@ -1437,7 +1437,7 @@ $schemaWebsite = [
                           background-size:200% auto;
                           color:#fff;padding:16px 36px;
                           border-radius:8px;
-                          font-family:'Poppins',sans-serif;
+                          font-family:var(--pg-font-body);
                           font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
                           text-decoration:none;
                           box-shadow:0 8px 32px rgba(187,151,109,.3);
@@ -1450,7 +1450,7 @@ $schemaWebsite = [
 
                 <div style="display:flex;align-items:center;gap:8px;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.6" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <span style="font-family:'Poppins',sans-serif;font-size:10.5px;color:rgba(255,255,255,.3);letter-spacing:.04em;">Secure checkout · Free returns</span>
+                    <span style="font-family:var(--pg-font-body);font-size:10.5px;color:rgba(255,255,255,.3);letter-spacing:.04em;">Secure checkout · Free returns</span>
                 </div>
 
             </div>

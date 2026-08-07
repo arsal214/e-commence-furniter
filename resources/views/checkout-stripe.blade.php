@@ -194,7 +194,14 @@
                 colorBackground: isDark ? '#12100e' : '#ffffff',
                 colorText:       isDark ? '#f3ede4' : '#1f1a15',
                 colorDanger:     isDark ? '#ff9c94' : '#b42318',
-                fontFamily:      "'DM Sans', 'Poppins', ui-sans-serif, system-ui, sans-serif",
+                /* A literal stack, not var(--pg-font-body): the Payment Element
+                   renders in a cross-origin iframe that cannot see this page's
+                   custom properties. Inter is named first and falls through to
+                   the system UI face, which is metrically close enough that the
+                   field labels still line up with ours. Loading Inter *into*
+                   the iframe would mean adding elements({fonts:[…]}), and that
+                   is the payment integration, which stays untouched. */
+                fontFamily:      "'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif",
                 borderRadius:    '12px',
                 spacingUnit:     '4px',
             },

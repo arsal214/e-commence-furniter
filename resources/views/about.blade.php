@@ -29,7 +29,7 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
     --ab-text:      #1f1a15;
     --ab-muted:     #6b6157;
 
-    font-family: 'DM Sans', 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--pg-font-body);
     color: var(--ab-text);
     background: var(--ab-bg);
 }
