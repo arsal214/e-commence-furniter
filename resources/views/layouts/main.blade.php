@@ -166,18 +166,15 @@
             });
         </script>
         <!-- Microsoft Clarity -->
+        {{-- Deliberately NOT routed through pgDefer like the ad pixels below:
+             Clarity records the session, so holding the tag back until onload or
+             first interaction would lose the opening moments of every visit. The
+             tag is injected async and never blocks rendering. --}}
         <script>
-        // Clarity's own snippet, split so the stub half stays synchronous and only
-        // the tag fetch is deferred: window.clarity() therefore exists immediately
-        // and any call made before the tag lands queues on clarity.q, which the
-        // library drains once it executes.
-        (function (c, l, a, r, i) {
+        (function (c, l, a, r, i, t, y) {
           c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
-          window.pgDefer(function () {
-            var t = l.createElement(r); t.async = 1;
-            t.src = "https://www.clarity.ms/tag/" + i;
-            var y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
-          });
+          t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+          y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
         })(window, document, "clarity", "script", @json(config('services.clarity.project_id')));
         </script>
         <!-- End Microsoft Clarity -->

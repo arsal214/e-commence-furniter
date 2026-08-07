@@ -2,12 +2,12 @@
 @extends('layouts.main')
 
 @section('title', 'About Us | PeytonGhalib')
-@section('meta_description', 'Learn about PeytonGhalib — our story, mission, and commitment to delivering quality furniture and home decor at unbeatable prices with exceptional service.')
+@section('meta_description', 'Learn about PeytonGhalib — our story, mission, and how we bring home essentials, kitchen, electronics, toys, garden and car accessories together in one place at unbeatable prices.')
 
 @push('schema')
 @php
 $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'About PeytonGhalib','url'=>url('/about'),
-    'description'=>'Learn about PeytonGhalib — our mission, our products, and our commitment to quality furniture and home decor.',
+    'description'=>'Learn about PeytonGhalib — our mission, our products, and our commitment to quality across every category we sell.',
     'about'=>['@type'=>'Organization','name'=>'PeytonGhalib','url'=>url('/')]];
 @endphp
 <script type="application/ld+json">{!! json_encode($schemaAbout, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
@@ -315,15 +315,16 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
                 <span aria-current="page">About</span>
             </nav>
 
-            <h1 class="ab-hero__title">Furniture that makes a house feel like <em>home</em>.</h1>
+            <h1 class="ab-hero__title">Shop your whole life in <em>one place</em>.</h1>
             <p class="ab-hero__text">
-                We're PeytonGhalib — a one-stop destination for quality furniture, home decor,
-                and everyday essentials, at prices that leave room for the rest of your life.
+                From home essentials and kitchen to electronics, toys, garden and car —
+                {{ number_format($productCount) }} products across {{ number_format($categoryCount) }} categories,
+                all fairly priced and shipped free.
             </p>
 
             <div class="ab-hero__actions">
                 <a class="ab-btn" href="{{ url('/shop') }}">
-                    Shop the collection
+                    Shop all categories
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
                 <a class="ab-btn ab-btn--ghost" href="{{ route('contact.show') }}">Talk to us</a>
@@ -540,9 +541,10 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
     <section class="ab-section" style="padding-top:0">
         <div class="ab__wrap">
             <div class="ab-cta">
-                <h2 class="ab-cta__title">Ready to make your space yours?</h2>
+                <h2 class="ab-cta__title">Ready to find what you came for?</h2>
                 <p class="ab-cta__text">
-                    Browse the collection, or send us a note — we're happy to help you find the right piece.
+                    Browse all {{ number_format($categoryCount) }} categories, or send us a note — we're happy to
+                    help you track down exactly what you need.
                 </p>
                 <div class="ab-cta__actions">
                     <a class="ab-btn ab-btn--dark" href="{{ url('/shop') }}">

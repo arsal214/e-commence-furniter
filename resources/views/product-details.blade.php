@@ -103,6 +103,80 @@
 .rich-content img{max-width:100%;height:auto;border-radius:.25rem;margin:.5em 0}
 .rich-content hr{border:none;border-top:1px solid #e5e7eb;margin:1.5em 0}
 
+/* ── Product description prose ───────────────────────────────────────────
+   The site sets Josefin Sans on <body>. It is a geometric display face with
+   a short x-height — right for headings, tiring for a paragraph of copy, and
+   the description is the one block on this page people actually read end to
+   end. So the prose switches to Poppins (already self-hosted, no extra
+   request) and keeps Josefin for its headings: the pairing gives the block a
+   voice instead of flattening it into one font.
+   Measure is capped near 68ch because the panel is 985px wide and a line
+   that long loses the reader on the carriage return.                     */
+.pd-prose{
+  font-family:'Poppins',ui-sans-serif,system-ui,sans-serif;
+  font-size:1.0625rem;          /* 17px — one step up from the site default */
+  line-height:1.8;
+  letter-spacing:.002em;
+  color:#4A5560;
+  max-width:68ch;
+  text-wrap:pretty;
+}
+.dark .pd-prose{color:rgba(255,255,255,.72)}
+.pd-prose p{margin-bottom:1.15em;line-height:1.8}
+.pd-prose p:last-child{margin-bottom:0}
+/* ~80 descriptions were pasted from Google and wrap their copy in <div>
+   rather than <p>. Without this they run together as one unbroken block. */
+.pd-prose > div{margin-bottom:1.15em;line-height:1.8}
+.pd-prose > div:last-child{margin-bottom:0}
+
+/* Opening paragraph carries the pitch, so it gets the weight of a lead:
+   a touch larger, darker, tighter. Everything after it settles back down.
+   Description only — shipping info opens with logistics, not a pitch.    */
+#tab-desc .pd-prose > p:first-child{
+  font-size:1.1875rem;
+  line-height:1.7;
+  letter-spacing:-.01em;
+  color:#2B333A;
+  margin-bottom:1.3em;
+}
+.dark #tab-desc .pd-prose > p:first-child{color:rgba(255,255,255,.92)}
+
+.pd-prose h1,.pd-prose h2,.pd-prose h3,.pd-prose h4,.pd-prose h5,.pd-prose h6{
+  font-family:'Josefin Sans',sans-serif;
+  font-weight:700;
+  letter-spacing:-.01em;
+  color:#1f2937;
+  margin-top:1.8em;
+  margin-bottom:.6em;
+}
+.pd-prose > :first-child{margin-top:0}
+.dark .pd-prose h1,.dark .pd-prose h2,.dark .pd-prose h3,
+.dark .pd-prose h4,.dark .pd-prose h5,.dark .pd-prose h6{color:#fff}
+
+/* Brand-coloured markers: the default disc reads as unstyled next to the
+   rest of the page, and bullets are where feature copy usually lands.     */
+.pd-prose ul{list-style:none;padding-left:0;margin-bottom:1.15em}
+.pd-prose ul > li{position:relative;padding-left:1.5rem;margin-bottom:.55em;line-height:1.75}
+.pd-prose ul > li::before{
+  content:'';position:absolute;left:.15rem;top:.72em;
+  width:.4rem;height:.4rem;border-radius:999px;background:#bb976d;
+}
+.pd-prose ol{padding-left:1.35rem;margin-bottom:1.15em}
+.pd-prose ol > li{margin-bottom:.55em;line-height:1.75;padding-left:.25rem}
+.pd-prose ol > li::marker{color:#bb976d;font-weight:600}
+.pd-prose strong,.pd-prose b{font-weight:600;color:#2B333A}
+.dark .pd-prose strong,.dark .pd-prose b{color:#fff}
+.pd-prose blockquote{
+  border-left:3px solid #bb976d;background:#F8F5F0;border-radius:0 .5rem .5rem 0;
+  padding:.9rem 1.25rem;margin:1.5em 0;font-style:normal;color:#4A5560;
+}
+.dark .pd-prose blockquote{background:rgba(255,255,255,.05);color:rgba(255,255,255,.72)}
+
+@media (max-width:640px){
+  .pd-prose{font-size:1rem;line-height:1.75}
+  #tab-desc .pd-prose > p:first-child{font-size:1.0625rem}
+}
+
 /* ── Product tabs ────────────────────────────────────────────────────────
    Segmented pill control rather than the old underlined text row: the site
    now pills every button, and a lone underline tab bar read as unfinished.
@@ -1499,7 +1573,7 @@ img.pd-slide-img:focus-visible {
             {{-- Description Panel --}}
             <div id="tab-desc" class="pdtab-panel">
                 @if($item->description)
-                    <div class="rich-content leading-relaxed">
+                    <div class="rich-content pd-prose">
                         {!! $item->description !!}
                     </div>
                 @else
@@ -1529,7 +1603,7 @@ img.pd-slide-img:focus-visible {
             {{-- Shipping Panel --}}
             @if($item->shipping_info)
             <div id="tab-shipping" class="pdtab-panel hidden">
-                <div class="rich-content leading-relaxed">
+                <div class="rich-content pd-prose">
                     {!! $item->shipping_info !!}
                 </div>
             </div>
