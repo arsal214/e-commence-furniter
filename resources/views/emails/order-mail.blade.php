@@ -12,10 +12,15 @@
      *
      * Expected: $order, $eyebrow, $heading, $intro
      * Optional: $showTracking (bool), $noteTitle, $noteBody
+     *           $adminNote — a line typed by staff for this one send
+     *           $cta — ['url', 'label', 'eyebrow', 'amount', 'caption'] renders a
+     *                  dark action panel in place of the tracking panel
      */
     $showTracking = $showTracking ?? true;
     $noteTitle    = $noteTitle ?? 'Need to change something?';
     $noteBody     = $noteBody ?? "Just reply to this email within 24 hours and we'll sort it out before your order ships.";
+    $adminNote    = $adminNote ?? null;
+    $cta          = $cta ?? null;
 
     $gold      = '#BB976D'; // brand gold — fills and text on dark only (2.7:1 on white)
     $goldText  = '#8A6A3F'; // AA-safe gold for text on light backgrounds (4.98:1)
@@ -103,6 +108,22 @@
                     </td>
                 </tr>
 
+                {{-- ── Note typed by staff for this send ────────────────── --}}
+                @if ($adminNote)
+                <tr>
+                    <td class="sp-x" style="padding:0 40px 28px 40px;">
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="{{ $warm }}" style="background-color:{{ $warm }}; border-left:3px solid {{ $gold }};">
+                            <tr>
+                                <td style="padding:16px 20px; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:22px; color:{{ $body }};">
+                                    <div style="font-size:10px; line-height:14px; letter-spacing:1px; color:{{ $muted }}; text-transform:uppercase; padding-bottom:6px;">A note from our team</div>
+                                    {!! nl2br(e($adminNote)) !!}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                @endif
+
                 {{-- ── Order facts ──────────────────────────────────────── --}}
                 <tr>
                     <td class="sp-x" style="padding:0 40px;">
@@ -130,6 +151,41 @@
                         </table>
                     </td>
                 </tr>
+
+                {{-- ── Action panel (pay now, etc.) ─────────────────────── --}}
+                @if ($cta)
+                <tr>
+                    <td class="sp-x" style="padding:24px 40px 0 40px;">
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="{{ $ink }}" style="background-color:{{ $ink }};">
+                            <tr>
+                                <td align="center" style="padding:28px 24px;">
+                                    @if (! empty($cta['eyebrow']))
+                                        <div style="font-family:Arial,Helvetica,sans-serif; font-size:10px; line-height:14px; letter-spacing:2px; color:#A9A29B; text-transform:uppercase;">{{ $cta['eyebrow'] }}</div>
+                                    @endif
+                                    @if (! empty($cta['amount']))
+                                        <div class="track-no" style="font-family:Georgia,'Times New Roman',serif; font-size:30px; line-height:38px; font-weight:bold; color:{{ $gold }}; padding:8px 0 20px 0; mso-line-height-rule:exactly;">{{ $cta['amount'] }}</div>
+                                    @endif
+
+                                    {{-- Bulletproof button: VML for Outlook, anchor everywhere else --}}
+                                    <!--[if mso]>
+                                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ $cta['url'] }}" style="height:46px; v-text-anchor:middle; width:220px;" arcsize="9%" stroke="f" fillcolor="{{ $gold }}">
+                                        <w:anchorlock/>
+                                        <center style="color:{{ $ink }}; font-family:Arial,sans-serif; font-size:14px; font-weight:bold;">{{ $cta['label'] }}</center>
+                                    </v:roundrect>
+                                    <![endif]-->
+                                    <!--[if !mso]><!-- -->
+                                    <a class="btn" href="{{ $cta['url'] }}" style="display:inline-block; background-color:{{ $gold }}; color:{{ $ink }}; font-family:Arial,Helvetica,sans-serif; font-size:14px; font-weight:bold; line-height:46px; text-align:center; text-decoration:none; padding:0 34px; border-radius:4px; mso-hide:all;">{{ $cta['label'] }}</a>
+                                    <!--<![endif]-->
+
+                                    @if (! empty($cta['caption']))
+                                        <div style="font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:18px; color:#A9A29B; padding-top:16px;">{{ $cta['caption'] }}</div>
+                                    @endif
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                @endif
 
                 {{-- ── Tracking ─────────────────────────────────────────── --}}
                 @if ($showTracking)

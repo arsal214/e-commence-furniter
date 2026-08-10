@@ -6,6 +6,12 @@
 
 @section('content')
 
+@php
+    /* Reached from an emailed pay link rather than the checkout flow: there is no
+       cart behind the page, so anything pointing back to /checkout is a dead end. */
+    $payLink = $payLink ?? false;
+@endphp
+
 @include('includes.navbar')
 
 <x-checkout.shell step="payment" title="Complete payment">
@@ -38,10 +44,12 @@
                     <span data-pay-label>Pay ${{ number_format($order->total, 2) }}</span>
                 </button>
 
-                <a class="co-back" href="{{ route('checkout') }}">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                    Back to details
-                </a>
+                @unless ($payLink)
+                    <a class="co-back" href="{{ route('checkout') }}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        Back to details
+                    </a>
+                @endunless
 
                 <p class="co-secure">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
@@ -108,7 +116,11 @@
             <section class="co-panel" aria-labelledby="co-deliver-title">
                 <h2 class="co-panel__title" id="co-deliver-title">Delivering to</h2>
                 <p class="co-panel__hint">
-                    <a href="{{ route('checkout') }}" style="color:var(--co-gold-ink); font-weight:600; text-decoration:none">Change</a>
+                    @if ($payLink)
+                        Need to change any of this? Reply to the email we sent you and we'll update it before dispatch.
+                    @else
+                        <a href="{{ route('checkout') }}" style="color:var(--co-gold-ink); font-weight:600; text-decoration:none">Change</a>
+                    @endif
                 </p>
 
                 <div class="co-review">

@@ -145,7 +145,7 @@
         </div>
         @endif
 
-        <div class="flex gap-3">
+        <div class="flex flex-wrap gap-3">
             <a href="{{ route('admin.products.index') }}"
                class="inline-flex items-center gap-2 px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
                 <i class="mdi mdi-package-variant"></i> View All Products

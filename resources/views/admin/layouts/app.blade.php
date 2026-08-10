@@ -14,16 +14,30 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased">
 
-<div class="flex h-screen overflow-hidden">
+{{-- h-dvh, not h-screen: on phones 100vh is the toolbar-less height, which pushes
+     the bottom of the panel under the browser chrome. --}}
+<div class="flex h-dvh overflow-hidden">
 
-    <!-- Sidebar -->
-    <aside class="w-64 bg-[#1a1a2e] text-white flex flex-col flex-shrink-0">
-        <div class="px-6 py-5 border-b border-white/10">
+    <!-- Drawer backdrop (mobile only) -->
+    <div id="admin-backdrop" data-sidebar-close
+         class="hidden fixed inset-0 z-40 bg-black/50 lg:hidden" aria-hidden="true"></div>
+
+    <!-- Sidebar: a slide-over under lg, a fixed column from lg up -->
+    <aside id="admin-sidebar" aria-label="Admin navigation"
+           class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] -translate-x-full transition-transform duration-200 ease-out
+                  lg:static lg:z-auto lg:w-64 lg:max-w-none lg:translate-x-0
+                  bg-[#1a1a2e] text-white flex flex-col flex-shrink-0">
+        <div class="px-6 py-5 border-b border-white/10 relative">
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-[#bb976d] flex items-center justify-center text-white font-bold text-sm">P</div>
                 <span class="font-semibold text-white text-lg leading-none">PeytonGhalib</span>
             </a>
             <p class="text-xs text-white/50 mt-1 ml-11">Admin Panel</p>
+            <button type="button" data-sidebar-close
+                    class="lg:hidden absolute top-4 right-3 p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors">
+                <i class="mdi mdi-close text-xl leading-none"></i>
+                <span class="sr-only">Close navigation</span>
+            </button>
         </div>
 
         <nav class="flex-1 px-4 py-5 space-y-1 overflow-y-auto">
@@ -125,38 +139,83 @@
     <div class="flex-1 flex flex-col overflow-hidden">
 
         <!-- Top bar -->
-        <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between flex-shrink-0">
-            <h1 class="text-xl font-semibold text-gray-800">@yield('page-title', 'Dashboard')</h1>
+        <header class="bg-white border-b border-gray-200 px-3 sm:px-6 py-3 sm:py-4 flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <button type="button" data-sidebar-open aria-controls="admin-sidebar" aria-expanded="false"
+                    class="lg:hidden p-2 -ml-1 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors">
+                <i class="mdi mdi-menu text-2xl leading-none"></i>
+                <span class="sr-only">Open navigation</span>
+            </button>
+            <h1 class="flex-1 min-w-0 truncate text-lg sm:text-xl font-semibold text-gray-800">@yield('page-title', 'Dashboard')</h1>
             <div class="flex items-center gap-3 text-sm text-gray-500">
-                <a href="{{ url('/') }}" target="_blank" class="flex items-center gap-1 hover:text-[#bb976d] transition-colors">
-                    <i class="mdi mdi-open-in-new"></i> View Store
+                <a href="{{ url('/') }}" target="_blank"
+                   class="flex items-center gap-1 whitespace-nowrap hover:text-[#bb976d] transition-colors">
+                    <i class="mdi mdi-open-in-new text-lg sm:text-base"></i>
+                    <span class="hidden sm:inline">View Store</span>
+                    <span class="sr-only sm:hidden">View Store</span>
                 </a>
             </div>
         </header>
 
         <!-- Flash messages -->
-        <div class="px-6 pt-4">
+        @if (session('success') || session('error'))
+        <div class="px-4 sm:px-6 pt-4">
             @if (session('success'))
-                <div class="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm mb-0">
-                    <i class="mdi mdi-check-circle text-green-600"></i>
-                    {{ session('success') }}
+                <div class="flex items-start gap-3 p-3 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm mb-0">
+                    <i class="mdi mdi-check-circle text-green-600 mt-0.5"></i>
+                    <span class="min-w-0 break-words">{{ session('success') }}</span>
                 </div>
             @endif
             @if (session('error'))
-                <div class="flex items-center gap-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm mb-0">
-                    <i class="mdi mdi-alert-circle text-red-600"></i>
-                    {{ session('error') }}
+                <div class="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm mb-0">
+                    <i class="mdi mdi-alert-circle text-red-600 mt-0.5"></i>
+                    <span class="min-w-0 break-words">{{ session('error') }}</span>
                 </div>
             @endif
         </div>
+        @endif
 
         <!-- Page content -->
-        <main class="flex-1 overflow-y-auto px-6 py-6">
+        <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-5 sm:py-6">
             @yield('content')
         </main>
     </div>
 
 </div>
+
+<script>
+/* Off-canvas admin navigation. Plain JS on purpose — the panel ships no JS
+   framework, and the server has no npm to build one. */
+(function () {
+    var sidebar  = document.getElementById('admin-sidebar');
+    var backdrop = document.getElementById('admin-backdrop');
+    var opener   = document.querySelector('[data-sidebar-open]');
+
+    if (!sidebar || !backdrop || !opener) return;
+
+    function setOpen(open) {
+        // The lg: variants keep the desktop column pinned regardless of this class.
+        sidebar.classList.toggle('-translate-x-full', !open);
+        backdrop.classList.toggle('hidden', !open);
+        opener.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    opener.addEventListener('click', function () { setOpen(true); });
+
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('[data-sidebar-close]')) setOpen(false);
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') setOpen(false);
+    });
+
+    // Crossing into desktop with the drawer open would otherwise leave the
+    // backdrop's state out of step with the now-static sidebar.
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', function (e) {
+        if (e.matches) setOpen(false);
+    });
+})();
+</script>
 
 @stack('scripts')
 </body>

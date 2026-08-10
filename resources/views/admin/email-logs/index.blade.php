@@ -50,7 +50,7 @@
 </form>
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-    <table class="w-full text-sm">
+    <table class="w-full text-sm min-w-[860px]">
         <thead class="bg-gray-50 border-b border-gray-100">
             <tr>
                 <th class="text-left px-5 py-3 font-medium text-gray-600">Sent</th>

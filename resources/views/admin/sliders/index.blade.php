@@ -5,7 +5,7 @@
 
 @section('content')
 
-<div class="flex items-center justify-between mb-5">
+<div class="flex flex-wrap items-center justify-between gap-3 mb-5">
     <p class="text-sm text-gray-500">Manage the homepage carousel slides. Drag to reorder via the sort field.</p>
     <a href="{{ route('admin.sliders.create') }}"
        class="inline-flex items-center gap-2 px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
@@ -14,7 +14,8 @@
 </div>
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[820px]">
         <thead class="bg-gray-50 border-b border-gray-100">
             <tr>
                 <th class="text-left px-5 py-3 font-medium text-gray-600 w-10">#</th>
@@ -81,6 +82,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 @endsection

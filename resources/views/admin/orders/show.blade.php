@@ -44,7 +44,8 @@ $paymentColors = [
             <div class="px-5 py-4 border-b border-gray-100">
                 <h2 class="text-base font-semibold text-gray-800">Order Items</h2>
             </div>
-            <table class="w-full text-sm">
+            <div class="overflow-x-auto">
+            <table class="w-full text-sm min-w-[560px]">
                 <thead class="bg-gray-50 border-b border-gray-100">
                     <tr>
                         <th class="text-left px-5 py-3 font-medium text-gray-600">Product</th>
@@ -91,6 +92,7 @@ $paymentColors = [
                     @endforeach
                 </tbody>
             </table>
+            </div>
             <div class="px-5 py-4 border-t border-gray-100 space-y-2 text-sm">
                 <div class="flex justify-between text-gray-600">
                     <span>Subtotal</span>
@@ -166,6 +168,87 @@ $paymentColors = [
                 </div>
                 @endif
             </div>
+        </div>
+
+        {{-- Proof of delivery (internal only) --}}
+        <div class="bg-white rounded-xl shadow-sm border border-amber-200 p-5">
+            <div class="flex items-center gap-2 mb-1">
+                <h2 class="text-base font-semibold text-gray-800">Proof of Delivery</h2>
+                <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Internal Only</span>
+            </div>
+            <p class="text-xs text-gray-400 mb-4">
+                Courier POD photos, signed receipts or dispatch slips kept as a record against this order.
+                Files are stored privately — they are never shown to the customer or linked in any email.
+            </p>
+
+            @if($order->deliveryProofs->isNotEmpty())
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
+                @foreach($order->deliveryProofs as $proof)
+                <div class="border border-gray-100 rounded-lg overflow-hidden">
+                    <a href="{{ route('admin.orders.delivery-proofs.show', [$order, $proof]) }}" target="_blank" rel="noopener"
+                       class="bg-gray-50 aspect-[4/3] flex items-center justify-center overflow-hidden"
+                       title="Open {{ $proof->display_name }}">
+                        @if($proof->isImage())
+                            <img src="{{ route('admin.orders.delivery-proofs.show', [$order, $proof]) }}"
+                                 alt="Proof of delivery: {{ $proof->display_name }}" class="w-full h-full object-cover">
+                        @else
+                            <i class="mdi {{ $proof->isPdf() ? 'mdi-file-pdf-box text-red-500' : 'mdi-file-document-outline text-gray-400' }} text-4xl"></i>
+                        @endif
+                    </a>
+                    <div class="p-2.5">
+                        <p class="text-xs font-medium text-gray-700 truncate" title="{{ $proof->display_name }}">{{ $proof->display_name }}</p>
+                        <p class="text-[11px] text-gray-400">
+                            {{ $proof->human_size }} · {{ $proof->created_at->format('d M Y') }}
+                            @if($proof->uploader) · {{ $proof->uploader->name }}@endif
+                        </p>
+                        @if($proof->note)
+                            <p class="text-[11px] text-gray-600 mt-1 italic break-words">{{ $proof->note }}</p>
+                        @endif
+                        <div class="flex items-center gap-3 mt-2">
+                            <a href="{{ route('admin.orders.delivery-proofs.show', [$order, $proof]) }}" download="{{ $proof->display_name }}"
+                               class="text-[11px] text-[#bb976d] hover:underline">Download</a>
+                            <form action="{{ route('admin.orders.delivery-proofs.destroy', [$order, $proof]) }}" method="POST"
+                                  onsubmit="return confirm('Delete this proof of delivery? This cannot be undone.')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="text-[11px] text-red-500 hover:underline">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @else
+            <p class="text-sm text-gray-400 mb-5">No proof of delivery uploaded for this order yet.</p>
+            @endif
+
+            <form action="{{ route('admin.orders.delivery-proofs.store', $order) }}" method="POST" enctype="multipart/form-data"
+                  class="space-y-3 pt-4 border-t border-gray-100">
+                @csrf
+                <div>
+                    <label for="proof-files" class="block text-xs font-medium text-gray-600 mb-1">Upload files</label>
+                    <input type="file" name="files[]" id="proof-files" multiple
+                           accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"
+                           class="w-full text-sm text-gray-600 border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]
+                                  file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium
+                                  file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
+                    <p class="text-xs text-gray-400 mt-1">JPG, PNG, WEBP, GIF or PDF. Up to 10 files, 8 MB each.</p>
+                    @error('files')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                    @error('files.*')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label for="proof-note" class="block text-xs font-medium text-gray-600 mb-1">
+                        Note <span class="text-gray-400 font-normal">(optional)</span>
+                    </label>
+                    <input type="text" name="note" id="proof-note" maxlength="1000" value="{{ old('note') }}"
+                           placeholder="e.g. Left with neighbour at no. 12 — signed by J. Ahmed"
+                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                    @error('note')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                </div>
+                <button type="submit"
+                        class="px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors">
+                    <i class="mdi mdi-cloud-upload-outline"></i> Upload Proof
+                </button>
+            </form>
         </div>
     </div>
 
@@ -247,6 +330,78 @@ $paymentColors = [
                 </button>
             </form>
         </div>
+
+        {{-- Chase an unpaid order --}}
+        @if($order->awaitingPayment())
+        <div class="bg-white rounded-xl shadow-sm border border-orange-200 p-5">
+            <div class="flex items-center gap-2 mb-1">
+                <h2 class="text-base font-semibold text-gray-800">Request Payment</h2>
+                <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">Unpaid</span>
+            </div>
+            <p class="text-xs text-gray-400 mb-4">
+                Emails the customer a secure card-payment link for the full ${{ number_format($order->total, 2) }}.
+                Paying marks the order <strong>Paid</strong> and moves it to <strong>Processing</strong> automatically.
+            </p>
+
+            @if($order->payment_requested_at)
+            <div class="mb-4 flex items-start gap-2 rounded-lg bg-orange-50 border border-orange-100 px-3 py-2 text-xs text-orange-800">
+                <i class="mdi mdi-email-clock-outline mt-0.5"></i>
+                <span>
+                    Last requested {{ $order->payment_requested_at->format('d M Y, H:i') }}
+                    ({{ $order->payment_request_count }} {{ $order->payment_request_count === 1 ? 'time' : 'times' }} in total).
+                </span>
+            </div>
+            @endif
+
+            <form action="{{ route('admin.orders.request-payment', $order) }}" method="POST" class="space-y-3">
+                @csrf
+                <div>
+                    <label for="payment-message" class="block text-xs font-medium text-gray-600 mb-1">
+                        Note to customer <span class="text-gray-400 font-normal">(optional)</span>
+                    </label>
+                    <textarea name="message" id="payment-message" rows="3" maxlength="1000"
+                              placeholder="e.g. Your card was declined at checkout — please try again using the link below."
+                              class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">{{ old('message') }}</textarea>
+                    @error('message')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                    <p class="text-xs text-gray-400 mt-1">Shown in the email above the payment button.</p>
+                </div>
+                <button type="submit"
+                        class="w-full px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700 transition-colors">
+                    <i class="mdi mdi-email-fast-outline"></i>
+                    {{ $order->payment_requested_at ? 'Send Reminder Again' : 'Email Payment Request' }}
+                </button>
+            </form>
+
+            @if($order->payment_token)
+            <div class="mt-4 pt-4 border-t border-gray-100">
+                <label for="pay-link" class="block text-xs font-medium text-gray-600 mb-1">Payment link</label>
+                <div class="flex gap-2">
+                    {{-- Same link the email carries, for sending over WhatsApp or reading out on a call. --}}
+                    <input id="pay-link" type="text" readonly value="{{ $order->pay_url }}"
+                           class="flex-1 min-w-0 text-xs border border-gray-200 rounded-lg px-3 py-2 bg-gray-50 text-gray-600">
+                    <button type="button" data-copy="#pay-link"
+                            class="shrink-0 px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-600 hover:border-[#bb976d] hover:text-[#bb976d] transition-colors">
+                        <i class="mdi mdi-content-copy"></i> Copy
+                    </button>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">Anyone with this link can pay this order. Stays valid until the order is paid or cancelled.</p>
+            </div>
+            @endif
+        </div>
+        @elseif($order->payment_requested_at)
+        <div class="bg-white rounded-xl shadow-sm border border-green-200 p-5">
+            <div class="flex items-start gap-2">
+                <i class="mdi mdi-check-decagram text-green-600 text-lg leading-none mt-0.5"></i>
+                <div class="text-sm">
+                    <p class="font-semibold text-gray-800">Payment settled.</p>
+                    <p class="text-xs text-gray-500 mt-0.5">
+                        {{ $order->payment_request_count }} payment {{ $order->payment_request_count === 1 ? 'request was' : 'requests were' }} sent for this order,
+                        the last on {{ $order->payment_requested_at->format('d M Y, H:i') }}.
+                    </p>
+                </div>
+            </div>
+        </div>
+        @endif
 
         {{-- Emails sent for this order --}}
         @php
@@ -337,3 +492,32 @@ $paymentColors = [
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-copy]');
+    if (!btn) return;
+
+    var field = document.querySelector(btn.dataset.copy);
+    if (!field) return;
+
+    // select() first: it works on http:// where the clipboard API is unavailable,
+    // and leaves the link highlighted for a manual Ctrl+C if the write is refused.
+    field.select();
+    field.setSelectionRange(0, field.value.length);
+
+    var done = function () {
+        var original = btn.innerHTML;
+        btn.innerHTML = '<i class="mdi mdi-check"></i> Copied';
+        setTimeout(function () { btn.innerHTML = original; }, 1800);
+    };
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(field.value).then(done, function () {});
+    } else if (document.execCommand('copy')) {
+        done();
+    }
+});
+</script>
+@endpush

@@ -2,6 +2,8 @@
     $showTracking  = $showTracking ?? true;
     $noteTitle     = $noteTitle ?? 'Need to change something?';
     $noteBody      = $noteBody ?? "Just reply to this email within 24 hours and we'll sort it out before your order ships.";
+    $adminNote     = $adminNote ?? null;
+    $cta           = $cta ?? null;
     $shippingLabel = ['free' => 'Free Shipping', 'fast' => 'Fast Shipping', 'local' => 'Local Pickup'][$order->shipping] ?? ucfirst($order->shipping);
     $paymentLabel  = $order->payment_method === 'cod' ? 'Cash on Delivery' : 'Card';
 @endphp
@@ -12,6 +14,19 @@ PEYTONGHALIB — Premium Furniture
 {{ $heading }}
 
 {{ $intro }}
+@if ($adminNote)
+
+A NOTE FROM OUR TEAM
+{{ $adminNote }}
+@endif
+@if ($cta)
+
+{{ strtoupper($cta['eyebrow'] ?? $cta['label']) }}@if (! empty($cta['amount'])): {{ $cta['amount'] }}@endif
+
+{{ $cta['label'] }}: {{ $cta['url'] }}
+@if (! empty($cta['caption'])){{ $cta['caption'] }}
+@endif
+@endif
 @if ($showTracking)
 
 Tracking number: {{ $order->tracking_number }}

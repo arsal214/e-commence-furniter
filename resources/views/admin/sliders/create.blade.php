@@ -91,7 +91,7 @@
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
         <h2 class="text-base font-semibold text-gray-800 border-b border-gray-100 pb-3">Settings</h2>
-        <div class="grid grid-cols-2 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">Sort Order</label>
                 <input type="number" name="sort_order" value="{{ old('sort_order', 0) }}" min="0"

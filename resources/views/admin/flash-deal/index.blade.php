@@ -49,7 +49,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-5">
             <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider pb-2 border-b border-gray-100">Deal Content</h3>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Badge Text</label>
                     <input type="text" name="badge_text" value="{{ old('badge_text', $deal->badge_text) }}"
@@ -88,7 +88,7 @@
                        class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d]">
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1.5">CTA Button Text</label>
                     <input type="text" name="cta_text" value="{{ old('cta_text', $deal->cta_text) }}" required

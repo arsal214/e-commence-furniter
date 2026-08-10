@@ -53,6 +53,9 @@ Route::get('/checkout',         [CheckoutController::class, 'index'])->name('che
 Route::post('/checkout',        [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/checkout/success', [CheckoutController::class, 'stripeSuccess'])->name('checkout.stripe-success');
 
+// Pay-by-link for an unpaid order, emailed from the admin. The token is the credential.
+Route::get('/pay/{token}', [CheckoutController::class, 'payLink'])->name('order.pay');
+
 // ──────────────────────────────────────────────
 //  Admin routes
 // ──────────────────────────────────────────────
@@ -64,6 +67,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('products/import', [Admin\ProductImportController::class, 'store'])->name('admin.products.import.store');
     Route::resource('products',   Admin\ProductController::class)->names('admin.products')->except(['show']);
     Route::resource('orders',     Admin\OrderController::class)->names('admin.orders')->only(['index', 'show', 'update']);
+    Route::post('orders/{order}/request-payment', [Admin\OrderController::class, 'requestPayment'])->name('admin.orders.request-payment');
+    Route::post('orders/{order}/delivery-proofs', [Admin\OrderController::class, 'storeDeliveryProof'])->name('admin.orders.delivery-proofs.store');
+    Route::get('orders/{order}/delivery-proofs/{proof}', [Admin\OrderController::class, 'showDeliveryProof'])->name('admin.orders.delivery-proofs.show');
+    Route::delete('orders/{order}/delivery-proofs/{proof}', [Admin\OrderController::class, 'destroyDeliveryProof'])->name('admin.orders.delivery-proofs.destroy');
     Route::resource('reviews',    Admin\ReviewController::class)->names('admin.reviews')->except(['show']);
     Route::resource('sliders',    Admin\SliderController::class)->names('admin.sliders')->except(['show']);
     Route::get('email-logs',     [Admin\EmailLogController::class, 'index'])->name('admin.email-logs.index');

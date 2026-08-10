@@ -367,6 +367,102 @@ class CheckoutController extends Controller
     }
 
     /**
+     * The pay-by-link page for an order that was placed but never paid for.
+     *
+     * Reached from the payment-request email an admin sends by hand. The token
+     * is the only credential — it is a long random string held on the order, so
+     * knowing an order number or an email address is not enough to open it.
+     */
+    public function payLink(string $token)
+    {
+        $order = Order::with('items.product')->where('payment_token', $token)->firstOrFail();
+
+        if ($order->payment_status === 'paid') {
+            return redirect()->route('track-order', ['tracking' => $order->tracking_number])
+                ->with('success', 'This order has already been paid — thank you! Nothing further is needed.');
+        }
+
+        if ($order->status === 'cancelled') {
+            return redirect('/')->with('error', 'Order ' . $order->tracking_number . ' was cancelled, so it can no longer be paid. Please contact us if this is unexpected.');
+        }
+
+        Stripe::setApiKey(config('services.stripe.secret'));
+
+        try {
+            $intent = $this->paymentIntentFor($order);
+        } catch (\Exception $e) {
+            \Log::error('Pay link could not open a payment for order #' . $order->id . ': ' . $e->getMessage());
+
+            return redirect('/')->with('error', 'We could not open the payment page just now. Please try again shortly, or reply to our email and we will help.');
+        }
+
+        // Already settled on Stripe's side but never recorded here — most likely
+        // the customer closed the tab before the return redirect landed.
+        if ($intent->status === 'succeeded') {
+            $order->update(['payment_status' => 'paid', 'status' => 'processing']);
+
+            return redirect()->route('track-order', ['tracking' => $order->tracking_number])
+                ->with('success', 'This order has already been paid — thank you! Nothing further is needed.');
+        }
+
+        $order->update([
+            'stripe_payment_intent' => $intent->id,
+            'stripe_livemode'       => $this->stripeLivemode(),
+        ]);
+
+        return view('checkout-stripe', [
+            'order'        => $order,
+            'clientSecret' => $intent->client_secret,
+            'stripeKey'    => config('services.stripe.key'),
+            // No cart sits behind this page, so the "back to details" and "change
+            // address" links would lead to an empty checkout.
+            'payLink'      => true,
+        ]);
+    }
+
+    /**
+     * A usable PaymentIntent for an order, reusing the existing one where we can.
+     *
+     * Minting a fresh intent on every visit would litter the Stripe dashboard
+     * with abandoned intents for the same order and make reconciliation harder.
+     * The existing one is reused unless it is unusable — gone, cancelled, or
+     * created against the other set of keys — and its amount is re-synced in
+     * case the order total moved since.
+     */
+    protected function paymentIntentFor(Order $order): PaymentIntent
+    {
+        $amount = (int) round($order->total * 100);
+
+        if ($order->stripe_payment_intent) {
+            try {
+                $intent = PaymentIntent::retrieve($order->stripe_payment_intent);
+
+                if ($intent->status === 'succeeded') {
+                    return $intent;
+                }
+
+                if ($intent->status !== 'canceled') {
+                    if ($intent->amount !== $amount) {
+                        $intent = PaymentIntent::update($intent->id, ['amount' => $amount]);
+                    }
+
+                    return $intent;
+                }
+            } catch (\Exception $e) {
+                // Wrong key mode, deleted in a sandbox reset, or a malformed id.
+                // A fresh intent below is the right recovery, not a hard failure.
+                \Log::info('Reusing payment intent failed for order #' . $order->id . ': ' . $e->getMessage());
+            }
+        }
+
+        return PaymentIntent::create([
+            'amount'   => $amount,
+            'currency' => 'usd',
+            'metadata' => ['order_id' => $order->id],
+        ]);
+    }
+
+    /**
      * Whether the configured Stripe keys are live or test, read from the key
      * prefix (`sk_live_` / `pk_test_` and friends).
      *
@@ -411,6 +507,10 @@ class CheckoutController extends Controller
                 $order->update([
                     'payment_status'  => 'paid',
                     'status'          => 'processing',
+                    // This route is only ever reached through Stripe, so the
+                    // method is settled — including for an order taken as COD
+                    // and later paid by card through the pay link.
+                    'payment_method'  => 'stripe',
                     // Re-stamped so orders created before this column existed
                     // still get labelled once they succeed.
                     'stripe_livemode' => $this->stripeLivemode(),

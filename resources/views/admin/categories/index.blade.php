@@ -4,7 +4,7 @@
 @section('page-title', 'Categories')
 
 @section('content')
-<div class="flex items-center justify-between mb-5">
+<div class="flex flex-wrap items-center justify-between gap-3 mb-5">
     <p class="text-sm text-gray-500">{{ $categories->total() }} categories total</p>
     <a href="{{ route('admin.categories.create') }}"
        class="inline-flex items-center gap-2 px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
@@ -12,8 +12,11 @@
     </a>
 </div>
 
+{{-- The table keeps its full width on phones and scrolls sideways, rather than
+     squashing eight columns into 360px. --}}
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[720px]">
         <thead class="bg-gray-50 border-b border-gray-100">
             <tr>
                 <th class="text-left px-5 py-3 font-medium text-gray-600">Image</th>
@@ -80,6 +83,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 @if ($categories->hasPages())

@@ -34,8 +34,10 @@ $currentStatus = request('status');
     @endforeach
 </div>
 
+{{-- Scrolls sideways on phones rather than crushing eight columns. --}}
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[860px]">
         <thead class="bg-gray-50 border-b border-gray-100">
             <tr>
                 <th class="text-left px-5 py-3 font-medium text-gray-600">#</th>
@@ -93,6 +95,7 @@ $currentStatus = request('status');
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 @if ($orders->hasPages())

@@ -10,7 +10,7 @@
         {{ $products->total() }} product{{ $products->total() !== 1 ? 's' : '' }}
         @if($search) &nbsp;matching <span class="font-medium text-gray-700">"{{ $search }}"</span> @endif
     </p>
-    <div class="flex items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2">
         <a href="{{ route('admin.products.export') }}"
            class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
             <i class="mdi mdi-download"></i> Export CSV
@@ -85,8 +85,10 @@
     </div>
 </form>
 
+{{-- Scrolls sideways on phones rather than crushing eight columns. --}}
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <table class="w-full text-sm">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm min-w-[880px]">
         <thead class="bg-gray-50 border-b border-gray-100">
             <tr>
                 <th class="text-left px-5 py-3 font-medium text-gray-600">Image</th>
@@ -184,6 +186,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 @if ($products->hasPages())
