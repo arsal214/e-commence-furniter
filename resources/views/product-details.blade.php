@@ -1261,6 +1261,151 @@ img.pd-slide-img:focus-visible {
     }
     .pd-sticky-bar__btn:active { transform: scale(.99); }
     .pd-sticky-bar__btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+    /* ── Selected colour, inside the sticky bar ──
+       The swatch row sits near the top of the info column, so a customer who
+       has scrolled down to the purchase area had to scroll all the way back up
+       to change colour. This chip carries the current selection down with them
+       and opens the sheet below. Rendered only when the product has colours. */
+    .pd-sticky-color {
+        display: inline-flex; align-items: center; gap: 7px;
+        flex: 0 1 auto; min-width: 0; max-width: 132px;
+        min-height: 46px; padding: 0 9px 0 8px;
+        font: inherit; text-align: left; color: #172430;
+        background: #fff; border: 1.5px solid #e3ddd3; border-radius: 999px;
+        cursor: pointer;
+        transition: border-color .18s ease, background .18s ease;
+    }
+    .pd-sticky-color:active { border-color: #bb976d; background: #F7F1E8; }
+    .pd-sticky-color:focus-visible { outline: 2px solid #172430; outline-offset: 2px; }
+    .dark .pd-sticky-color { background: #1f2c38; border-color: #38454f; color: #fff; }
+    .pd-sticky-color__dot {
+        width: 24px; height: 24px; border-radius: 50%; flex: none;
+        border: 2px solid #fff; box-shadow: inset 0 0 0 1px rgba(16,24,32,.18);
+    }
+    .dark .pd-sticky-color__dot { border-color: #1f2c38; box-shadow: inset 0 0 0 1px rgba(255,255,255,.28); }
+    .pd-sticky-color__name {
+        font-size: 13px; font-weight: 600; line-height: 1.1;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .pd-sticky-color__caret { flex: none; color: #8a9199; }
+
+    /* ── Colour sheet ──
+       Only this rule reveals it, so the sheet is unreachable above 768px even
+       if the class is left on the element. */
+    .pd-color-sheet.is-open { display: block; }
+
+    /* 360px and under: the chip, the price and a full CTA have to share ~300px,
+       so the label tightens rather than any one of the three being dropped. */
+    @media (max-width: 360px) {
+        .pd-sticky-bar { gap: 8px; padding-left: 10px; padding-right: 10px; }
+        .pd-sticky-color { max-width: 96px; padding: 0 7px 0 6px; gap: 5px; }
+        .pd-sticky-color__dot { width: 21px; height: 21px; }
+        .pd-sticky-bar__btn { font-size: 13px; letter-spacing: .02em; gap: 6px; }
+        .pd-sticky-bar__btn svg { display: none; }
+    }
+}
+
+/* ── Mobile colour bottom sheet ──────────────────────────────────────────
+   Hidden at every width by default; the rule that shows it lives inside the
+   mobile media query above, so the desktop page is untouched by all of this.
+   Everything below is inert until `.is-open` is added. */
+.pd-color-sheet { display: none; }
+.pd-color-sheet__backdrop {
+    position: fixed; inset: 0; z-index: 9998;
+    background: rgba(16, 24, 32, .48);
+    opacity: 0; transition: opacity .26s cubic-bezier(.4,0,.2,1);
+    -webkit-tap-highlight-color: transparent;
+}
+.pd-color-sheet.is-shown .pd-color-sheet__backdrop { opacity: 1; }
+
+.pd-color-sheet__panel {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 9999;
+    display: flex; flex-direction: column;
+    max-height: min(72vh, 560px);
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -10px 40px rgba(16, 24, 32, .28);
+    transform: translateY(100%);
+    transition: transform .3s cubic-bezier(.32, .72, 0, 1);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pd-color-sheet.is-shown .pd-color-sheet__panel { transform: translateY(0); }
+.dark .pd-color-sheet__panel { background: #172430; }
+
+/* Head is also the drag handle, so it never scrolls away from the thumb. */
+.pd-color-sheet__head {
+    flex: none; padding: 8px 16px 12px;
+    border-bottom: 1px solid #f1eee9;
+    touch-action: none;
+}
+.dark .pd-color-sheet__head { border-bottom-color: #2f3b45; }
+.pd-color-sheet__grab {
+    width: 40px; height: 4px; margin: 0 auto 12px;
+    border-radius: 999px; background: #ddd7cd;
+}
+.dark .pd-color-sheet__grab { background: #3d4a55; }
+.pd-color-sheet__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.pd-color-sheet__title {
+    font-family: var(--pg-font-heading, inherit);
+    font-size: 1.0625rem; font-weight: 700; line-height: 1.25;
+    color: #101820; margin: 0;
+}
+.dark .pd-color-sheet__title { color: #fff; }
+.pd-color-sheet__close {
+    display: grid; place-items: center; flex: none;
+    width: 36px; height: 36px; margin-right: -6px;
+    border: 0; border-radius: 50%;
+    background: #f4f1ec; color: #6B7280; cursor: pointer;
+}
+.pd-color-sheet__close:active { background: #e9e4db; }
+.pd-color-sheet__close:focus-visible { outline: 2px solid #101820; outline-offset: 2px; }
+.dark .pd-color-sheet__close { background: rgba(255,255,255,.08); color: #fff; }
+
+/* Scrolls on its own axis so a product with many colours never grows the
+   sheet past its cap. */
+.pd-color-sheet__list {
+    flex: 1 1 auto; min-height: 0;
+    overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+    padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+}
+
+.pd-cs-opt {
+    display: flex; align-items: center; gap: 13px; width: 100%;
+    min-height: 56px; padding: 8px 12px;
+    font: inherit; text-align: left; cursor: pointer;
+    background: transparent; border: 1.5px solid transparent; border-radius: 14px;
+    transition: background .16s ease, border-color .16s ease;
+}
+.pd-cs-opt + .pd-cs-opt { margin-top: 2px; }
+.pd-cs-opt:active { background: #f7f4f0; }
+.pd-cs-opt:focus-visible { outline: 2px solid #101820; outline-offset: -2px; }
+.pd-cs-opt.is-selected { background: #F7F1E8; border-color: #8A6A3F; }
+.dark .pd-cs-opt:active { background: rgba(255,255,255,.06); }
+.dark .pd-cs-opt.is-selected { background: rgba(187,151,109,.18); border-color: #bb976d; }
+
+/* Same treatment as the .pdx-swatch__dot used by the main selector — white
+   ring, hairline inset — so the two read as one control, not two designs. */
+.pd-cs-opt__dot {
+    width: 34px; height: 34px; flex: none; border-radius: 50%;
+    border: 2px solid #fff; box-shadow: inset 0 0 0 1px rgba(16, 24, 32, .16);
+}
+.dark .pd-cs-opt__dot { border-color: #172430; box-shadow: inset 0 0 0 1px rgba(255,255,255,.26); }
+.pd-cs-opt__txt { flex: 1 1 auto; min-width: 0; }
+.pd-cs-opt__name {
+    display: block; font-size: .9375rem; font-weight: 600; line-height: 1.3; color: #101820;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.dark .pd-cs-opt__name { color: #fff; }
+.pd-cs-opt.is-selected .pd-cs-opt__name { color: #8A6A3F; }
+.dark .pd-cs-opt.is-selected .pd-cs-opt__name { color: #e6c99b; }
+.pd-cs-opt__stock { display: block; font-size: .75rem; font-weight: 500; color: #C2321F; margin-top: 2px; }
+.pd-cs-opt__tick { flex: none; display: none; color: #8A6A3F; }
+.pd-cs-opt.is-selected .pd-cs-opt__tick { display: block; }
+.dark .pd-cs-opt.is-selected .pd-cs-opt__tick { color: #e6c99b; }
+
+@media (prefers-reduced-motion: reduce) {
+    .pd-color-sheet__panel, .pd-color-sheet__backdrop { transition-duration: .01ms; }
 }
 
 /* ── Buy controls: tablet ────────────────────────────────────────────────
@@ -1815,6 +1960,17 @@ img.pd-slide-img:focus-visible {
         <span id="pd-sticky-now" class="pd-sticky-bar__now">${{ $activePrice }}</span>
         <span id="pd-sticky-was" class="pd-sticky-bar__was" style="{{ $baseWas ? '' : 'display:none' }}">${{ number_format($baseWas ?? 0, 2) }}</span>
     </div>
+    @if(!empty($item->colors) && count($item->colors))
+    {{-- Opens the colour sheet. Holds no state of its own — the swatch and name
+         are written from whichever .color-radio is checked. --}}
+    <button type="button" id="pd-sticky-color" class="pd-sticky-color"
+            aria-haspopup="dialog" aria-expanded="false" aria-controls="pd-color-sheet"
+            aria-label="Color: {{ $item->colors[0] }}. Change color">
+        <span class="pd-sticky-color__dot" style="background:{{ \App\Models\Product::colorHex($item->colors[0]) }}" aria-hidden="true"></span>
+        <span class="pd-sticky-color__name">{{ $item->colors[0] }}</span>
+        <svg class="pd-sticky-color__caret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    @endif
     <button type="submit" form="pd-cart-form" id="pd-sticky-btn" class="pd-sticky-bar__btn"
             {{ $pdInStock ? '' : 'disabled aria-disabled=true' }}>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1823,6 +1979,201 @@ img.pd-slide-img:focus-visible {
         <span id="pd-sticky-btn-label">{{ $pdInStock ? 'Add to Cart' : 'Out of Stock' }}</span>
     </button>
 </div>
+
+@if(!empty($item->colors) && count($item->colors))
+{{-- Mobile colour sheet. The options are buttons that check the matching
+     .color-radio and fire its change event — the radios stay the single source
+     of truth, so the label, the hidden cart input, the gallery jump, the pill
+     highlight and the variant price/stock update all run through the handlers
+     that already exist. Nothing here renders above 768px. --}}
+<div class="pd-color-sheet" id="pd-color-sheet">
+    <div class="pd-color-sheet__backdrop" data-pd-cs-dismiss></div>
+    <div class="pd-color-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="pd-color-sheet-title">
+        <div class="pd-color-sheet__head">
+            <div class="pd-color-sheet__grab" aria-hidden="true"></div>
+            <div class="pd-color-sheet__row">
+                <h2 class="pd-color-sheet__title" id="pd-color-sheet-title">Choose Color</h2>
+                <button type="button" class="pd-color-sheet__close" data-pd-cs-dismiss aria-label="Close color picker">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="pd-color-sheet__list" role="radiogroup" aria-labelledby="pd-color-sheet-title">
+            @foreach($item->colors as $ci => $clr)
+            @php
+                // Only flagged when this colour has its own variant row reporting
+                // zero — a colour with no variant falls back to product stock and
+                // gets no claim made about it either way.
+                $csKey   = strtolower(trim($clr));
+                $csOut   = isset($pdVariants['color'][$csKey]) && (int) $pdVariants['color'][$csKey]['stock'] <= 0;
+            @endphp
+            <button type="button" class="pd-cs-opt {{ $ci===0?'is-selected':'' }}" role="radio"
+                    aria-checked="{{ $ci===0?'true':'false' }}" tabindex="{{ $ci===0?'0':'-1' }}"
+                    data-color="{{ $clr }}">
+                <span class="pd-cs-opt__dot" style="background:{{ \App\Models\Product::colorHex($clr) }}" aria-hidden="true"></span>
+                <span class="pd-cs-opt__txt">
+                    <span class="pd-cs-opt__name">{{ $clr }}</span>
+                    @if($csOut)<span class="pd-cs-opt__stock">Out of stock</span>@endif
+                </span>
+                <svg class="pd-cs-opt__tick" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+            </button>
+            @endforeach
+        </div>
+    </div>
+</div>
+
+<script>
+/* Mobile colour sheet — see the markup note above. Mobile-only by construction:
+   the trigger lives in the sticky bar and the sheet's only display rule sits
+   inside the max-width:767.98px block. */
+(function () {
+    var sheet   = document.getElementById('pd-color-sheet');
+    var trigger = document.getElementById('pd-sticky-color');
+    if (!sheet || !trigger) return;
+
+    var panel  = sheet.querySelector('.pd-color-sheet__panel');
+    var head   = sheet.querySelector('.pd-color-sheet__head');
+    var closeB = sheet.querySelector('.pd-color-sheet__close');
+    var opts   = Array.prototype.slice.call(sheet.querySelectorAll('.pd-cs-opt'));
+    var dotEl  = trigger.querySelector('.pd-sticky-color__dot');
+    var nameEl = trigger.querySelector('.pd-sticky-color__name');
+    var radios = Array.prototype.slice.call(document.querySelectorAll('.color-radio'));
+    var mq     = window.matchMedia('(max-width: 767.98px)');
+    var lastFocus = null, hideTimer = null;
+
+    // ── Read the selection back out of the radios ──
+    function currentRadio() {
+        for (var i = 0; i < radios.length; i++) { if (radios[i].checked) return radios[i]; }
+        return radios[0] || null;
+    }
+    // The hex is already on the main selector's swatch, set inline by Blade, so
+    // it is read from there rather than shipped a second time as a JS map.
+    function hexOf(radio) {
+        var pill = radio.nextElementSibling;
+        var dot  = pill ? pill.querySelector('.pdx-swatch__dot') : null;
+        return dot ? dot.style.background : '';
+    }
+    function sync() {
+        var r = currentRadio();
+        if (!r) return;
+        var hex = hexOf(r);
+        if (dotEl && hex) dotEl.style.background = hex;
+        if (nameEl) nameEl.textContent = r.value;
+        trigger.setAttribute('aria-label', 'Color: ' + r.value + '. Change color');
+        opts.forEach(function (o) {
+            var on = o.getAttribute('data-color') === r.value;
+            o.classList.toggle('is-selected', on);
+            o.setAttribute('aria-checked', on ? 'true' : 'false');
+            o.tabIndex = on ? 0 : -1;
+        });
+    }
+    // Fires for a pick made anywhere — the swatch row up the page, or the sheet.
+    radios.forEach(function (r) { r.addEventListener('change', sync); });
+    sync();
+
+    // ── Selecting writes through to the radio, never to local state ──
+    function pick(value) {
+        var target = null;
+        radios.forEach(function (r) { if (r.value === value) target = r; });
+        if (target && !target.checked) {
+            target.checked = true;
+            target.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        close();
+    }
+
+    // ── Open / close ──
+    // Scroll is held with overflow on the scrolling elements — the same approach
+    // the size-chart modal uses — rather than a position:fixed body lock, which
+    // would drop the page back to the top when released.
+    function open() {
+        if (!mq.matches) return;
+        clearTimeout(hideTimer);
+        lastFocus = document.activeElement;
+        sheet.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+        trigger.setAttribute('aria-expanded', 'true');
+        requestAnimationFrame(function () { sheet.classList.add('is-shown'); });
+        var sel = sheet.querySelector('.pd-cs-opt.is-selected') || closeB;
+        if (sel) sel.focus({ preventScroll: true });
+    }
+    function close() {
+        if (!sheet.classList.contains('is-open')) return;
+        sheet.classList.remove('is-shown');
+        trigger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        // Focus returns to the chip, which is fixed to the viewport — so the page
+        // stays exactly where the customer left it. iOS does not focus a button
+        // on tap, so lastFocus is <body> there; the chip is the useful target.
+        var back = (lastFocus && lastFocus !== document.body && lastFocus.focus) ? lastFocus : trigger;
+        back.focus({ preventScroll: true });
+        hideTimer = setTimeout(function () { sheet.classList.remove('is-open'); }, 320);
+    }
+
+    trigger.addEventListener('click', open);
+    sheet.addEventListener('click', function (e) {
+        if (e.target.closest('[data-pd-cs-dismiss]')) { close(); return; }
+        var opt = e.target.closest('.pd-cs-opt');
+        if (opt) pick(opt.getAttribute('data-color'));
+    });
+
+    // ── Keyboard: Escape closes, arrows move between options, Tab is trapped ──
+    sheet.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            var cur = opts.indexOf(document.activeElement);
+            if (cur === -1) return;
+            e.preventDefault();
+            var step = (e.key === 'ArrowDown' || e.key === 'ArrowRight') ? 1 : -1;
+            var next = opts[(cur + step + opts.length) % opts.length];
+            next.tabIndex = 0;
+            next.focus({ preventScroll: true });
+            return;
+        }
+
+        if (e.key === 'Tab') {
+            var f = [closeB].concat(opts.filter(function (o) { return o.tabIndex === 0; }));
+            f = f.filter(Boolean);
+            if (!f.length) return;
+            var first = f[0], last = f[f.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus({ preventScroll: true }); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus({ preventScroll: true }); }
+        }
+    });
+
+    // ── Drag the head down to dismiss ──
+    var startY = 0, dy = 0, dragging = false;
+    head.addEventListener('touchstart', function (e) {
+        if (!e.touches || e.touches.length !== 1) return;
+        dragging = true; startY = e.touches[0].clientY; dy = 0;
+        panel.style.transition = 'none';
+    }, { passive: true });
+    head.addEventListener('touchmove', function (e) {
+        if (!dragging) return;
+        dy = Math.max(0, e.touches[0].clientY - startY);
+        panel.style.transform = 'translateY(' + dy + 'px)';
+    }, { passive: true });
+    function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        panel.style.transition = '';
+        panel.style.transform = '';
+        if (dy > 80) close();
+    }
+    head.addEventListener('touchend', endDrag);
+    head.addEventListener('touchcancel', endDrag);
+
+    // Rotating or resizing past the breakpoint takes the trigger off screen, so
+    // the sheet must not be left hanging over the desktop layout.
+    var onMq = function () { if (!mq.matches) close(); };
+    if (mq.addEventListener) mq.addEventListener('change', onMq);
+    else if (mq.addListener) mq.addListener(onMq);
+}());
+</script>
+@endif
 
 <script>
 (function(){
