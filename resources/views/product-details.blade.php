@@ -808,6 +808,60 @@
     .pdx-features { gap: 10px; }
     .pdx-trust { gap: 10px 12px; }
 }
+/* ── Action buttons ─────────────────────────────────────────────────────
+   Mobile (default): the stack this block has always been — Add to Cart, then
+   Buy It Now, then wishlist, 12px apart. Identical to the old
+   `flex flex-col gap-3`, just owned here instead of by utilities.
+
+   Desktop: the same three buttons, re-placed by grid. Three full-width bars
+   stacked was a lot of weight for one column and left Add to Cart and Buy It
+   Now competing at identical size; pairing the cart with the wishlist and
+   giving Buy It Now the full span reads as one deliberate block and takes a
+   row less. Source order never changes, so nothing about the tab order or the
+   mobile rendering depends on this. */
+.pdx-actions { display: flex; flex-direction: column; gap: .75rem; }
+
+@media (min-width: 768px) {
+    .pdx-actions {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        gap: 12px;
+    }
+    /* Explicit placement — the buttons stay in source order in the DOM. */
+    .pdx-actions .pd-btn-cart        { grid-area: 1 / 1; }
+    .pdx-actions .wishlist-toggle-btn{ grid-area: 1 / 2; }
+    .pdx-actions .pdx-btn-buy        { grid-area: 2 / 1 / 3 / -1; }
+
+    /* 60px was sized for a button alone on its row. Two side by side at that
+       height read as slabs, so the whole set comes down to 54px. */
+    .pdx .pdx-actions .pd-btn-cart,
+    .pdx .pdx-actions .pdx-btn-buy { height: 54px; font-size: .9375rem; }
+    .pdx .pdx-actions .wishlist-toggle-btn { height: 54px !important; }
+
+    /* The wishlist is a quiet tertiary when it sits alone under two full-width
+       CTAs. As a peer beside Add to Cart it needs an edge or it reads as
+       floating text — a hairline in the existing line token, nothing more. Its
+       gold hover is untouched. */
+    .pdx .pdx-actions .wishlist-toggle-btn {
+        border: 1.5px solid var(--pdx-line) !important;
+        border-radius: 16px !important;
+    }
+    .pdx .pdx-actions .wishlist-toggle-btn:hover { border-color: var(--pdx-gold) !important; }
+
+    /* Neither label may wrap inside a fixed-height pill at narrow desktop. */
+    .pdx-actions #pd-add-btn-label,
+    .pdx-actions .wishlist-btn-text { white-space: nowrap; }
+}
+
+/* Between 768 and ~1100 the info column is at its narrowest and "Add to
+   wishlist" beside a cart button runs out of room before the icon does. */
+@media (min-width: 768px) and (max-width: 1099.98px) {
+    .pdx .pdx-actions .pd-btn-cart,
+    .pdx .pdx-actions .pdx-btn-buy { font-size: .875rem; }
+    .pdx .pdx-actions .wishlist-toggle-btn { font-size: .8125rem !important; }
+    .pdx-actions { gap: 10px; }
+}
+
 .pdx, .pdx * { min-width: 0; }
 .pdx img, .pdx svg { max-width: 100%; }
 
@@ -1190,7 +1244,9 @@ img.pd-slide-img:focus-visible {
        Cropping instead is not an option: this is the product, and cutting its
        edges off to fill a box is worse than a little letterboxing. */
     .pd-main-wrap { aspect-ratio: 1/1; max-height: 62vh; }
-    body { padding-bottom: 74px; }              /* room so the bar never covers content */
+    /* Clears the two-row bar (colour + qty above price + CTA) so it never
+       covers page content. Was 74px when the bar was a single row. */
+    body { padding-bottom: 122px; }
 
     /* ── Typography ──
        Desktop sizes were rendering unchanged on a 371px screen. */
@@ -1241,13 +1297,19 @@ img.pd-slide-img:focus-visible {
     .pd-write__icon { width: 2.2rem; height: 2.2rem; }
     .pd-star { width: 2.35rem; height: 2.35rem; }
 
+    /* Two rows: colour + qty on a slim top row, the original price + CTA row
+       untouched underneath. One row cannot hold four controls at 320px — the
+       CTA would drop under a readable width — and the CTA is the one thing on
+       this bar that must never be cramped. */
     .pd-sticky-bar {
-        display: flex; align-items: center; gap: 12px;
+        display: flex; flex-direction: column; align-items: stretch; gap: 7px;
         position: fixed; left: 0; right: 0; bottom: 0; z-index: 9990;
-        padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+        padding: 8px 14px calc(9px + env(safe-area-inset-bottom, 0px));
         background: #fff; border-top: 1px solid #ece7df;
         box-shadow: 0 -6px 20px rgba(0,0,0,.10);
     }
+    .pd-sticky-bar__top  { display: flex; align-items: center; gap: 10px; }
+    .pd-sticky-bar__main { display: flex; align-items: center; gap: 12px; }
     .dark .pd-sticky-bar { background: #172430; border-color: #2f3b45; }
     .pd-sticky-bar__price { display: flex; flex-direction: column; line-height: 1.12; flex: none; }
     .pd-sticky-bar__now { font-size: 18px; font-weight: 800; color: #172430; }
@@ -1269,8 +1331,8 @@ img.pd-slide-img:focus-visible {
        and opens the sheet below. Rendered only when the product has colours. */
     .pd-sticky-color {
         display: inline-flex; align-items: center; gap: 7px;
-        flex: 0 1 auto; min-width: 0; max-width: 132px;
-        min-height: 46px; padding: 0 9px 0 8px;
+        flex: 0 1 auto; min-width: 0;
+        min-height: 44px; padding: 0 9px 0 8px;
         font: inherit; text-align: left; color: #172430;
         background: #fff; border: 1.5px solid #e3ddd3; border-radius: 999px;
         cursor: pointer;
@@ -1290,17 +1352,46 @@ img.pd-slide-img:focus-visible {
     }
     .pd-sticky-color__caret { flex: none; color: #8a9199; }
 
+    /* ── Quantity, inside the sticky bar ──
+       A display, not a second <input name="qty">: #pd-qty in the form stays the
+       only control that submits, and these buttons drive it. Two inputs with
+       the same name would post twice. */
+    .pd-sticky-qty {
+        display: inline-flex; align-items: center; flex: none; margin-left: auto;
+        height: 44px; border: 1.5px solid #e3ddd3; border-radius: 999px; overflow: hidden;
+        background: #fff;
+    }
+    .dark .pd-sticky-qty { background: #1f2c38; border-color: #38454f; }
+    .pd-sticky-qty__btn {
+        width: 40px; height: 100%; border: 0; background: transparent;
+        display: grid; place-items: center; cursor: pointer; color: #172430;
+    }
+    .dark .pd-sticky-qty__btn { color: #fff; }
+    .pd-sticky-qty__btn:active { background: #F7F1E8; }
+    .dark .pd-sticky-qty__btn:active { background: rgba(255,255,255,.08); }
+    .pd-sticky-qty__btn:disabled { opacity: .35; cursor: not-allowed; }
+    .pd-sticky-qty__btn:focus-visible { outline: 2px solid #172430; outline-offset: -3px; }
+    .pd-sticky-qty__val {
+        min-width: 26px; text-align: center;
+        font-size: 15px; font-weight: 700; color: #172430;
+        font-variant-numeric: tabular-nums;
+    }
+    .dark .pd-sticky-qty__val { color: #fff; }
+
     /* ── Colour sheet ──
        Only this rule reveals it, so the sheet is unreachable above 768px even
        if the class is left on the element. */
     .pd-color-sheet.is-open { display: block; }
 
-    /* 360px and under: the chip, the price and a full CTA have to share ~300px,
-       so the label tightens rather than any one of the three being dropped. */
+    /* 360px and under. The top row has slack, so only the price + CTA row
+       tightens — the CTA keeps a readable label rather than losing the glyph
+       and the price both. */
     @media (max-width: 360px) {
-        .pd-sticky-bar { gap: 8px; padding-left: 10px; padding-right: 10px; }
-        .pd-sticky-color { max-width: 96px; padding: 0 7px 0 6px; gap: 5px; }
+        .pd-sticky-bar { padding-left: 10px; padding-right: 10px; }
+        .pd-sticky-bar__main { gap: 9px; }
+        .pd-sticky-color { padding: 0 7px 0 6px; gap: 5px; }
         .pd-sticky-color__dot { width: 21px; height: 21px; }
+        .pd-sticky-qty__btn { width: 36px; }
         .pd-sticky-bar__btn { font-size: 13px; letter-spacing: .02em; gap: 6px; }
         .pd-sticky-bar__btn svg { display: none; }
     }
@@ -1328,7 +1419,8 @@ img.pd-slide-img:focus-visible {
     box-shadow: 0 -10px 40px rgba(16, 24, 32, .28);
     transform: translateY(100%);
     transition: transform .3s cubic-bezier(.32, .72, 0, 1);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    /* Safe-area inset is paid by .pd-color-sheet__foot, not here — adding it in
+       both places would leave a dead band under the Done button on an iPhone. */
 }
 .pd-color-sheet.is-shown .pd-color-sheet__panel { transform: translateY(0); }
 .dark .pd-color-sheet__panel { background: #172430; }
@@ -1367,8 +1459,14 @@ img.pd-slide-img:focus-visible {
 .pd-color-sheet__list {
     flex: 1 1 auto; min-height: 0;
     overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
-    padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+    padding: 8px 10px 10px;
 }
+
+.pd-color-sheet__kicker {
+    font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em;
+    color: #6B7280; margin: 4px 0 6px; padding: 0 12px;
+}
+.dark .pd-color-sheet__kicker { color: rgba(255,255,255,.55); }
 
 .pd-cs-opt {
     display: flex; align-items: center; gap: 13px; width: 100%;
@@ -1403,6 +1501,24 @@ img.pd-slide-img:focus-visible {
 .pd-cs-opt__tick { flex: none; display: none; color: #8A6A3F; }
 .pd-cs-opt.is-selected .pd-cs-opt__tick { display: block; }
 .dark .pd-cs-opt.is-selected .pd-cs-opt__tick { color: #e6c99b; }
+
+/* Footer sits outside the scrolling list, so Done stays reachable on a product
+   with twenty colours. */
+.pd-color-sheet__foot {
+    flex: none; padding: 10px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid #f1eee9;
+}
+.dark .pd-color-sheet__foot { border-top-color: #2f3b45; }
+.pd-color-sheet__done {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 52px;
+    border: 0; border-radius: 999px; cursor: pointer;
+    background: #172430; color: #fff;
+    font-size: .9375rem; font-weight: 700; letter-spacing: .02em;
+}
+.pd-color-sheet__done:active { transform: scale(.99); }
+.pd-color-sheet__done:focus-visible { outline: 3px solid #bb976d; outline-offset: 2px; }
+.dark .pd-color-sheet__done { background: #bb976d; }
 
 @media (prefers-reduced-motion: reduce) {
     .pd-color-sheet__panel, .pd-color-sheet__backdrop { transition-duration: .01ms; }
@@ -1735,11 +1851,14 @@ img.pd-slide-img:focus-visible {
                             </div>
                         </div>
 
-                        {{-- Add to Cart is the dominant control: full width, 60px, and
-                             alone on its row so nothing competes with it. Buy Now sits
-                             directly beneath as the outlined secondary, and wishlist
-                             drops to a quiet tertiary link below both. --}}
-                        <div class="pdx-block flex flex-col gap-3">
+                        {{-- Mobile keeps the stack: Add to Cart, Buy It Now, wishlist.
+                             Desktop re-lays the same three buttons as a grid — cart and
+                             wishlist share row 1, Buy It Now spans row 2 — which is why
+                             the source order is unchanged and only CSS moves them.
+                             The Tailwind flex utilities were dropped from this wrapper so
+                             both layouts are defined in one place and cannot be
+                             overridden by utility-order surprises. --}}
+                        <div class="pdx-block pdx-actions">
                             <button type="submit" id="pd-add-btn" class="pd-btn-cart">
                                 <svg class="pdx-cart-ico" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
@@ -1956,28 +2075,50 @@ img.pd-slide-img:focus-visible {
 {{-- Mobile sticky Add to Cart: submits the main #pd-cart-form (so selected qty /
      size / colour carry over) and triggers the same confirmation modal. --}}
 <div class="pd-sticky-bar" aria-hidden="false">
-    <div class="pd-sticky-bar__price">
-        <span id="pd-sticky-now" class="pd-sticky-bar__now">${{ $activePrice }}</span>
-        <span id="pd-sticky-was" class="pd-sticky-bar__was" style="{{ $baseWas ? '' : 'display:none' }}">${{ number_format($baseWas ?? 0, 2) }}</span>
+
+    {{-- Top row: current colour + quantity. Both are mirrors of the controls in
+         the info column — neither holds state of its own. --}}
+    <div class="pd-sticky-bar__top">
+        @if(!empty($item->colors) && count($item->colors))
+        {{-- Opens the colour sheet. The swatch and name are written from
+             whichever .color-radio is checked, so this can never disagree with
+             the selector up the page. --}}
+        <button type="button" id="pd-sticky-color" class="pd-sticky-color"
+                aria-haspopup="dialog" aria-expanded="false" aria-controls="pd-color-sheet"
+                aria-label="Color: {{ $item->colors[0] }}. Change color">
+            <span class="pd-sticky-color__dot" style="background:{{ \App\Models\Product::colorHex($item->colors[0]) }}" aria-hidden="true"></span>
+            <span class="pd-sticky-color__name">{{ $item->colors[0] }}</span>
+            <svg class="pd-sticky-color__caret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        @endif
+
+        {{-- Drives #pd-qty in the form. A <span>, not an input: a second
+             control named "qty" would post the quantity twice. --}}
+        <div class="pd-sticky-qty" role="group" aria-label="Quantity">
+            <button type="button" id="pd-sticky-dec" class="pd-sticky-qty__btn" aria-label="Decrease quantity">
+                <svg width="13" height="2" viewBox="0 0 12 2" fill="none" aria-hidden="true"><path d="M1 1H11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <span class="pd-sticky-qty__val" id="pd-sticky-qty" aria-live="polite">1</span>
+            <button type="button" id="pd-sticky-inc" class="pd-sticky-qty__btn" aria-label="Increase quantity">
+                <svg width="13" height="13" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M6 1V11M1 6H11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+        </div>
     </div>
-    @if(!empty($item->colors) && count($item->colors))
-    {{-- Opens the colour sheet. Holds no state of its own — the swatch and name
-         are written from whichever .color-radio is checked. --}}
-    <button type="button" id="pd-sticky-color" class="pd-sticky-color"
-            aria-haspopup="dialog" aria-expanded="false" aria-controls="pd-color-sheet"
-            aria-label="Color: {{ $item->colors[0] }}. Change color">
-        <span class="pd-sticky-color__dot" style="background:{{ \App\Models\Product::colorHex($item->colors[0]) }}" aria-hidden="true"></span>
-        <span class="pd-sticky-color__name">{{ $item->colors[0] }}</span>
-        <svg class="pd-sticky-color__caret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-    </button>
-    @endif
-    <button type="submit" form="pd-cart-form" id="pd-sticky-btn" class="pd-sticky-bar__btn"
-            {{ $pdInStock ? '' : 'disabled aria-disabled=true' }}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-        </svg>
-        <span id="pd-sticky-btn-label">{{ $pdInStock ? 'Add to Cart' : 'Out of Stock' }}</span>
-    </button>
+
+    {{-- Bottom row: unchanged from the single-row bar. --}}
+    <div class="pd-sticky-bar__main">
+        <div class="pd-sticky-bar__price">
+            <span id="pd-sticky-now" class="pd-sticky-bar__now">${{ $activePrice }}</span>
+            <span id="pd-sticky-was" class="pd-sticky-bar__was" style="{{ $baseWas ? '' : 'display:none' }}">${{ number_format($baseWas ?? 0, 2) }}</span>
+        </div>
+        <button type="submit" form="pd-cart-form" id="pd-sticky-btn" class="pd-sticky-bar__btn"
+                {{ $pdInStock ? '' : 'disabled aria-disabled=true' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            <span id="pd-sticky-btn-label">{{ $pdInStock ? 'Add to Cart' : 'Out of Stock' }}</span>
+        </button>
+    </div>
 </div>
 
 @if(!empty($item->colors) && count($item->colors))
@@ -1999,6 +2140,7 @@ img.pd-slide-img:focus-visible {
             </div>
         </div>
         <div class="pd-color-sheet__list" role="radiogroup" aria-labelledby="pd-color-sheet-title">
+            <p class="pd-color-sheet__kicker">Color</p>
             @foreach($item->colors as $ci => $clr)
             @php
                 // Only flagged when this colour has its own variant row reporting
@@ -2019,6 +2161,12 @@ img.pd-slide-img:focus-visible {
             </button>
             @endforeach
         </div>
+        {{-- Tapping a colour already applies it and closes the sheet. Done is
+             the explicit way out for someone who opened the sheet to look
+             rather than to change something. --}}
+        <div class="pd-color-sheet__foot">
+            <button type="button" class="pd-color-sheet__done" data-pd-cs-dismiss>Done</button>
+        </div>
     </div>
 </div>
 
@@ -2034,6 +2182,7 @@ img.pd-slide-img:focus-visible {
     var panel  = sheet.querySelector('.pd-color-sheet__panel');
     var head   = sheet.querySelector('.pd-color-sheet__head');
     var closeB = sheet.querySelector('.pd-color-sheet__close');
+    var doneB  = sheet.querySelector('.pd-color-sheet__done');
     var opts   = Array.prototype.slice.call(sheet.querySelectorAll('.pd-cs-opt'));
     var dotEl  = trigger.querySelector('.pd-sticky-color__dot');
     var nameEl = trigger.querySelector('.pd-sticky-color__name');
@@ -2135,7 +2284,9 @@ img.pd-slide-img:focus-visible {
         }
 
         if (e.key === 'Tab') {
-            var f = [closeB].concat(opts.filter(function (o) { return o.tabIndex === 0; }));
+            var f = [closeB]
+                .concat(opts.filter(function (o) { return o.tabIndex === 0; }))
+                .concat([doneB]);
             f = f.filter(Boolean);
             if (!f.length) return;
             var first = f[0], last = f[f.length - 1];
@@ -2438,12 +2589,38 @@ img.pd-slide-img:focus-visible {
     // The gallery now moves only when the customer moves it.
 
     // ── Qty +/- ──
+    // #pd-qty is the one control that submits; the stepper in the mobile sticky
+    // bar is a mirror of it, not a second quantity. Both sets of buttons go
+    // through setQty so the two can never show different numbers.
     var qtyEl = document.getElementById('pd-qty');
     var dec = document.getElementById('pd-dec');
     var inc = document.getElementById('pd-inc');
-    if(dec && inc && qtyEl){
-        dec.addEventListener('click', function(){ var v=parseInt(qtyEl.value)||1; if(v>1) qtyEl.value=v-1; });
-        inc.addEventListener('click', function(){ var v=parseInt(qtyEl.value)||1; qtyEl.value=v+1; });
+    var sDec = document.getElementById('pd-sticky-dec');
+    var sInc = document.getElementById('pd-sticky-inc');
+    var sVal = document.getElementById('pd-sticky-qty');
+
+    function readQty(){ var v = parseInt(qtyEl && qtyEl.value, 10); return (isNaN(v) || v < 1) ? 1 : v; }
+    function paintQty(){
+        var v = readQty();
+        if (sVal) sVal.textContent = v;
+        if (sDec) sDec.disabled = v <= 1;
+        if (dec)  dec.disabled  = v <= 1;
+    }
+    function setQty(v){
+        if (!qtyEl) return;
+        qtyEl.value = Math.max(1, v);
+        paintQty();
+    }
+
+    if (qtyEl) {
+        if (dec)  dec.addEventListener('click',  function(){ setQty(readQty() - 1); });
+        if (inc)  inc.addEventListener('click',  function(){ setQty(readQty() + 1); });
+        if (sDec) sDec.addEventListener('click', function(){ setQty(readQty() - 1); });
+        if (sInc) sInc.addEventListener('click', function(){ setQty(readQty() + 1); });
+        // Typing straight into the field is still allowed, so mirror that too.
+        qtyEl.addEventListener('input',  paintQty);
+        qtyEl.addEventListener('change', paintQty);
+        paintQty();
     }
 
     // ── Color label + hidden input sync + image switch ──

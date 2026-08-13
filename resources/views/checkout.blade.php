@@ -649,6 +649,283 @@
 })();
 </script>
 
+{{-- ── Searchable state field ───────────────────────────────────────────────
+     The state list runs to 50+ entries for the US and worse elsewhere, so the
+     native dropdown made the buyer scroll a wall of names. This upgrades it to
+     a type-to-filter combobox.
+
+     The <select> stays the one source of truth: it is what submits, what the
+     server validates, and what syncStateOptions() rebuilds when the country
+     changes. The combobox only reads its <option>s and writes back to its
+     value, so none of that logic needed touching.
+
+     Loaded after the block above deliberately — its `change` listener on the
+     country field therefore registers second and runs after syncStateOptions()
+     has already rebuilt the options it needs to read. --}}
+<script>
+(function () {
+    var form     = document.querySelector('[data-co-form]');
+    var stateEl  = document.getElementById('state');
+    var countryEl= document.getElementById('country');
+    if (!form || !stateEl || stateEl.dataset.comboReady) return;
+
+    // Below this many options the native control is the better one: it needs no
+    // JS, no filtering, and opens faster than anything built here.
+    var MIN_OPTIONS = 8;
+
+    var wrap  = document.createElement('div');
+    var input = document.createElement('input');
+    var caret = document.createElement('span');
+    var panel = document.createElement('div');
+    var list  = document.createElement('ul');
+
+    wrap.className  = 'co-combo';
+    input.className = 'co-field__input co-combo__input';
+    input.type = 'text';
+    input.id = 'state-combo';
+    input.autocomplete = 'off';
+    input.spellcheck = false;
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-expanded', 'false');
+    input.setAttribute('aria-controls', 'state-combo-list');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-describedby', 'state-error');
+
+    caret.className = 'co-combo__caret';
+    caret.setAttribute('aria-hidden', 'true');
+    caret.innerHTML = '<svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1.5 6 6.5l5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    panel.className = 'co-combo__panel';
+    panel.hidden = true;
+    list.className = 'co-combo__list';
+    list.id = 'state-combo-list';
+    list.setAttribute('role', 'listbox');
+    panel.appendChild(list);
+
+    stateEl.parentNode.insertBefore(wrap, stateEl);
+    wrap.appendChild(stateEl);
+    wrap.appendChild(input);
+    wrap.appendChild(caret);
+    wrap.appendChild(panel);
+
+    stateEl.classList.add('co-combo__native');
+    stateEl.tabIndex = -1;
+    stateEl.setAttribute('aria-hidden', 'true');
+    stateEl.dataset.comboReady = '1';
+
+    // The label drives the combo now. syncStateOptions() rewrites this same
+    // element's text when the country changes, so the rename follows along.
+    var label = form.querySelector('[data-state-label]');
+    if (label) label.setAttribute('for', 'state-combo');
+
+    var items = [];          // [{value, text}] mirrored from the <option>s
+    var shown = [];          // whatever survives the current filter
+    var active = -1;         // keyboard cursor into `shown`
+    var open = false;
+    var justCommitted = false;
+
+    function selectedText() {
+        var o = stateEl.options[stateEl.selectedIndex];
+        return (o && o.value) ? o.text : '';
+    }
+    function esc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function escHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    /* Read the <option>s back out. Called on load and after every country
+       change, so the combo can never hold a stale country's states. */
+    function refresh() {
+        items = [];
+        Array.prototype.forEach.call(stateEl.options, function (o) {
+            if (o.value) items.push({ value: o.value, text: o.text });
+        });
+
+        var enough = items.length >= MIN_OPTIONS;
+        input.hidden = !enough;
+        caret.hidden = !enough;
+        // Hand the field back to the native control when the list is short, or
+        // when the country has no subdivisions at all and it must stay hidden.
+        stateEl.classList.toggle('co-combo__native', enough);
+        stateEl.tabIndex = enough ? -1 : 0;
+        if (enough) { stateEl.setAttribute('aria-hidden', 'true'); }
+        else { stateEl.removeAttribute('aria-hidden'); }
+        if (label) label.setAttribute('for', enough ? 'state-combo' : 'state');
+
+        input.placeholder = 'Search ' + (stateEl.dataset.label || 'state').toLowerCase() + '…';
+        setInputToSelection();
+        if (!enough) close();
+    }
+
+    function setInputToSelection() { input.value = selectedText(); }
+
+    function render(query) {
+        var q = query.trim().toLowerCase();
+        shown = !q ? items.slice() : items.filter(function (it) {
+            return it.text.toLowerCase().indexOf(q) !== -1 ||
+                   it.value.toLowerCase().indexOf(q) === 0;
+        });
+
+        list.innerHTML = '';
+        if (!shown.length) {
+            var none = document.createElement('li');
+            none.className = 'co-combo__empty';
+            none.textContent = 'No matches';
+            list.appendChild(none);
+            active = -1;
+            input.removeAttribute('aria-activedescendant');
+            return;
+        }
+
+        var re = q ? new RegExp('(' + esc(q) + ')', 'i') : null;
+        shown.forEach(function (it, i) {
+            var li = document.createElement('li');
+            li.className = 'co-combo__opt';
+            li.id = 'state-combo-opt-' + i;
+            li.setAttribute('role', 'option');
+            li.setAttribute('aria-selected', it.value === stateEl.value ? 'true' : 'false');
+            li.dataset.value = it.value;
+            li.innerHTML = re ? escHtml(it.text).replace(re, '<mark>$1</mark>') : escHtml(it.text);
+            list.appendChild(li);
+        });
+
+        // Cursor starts on the committed value when it survived the filter, so
+        // Enter on an untouched list re-picks what is already chosen.
+        var at = shown.findIndex ? shown.findIndex(function (it) { return it.value === stateEl.value; }) : -1;
+        setActive(at > -1 ? at : 0, false);
+    }
+
+    function setActive(i, scroll) {
+        var rows = list.querySelectorAll('.co-combo__opt');
+        if (!rows.length) return;
+        active = Math.max(0, Math.min(i, rows.length - 1));
+        Array.prototype.forEach.call(rows, function (r, n) { r.classList.toggle('is-active', n === active); });
+        var el = rows[active];
+        input.setAttribute('aria-activedescendant', el.id);
+        if (scroll !== false) {
+            var top = el.offsetTop, bottom = top + el.offsetHeight;
+            if (top < list.scrollTop) list.scrollTop = top;
+            else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight;
+        }
+    }
+
+    function openPanel() {
+        if (open || input.hidden || justCommitted) return;
+        open = true;
+        panel.hidden = false;
+        wrap.classList.add('is-open');
+        input.setAttribute('aria-expanded', 'true');
+        render('');
+        // Whatever is already chosen sits in the box; selecting it means the
+        // first keystroke replaces it rather than appending to it.
+        input.select();
+    }
+
+    function close() {
+        if (!open) { setInputToSelection(); return; }
+        open = false;
+        panel.hidden = true;
+        wrap.classList.remove('is-open');
+        input.setAttribute('aria-expanded', 'false');
+        input.removeAttribute('aria-activedescendant');
+        // A half-typed query is not a choice — the box goes back to showing
+        // whatever the select actually holds.
+        setInputToSelection();
+    }
+
+    function commit(value) {
+        if (stateEl.value !== value) {
+            stateEl.value = value;
+            stateEl.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        close();
+        // Returning focus must not trip the focus handler and reopen the panel
+        // the buyer just dismissed by choosing.
+        justCommitted = true;
+        input.focus();
+        justCommitted = false;
+        // Runs the form's own blur validation against the select, clearing the
+        // "Please choose a state." error the moment a state is chosen.
+        stateEl.dispatchEvent(new Event('blur'));
+    }
+
+    /* ── Events ── */
+    input.addEventListener('focus', openPanel);
+    input.addEventListener('click', openPanel);
+    input.addEventListener('input', function () {
+        if (!open) openPanel();
+        render(input.value);
+    });
+
+    input.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (!open) { openPanel(); return; }
+            setActive(active + (e.key === 'ArrowDown' ? 1 : -1));
+            return;
+        }
+        if (e.key === 'Home' || e.key === 'End') {
+            if (!open) return;
+            e.preventDefault();
+            setActive(e.key === 'Home' ? 0 : shown.length - 1);
+            return;
+        }
+        if (e.key === 'Enter') {
+            if (open && shown[active]) { e.preventDefault(); commit(shown[active].value); }
+            return;
+        }
+        if (e.key === 'Escape') {
+            if (open) { e.stopPropagation(); close(); }
+            return;
+        }
+        if (e.key === 'Tab' && open) close();
+    });
+
+    list.addEventListener('mousedown', function (e) {
+        // mousedown, not click: the input would blur first and close the panel
+        // out from under the pointer.
+        var row = e.target.closest('.co-combo__opt');
+        if (!row) return;
+        e.preventDefault();
+        commit(row.dataset.value);
+    });
+    list.addEventListener('mousemove', function (e) {
+        var row = e.target.closest('.co-combo__opt');
+        if (!row) return;
+        var rows = Array.prototype.slice.call(list.querySelectorAll('.co-combo__opt'));
+        setActive(rows.indexOf(row), false);
+    });
+
+    document.addEventListener('mousedown', function (e) {
+        if (!wrap.contains(e.target)) close();
+    });
+    input.addEventListener('blur', function () {
+        // Deferred: a click on a row fires blur before the row's handler.
+        setTimeout(function () {
+            if (wrap.contains(document.activeElement)) return;
+            close();
+            stateEl.dispatchEvent(new Event('blur'));
+        }, 0);
+    });
+
+    // The form focuses the first invalid control on submit; the select is not
+    // the visible one any more, so hand focus on to the combo.
+    stateEl.addEventListener('focus', function () {
+        if (!input.hidden) input.focus();
+    });
+    // Mirror the invalid state the form sets on the select onto the visible box.
+    new MutationObserver(function () {
+        if (stateEl.getAttribute('aria-invalid') === 'true') input.setAttribute('aria-invalid', 'true');
+        else input.removeAttribute('aria-invalid');
+    }).observe(stateEl, { attributes: true, attributeFilter: ['aria-invalid'] });
+
+    // Country change rebuilds the options; mirror them. Autofill also fires
+    // change on the select itself, so the box follows that too.
+    if (countryEl) countryEl.addEventListener('change', refresh);
+    stateEl.addEventListener('change', setInputToSelection);
+
+    refresh();
+}());
+</script>
+
 {{-- ── Meta Pixel InitiateCheckout ──────────────────────────────────────────
      Fires on /checkout only. The Stripe step (checkout-stripe.blade.php) is the
      second half of the same checkout, so firing there as well would report two

@@ -135,6 +135,88 @@
    land on the option elements too or the list is white-on-white. */
 .dark .co-field__select option { background: var(--co-field); color: var(--co-text); }
 
+/* ── Searchable select (combobox) ──────────────────────────────
+   The US state list is 50+ entries and a few countries are worse, so the
+   native dropdown opens a wall the buyer has to scroll or hunt through. This
+   layers a type-to-filter combobox over the real <select>, which stays in the
+   DOM as the submitted control — the server validation, the country → state
+   rebuild and the no-JS fallback all keep working against it untouched.
+
+   Built by JS, never by Blade: with scripting off the native select is simply
+   left visible and the buyer gets the ordinary dropdown. */
+.co-combo { position: relative; }
+
+/* Reuses .co-field__input wholesale, same as .co-field__select, so the two
+   can never drift apart visually. Only the caret is drawn here. */
+.co-combo__input {
+    padding-right: 38px;
+    cursor: pointer;
+    text-overflow: ellipsis;
+}
+.co-combo__input:not(:placeholder-shown) { cursor: text; }
+.co-combo__caret {
+    position: absolute; top: 0; right: 14px; height: 50px;
+    display: grid; place-items: center;
+    color: var(--co-muted); pointer-events: none;
+    transition: transform .2s ease;
+}
+/* An author `display` beats the UA stylesheet's [hidden] rule, so the short-list
+   fallback (which hands the field back to the native select) has to say so. */
+.co-combo__caret[hidden] { display: none; }
+.co-combo.is-open .co-combo__caret { transform: rotate(180deg); }
+
+/* The real control: kept focusable so the form's own
+   `firstInvalid.focus()` still lands on this field, and positioned over the
+   combo so `scrollIntoView` brings the right row into view. */
+.co-combo__native {
+    position: absolute; inset: 0 0 auto 0; height: 50px;
+    opacity: 0; pointer-events: none;
+    /* Never the paint target — the combo input mirrors the invalid state. */
+    border: 0; background: none;
+}
+
+.co-combo__panel {
+    position: absolute; z-index: 60;
+    top: calc(100% + 6px); left: 0; right: 0;
+    background: var(--co-surface);
+    border: 1px solid var(--co-border);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px -8px rgba(31, 26, 21, .22);
+    overflow: hidden;
+}
+.dark .co-combo__panel { background: #14100c; border-color: rgba(212, 169, 106, .28); }
+.co-combo__panel[hidden] { display: none; }
+
+.co-combo__list {
+    list-style: none; margin: 0; padding: 5px;
+    max-height: 264px;                       /* ~7 rows, then it scrolls */
+    overflow-y: auto; overscroll-behavior: contain;
+}
+.co-combo__opt {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    min-height: 42px; padding: 9px 11px;
+    font-size: 15px; color: var(--co-text);
+    border-radius: 8px; cursor: pointer;
+}
+.co-combo__opt mark {
+    background: rgba(187, 151, 109, .28); color: inherit;
+    border-radius: 3px; padding: 0 1px; font-weight: 700;
+}
+/* .is-active is the keyboard cursor; aria-selected is the committed value.
+   They are different things and a buyer arrowing through the list needs to
+   see both at once. */
+.co-combo__opt.is-active { background: rgba(187, 151, 109, .16); }
+.co-combo__opt[aria-selected="true"] { color: var(--co-gold-ink); font-weight: 600; }
+.co-combo__opt[aria-selected="true"]::after {
+    content: ''; flex: none; width: 15px; height: 15px;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/contain no-repeat;
+    mask: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.co-combo__empty { padding: 14px 12px; font-size: 14px; color: var(--co-muted); text-align: center; }
+
+@media (prefers-reduced-motion: reduce) { .co-combo__caret { transition: none; } }
+
 .co-field__error {
     display: none; align-items: center; gap: 5px;
     font-size: 12.5px; font-weight: 500; color: var(--co-danger); margin-top: 6px;
