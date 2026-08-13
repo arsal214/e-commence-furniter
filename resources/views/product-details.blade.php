@@ -800,7 +800,16 @@
     .pdx.pd-info-col { border-radius: 16px; }
     .pdx-body { font-size: 1rem; line-height: 1.75; }
     .pdx .pd-variant-pill { min-height: 52px; font-size: 1rem; }
-    .pdx .pd-variant-pill--swatch { width: 52px; height: 52px; }
+    /* 52px circles pushed a seven-colour product onto two rows and gave the
+       swatches more weight than the price. 44px is the floor here, not an
+       arbitrary trim — it is the minimum comfortable touch target, so this is
+       as small as the swatches can go without becoming hard to hit. Tightening
+       the gap with it buys a sixth swatch on the first row at 375px. */
+    /* min-height must come down too — the shared .pd-variant-pill rule above
+       sets 52px for the text size pills, and it would otherwise stretch these
+       into ovals. */
+    .pdx .pd-variant-pill--swatch { width: 44px; height: 44px; min-height: 44px; }
+    .pdx #color-options { gap: 8px; }
     .pdx.pd-qty-wrap, .pdx .pd-qty-wrap { height: 56px; }
     .pdx .pd-qty-btn { width: 56px; }
     .pdx #pd-qty { width: 56px !important; font-size: 1rem !important; }
@@ -875,6 +884,49 @@
 </style>
 @endpush
 @section('content')
+{{-- ── Open at the top ─────────────────────────────────────────────────────
+     On phones this page was landing part-way down, on the thumbnail strip,
+     instead of at the product photo. The gallery media and the info card
+     finish loading after first paint, and once the document grows under it
+     the browser's scroll anchoring holds its anchor element still — which
+     moves the viewport down rather than letting the content settle beneath
+     it. The visitor never scrolled, so the page should not have moved.
+
+     Only a *fresh* navigation is corrected. A back/forward restore and an
+     explicit #hash are both positions the visitor actually asked for, so
+     they are left exactly alone, and history.scrollRestoration is never
+     touched — flipping it to 'manual' would break the restore on the way
+     back to this page later.
+
+     Runs inline, before the gallery markup is parsed, so the hold is already
+     in place by the time the first image can shift anything. --}}
+<script>
+(function () {
+    if (window.matchMedia && !window.matchMedia('(max-width: 767.98px)').matches) return;
+    if (location.hash) return;
+
+    var nav = (window.performance && performance.getEntriesByType)
+        ? performance.getEntriesByType('navigation')[0] : null;
+    var type = nav ? nav.type
+        : (window.performance && performance.navigation
+            ? ['navigate', 'reload', 'back_forward'][performance.navigation.type] : 'navigate');
+    if (type === 'back_forward' || type === 'reload') return;
+
+    // Held for a short window rather than pinned once: the shift arrives with
+    // the images, which is well after DOMContentLoaded.
+    var until = Date.now() + 1500;
+    (function hold() {
+        if (window.scrollY !== 0) window.scrollTo(0, 0);
+        if (Date.now() < until) requestAnimationFrame(hold);
+    }());
+
+    // A real touch or wheel from the visitor ends the hold immediately, so it
+    // can never fight someone who has started scrolling.
+    ['touchstart', 'wheel', 'keydown', 'pointerdown'].forEach(function (ev) {
+        window.addEventListener(ev, function () { until = 0; }, { passive: true, once: true });
+    });
+}());
+</script>
 @include('includes.navbar')
 <!-- Search -->
 <div class="search_popup fixed top-0 left-0 bg-red dark:bg-[#39434D] bg-opacity-90 dark:bg-opacity-80 backdrop-blur-[3px] dark:backdrop-blur-[7.5px] w-full h-screen z-[999] px-[15px] md:px-[30px] py-12 md:py-[70px] overflow-y-auto transform scale-90 opacity-0 invisible transition-all duration-300 flex items-center justify-center">
@@ -1244,6 +1296,15 @@ img.pd-slide-img:focus-visible {
        Cropping instead is not an option: this is the product, and cutting its
        edges off to fill a box is worse than a little letterboxing. */
     .pd-main-wrap { aspect-ratio: 1/1; max-height: 62vh; }
+
+    /* The other half of the "page opens part-way down" fix above. When the
+       gallery media settles after first paint the document grows, and scroll
+       anchoring answers by holding its chosen anchor still — dragging the
+       viewport down onto the thumbnail strip. Opting these two containers out
+       lets the content settle underneath the viewport, which is what a visitor
+       who has not scrolled expects. Scoped to mobile; the desktop grid lays out
+       from reserved boxes and never shifted. */
+    .pd-section, .pd-img-panel, .pd-thumbs, .pdx.pd-info-col { overflow-anchor: none; }
     /* Clears the two-row bar (colour + qty above price + CTA) so it never
        covers page content. Was 74px when the bar was a single row. */
     body { padding-bottom: 122px; }
@@ -2625,8 +2686,45 @@ img.pd-slide-img:focus-visible {
 
     // ── Color label + hidden input sync + image switch ──
     var pdColorImageMap = @json($colorImageMap);
+
+    /* Picking a colour must never move the page.
+       Two things can move it, and both are outside this handler's control:
+       the browser scrolling the visually-hidden .pdx-vinput radio into view
+       the moment its label is pressed, and the gallery jumping to the new
+       colour's photo. Neither is a scroll the shopper asked for — they were
+       reading the buy area, not the pictures.
+
+       The offset is captured on press, *before* focus moves, because by the
+       time `change` fires any focus-scroll has already happened and the
+       original position is gone. The sheet in the sticky bar dispatches
+       `change` programmatically with no press in front of it, so that path
+       falls back to reading the offset at the top of the handler, which is
+       still accurate there. */
+    var pdLockY = null;
+    var pdColorRow = document.getElementById('color-options');
+    if (pdColorRow) {
+        ['pointerdown', 'touchstart', 'mousedown', 'keydown'].forEach(function (ev) {
+            pdColorRow.addEventListener(ev, function () { pdLockY = window.scrollY; }, { passive: true });
+        });
+    }
+    function pdHoldScroll(y) {
+        function put() {
+            if (Math.abs(window.scrollY - y) > 1) {
+                // 'instant' so a global scroll-behavior:smooth cannot turn the
+                // correction into a visible glide of its own.
+                try { window.scrollTo({ top: y, left: 0, behavior: 'instant' }); }
+                catch (e) { window.scrollTo(0, y); }
+            }
+        }
+        put();
+        requestAnimationFrame(put);
+    }
+
     document.querySelectorAll('.color-radio').forEach(function(r){
         r.addEventListener('change', function(){
+            var y = (pdLockY !== null) ? pdLockY : window.scrollY;
+            pdLockY = null;
+
             var lbl = document.getElementById('selected-color-label');
             if(lbl) lbl.textContent = r.value;
             var hid = document.getElementById('selected-color');
@@ -2638,6 +2736,8 @@ img.pd-slide-img:focus-visible {
             if(typeof idx === 'number'){
                 goTo(idx);
             }
+
+            pdHoldScroll(y);
         });
     });
 
