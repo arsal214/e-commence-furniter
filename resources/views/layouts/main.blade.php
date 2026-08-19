@@ -195,7 +195,7 @@
           // back. ttq.page() still runs now and queues on the ttq array, which
           // the SDK drains once it loads.
           window.pgDefer(function () {
-            ttq.load(@json(config('services.tiktok.pixel_id', 'DA2SIDBC77U281ESJ9V0')));
+            ttq.load(@json(config('services.tiktok.pixel_id', 'D95OHCRC77UFCF7AKUBG')));
           });
           ttq.page();
         }(window, document, 'ttq');
