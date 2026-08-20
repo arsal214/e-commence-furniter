@@ -59,6 +59,9 @@
 
 
           ttq.load(@json(config('services.tiktok.pixel_id', 'D95OHCRC77UFCF7AKUBG')));
+          @if (config('services.tiktok.pixel_id_2'))
+          ttq.load(@json(config('services.tiktok.pixel_id_2')));
+          @endif
           ttq.page();
         }(window, document, 'ttq');
         </script>
