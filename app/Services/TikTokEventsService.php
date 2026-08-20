@@ -12,9 +12,13 @@ use function Illuminate\Support\defer;
 /**
  * Server-side TikTok Events API (v1.3) integration.
  *
- * Pairs with the browser pixel in layouts/main.blade.php. Every event sent from
+ * Pairs with the browser pixels in layouts/main.blade.php. Every event sent from
  * here is emitted with an event_id that the browser pixel re-uses verbatim, so
  * TikTok deduplicates the browser/server pair into a single conversion.
+ *
+ * The store runs two pixels. Each one is a separate TikTok account with its own
+ * access token, so every event is posted once per configured pixel. Dedup is
+ * scoped to a pixel, which is why the same event_id is reused across both.
  *
  * Failures are logged and swallowed: analytics must never break a checkout.
  */
@@ -23,11 +27,42 @@ class TikTokEventsService
     /** Session key holding events the browser pixel still needs to fire. */
     public const BROWSER_QUEUE = 'tiktok_browser_events';
 
+    /**
+     * Pixels that can receive server events, as pixel_id/access_token pairs.
+     *
+     * A pixel configured without its own access token is browser-only and is
+     * dropped here rather than posted with another account's credentials.
+     *
+     * @return array<int, array{pixel_id: string, access_token: string, test_event_code: ?string}>
+     */
+    public function destinations(): array
+    {
+        if (! config('services.tiktok.enabled')) {
+            return [];
+        }
+
+        $candidates = [
+            [
+                'pixel_id'        => config('services.tiktok.pixel_id'),
+                'access_token'    => config('services.tiktok.access_token'),
+                'test_event_code' => config('services.tiktok.test_event_code'),
+            ],
+            [
+                'pixel_id'        => config('services.tiktok.pixel_id_2'),
+                'access_token'    => config('services.tiktok.access_token_2'),
+                'test_event_code' => config('services.tiktok.test_event_code_2'),
+            ],
+        ];
+
+        return array_values(array_filter(
+            $candidates,
+            fn (array $d) => filled($d['pixel_id']) && filled($d['access_token'])
+        ));
+    }
+
     public function enabled(): bool
     {
-        return (bool) config('services.tiktok.enabled')
-            && filled(config('services.tiktok.pixel_id'))
-            && filled(config('services.tiktok.access_token'));
+        return $this->destinations() !== [];
     }
 
     /**
@@ -114,40 +149,43 @@ class TikTokEventsService
     }
 
     /**
-     * Fire a server event. Dispatched after the response is sent, so the HTTP
-     * round-trip to TikTok never delays the user.
+     * Fire a server event to every configured pixel. Dispatched after the
+     * response is sent, so the HTTP round-trips to TikTok never delay the user.
      */
     public function track(string $event, string $eventId, array $properties, array $user, ?string $pageUrl = null): void
     {
-        if (! $this->enabled()) {
-            return;
+        // event_time is stamped once so both pixels record the same moment.
+        $data = array_filter([
+            'event'      => $event,
+            'event_time' => time(),
+            'event_id'   => $eventId,
+            'user'       => $user,
+            'page'       => $pageUrl ? ['url' => $pageUrl] : null,
+            'properties' => $properties,
+        ], fn ($v) => filled($v));
+
+        foreach ($this->destinations() as $destination) {
+            $payload = [
+                'event_source'    => 'web',
+                'event_source_id' => $destination['pixel_id'],
+                'data'            => [$data],
+            ];
+
+            // Test event codes are issued per pixel in Events Manager, so each
+            // destination carries its own.
+            if ($code = $destination['test_event_code']) {
+                $payload['test_event_code'] = $code;
+            }
+
+            defer(fn () => $this->send($payload, $event, $destination['access_token'], $destination['pixel_id']));
         }
-
-        $payload = [
-            'event_source'    => 'web',
-            'event_source_id' => config('services.tiktok.pixel_id'),
-            'data'            => [array_filter([
-                'event'      => $event,
-                'event_time' => time(),
-                'event_id'   => $eventId,
-                'user'       => $user,
-                'page'       => $pageUrl ? ['url' => $pageUrl] : null,
-                'properties' => $properties,
-            ], fn ($v) => filled($v))],
-        ];
-
-        if ($code = config('services.tiktok.test_event_code')) {
-            $payload['test_event_code'] = $code;
-        }
-
-        defer(fn () => $this->send($payload, $event));
     }
 
-    protected function send(array $payload, string $event): void
+    protected function send(array $payload, string $event, string $accessToken, string $pixelId): void
     {
         try {
             $response = Http::withHeaders([
-                'Access-Token' => config('services.tiktok.access_token'),
+                'Access-Token' => $accessToken,
                 'Content-Type' => 'application/json',
             ])->timeout(8)->post(config('services.tiktok.endpoint'), $payload);
 
@@ -157,13 +195,14 @@ class TikTokEventsService
 
             if (! $response->successful() || $code !== 0) {
                 Log::warning('TikTok Events API rejected ' . $event, [
+                    'pixel_id'    => $pixelId,
                     'http_status' => $response->status(),
                     'code'        => $code,
                     'message'     => $response->json('message'),
                 ]);
             }
         } catch (\Throwable $e) {
-            Log::warning('TikTok Events API request failed for ' . $event . ': ' . $e->getMessage());
+            Log::warning('TikTok Events API request failed for ' . $event . ' on pixel ' . $pixelId . ': ' . $e->getMessage());
         }
     }
 

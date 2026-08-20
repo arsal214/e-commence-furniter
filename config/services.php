@@ -42,14 +42,17 @@ return [
 
     'tiktok' => [
         'pixel_id'     => env('TIKTOK_PIXEL_ID'),
-        // Second browser pixel. Loaded alongside pixel_id in the page head so
-        // both accounts receive the same page views and events. Browser only —
-        // the server-side Events API still posts to pixel_id.
-        'pixel_id_2'   => env('TIKTOK_PIXEL_ID_2', 'DA2SIDBC77U281ESJ9V0'),
         'access_token' => env('TIKTOK_ACCESS_TOKEN'),
+        // Second pixel. Loaded in the page head alongside pixel_id, and served
+        // server-side too once its own access token is set — the token belongs
+        // to the other TikTok account and cannot be shared with the first.
+        'pixel_id_2'     => env('TIKTOK_PIXEL_ID_2', 'DA2SIDBC77U281ESJ9V0'),
+        'access_token_2' => env('TIKTOK_ACCESS_TOKEN_2'),
         'endpoint'     => env('TIKTOK_API_ENDPOINT', 'https://business-api.tiktok.com/open_api/v1.3/event/track/'),
         // Set TIKTOK_TEST_EVENT_CODE while validating in Events Manager > Test Events.
-        'test_event_code' => env('TIKTOK_TEST_EVENT_CODE'),
+        // Codes are per pixel, so the second pixel has its own.
+        'test_event_code'   => env('TIKTOK_TEST_EVENT_CODE'),
+        'test_event_code_2' => env('TIKTOK_TEST_EVENT_CODE_2'),
         'enabled'      => env('TIKTOK_EVENTS_ENABLED', true),
     ],
 
