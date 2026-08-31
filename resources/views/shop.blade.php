@@ -311,17 +311,7 @@
                 <div class="pg-shop__main">
 
                     {{-- Toolbar --}}
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <p class="text-sm text-paragraph dark:text-white-light" role="status" aria-live="polite">
-                            @if ($products->total() > 0)
-                                Showing <span class="font-semibold text-title dark:text-white">{{ $products->firstItem() }}–{{ $products->lastItem() }}</span>
-                                of <span class="font-semibold text-title dark:text-white">{{ $products->total() }}</span>
-                                {{ \Str::plural('product', $products->total()) }}
-                            @else
-                                No products found
-                            @endif
-                        </p>
-
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3">
                         <div class="flex items-center gap-2">
                             <label for="pg-sort" class="text-sm text-paragraph dark:text-white-light">Sort by</label>
                             {{-- pg-native-select keeps niceSelect's hands off it: the plugin

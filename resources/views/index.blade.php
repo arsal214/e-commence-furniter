@@ -886,9 +886,6 @@ $schemaWebsite = [
                         <polyline points="6 9 12 15 18 9"/>
                     </svg>
                 </button>
-                <p id="pgh-cat-toggle-count" class="text-xs text-gray-400 mt-2">
-                    Showing 6 of {{ $categories->count() }} categories
-                </p>
             </div>
             @endif
         </div>
@@ -1713,7 +1710,6 @@ $schemaWebsite = [
     var btn     = document.getElementById('pgh-cat-toggle');
     var label   = document.getElementById('pgh-cat-toggle-label');
     var icon    = document.getElementById('pgh-cat-toggle-icon');
-    var counter = document.getElementById('pgh-cat-toggle-count');
     if (!grid || !btn) return;
 
     var cards   = Array.from(grid.querySelectorAll('[data-cat-index]'));
@@ -1748,9 +1744,6 @@ $schemaWebsite = [
         } else {
             label.textContent = 'Show More';
             icon.innerHTML    = '<polyline points="6 9 12 15 18 9"/>';
-        }
-        if (counter) {
-            counter.textContent = 'Showing ' + Math.min(visible, total) + ' of ' + total + ' categories';
         }
     }
 

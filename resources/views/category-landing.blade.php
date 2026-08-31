@@ -224,10 +224,7 @@
 ══════════════════════════════════════ --}}
 <div class="cl-sort-bar">
     <div class="container-fluid px-4 sm:px-6">
-        <div class="max-w-[1720px] mx-auto flex items-center justify-between gap-4 flex-wrap">
-            <p class="text-sm text-gray-500 dark:text-white/50">
-                Showing <span class="font-semibold text-[#172430] dark:text-white">{{ $products->count() + ($featuredProduct ? 1 : 0) }}</span> of <span class="font-semibold text-[#172430] dark:text-white">{{ $totalCount }}</span> products
-            </p>
+        <div class="max-w-[1720px] mx-auto flex items-center justify-end gap-4 flex-wrap">
             <div class="flex items-center gap-3 flex-wrap">
                 {{-- Sort --}}
                 <div class="flex items-center gap-2">
