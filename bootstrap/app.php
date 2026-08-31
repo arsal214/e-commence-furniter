@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin'       => \App\Http\Middleware\AdminMiddleware::class,
             'must-reset'  => \App\Http\Middleware\EnsurePasswordSet::class,
         ]);
+        // Gmail/Outlook one-click unsubscribe POSTs the List-Unsubscribe URL with
+        // no session and no token. The signature on the URL is the credential.
+        $middleware->validateCsrfTokens(except: [
+            'unsubscribe',
+        ]);
         // SEO: 301 trailing-slash URLs to their slashless canonical.
         $middleware->web(prepend: [
             \App\Http\Middleware\RedirectTrailingSlash::class,

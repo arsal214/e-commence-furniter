@@ -24,6 +24,7 @@ class User extends Authenticatable
         'role',
         'password',
         'must_reset_password',
+        'marketing_opt_out_at',
     ];
 
     /**
@@ -47,6 +48,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'must_reset_password' => 'boolean',
+            'marketing_opt_out_at' => 'datetime',
         ];
     }
 
@@ -58,5 +60,16 @@ class User extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Whether this account may receive promotional mail.
+     *
+     * Only marketing is gated. Order and password emails are transactional and
+     * go out regardless of this flag.
+     */
+    public function acceptsMarketing(): bool
+    {
+        return $this->marketing_opt_out_at === null;
     }
 }

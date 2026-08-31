@@ -22,7 +22,7 @@ class SeoNoindex
         '/wishlist', '/cart', '/checkout', '/checkout/success',
         '/thank-you', '/track-order', '/coming-soon', '/error',
         '/invoice', '/payment-confirmation', '/payment-success',
-        '/payment-failure', '/short-code',
+        '/payment-failure', '/short-code', '/unsubscribe',
     ];
 
     /** Path prefixes whose sub-paths are all private. */

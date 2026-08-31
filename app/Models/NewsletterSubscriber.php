@@ -14,4 +14,12 @@ class NewsletterSubscriber extends Model
     protected $casts = [
         'unsubscribed_at' => 'datetime',
     ];
+
+    /**
+     * Whether this address may receive promotional mail.
+     */
+    public function acceptsMarketing(): bool
+    {
+        return $this->unsubscribed_at === null;
+    }
 }

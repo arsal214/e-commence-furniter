@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
@@ -74,6 +75,13 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::resource('reviews',    Admin\ReviewController::class)->names('admin.reviews')->except(['show']);
     Route::resource('sliders',    Admin\SliderController::class)->names('admin.sliders')->except(['show']);
     Route::get('email-logs',     [Admin\EmailLogController::class, 'index'])->name('admin.email-logs.index');
+
+    // Marketing: one-to-one deals & offers email.
+    Route::get('customers',        [Admin\CustomerController::class, 'index'])->name('admin.customers.index');
+    Route::get('campaigns/compose',  [Admin\CampaignController::class, 'compose'])->name('admin.campaigns.compose');
+    Route::post('campaigns/preview', [Admin\CampaignController::class, 'preview'])->name('admin.campaigns.preview');
+    Route::post('campaigns/send',    [Admin\CampaignController::class, 'send'])->name('admin.campaigns.send');
+    Route::resource('email-templates', Admin\EmailTemplateController::class)->names('admin.email-templates')->except(['show']);
     Route::get('flash-deal',     [Admin\FlashDealController::class, 'index'])->name('admin.flash-deal.index');
     Route::put('flash-deal',     [Admin\FlashDealController::class, 'update'])->name('admin.flash-deal.update');
 });
@@ -134,3 +142,9 @@ Route::get('/contact',  [HomeController::class, 'contact'])->name('contact.show'
 Route::redirect('/contactus', '/contact', 301);
 Route::post('/contactus', [ContactController::class, 'send'])->name('contact.send');
 Route::post('/newsletter', [ContactController::class, 'newsletter'])->name('newsletter.subscribe');
+
+// Opt-out target for the unsubscribe link in promotional email. Signed, so the
+// URL itself is the credential; POST is what one-click unsubscribe clients use.
+Route::match(['get', 'post'], '/unsubscribe', [MarketingController::class, 'unsubscribe'])
+    ->middleware('signed')
+    ->name('marketing.unsubscribe');

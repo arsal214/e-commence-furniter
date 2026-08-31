@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             AdminSeeder::class,
             SliderSeeder::class,
+            EmailTemplateSeeder::class,
         ]);
     }
 }

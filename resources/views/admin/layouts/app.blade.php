@@ -81,6 +81,18 @@
                     <span class="ml-auto bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full leading-none">{{ $pendingCount }}</span>
                 @endif
             </a>
+            <a href="{{ route('admin.customers.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                      {{ request()->routeIs('admin.customers.*') || request()->routeIs('admin.campaigns.*') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                <i class="mdi mdi-account-multiple text-lg"></i>
+                Customers
+            </a>
+            <a href="{{ route('admin.email-templates.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                      {{ request()->routeIs('admin.email-templates.*') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                <i class="mdi mdi-file-document-edit-outline text-lg"></i>
+                Email Templates
+            </a>
             <a href="{{ route('admin.email-logs.index') }}"
                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
                       {{ request()->routeIs('admin.email-logs.*') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
