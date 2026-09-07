@@ -104,8 +104,6 @@
     .dark .pg-fbox__head { border-color: #2F3B45; }
     .pg-fbox__title { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #172430; margin: 0; }
     .dark .pg-fbox__title { color: #fff; }
-    .pg-fbox__sub { font-size: 12px; color: #6B6560; margin: 3px 0 0; }
-    .dark .pg-fbox__sub { color: #DBDBDB; }
     .pg-fbox__clear { font-size: 13px; font-weight: 600; color: #8A6A3F; text-decoration: none; }
     .dark .pg-fbox__clear { color: #BB976D; }
     .pg-fbox__clear:hover { text-decoration: underline; }
@@ -131,8 +129,7 @@
     .pg-opt input:focus-visible { outline: 2px solid #BB976D; outline-offset: 2px; }
     .pg-opt__label { flex: 1 1 auto; font-size: 14px; color: #3C474E; }
     .dark .pg-opt__label { color: #DBDBDB; }
-    .pg-opt__count { flex: 0 0 auto; font-size: 12px; color: #6B6560; font-variant-numeric: tabular-nums; }
-    .pg-opt--off .pg-opt__label, .pg-opt--off .pg-opt__count { opacity: .45; }
+    .pg-opt--off .pg-opt__label { opacity: .45; }
     .pg-opt__dot {
         width: 16px; height: 16px; border-radius: 50%; flex: 0 0 auto;
         border: 1px solid rgba(0,0,0,.18); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
@@ -240,7 +237,6 @@
                         <div class="pg-fbox__head">
                             <div>
                                 <p class="pg-fbox__title">Filters</p>
-                                <p class="pg-fbox__sub">{{ $products->total() }} {{ \Str::plural('product', $products->total()) }}</p>
                             </div>
                             @if ($hasFilters)
                                 <a href="{{ url('/shop') }}" class="pg-fbox__clear">Clear All</a>
@@ -274,7 +270,6 @@
                                         <input type="checkbox" name="category[]" value="{{ $cat->slug }}"
                                                @checked(in_array($cat->slug, $filters['categories'], true))>
                                         <span class="pg-opt__label">{{ $cat->name }}</span>
-                                        <span class="pg-opt__count">({{ $n }})</span>
                                     </label>
                                 @endforeach
                             </div>
@@ -293,7 +288,6 @@
                                         <input type="checkbox" name="price[]" value="{{ $key }}"
                                                @checked(in_array($key, $filters['price'], true))>
                                         <span class="pg-opt__label">{{ $bucket['label'] }}</span>
-                                        <span class="pg-opt__count">({{ $n }})</span>
                                     </label>
                                 @endforeach
                             </div>

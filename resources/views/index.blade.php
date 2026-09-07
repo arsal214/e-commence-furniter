@@ -355,11 +355,6 @@ $schemaWebsite = [
 }
 .pgh-catimg-card:hover .pgh-cat-scrim { opacity: .85; }
 .pgh-cat-body { position:absolute; bottom:0; left:0; right:0; padding:14px 14px 16px; }
-.pgh-cat-count {
-    display: inline-block;
-    font-size: 10px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase;
-    color: rgba(255,255,255,.7); margin-bottom: 4px;
-}
 .pgh-cat-name { font-size:14px; font-weight:700; color:#fff; line-height:1.25; }
 .pgh-cat-arrow {
     position: absolute; top: 14px; right: 14px;
@@ -868,7 +863,6 @@ $schemaWebsite = [
                     @endif
                     <div class="pgh-cat-scrim"></div>
                     <div class="pgh-cat-body">
-                        <div class="pgh-cat-count">{{ $cat->products_count }} {{ Str::plural('item', $cat->products_count) }}</div>
                         <div class="pgh-cat-name">{{ $cat->name }}</div>
                     </div>
                     <div class="pgh-cat-arrow">
