@@ -119,7 +119,10 @@ class CampaignController extends Controller
 
         return new PromotionalMail(
             subjectLine:    (string) $merge($data['subject']),
-            bodyHtml:       (string) $merge(EmailHtml::sanitize($data['body_html'])),
+            // absolutizeUrls last: a relative image src renders as a broken
+            // image in every mail client, including in bodies saved before the
+            // editors started uploading to absolute URLs.
+            bodyHtml:       EmailHtml::absolutizeUrls((string) $merge(EmailHtml::sanitize($data['body_html']))),
             // The greeting reads better on a first name; the full name stays
             // available to the author through the {{name}} merge tag.
             recipientName:  (string) trim(strtok(trim($name), ' ') ?: ''),

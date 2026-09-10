@@ -78,6 +78,45 @@ class EmailHtml
     }
 
     /**
+     * Rewrite relative src/href values to absolute URLs.
+     *
+     * A mail client has no page to resolve "/storage/email-images/x.jpg"
+     * against, so a relative path renders as a broken image no matter how the
+     * body was authored. The editors now upload to an absolute URL, but bodies
+     * saved before that — and anything typed by hand into the source view —
+     * still arrive relative, so the send path fixes them up rather than
+     * trusting the input.
+     */
+    public static function absolutizeUrls(string $html): string
+    {
+        if (trim($html) === '') {
+            return '';
+        }
+
+        return (string) preg_replace_callback(
+            '#\s(src|href)\s*=\s*(["\'])(.*?)\2#is',
+            static function (array $m): string {
+                [$attr, $quote, $url] = [$m[1], $m[2], trim($m[3])];
+
+                // Already absolute, a scheme we must not touch, an in-page
+                // anchor, or an unresolved merge tag — all left as authored.
+                $skip = $url === ''
+                    || str_starts_with($url, '#')
+                    || str_starts_with($url, '//')
+                    || str_starts_with($url, '{{')
+                    || preg_match('#^[a-z][a-z0-9+.-]*:#i', $url) === 1;
+
+                if ($skip) {
+                    return $m[0];
+                }
+
+                return ' ' . $attr . '=' . $quote . url(ltrim($url, '/')) . $quote;
+            },
+            $html
+        );
+    }
+
+    /**
      * Substitute the merge tags offered on the compose screen.
      *
      * Unknown tags are left as typed rather than blanked, so a typo is visible

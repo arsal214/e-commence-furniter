@@ -82,6 +82,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('campaigns/preview', [Admin\CampaignController::class, 'preview'])->name('admin.campaigns.preview');
     Route::post('campaigns/send',    [Admin\CampaignController::class, 'send'])->name('admin.campaigns.send');
     Route::resource('email-templates', Admin\EmailTemplateController::class)->names('admin.email-templates')->except(['show']);
+    // Shared by both editors: images must be hosted before they can go in a mail body.
+    Route::post('email-images', [Admin\EmailImageController::class, 'store'])->name('admin.email-images.store');
     Route::get('flash-deal',     [Admin\FlashDealController::class, 'index'])->name('admin.flash-deal.index');
     Route::put('flash-deal',     [Admin\FlashDealController::class, 'update'])->name('admin.flash-deal.update');
 });

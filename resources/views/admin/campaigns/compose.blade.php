@@ -255,8 +255,10 @@
 
 @push('scripts')
 <script src="{{ asset('assets/js/vendor/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
+@include('admin.partials._email-editor-uploads')
 <script>
 tinymce.init({
+    ...window.emailEditorImageOptions,
     selector: '.tinymce-editor',
     license_key: 'gpl',
     plugins: 'lists link image table code wordcount',
