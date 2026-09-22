@@ -46,7 +46,7 @@
                         <div>
                             <span class="acc-ordercard__k">Payment</span>
                             <span class="acc-ordercard__v">
-                                {{ $order->payment_method === 'cod' ? 'Cash on delivery' : ucfirst($order->payment_method) }}
+                                {{ ['cod' => 'Cash on delivery', 'stripe' => 'Stripe', 'paypal' => 'PayPal'][$order->payment_method] ?? ucfirst($order->payment_method) }}
                             </span>
                         </div>
                     </div>

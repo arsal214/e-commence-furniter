@@ -35,7 +35,7 @@
 
     $shippingLabel = ['free' => 'Free Shipping', 'fast' => 'Fast Shipping', 'local' => 'Local Pickup'][$order->shipping] ?? ucfirst($order->shipping);
     $isPaid        = $order->payment_status === 'paid';
-    $paymentLabel  = $order->payment_method === 'cod' ? 'Cash on Delivery' : 'Card';
+    $paymentLabel  = ['cod' => 'Cash on Delivery', 'stripe' => 'Card', 'paypal' => 'PayPal'][$order->payment_method] ?? ucfirst($order->payment_method);
     $trackUrl      = url('/track-order?tracking=' . $order->tracking_number);
 
     // Carrier handoff details only exist once an admin has shipped the order.

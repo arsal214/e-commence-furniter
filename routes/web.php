@@ -53,6 +53,7 @@ Route::middleware(['auth', 'must-reset'])->group(function () {
 Route::get('/checkout',         [CheckoutController::class, 'index'])->name('checkout');
 Route::post('/checkout',        [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/checkout/success', [CheckoutController::class, 'stripeSuccess'])->name('checkout.stripe-success');
+Route::post('/checkout/paypal/{order}/capture', [CheckoutController::class, 'paypalCapture'])->name('checkout.paypal-capture');
 
 // Pay-by-link for an unpaid order, emailed from the admin. The token is the credential.
 Route::get('/pay/{token}', [CheckoutController::class, 'payLink'])->name('order.pay');

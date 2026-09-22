@@ -79,15 +79,25 @@ class SecurityHeaders
                 . "https://*.googletagmanager.com https://*.google-analytics.com "
                 . "https://*.facebook.net https://*.facebook.com "
                 . "https://*.tiktok.com https://*.tiktokw.us https://*.ibyteimg.com https://*.muscdn.com "
-                . "https://analytics.ahrefs.com https://js.stripe.com",
+                . "https://analytics.ahrefs.com https://js.stripe.com "
+                . "https://www.paypal.com https://www.paypalobjects.com https://www.sandbox.paypal.com "
+                . "https://*.clarity.ms",
             "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com",
             "font-src 'self' data: https://cdn.jsdelivr.net https://fonts.gstatic.com",
             "img-src 'self' data: blob: https: ",
+            // GA4 falls back to google.com/g/collect (instead of google-analytics.com)
+            // depending on consent-mode/region signals picked at runtime, same
+            // reasoning as the tracker wildcards above — not something to pin down
+            // to one fixed endpoint.
             "connect-src 'self' https://*.google-analytics.com https://*.googletagmanager.com https://*.analytics.google.com "
+                . "https://www.google.com "
                 . "https://*.facebook.com https://*.facebook.net "
                 . "https://*.tiktok.com https://*.tiktokw.us https://*.ibyteimg.com https://*.muscdn.com "
-                . "https://analytics.ahrefs.com https://api.stripe.com",
-            "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://*.facebook.com",
+                . "https://analytics.ahrefs.com https://api.stripe.com "
+                . "https://www.paypal.com https://www.paypalobjects.com https://www.sandbox.paypal.com "
+                . "https://*.clarity.ms",
+            "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://*.facebook.com "
+                . "https://www.paypal.com https://www.sandbox.paypal.com",
         ];
 
         return implode('; ', $directives);

@@ -24,12 +24,14 @@ $paymentColors = [
     </a>
 </div>
 
-@if($order->isStripeTestOrder())
+@if($order->isTestOrder())
 <div class="mb-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
     <i class="mdi mdi-flask-outline text-red-500 text-lg leading-none mt-0.5"></i>
     <div class="text-sm">
         <p class="font-semibold text-red-700">Sandbox test order — no real payment was taken.</p>
-        <p class="text-red-600/80 text-xs mt-0.5">Placed against Stripe test keys. Do not fulfil this order or place it with a supplier.</p>
+        <p class="text-red-600/80 text-xs mt-0.5">
+            Placed against {{ $order->isStripeTestOrder() ? 'Stripe test keys' : 'PayPal sandbox credentials' }}. Do not fulfil this order or place it with a supplier.
+        </p>
     </div>
 </div>
 @endif
@@ -271,15 +273,21 @@ $paymentColors = [
                         {{ ucfirst($order->payment_status) }}
                     </span>
                 </div>
+                @php
+                    $methodLabels = ['cod' => 'Cash on Delivery', 'stripe' => 'Stripe', 'paypal' => 'PayPal'];
+                    // Stripe reports 'test'/'live'; PayPal reports 'sandbox'/'live' — normalised
+                    // to the same two badge styles here so the markup below doesn't fork per gateway.
+                    $gatewayMode = $order->payment_method === 'stripe' ? $order->stripe_mode : ($order->payment_method === 'paypal' ? $order->paypal_mode : null);
+                @endphp
                 <div class="flex justify-between items-center">
                     <span class="text-gray-500">Method</span>
                     <span class="font-medium text-gray-700">
-                        {{ $order->payment_method === 'cod' ? 'Cash on Delivery' : 'Stripe' }}
-                        @if($order->stripe_mode === 'test')
-                            <span class="ml-1 inline-flex px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700 align-middle">TEST</span>
-                        @elseif($order->stripe_mode === 'live')
+                        {{ $methodLabels[$order->payment_method] ?? ucfirst($order->payment_method) }}
+                        @if(in_array($gatewayMode, ['test', 'sandbox']))
+                            <span class="ml-1 inline-flex px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700 align-middle">{{ strtoupper($gatewayMode) }}</span>
+                        @elseif($gatewayMode === 'live')
                             <span class="ml-1 inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 align-middle">LIVE</span>
-                        @elseif($order->payment_method === 'stripe')
+                        @elseif(in_array($order->payment_method, ['stripe', 'paypal']))
                             <span class="ml-1 inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500 align-middle">Mode unknown</span>
                         @endif
                     </span>
@@ -293,6 +301,12 @@ $paymentColors = [
                        class="text-xs text-[#bb976d] hover:underline truncate" title="{{ $order->stripe_payment_intent }}">
                         {{ $order->stripe_payment_intent }}
                     </a>
+                </div>
+                @endif
+                @if($order->paypal_order_id)
+                <div class="flex justify-between items-center gap-2">
+                    <span class="text-gray-500 shrink-0">PayPal Order ID</span>
+                    <span class="text-xs text-gray-600 truncate" title="{{ $order->paypal_order_id }}">{{ $order->paypal_order_id }}</span>
                 </div>
                 @endif
                 <div class="flex justify-between items-center">

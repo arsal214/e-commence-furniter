@@ -55,7 +55,7 @@ $currentStatus = request('status');
             <tr class="hover:bg-gray-50 transition-colors">
                 <td class="px-5 py-3 font-medium text-gray-800">
                     #{{ $order->id }}
-                    @if($order->isStripeTestOrder())
+                    @if($order->isTestOrder())
                         <span class="ml-1 inline-flex px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 align-middle">TEST</span>
                     @endif
                 </td>
@@ -67,7 +67,7 @@ $currentStatus = request('status');
                 <td class="px-5 py-3 font-semibold text-gray-800">${{ number_format($order->total, 2) }}</td>
                 <td class="px-5 py-3">
                     <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $paymentColors[$order->payment_status] ?? 'bg-gray-100 text-gray-600' }}">
-                        {{ $order->payment_method === 'cod' ? 'COD' : 'Stripe' }} · {{ ucfirst($order->payment_status) }}
+                        {{ ['cod' => 'COD', 'stripe' => 'Stripe', 'paypal' => 'PayPal'][$order->payment_method] ?? ucfirst($order->payment_method) }} · {{ ucfirst($order->payment_status) }}
                     </span>
                 </td>
                 <td class="px-5 py-3">

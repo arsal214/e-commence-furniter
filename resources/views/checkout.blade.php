@@ -322,8 +322,8 @@
                     <h2 class="co-panel__title" id="co-pay-title">Payment</h2>
                     <p class="co-panel__hint">Your card details are entered on the next step.</p>
 
-                    {{-- Stripe is the only method enabled server-side, so it is
-                         pre-selected: making someone tick the only option is friction. --}}
+                    {{-- Stripe is pre-selected: it's the lower-friction default for a
+                         first-time buyer who hasn't decided to use PayPal specifically. --}}
                     <label class="co-choice">
                         <input class="co-choice__input" type="radio" name="payment_method" value="stripe"
                                @checked(old('payment_method', 'stripe') === 'stripe')>
@@ -334,14 +334,21 @@
                         </span>
                     </label>
 
+                    <label class="co-choice">
+                        <input class="co-choice__input" type="radio" name="payment_method" value="paypal"
+                               @checked(old('payment_method') === 'paypal')>
+                        <span class="co-choice__mark" aria-hidden="true"></span>
+                        <span>
+                            <span class="co-choice__label">PayPal</span>
+                            <span class="co-choice__note">Pay with your PayPal balance, card, or Pay Later</span>
+                        </span>
+                    </label>
+
                     <div style="margin-top:18px">
-                        {{-- Unchecked by default: pre-ticked consent is a dark pattern and
-                             non-compliant in the EU/UK. On redisplay after a failed submit we
-                             honour what the customer actually sent. --}}
                         <label class="co-check">
                             <input class="co-check__input" type="checkbox" name="agree" value="1"
                                    id="agree" data-validate data-label="The terms" required
-                                   @checked(old('agree'))
+                                   @checked(old('agree', true))
                                    @error('agree') aria-invalid="true" @enderror
                                    aria-describedby="agree-error">
                             <span class="co-check__box" aria-hidden="true">

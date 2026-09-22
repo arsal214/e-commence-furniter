@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\CartService;
+use App\Services\PayPalService;
 use App\Services\TikTokEventsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +25,7 @@ class CheckoutController extends Controller
     public function __construct(
         protected CartService $cart,
         protected TikTokEventsService $tiktok,
+        protected PayPalService $paypal,
     ) {}
 
     /**
@@ -208,7 +210,7 @@ class CheckoutController extends Controller
             'address'        => 'required|string|max:255',
             'address2'       => 'nullable|string|max:255',
             'notes'          => 'nullable|string',
-            'payment_method' => 'required|in:cod,stripe',
+            'payment_method' => 'required|in:cod,stripe,paypal',
             'shipping'       => 'required|in:free,fast,local',
             'agree'          => 'accepted',
             'order_bump'     => 'nullable|integer|exists:products,id',
@@ -340,6 +342,21 @@ class CheckoutController extends Controller
 
             return redirect()->route('thank-you')
                 ->with('order_total', $total);
+        }
+
+        if ($data['payment_method'] === 'paypal') {
+            $paypalOrder = $this->paypal->createOrder($total, (string) $order->id);
+
+            $order->update([
+                'paypal_order_id' => $paypalOrder['id'],
+                'paypal_livemode' => $this->paypal->livemode(),
+            ]);
+
+            return view('checkout-paypal', [
+                'order'          => $order,
+                'paypalOrderId'  => $paypalOrder['id'],
+                'paypalClientId' => config('services.paypal.client_id'),
+            ]);
         }
 
         // Stripe payment
@@ -541,5 +558,54 @@ class CheckoutController extends Controller
         }
 
         return redirect()->route('checkout')->with('error', 'Payment was not completed. Please try again.');
+    }
+
+    /**
+     * Captures the buyer's approved PayPal order and settles it server-side.
+     *
+     * Called by the checkout-paypal page's onApprove handler rather than via a
+     * redirect, because the PayPal JS SDK approves in-page — there is no return
+     * URL to hang a GET success route off, unlike Stripe's redirect flow above.
+     */
+    public function paypalCapture(Request $request, Order $order)
+    {
+        if ($order->payment_method !== 'paypal' || ! $order->paypal_order_id) {
+            return response()->json(['error' => 'Invalid order.'], 422);
+        }
+
+        if ($order->payment_status === 'paid') {
+            return response()->json(['redirect' => route('thank-you')]);
+        }
+
+        try {
+            $capture = $this->paypal->captureOrder($order->paypal_order_id);
+        } catch (\Exception $e) {
+            \Log::warning('PayPal capture failed for order #' . $order->id . ': ' . $e->getMessage());
+
+            return response()->json(['error' => 'Payment could not be confirmed. Please try again or contact us.'], 422);
+        }
+
+        if (($capture['status'] ?? null) !== 'COMPLETED') {
+            return response()->json(['error' => 'Payment was not completed. Please try again.'], 422);
+        }
+
+        $order->load('items');
+        $order->update(['payment_status' => 'paid', 'status' => 'processing']);
+        $this->trackCompletePayment($order, $request);
+
+        try {
+            Mail::to($order->email)->send(new OrderConfirmationMail($order));
+        } catch (\Exception $e) {
+            \Log::warning('PayPal order confirmation email failed for order #' . $order->tracking_number . ': ' . $e->getMessage());
+            \App\Models\EmailLog::recordFailure($order->email, OrderConfirmationMail::class, $e->getMessage(), $order->user_id, $order->id);
+        }
+
+        $this->cart->clear();
+        session()->put('recent_order', $order->tracking_number);
+        // No redirect() here to flash through, so it's set by hand — the JS
+        // client follows the JSON 'redirect' with its own window.location.
+        session()->flash('order_total', $order->total);
+
+        return response()->json(['redirect' => route('thank-you')]);
     }
 }

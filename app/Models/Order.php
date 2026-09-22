@@ -10,7 +10,8 @@ class Order extends Model
     protected $fillable = [
         'user_id', 'name', 'email', 'phone', 'city', 'state', 'zip', 'country',
         'address', 'address2', 'notes', 'payment_method',
-        'payment_status', 'stripe_payment_intent', 'stripe_livemode', 'shipping',
+        'payment_status', 'stripe_payment_intent', 'stripe_livemode',
+        'paypal_order_id', 'paypal_livemode', 'shipping',
         'subtotal', 'shipping_cost', 'total', 'status',
         'tracking_number', 'supplier_name', 'supplier_order_id',
         'supplier_tracking', 'carrier', 'shipped_at',
@@ -21,6 +22,7 @@ class Order extends Model
         'shipped_at'           => 'datetime',
         'payment_requested_at' => 'datetime',
         'stripe_livemode'      => 'boolean',
+        'paypal_livemode'      => 'boolean',
     ];
 
     /**
@@ -83,16 +85,56 @@ class Order extends Model
         return $query->where('payment_method', 'stripe')->where('stripe_livemode', true);
     }
 
+    /** A PayPal order taken against sandbox credentials — not real money. */
+    public function isPaypalSandboxOrder(): bool
+    {
+        return $this->payment_method === 'paypal' && $this->paypal_livemode === false;
+    }
+
     /**
-     * Real orders only — sandbox payments carry no money and must not reach the
-     * revenue figures. Null is kept in, since COD orders and pre-column Stripe
-     * orders are real; only an explicit false is excluded.
+     * 'live' | 'sandbox' | null, mirroring stripe_mode above.
      */
-    public function scopeExcludingStripeTest($query)
+    public function getPaypalModeAttribute(): ?string
+    {
+        if ($this->payment_method !== 'paypal' || $this->paypal_livemode === null) {
+            return null;
+        }
+
+        return $this->paypal_livemode ? 'live' : 'sandbox';
+    }
+
+    /** No real money changed hands — a Stripe test charge or a PayPal sandbox capture. */
+    public function isTestOrder(): bool
+    {
+        return $this->isStripeTestOrder() || $this->isPaypalSandboxOrder();
+    }
+
+    /** Every sandbox/test order, regardless of gateway. */
+    public function scopeTestOrders($query)
     {
         return $query->where(function ($q) {
-            $q->whereNull('stripe_livemode')->orWhere('stripe_livemode', true);
+            $q->where(function ($s) {
+                $s->where('payment_method', 'stripe')->where('stripe_livemode', false);
+            })->orWhere(function ($s) {
+                $s->where('payment_method', 'paypal')->where('paypal_livemode', false);
+            });
         });
+    }
+
+    /**
+     * Real orders only — sandbox/test payments carry no money and must not reach
+     * the revenue figures. Null is kept in, since COD orders and pre-column
+     * orders are real; only an explicit false is excluded.
+     */
+    public function scopeExcludingTestOrders($query)
+    {
+        return $query
+            ->where(function ($q) {
+                $q->whereNull('stripe_livemode')->orWhere('stripe_livemode', true);
+            })
+            ->where(function ($q) {
+                $q->whereNull('paypal_livemode')->orWhere('paypal_livemode', true);
+            });
     }
 
     public function items()

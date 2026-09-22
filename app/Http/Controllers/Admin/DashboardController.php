@@ -19,10 +19,10 @@ class DashboardController extends Controller
         // Sandbox orders are excluded from every figure here: a test payment is
         // marked paid like any other, so counting it would report money that was
         // never taken. They stay visible in the orders list, badged TEST.
-        $totalOrders      = Order::excludingStripeTest()->count();
-        $pendingOrders    = Order::excludingStripeTest()->where('status', 'pending')->count();
-        $totalRevenue     = Order::excludingStripeTest()->where('payment_status', 'paid')->sum('total');
-        $testOrders       = Order::stripeTest()->count();
+        $totalOrders      = Order::excludingTestOrders()->count();
+        $pendingOrders    = Order::excludingTestOrders()->where('status', 'pending')->count();
+        $totalRevenue     = Order::excludingTestOrders()->where('payment_status', 'paid')->sum('total');
+        $testOrders       = Order::testOrders()->count();
 
         return view('admin.dashboard.index', compact(
             'totalProducts', 'totalCategories', 'totalUsers', 'featuredProducts',

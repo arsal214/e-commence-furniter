@@ -215,7 +215,7 @@
                         Payment
                     </h3>
                     <p class="mt-2 text-sm text-title dark:text-white">
-                        {{ $order->payment_method === 'cod' ? 'Cash on Delivery' : 'Card' }}
+                        {{ ['cod' => 'Cash on Delivery', 'stripe' => 'Card', 'paypal' => 'PayPal'][$order->payment_method] ?? ucfirst($order->payment_method) }}
                     </p>
                     {{-- Icon + text, so status isn't carried by colour alone. The dark variants
                          come from the template CSS — arbitrary dark:text-[#hex] would compile to a

@@ -5,7 +5,7 @@
     $adminNote     = $adminNote ?? null;
     $cta           = $cta ?? null;
     $shippingLabel = ['free' => 'Free Shipping', 'fast' => 'Fast Shipping', 'local' => 'Local Pickup'][$order->shipping] ?? ucfirst($order->shipping);
-    $paymentLabel  = $order->payment_method === 'cod' ? 'Cash on Delivery' : 'Card';
+    $paymentLabel  = ['cod' => 'Cash on Delivery', 'stripe' => 'Card', 'paypal' => 'PayPal'][$order->payment_method] ?? ucfirst($order->payment_method);
 @endphp
 PEYTONGHALIB — Premium Furniture
 
