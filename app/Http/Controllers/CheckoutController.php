@@ -77,32 +77,48 @@ class CheckoutController extends Controller
             'countries'       => config('checkout.countries', []),
             'defaultCountry'  => config('checkout.default_country', 'US'),
             'countryRules'    => $this->countryRulesForJs(),
-            'orderBump'       => $this->orderBump(),
+            'orderBumps'      => $this->orderBumps(),
         ]);
     }
 
     /**
-     * A single low-friction add-on offered at checkout.
+     * Up to two low-friction add-ons offered at checkout, both under $10 so the
+     * ask stays a true impulse decision next to a basket the buyer has already
+     * committed to.
      *
-     * The cheapest in-stock item the buyer does not already have, so the ask is
-     * small next to a basket they have already decided on. Deliberately one
-     * product, not a rail: an order bump works because it is a yes/no decision at
-     * the moment of purchase, and a grid of choices reintroduces the browsing the
-     * customer just finished.
-     *
-     * Returns null on an empty catalogue or when everything is already in the
-     * cart, and the section then does not render at all.
+     * Slot one favours relevance — the cheapest eligible item sharing a
+     * category with something already in the cart (a sofa buyer sees a cheap
+     * cushion cover, not a random lamp). Slot two is any other eligible item,
+     * picked at random so it doesn't always show the same product. Either slot
+     * can come back empty — on an empty catalogue, when the cart already holds
+     * everything eligible, or simply because nothing in the catalogue is under
+     * $10 yet — and the section renders only what's left after that.
      */
-    protected function orderBump(): ?Product
+    protected function orderBumps(): \Illuminate\Support\Collection
     {
         $cartIds = collect($this->cart->items())->pluck('id')->filter()->values();
         $eff     = 'COALESCE(NULLIF(sale_price, 0), price)';
 
-        return Product::where('is_active', true)
+        $eligible = Product::where('is_active', true)
             ->where('stock', '>', 0)
+            ->whereRaw("$eff < 10")
             ->when($cartIds->isNotEmpty(), fn ($q) => $q->whereNotIn('id', $cartIds))
-            ->orderByRaw("$eff ASC")
+            ->get();
+
+        $cartCategoryIds = $cartIds->isNotEmpty()
+            ? Product::whereIn('id', $cartIds)->pluck('category_id')->filter()->unique()
+            : collect();
+
+        $relevant = $eligible->whereIn('category_id', $cartCategoryIds)
+            ->sortBy(fn ($p) => $p->effective_price)
             ->first();
+
+        $random = $eligible
+            ->reject(fn ($p) => $relevant && $p->id === $relevant->id)
+            ->shuffle()
+            ->first();
+
+        return collect([$relevant, $random])->filter()->values();
     }
 
     /**
@@ -213,7 +229,8 @@ class CheckoutController extends Controller
             'payment_method' => 'required|in:cod,stripe,paypal',
             'shipping'       => 'required|in:free,fast,local',
             'agree'          => 'accepted',
-            'order_bump'     => 'nullable|integer|exists:products,id',
+            'order_bump'     => 'nullable|array',
+            'order_bump.*'   => 'integer|exists:products,id',
         ], [
             'state.in'       => 'Choose a valid ' . strtolower($country['subdivision_label'] ?? 'state') . ' for the selected country.',
             'state.required' => 'Please choose a ' . strtolower($country['subdivision_label'] ?? 'state') . '.',
@@ -233,8 +250,8 @@ class CheckoutController extends Controller
         // normally-added product. Re-checked server-side rather than trusted from
         // the form — the posted id is user input, and the item may have sold out
         // while the checkout page sat open.
-        if (! empty($data['order_bump'])) {
-            $bump = Product::where('id', $data['order_bump'])
+        foreach ($data['order_bump'] ?? [] as $bumpId) {
+            $bump = Product::where('id', $bumpId)
                 ->where('is_active', true)
                 ->first();
 

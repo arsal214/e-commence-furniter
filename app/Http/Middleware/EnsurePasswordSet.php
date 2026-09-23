@@ -20,7 +20,7 @@ class EnsurePasswordSet
 
         if ($user
             && $user->must_reset_password
-            && ! $request->routeIs('account.set-password')
+            && ! $request->routeIs('account.set-password*')
             && ! $request->routeIs('logout')) {
             return redirect()->route('account.set-password');
         }

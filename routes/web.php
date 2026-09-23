@@ -35,7 +35,7 @@ Route::middleware(['auth', 'must-reset'])->group(function () {
     // First-login password setup for guest-checkout accounts (flow B). Kept inside
     // the must-reset group; the middleware exempts these routes so the user can finish.
     Route::get('/account/set-password',  [AuthController::class, 'showSetPassword'])->name('account.set-password');
-    Route::post('/account/set-password', [AuthController::class, 'setPassword']);
+    Route::post('/account/set-password', [AuthController::class, 'setPassword'])->name('account.set-password.store');
 
     Route::get('/my-profile',    fn() => redirect('/my-account'));
     Route::get('/my-account',    [HomeController::class, 'myAccount']);
