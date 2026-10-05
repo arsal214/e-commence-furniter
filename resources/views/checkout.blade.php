@@ -26,10 +26,10 @@
 
         <div class="co__grid">
 
-            {{-- ── Left: details ────────────────────────────── --}}
+            {{-- ── Left: 1 Contact · 2 Delivery · 3 Payment ── --}}
             <div>
                 <section class="co-panel">
-                    <h2 class="co-panel__title">Contact details</h2>
+                    <h2 class="co-panel__title co-num"><span class="co-num__n">1</span>Contact</h2>
                     <p class="co-panel__hint">We'll send your order confirmation and tracking here.</p>
 
                     <div class="co-grid">
@@ -83,8 +83,9 @@
                     </div>
                 </section>
 
+
                 <section class="co-panel">
-                    <h2 class="co-panel__title">Shipping address</h2>
+                    <h2 class="co-panel__title co-num"><span class="co-num__n">2</span>Delivery</h2>
                     <p class="co-panel__hint">Where should we deliver your order?</p>
 
                     <div class="co-grid">
@@ -186,65 +187,18 @@
                             </p>
                         </div>
                     </div>
-                </section>
-
-                <section class="co-panel">
-                    <h2 class="co-panel__title">Order notes</h2>
-                    <p class="co-panel__hint">Anything we should know — delivery instructions, a gift message.</p>
-
-                    <div class="co-field" style="margin-bottom:0">
-                        <label class="co-sr" for="notes">Order notes</label>
+                    <div class="co-grid" style="margin-top:4px">
+                    <div class="co-field co-field--full" style="margin-bottom:0">
+                        <label class="co-field__label" for="notes">Delivery notes <span style="font-weight:400;color:var(--co-muted)">(optional)</span></label>
                         <textarea class="co-field__area" id="notes" name="notes"
-                                  placeholder="Leave at the side door, please.">{{ old('notes') }}</textarea>
+                                  placeholder="Leave at the side door, please." style="height:84px">{{ old('notes') }}</textarea>
                     </div>
-                </section>
-            </div>
-
-            {{-- ── Right: summary + payment ─────────────────── --}}
-            <div class="co-summary">
-                <section class="co-panel" aria-labelledby="co-sum-title">
-                    <h2 class="co-panel__title" id="co-sum-title">
-                        Order summary
-                        <span style="font-weight:500; color:var(--co-muted)">({{ $itemCount }} item{{ $itemCount === 1 ? '' : 's' }})</span>
-                    </h2>
-                    <p class="co-panel__hint">
-                        <a href="{{ route('cart') }}" style="color:var(--co-gold-ink); font-weight:600; text-decoration:none">Edit cart</a>
-                    </p>
-
-                    <ul class="co-sum__items">
-                        @foreach ($cartItems as $item)
-                            <li class="co-sum__item">
-                                <span class="co-sum__figure">
-                                    @php
-                                        $img = $item['image'] ?? null;
-                                        $src = $img
-                                            ? (Str::startsWith($img, 'assets/') ? asset($img) : Storage::url($img))
-                                            : asset('assets/img/gallery/cart/cart-01.jpg');
-                                    @endphp
-                                    <img class="co-sum__thumb" src="{{ $src }}" alt="" width="54" height="54" loading="lazy">
-                                    <span class="co-sum__qty">{{ $item['qty'] }}</span>
-                                </span>
-
-                                <span style="min-width:0">
-                                    <span class="co-sum__name">{{ $item['name'] }}</span>
-                                    @if (!empty($item['color']) || !empty($item['size']))
-                                        <span class="co-sum__variant">
-                                            {{ collect([$item['color'] ?? null, $item['size'] ?? null])->filter()->implode(' · ') }}
-                                        </span>
-                                    @endif
-                                </span>
-
-                                <span class="co-sum__line">${{ number_format($item['price'] * $item['qty'], 2) }}</span>
-                            </li>
-                        @endforeach
-                    </ul>
-
-                    <div class="co-sum__rule"></div>
-
+                    </div>
                     {{-- data-cost is read by the script, so the displayed total always
                          matches whatever $shippingOptions the controller offers. --}}
-                    <fieldset style="border:0; padding:0; margin:0 0 16px">
-                        <legend class="co-field__label" style="padding:0">Shipping</legend>
+                    <fieldset class="co-ship" style="border:0; padding:0; margin:18px 0 0; background:transparent !important; box-shadow:none">
+                        <legend class="co-sr">Shipping method</legend>
+                        <div class="co-field__label" aria-hidden="true">Shipping method</div>
 
                         @foreach ($shippingOptions as $key => $option)
                             <label class="co-choice">
@@ -259,29 +213,8 @@
                             </label>
                         @endforeach
                     </fieldset>
-
-                    <div class="co-sum__row">
-                        <span>Subtotal</span>
-                        <span id="co-subtotal">${{ number_format($cartTotal, 2) }}</span>
-                    </div>
-                    {{-- Only rendered once the bump is actually ticked, so the summary
-                         never shows a line for something the customer has not chosen. --}}
-                    <div class="co-sum__row" id="co-bump-row" hidden>
-                        <span id="co-bump-label">Added extra</span>
-                        <span id="co-bump-amount">$0.00</span>
-                    </div>
-                    <div class="co-sum__row">
-                        <span>Shipping</span>
-                        <span id="co-shipping">Free</span>
-                    </div>
-
-                    <div class="co-sum__rule"></div>
-
-                    <div class="co-sum__total">
-                        <span>Total</span>
-                        <b id="co-total">${{ number_format($cartTotal, 2) }}</b>
-                    </div>
                 </section>
+
 
                 {{-- ── Order bump ──────────────────────────────────────────────
                      Up to two add-ons, unchecked by default. A pre-ticked box that
@@ -321,9 +254,10 @@
                 </section>
                 @endif
 
+
                 <section class="co-panel" aria-labelledby="co-pay-title">
-                    <h2 class="co-panel__title" id="co-pay-title">Payment</h2>
-                    <p class="co-panel__hint">Your card details are entered on the next step.</p>
+                    <h2 class="co-panel__title co-num" id="co-pay-title"><span class="co-num__n">3</span>Payment</h2>
+                    <p class="co-panel__hint">All transactions are secure and encrypted. Your card details are entered on the next step.</p>
 
                     {{-- Stripe is pre-selected: it's the lower-friction default for a
                          first-time buyer who hasn't decided to use PayPal specifically. --}}
@@ -391,6 +325,88 @@
                 </section>
             </div>
 
+            {{-- ── Right: order summary + guarantees ──────── --}}
+            <div class="co-summary">
+                <section class="co-panel co-sumpanel" aria-labelledby="co-sum-title">
+                    <details class="co-sumd" open>
+                    <summary class="co-sumd__head"><span>Order summary <span style="font-weight:500; color:var(--co-muted)">({{ $itemCount }})</span></span><b data-co-total-mirror>${{ number_format($cartTotal, 2) }}</b></summary>
+                    <p class="co-panel__hint" id="co-sum-title" style="margin-top:6px"><a href="{{ route('cart') }}" style="color:var(--co-gold-ink); font-weight:600; text-decoration:none">Edit cart</a></p>
+
+                    <ul class="co-sum__items">
+                        @foreach ($cartItems as $item)
+                            <li class="co-sum__item">
+                                <span class="co-sum__figure">
+                                    @php
+                                        $img = $item['image'] ?? null;
+                                        $src = $img
+                                            ? (Str::startsWith($img, 'assets/') ? asset($img) : Storage::url($img))
+                                            : asset('assets/img/gallery/cart/cart-01.jpg');
+                                    @endphp
+                                    <img class="co-sum__thumb" src="{{ $src }}" alt="" width="54" height="54" loading="lazy">
+                                    <span class="co-sum__qty">{{ $item['qty'] }}</span>
+                                </span>
+
+                                <span style="min-width:0">
+                                    <span class="co-sum__name">{{ $item['name'] }}</span>
+                                    @if (!empty($item['color']) || !empty($item['size']))
+                                        <span class="co-sum__variant">
+                                            {{ collect([$item['color'] ?? null, $item['size'] ?? null])->filter()->implode(' · ') }}
+                                        </span>
+                                    @endif
+                                </span>
+
+                                <span class="co-sum__line">${{ number_format($item['price'] * $item['qty'], 2) }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+
+                    <div class="co-sum__rule"></div>
+
+
+                    <div class="co-sum__row">
+                        <span>Subtotal</span>
+                        <span id="co-subtotal">${{ number_format($cartTotal, 2) }}</span>
+                    </div>
+                    {{-- Only rendered once the bump is actually ticked, so the summary
+                         never shows a line for something the customer has not chosen. --}}
+                    <div class="co-sum__row" id="co-bump-row" hidden>
+                        <span id="co-bump-label">Added extra</span>
+                        <span id="co-bump-amount">$0.00</span>
+                    </div>
+                    <div class="co-sum__row">
+                        <span>Shipping</span>
+                        <span id="co-shipping">Free</span>
+                    </div>
+
+                    <div class="co-sum__rule"></div>
+
+                    <div class="co-sum__total">
+                        <span>Total</span>
+                        <b id="co-total">${{ number_format($cartTotal, 2) }}</b>
+                    </div>
+                    </details>
+                </section>
+
+
+                <section class="co-trust" aria-label="Our guarantees">
+                    <div class="co-trust__row">
+                        <span class="co-trust__ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></span>
+                        <span><b>30-day free returns</b><small>Changed your mind? Send it back, full refund.</small></span>
+                    </div>
+                    <div class="co-trust__row">
+                        <span class="co-trust__ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+                        <span><b>Money-back guarantee</b><small>Refund if your order never arrives or isn't as described.</small></span>
+                    </div>
+                    <div class="co-trust__row">
+                        <span class="co-trust__ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM15 18a2 2 0 1 0 4 0 2 2 0 0 0-4 0z"/><path d="M3 6h11v10M14 9h4l3 3v6"/></svg></span>
+                        <span><b>Tracked delivery</b><small>Tracking link by email the moment it ships.</small></span>
+                    </div>
+                </section>
+
+                <p class="co-help">Questions? <a href="tel:+19294699864">+1 (929) 469-9864</a> &middot; <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a></p>
+                <p class="co-help co-help--links"><a href="{{ route('refund-policy') }}">Refunds</a> <a href="{{ url('/terms-and-conditions') }}">Terms</a> <a href="{{ url('/privacy-policy') }}">Privacy</a></p>
+            </div>
+
         </div>
     </form>
 
@@ -399,6 +415,30 @@
 @include('includes.footer')
 
 @endsection
+
+
+@push('styles')
+<style>
+.co-num { display: flex; align-items: center; gap: 10px; font-size: 18px; }
+.co-num__n { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #172430; color: #fff; font-size: 13px; font-weight: 700; flex: none; }
+.co-summary { display: flex; flex-direction: column; gap: 16px; }
+.co-summary .co-panel + .co-panel { margin-top: 0; }
+@media (min-width: 1025px) { .co-summary { position: sticky; top: 24px; } }
+.co-sumd__head { display: flex; align-items: center; justify-content: space-between; list-style: none; cursor: pointer; font-size: 16px; font-weight: 700; }
+.co-sumd__head::-webkit-details-marker { display: none; }
+@media (min-width: 1025px) { .co-sumd__head { pointer-events: none; } .co-sumd__head b { display: none; } }
+@media (max-width: 1024px) { .co__grid > .co-summary { order: -1; } .co-sumd__head::after { content: "\25BE"; margin-left: 8px; color: var(--co-muted); } .co-sumd[open] .co-sumd__head::after { content: "\25B4"; } }
+.co-trust { display: flex; flex-direction: column; gap: 14px; padding: 18px 20px; border: 1px solid var(--co-border); border-radius: 18px; background: var(--co-surface); }
+.co-trust__row { display: flex; gap: 12px; align-items: flex-start; font-size: 13.5px; }
+.co-trust__row b { display: block; font-weight: 700; color: var(--co-text); }
+.co-trust__row small { display: block; margin-top: 2px; color: var(--co-muted); font-size: 12.5px; line-height: 1.4; }
+.co-trust__ico { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: rgba(187,151,109,.14); color: var(--co-gold-ink); }
+.co-help { margin: 0; text-align: center; font-size: 12.5px; color: var(--co-muted); }
+.co-help a { color: var(--co-gold-ink); text-decoration: none; margin: 0 6px; }
+.co-help--links a { text-decoration: underline; }
+.co-submit { height: 56px; border-radius: 999px; }
+</style>
+@endpush
 
 @push('scripts')
 <script>
@@ -456,6 +496,7 @@
         }
 
         if (totalEl) totalEl.textContent = money(SUBTOTAL + cost + extra);
+        document.querySelectorAll('[data-co-total-mirror]').forEach(function (m) { m.textContent = money(SUBTOTAL + cost + extra); });
     }
 
     bumpInputs.forEach(function (input) {
@@ -466,6 +507,8 @@
         radio.addEventListener('change', refreshTotals);
     });
     refreshTotals();
+    var sumD = document.querySelector('.co-sumd');
+    if (sumD && window.matchMedia('(max-width: 1024px)').matches) sumD.open = false;
 
     /* ── Address: country → state → ZIP ─────────────────────────
        One source of truth, rendered from config/checkout.php. The server
