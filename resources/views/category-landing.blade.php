@@ -373,7 +373,7 @@
 <div data-aos="fade-up">
     <div class="text-center mb-8">
         <p class="text-xs font-bold uppercase tracking-[.2em] mb-2" style="color:#bb976d;">Discover more</p>
-        <h2 class="text-2xl md:text-3xl font-semibold text-[#172430] dark:text-white">Also Browse</h2>
+        <h2 class="text-2xl md:text-3xl font-semibold text-[#172430] dark:text-white">More Categories</h2>
     </div>
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         @foreach($relatedCategories as $related)

@@ -583,12 +583,35 @@
 
         {{-- Category picker + search (2b). Submits to /shop like the modal does. --}}
         <form action="{{ url('/shop') }}" method="GET" class="pg-hdr-search" role="search">
-            <select name="category" aria-label="Search category" class="pg-hdr-cat pg-native-select">
-                <option value="">All categories</option>
-                @foreach($navCategories as $nCat)
-                    <option value="{{ $nCat->slug }}" @selected(request('category') === $nCat->slug)>{{ $nCat->name }}</option>
-                @endforeach
-            </select>
+            @php $curCat = $navCategories->firstWhere('slug', request('category')); @endphp
+            <div class="pg-dd" id="pg-dd">
+                <input type="hidden" name="category" value="{{ $curCat?->slug }}">
+                <button type="button" class="pg-dd__btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Search category">
+                    <span class="pg-dd__label">{{ $curCat?->name ?? 'All categories' }}</span>
+                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <ul class="pg-dd__list" role="listbox" hidden>
+                    <li role="option" data-value="" class="{{ $curCat ? '' : 'is-sel' }}">All categories</li>
+                    @foreach($navCategories as $nCat)
+                    <li role="option" data-value="{{ $nCat->slug }}" class="{{ $curCat?->id === $nCat->id ? 'is-sel' : '' }}">{{ $nCat->name }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            <script>
+            (function () {
+                var dd = document.getElementById('pg-dd'); if (!dd) return;
+                var btn = dd.querySelector('.pg-dd__btn'), list = dd.querySelector('.pg-dd__list'), inp = dd.querySelector('input');
+                function set(open) { list.hidden = !open; btn.setAttribute('aria-expanded', open); dd.classList.toggle('is-open', open); }
+                btn.addEventListener('click', function () { set(list.hidden); });
+                list.addEventListener('click', function (e) {
+                    var li = e.target.closest('li'); if (!li) return;
+                    inp.value = li.dataset.value; dd.querySelector('.pg-dd__label').textContent = li.textContent;
+                    list.querySelectorAll('.is-sel').forEach(function (x) { x.classList.remove('is-sel'); }); li.classList.add('is-sel'); set(false);
+                });
+                document.addEventListener('click', function (e) { if (!dd.contains(e.target)) set(false); });
+                document.addEventListener('keydown', function (e) { if (e.key === 'Escape') set(false); });
+            })();
+            </script>
             <div class="pg-hdr-field">
                 <input type="search" name="search" value="{{ request('search') }}" placeholder="Search products, brands, sellers" aria-label="Search products" autocomplete="off">
                 <button type="submit">Go</button>

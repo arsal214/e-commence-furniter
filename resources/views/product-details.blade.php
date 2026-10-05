@@ -1164,6 +1164,35 @@ img.pd-slide-img:focus-visible {
     display: flex; align-items: center; justify-content: center;
     background: #172430; color: #fff; font-size: 22px;
 }
+
+/* "+N" thumb + gallery modal */
+.pd-thumb { position: relative; flex: 0 0 auto; }
+.pd-thumb-more__badge { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(23,36,48,.62); color: #fff; font-weight: 700; font-size: 18px; }
+.pd-thumb-more { opacity: 1; }
+@media (max-width: 480px) { .pd-thumb { width: 56px; height: 56px; min-width: 56px; } .pd-thumbs { gap: 8px; } }
+.pdg { position: fixed; inset: 0; z-index: 2000; background: #fff; display: none; flex-direction: column; }
+.pdg.is-open { display: flex; }
+.pdg__bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #c9c2b4; flex: none; }
+.pdg__tab { font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #172430; padding-bottom: 12px; margin-bottom: -15px; border-bottom: 3px solid #172430; }
+.pdg__close { width: 40px; height: 40px; border: 0; border-radius: 50%; background: #f1ede6; color: #172430; font-size: 22px; cursor: pointer; }
+.pdg__close:hover { background: #172430; color: #fff; }
+.pdg__body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: 24px; padding: 20px; }
+.pdg__stage { position: relative; min-height: 0; display: flex; align-items: center; justify-content: center; }
+.pdg__stage img, .pdg__stage video { max-width: 100%; max-height: 100%; object-fit: contain; }
+.pdg__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 1px solid #c9c2b4; background: #fff; font-size: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+.pdg__nav--prev { left: 4px; } .pdg__nav--next { right: 4px; }
+.pdg__side { overflow-y: auto; }
+.pdg__title { font-size: 20px; line-height: 1.35; font-weight: 500; color: #172430; margin: 0 0 16px; }
+.pdg__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.pdg__t { aspect-ratio: 1; padding: 0; border: 2px solid #e5e1d8; border-radius: 8px; overflow: hidden; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #172430; }
+.pdg__t img { width: 100%; height: 100%; object-fit: cover; }
+.pdg__t.is-active { border-color: #172430; }
+@media (max-width: 800px) {
+  .pdg__body { grid-template-columns: 1fr; grid-template-rows: minmax(0,1fr) auto; gap: 12px; padding: 12px; }
+  .pdg__side { max-height: 34vh; }
+  .pdg__title { display: none; }
+  .pdg__grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+}
 .pd-dot { border: none; padding: 0; }
 .pd-dot:focus-visible { outline: 2px solid #bb976d; outline-offset: 3px; }
 
@@ -1726,10 +1755,11 @@ img.pd-slide-img:focus-visible {
                          The alt is empty because the button already carries the
                          label; leaving both makes screen readers say it twice. --}}
                     <div class="pd-thumbs" aria-label="Product image thumbnails">
-                        @foreach($galleryImages as $ti => $slide)
+                        @php $pdMore = max(0, $galleryImages->count() - 5); @endphp
+                        @foreach($galleryImages->take(5) as $ti => $slide)
                         <button type="button"
-                                class="pd-thumb {{ $slide['type'] === 'video' ? 'pd-thumb-video' : '' }} {{ $ti === 0 ? 'active' : '' }}"
-                                data-index="{{ $ti }}"
+                                class="pd-thumb {{ $slide['type'] === 'video' ? 'pd-thumb-video' : '' }} {{ $ti === 0 ? 'active' : '' }} {{ $pdMore && $ti === 4 ? 'pd-thumb-more' : '' }}"
+                                data-index="{{ $ti }}" @if($pdMore && $ti === 4) data-more="1" @endif
                                 @if($ti === 0) aria-current="true" @endif
                                 aria-label="{{ $slide['type'] === 'video' ? 'Show product video' : 'Show image ' . ($ti + 1) }}">
                             @if($slide['type'] === 'video')
@@ -1737,6 +1767,7 @@ img.pd-slide-img:focus-visible {
                             @else
                             <img src="{{ $slide['src'] }}" alt="" loading="lazy" decoding="async">
                             @endif
+                            @if($pdMore && $ti === 4)<span class="pd-thumb-more__badge" aria-hidden="true">+{{ $pdMore }}</span>@endif
                         </button>
                         @endforeach
                     </div>
@@ -2387,6 +2418,55 @@ img.pd-slide-img:focus-visible {
 </script>
 @endif
 
+@php $pdModalSlides = $galleryImages->values()->map(fn ($g) => ['src' => $g['src'], 'type' => $g['type']]); @endphp
+<div class="pdg" id="pdg" role="dialog" aria-modal="true" aria-label="Product images" hidden>
+    <div class="pdg__bar"><span class="pdg__tab">Images</span><button type="button" class="pdg__close" id="pdg-close" aria-label="Close">&times;</button></div>
+    <div class="pdg__body">
+        <div class="pdg__stage" id="pdg-stage">
+            <button type="button" class="pdg__nav pdg__nav--prev" id="pdg-prev" aria-label="Previous image">&#8249;</button>
+            <button type="button" class="pdg__nav pdg__nav--next" id="pdg-next" aria-label="Next image">&#8250;</button>
+        </div>
+        <div class="pdg__side">
+            <h2 class="pdg__title">{{ $item->name }}</h2>
+            <div class="pdg__grid" id="pdg-grid"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function () {
+    var slides = @json($pdModalSlides);
+    var m = document.getElementById('pdg'), stage = document.getElementById('pdg-stage'), grid = document.getElementById('pdg-grid');
+    var cur = 0, lastFocus = null;
+    function show(i) {
+        cur = (i + slides.length) % slides.length;
+        var old = stage.querySelector('.pdg__media'); if (old) old.remove();
+        var s = slides[cur], el;
+        if (s.type === 'video') { el = document.createElement('video'); el.controls = true; el.autoplay = true; }
+        else { el = document.createElement('img'); el.alt = ''; }
+        el.src = s.src; el.className = 'pdg__media'; stage.insertBefore(el, stage.firstChild);
+        grid.querySelectorAll('.pdg__t').forEach(function (t, k) { t.classList.toggle('is-active', k === cur); });
+    }
+    slides.forEach(function (s, i) {
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'pdg__t'; b.setAttribute('aria-label', 'Image ' + (i + 1));
+        b.innerHTML = s.type === 'video' ? '&#9654;' : '<img src="' + s.src + '" alt="" loading="lazy">';
+        b.addEventListener('click', function () { show(i); }); grid.appendChild(b);
+    });
+    function open(i) { lastFocus = document.activeElement; m.hidden = false; m.classList.add('is-open'); document.body.style.overflow = 'hidden'; show(i); document.getElementById('pdg-close').focus(); }
+    function close() { m.classList.remove('is-open'); m.hidden = true; document.body.style.overflow = ''; var v = stage.querySelector('video'); if (v) v.pause(); if (lastFocus) lastFocus.focus(); }
+    document.getElementById('pdg-close').addEventListener('click', close);
+    document.getElementById('pdg-prev').addEventListener('click', function () { show(cur - 1); });
+    document.getElementById('pdg-next').addEventListener('click', function () { show(cur + 1); });
+    document.addEventListener('keydown', function (e) {
+        if (!m.classList.contains('is-open')) return;
+        if (e.key === 'Escape') close(); else if (e.key === 'ArrowLeft') show(cur - 1); else if (e.key === 'ArrowRight') show(cur + 1);
+    });
+    var sx = 0; stage.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    stage.addEventListener('touchend', function (e) { var d = sx - e.changedTouches[0].clientX; if (Math.abs(d) > 40) show(cur + (d > 0 ? 1 : -1)); }, { passive: true });
+    var more = document.querySelector('.pd-thumb[data-more]');
+    if (more) more.addEventListener('click', function (e) { e.stopImmediatePropagation(); open(4); }, true);
+})();
+</script>
+
 <script>
 (function(){
     // ── Carousel ──
@@ -2758,23 +2838,50 @@ img.pd-slide-img:focus-visible {
     $pdDist   = collect([5,4,3,2,1])->mapWithKeys(fn ($n) => [$n => $pdRevs->where('rating', $n)->count()]);
 @endphp
 <style>
-.pdx-info{border-top:1px solid #e5e1d8;padding:2.5rem 0 3rem}
+.pdx-info{border-top:1px solid #c9c2b4;padding:2.5rem 0 3rem}
 .pdx-info__grid{display:grid;grid-template-columns:1fr;gap:2.5rem}
 @media(min-width:900px){.pdx-info__grid{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:4rem}}
-.pdx-acc{border-bottom:1px solid #e5e1d8}
+.pdx-acc{border-bottom:1px solid #c9c2b4}
 .pdx-acc>summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;list-style:none;padding:1.1rem 0;font-size:.95rem;font-weight:500;color:#172430}
 .pdx-acc>summary::-webkit-details-marker{display:none}
 .pdx-acc>summary::after{content:"+";font-size:1.1rem;font-weight:400}
-.pdx-acc[open]>summary::after{content:"2"}
+.pdx-acc[open]>summary::after{content:"−"}
 .pdx-acc__body{padding:0 0 1.4rem;font-size:.9rem;line-height:1.7;color:#555}
-.pdx-acc:first-child{border-top:1px solid #e5e1d8}
-.pdx-rate__title{font-size:.95rem;font-weight:500;color:#172430;padding:1.1rem 0;border-top:1px solid #e5e1d8}
+.pdx-acc:first-child{border-top:1px solid #c9c2b4}
+.pdx-rate__title{font-size:.95rem;font-weight:500;color:#172430;padding:1.1rem 0;border-top:1px solid #c9c2b4}
 .pdx-bar{display:flex;align-items:center;gap:.6rem;font-size:.75rem;color:#555;margin:.55rem 0}
 .pdx-bar__lbl{width:1.6rem}
-.pdx-bar__track{flex:1;height:6px;border-radius:99px;background:#e5e1d8;overflow:hidden}
+.pdx-bar__track{flex:1;height:6px;border-radius:99px;background:#c9c2b4;overflow:hidden}
 .pdx-bar__fill{display:block;height:100%;background:#172430;border-radius:99px}
 .dark .pdx-acc>summary,.dark .pdx-rate__title{color:#fff}.dark .pdx-acc__body,.dark .pdx-bar{color:rgba(255,255,255,.7)}
 .dark .pdx-info,.dark .pdx-acc,.dark .pdx-rate__title,.dark .pdx-acc:first-child{border-color:rgba(255,255,255,.12)}
+
+/* ── Reviews: premium cards ── */
+.pd-reviews{border-top:1px solid #c9c2b4;padding-top:2.5rem}
+.pd-rev-head{border-bottom:0;padding-bottom:0}
+.pd-rev-head__title{font-size:1.35rem;font-weight:600}
+.pd-rev-head__score{font-size:1.35rem}
+.pd-rev-head__sep{display:none}
+.pd-rev-bar{margin:1.25rem 0 1.5rem;padding-bottom:1rem;border-bottom:1px solid #c9c2b4}
+.pd-rev-tab{border-bottom:0;padding-bottom:0;font-size:.9rem}
+.pd-rev-filter__input{border-radius:10px;border-color:#c9c2b4}
+.pd-rev-grid{column-gap:1.25rem}
+.pd-rev-card{background:#fff;border:1px solid #ece7de;border-radius:16px;padding:1.4rem;margin-bottom:1.25rem;
+  box-shadow:0 1px 2px rgba(23,36,48,.04);transition:box-shadow .25s,transform .25s}
+.pd-rev-card:hover{box-shadow:0 10px 28px rgba(23,36,48,.1);transform:translateY(-2px)}
+.pd-rev-card__top{margin-bottom:.8rem}
+.pd-rev-card__stars{font-size:.85rem;color:#e8a317}
+.pd-rev-card__date{font-size:.72rem;color:#a39e94}
+.pd-rev-card__text{font-size:.9rem;line-height:1.65;color:#3a3a3a}
+.pd-rev-card__foot{margin-top:1.1rem;padding-top:1rem;border-top:1px solid #f0ebe2;gap:.6rem}
+.pd-rev-card__avatar{width:2rem;height:2rem;font-size:.8rem}
+.pd-rev-card__name{font-size:.82rem;font-weight:600;color:#172430}
+.pd-rev-more{color:#172430;border:1px solid #172430;padding:.65rem 1.6rem;font-weight:500}
+.pd-rev-more:hover{background:#172430;color:#fff}
+.dark .pd-reviews,.dark .pd-rev-bar,.dark .pd-rev-card__foot{border-color:rgba(255,255,255,.12)}
+.dark .pd-rev-card{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)}
+.dark .pd-rev-card__name{color:#fff}
+.dark .pd-rev-more{color:#fff;border-color:#fff}
 </style>
 <div class="pdx-info">
     <div class="container-fluid">
@@ -2905,7 +3012,7 @@ img.pd-slide-img:focus-visible {
                                  class="pd-rev-card__img" loading="lazy" decoding="async" width="160" height="160">
                         @endif
 
-                        <footer class="pd-rev-card__foot">
+                        <div class="pd-rev-card__foot">
                             <span class="pd-rev-card__avatar" style="background:{{ $review->avatar_color }}" aria-hidden="true">{{ $review->initial }}</span>
                             <span class="pd-rev-card__name">{{ $review->author_name }}</span>
                             @if ($review->country)
@@ -2914,7 +3021,7 @@ img.pd-slide-img:focus-visible {
                             @if ($review->is_verified)
                                 <i class="mdi mdi-check-circle pd-rev-card__tick" title="Verified purchase" aria-label="Verified purchase"></i>
                             @endif
-                        </footer>
+                        </div>
                     </article>
                     @endforeach
                 </div>

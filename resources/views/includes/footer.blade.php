@@ -70,36 +70,42 @@
                     <h3 class="font-bold text-white text-base mb-5 uppercase tracking-wider">Stay Updated</h3>
                     <p class="text-white-light text-sm mb-4 leading-relaxed">Subscribe for exclusive offers, new arrivals, and interior inspiration.</p>
 
-                    <form action="{{ route('newsletter.subscribe') }}" method="POST" class="mb-6">
+                    <form action="{{ route('newsletter.subscribe') }}" method="POST" class="ft-news">
                         @csrf
                         @if(session('newsletter_success'))
                             <p class="text-green-400 text-xs mb-2">{{ session('newsletter_success') }}</p>
                         @endif
-                        <div class="flex flex-col gap-2">
-                            <input type="email" name="email" required placeholder="Your email address"
-                                   class="w-full h-11 bg-white/5 border border-white/25 text-white placeholder:text-white/40 text-sm px-4 outline-none focus:border-primary duration-300">
-                            <button type="submit"
-                                    onclick="fbq('track', 'Lead');"
-                                    class="w-full h-11 bg-[#8a6a45] text-white text-sm font-semibold tracking-wider uppercase hover:bg-[#755a3a] duration-300">
-                                Subscribe
-                            </button>
+                        <div class="ft-news__row">
+                            <input type="email" name="email" required placeholder="Your email address" aria-label="Email address">
+                            <button type="submit" onclick="fbq('track', 'Lead');">Subscribe</button>
                         </div>
                     </form>
 
-                    <div class="space-y-2.5">
-                        <a href="mailto:info@peytonghalib.com" class="flex items-center gap-2.5 text-white-light hover:text-primary duration-200 text-sm">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                            info@peytonghalib.com
-                        </a>
-                        <a href="tel:+19294699864" class="flex items-center gap-2.5 text-white-light hover:text-primary duration-200 text-sm">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                            +1 (929) 469-9864
-                        </a>
-                        <span class="flex items-center gap-2.5 text-white-light text-sm">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                            200 Orient Ave STE 2B, Jersey City, NJ 07305
-                        </span>
-                    </div>
+                    <ul class="ft-contact">
+                        <li><a href="mailto:info@peytonghalib.com">
+                            <span class="ft-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
+                            <span>info@peytonghalib.com</span></a></li>
+                        <li><a href="tel:+19294699864">
+                            <span class="ft-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+                            <span>+1 (929) 469-9864</span></a></li>
+                        <li><span class="ft-addr">
+                            <span class="ft-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+                            <span>200 Orient Ave STE 2B, Jersey City, NJ 07305</span></span></li>
+                    </ul>
+<style>
+.ft-news { margin: 0 0 24px; }
+.ft-news__row { display: flex; align-items: stretch; height: 48px; border: 1px solid rgba(255,255,255,.22); border-radius: 999px; background: rgba(255,255,255,.06); overflow: hidden; transition: border-color .2s, box-shadow .2s; }
+.ft-news__row:focus-within { border-color: #bb976d; box-shadow: 0 0 0 3px rgba(187,151,109,.25); }
+.ft-news__row input { flex: 1; min-width: 0; height: 100%; padding: 0 18px; background: transparent !important; border: 0 !important; outline: 0; color: #fff; font-size: 14px; }
+.ft-news__row input::placeholder { color: rgba(255,255,255,.5); }
+.ft-news__row button { flex: none; padding: 0 22px; border: 0; background: #bb976d; color: #172430; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: background .2s; }
+.ft-news__row button:hover { background: #d1b08a; }
+.ft-contact { list-style: none; margin: 0; padding: 20px 0 0; border-top: 1px solid rgba(255,255,255,.12); display: flex; flex-direction: column; gap: 14px; }
+.ft-contact a, .ft-addr { display: flex; align-items: flex-start; gap: 12px; color: rgba(255,255,255,.78); font-size: 14px; line-height: 1.5; text-decoration: none; transition: color .2s; }
+.ft-contact a:hover { color: #bb976d; }
+.ft-ico { flex: none; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; background: rgba(187,151,109,.14); color: #bb976d; }
+.ft-contact li > a > span:last-child, .ft-addr > span:last-child { padding-top: 5px; }
+</style>
                 </div>
 
             </div>
