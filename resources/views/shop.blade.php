@@ -216,7 +216,6 @@
     </nav>
     <div class="pg-shophead__row">
         <h1>{{ $shopTitle }}</h1>
-        <span>{{ number_format($products->total()) }} {{ \Illuminate\Support\Str::plural('result', $products->total()) }}</span>
     </div>
 </div>
 <!-- Banner End -->
@@ -224,31 +223,6 @@
 <div class="pg-shopwrap">
     <div class="container-fluid">
         <div class="max-w-[1440px] mx-auto">
-
-            {{-- Departments (4a): shown on the unfiltered first page, built from the live categories --}}
-            @if (! $hasFilters && $products->currentPage() === 1 && $categories->isNotEmpty())
-            <section class="pg-depts" aria-labelledby="pg-depts-title">
-                <h2 id="pg-depts-title" class="sr-only">Shop by department</h2>
-                <div class="pg-depts__grid">
-                    @foreach ($categories as $dept)
-                        @php
-                            $deptImg = $dept->image
-                                ? (str_starts_with($dept->image, 'assets/') ? asset($dept->image) : Storage::url($dept->image))
-                                : null;
-                        @endphp
-                        <a class="pg-dept" href="{{ route('category.landing', $dept->slug) }}">
-                            <span class="pg-dept__img">
-                                @if ($deptImg)
-                                    <img src="{{ $deptImg }}" alt="" loading="lazy" decoding="async">
-                                @endif
-                                <b>{{ $dept->name }}</b>
-                            </span>
-                            <span class="pg-dept__count">{{ number_format($categoryCounts[$dept->slug] ?? 0) }} {{ \Illuminate\Support\Str::plural('item', $categoryCounts[$dept->slug] ?? 0) }}</span>
-                        </a>
-                    @endforeach
-                </div>
-            </section>
-            @endif
 
             {{-- Layout container only. The GET filter form is scoped to the sidebar below;
                  wrapping the product grid too would nest the add-to-cart POST forms inside a
