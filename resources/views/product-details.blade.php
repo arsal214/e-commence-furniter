@@ -1176,10 +1176,10 @@ img.pd-slide-img:focus-visible {
 .pdg__tab { font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #172430; padding-bottom: 12px; margin-bottom: -15px; border-bottom: 3px solid #172430; }
 .pdg__close { width: 40px; height: 40px; border: 0; border-radius: 50%; background: #f1ede6; color: #172430; font-size: 22px; cursor: pointer; }
 .pdg__close:hover { background: #172430; color: #fff; }
-.pdg__body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0,1fr) 340px; gap: 24px; padding: 20px; }
+.pdg__body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0,1fr) 360px; grid-template-rows: minmax(0,1fr); gap: 24px; padding: 20px; }
 .pdg__stage { position: relative; min-height: 0; display: flex; align-items: center; justify-content: center; }
-.pdg__stage img, .pdg__stage video { max-width: 100%; max-height: 100%; object-fit: contain; }
-.pdg__nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 1px solid #c9c2b4; background: #fff; font-size: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+.pdg__stage img, .pdg__stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.pdg__nav { z-index: 2; position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 1px solid #c9c2b4; background: #fff; font-size: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
 .pdg__nav--prev { left: 4px; } .pdg__nav--next { right: 4px; }
 .pdg__side { overflow-y: auto; }
 .pdg__title { font-size: 20px; line-height: 1.35; font-weight: 500; color: #172430; margin: 0 0 16px; }
