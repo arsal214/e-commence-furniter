@@ -33,6 +33,8 @@
         <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/fonts.css')">
         {{-- Unified type system — must stay last (see layouts/main.blade.php). --}}
         <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/typography.css')">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&family=DM+Serif+Display&display=swap">
+        <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/pg-redesign.css')">
         {{-- Icon font is decorative and not needed for first paint, so load it without
              blocking rendering (classic preload+swap async-CSS pattern). --}}
         <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css">

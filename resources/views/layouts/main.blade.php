@@ -84,6 +84,9 @@
              the template's Josefin Sans body font and the four competing
              stacks that had grown around it. See the header of that file. --}}
         <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/typography.css')">
+        <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&family=DM+Serif+Display&display=swap">
+        <link rel="stylesheet" type="text/css" href="@versionedAsset('assets/css/pg-redesign.css')">
 
         {{-- Analytics is async and never blocks the parser, but it still competes
              for bandwidth with the CSS above — so it is requested after it. --}}

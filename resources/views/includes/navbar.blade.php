@@ -579,9 +579,21 @@
     <div class="pg-hdr-inner">
 
         {{-- Logo --}}
-        <a href="{{ url('/') }}" class="pg-hdr-logo" aria-label="PeytonGhalib">
-            <img src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" width="180" height="42">
-        </a>
+        <a href="{{ url('/') }}" class="pg-hdr-logo" aria-label="PeytonGhalib"><img src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" width="180" height="42"></a>
+
+        {{-- Category picker + search (2b). Submits to /shop like the modal does. --}}
+        <form action="{{ url('/shop') }}" method="GET" class="pg-hdr-search" role="search">
+            <select name="category" aria-label="Search category" class="pg-hdr-cat pg-native-select">
+                <option value="">All categories</option>
+                @foreach($navCategories as $nCat)
+                    <option value="{{ $nCat->slug }}" @selected(request('category') === $nCat->slug)>{{ $nCat->name }}</option>
+                @endforeach
+            </select>
+            <div class="pg-hdr-field">
+                <input type="search" name="search" value="{{ request('search') }}" placeholder="Search products, brands, sellers" aria-label="Search products" autocomplete="off">
+                <button type="submit">Go</button>
+            </div>
+        </form>
 
         {{-- Navigation --}}
         <nav aria-label="Main navigation">
@@ -600,27 +612,6 @@
 
                 <li><a href="{{ url('/about') }}">About Us</a></li>
                 <li><a href="{{ url('/contact') }}">Contact</a></li>
-                <li style="margin-left:8px;">
-                    <a href="{{ route('track-order') }}"
-                       style="display:inline-flex;align-items:center;gap:7px;
-                              height:36px;padding:0 16px;
-                              background:#bb976d;border:1.5px solid #bb976d;
-                              font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-                              color:#fff;text-decoration:none;white-space:nowrap;
-                              transition:background .2s,border-color .2s;line-height:1;"
-                       onmouseover="this.style.background='#a8845a';this.style.borderColor='#a8845a'"
-                       onmouseout="this.style.background='#bb976d';this.style.borderColor='#bb976d'">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
-                            <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/>
-                            <polyline points="16.5 9.4 7.55 4.24"/>
-                            <polyline points="3.29 7 12 12 20.71 7"/>
-                            <line x1="12" y1="22" x2="12" y2="12"/>
-                            <circle cx="18.5" cy="15.5" r="2.5"/>
-                            <path d="M20.27 17.27 22 19"/>
-                        </svg>
-                        Track Order
-                    </a>
-                </li>
 
             </ul>
         </nav>
@@ -638,10 +629,8 @@
             {{-- Account --}}
             @auth
             <div class="pg-acct-wrap">
-                <button class="pg-act-btn" aria-label="My Account">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                    </svg>
+                <button class="pg-act-btn pg-act-txt" aria-label="My Account">
+                    <span>{{ \Illuminate\Support\Str::before(Auth::user()->name, ' ') }}</span>
                 </button>
                 <div class="pg-acct-dd">
                     <div class="pg-acct-dd-top">
@@ -659,15 +648,15 @@
                 </div>
             </div>
             @else
-            <a href="{{ url('/login') }}" class="pg-act-btn" aria-label="Login">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                </svg>
+            <a href="{{ url('/login') }}" class="pg-act-btn pg-act-txt" aria-label="Login">
+                <span>Sign in</span>
             </a>
             @endauth
 
+
+
             {{-- Wishlist --}}
-            <a href="{{ url('/wishlist') }}" class="pg-act-btn" aria-label="Wishlist">
+            <a href="{{ url('/wishlist') }}" class="pg-act-btn pg-act-txt" aria-label="Wishlist"><span>Saved</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
@@ -680,12 +669,26 @@
                     <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
                 </svg>
                 <span class="pg-badge js-cart-count" id="pg-cart-badge">{{ $cart->count() }}</span>
+                <span class="pg-cart-label">Cart</span>
             </button>
 
 
         </div>
     </div>
 </header>
+
+{{-- Category strip (2b) --}}
+<div id="pg-catstrip" aria-label="Categories">
+    <div class="pg-catstrip-inner">
+        <a href="{{ url('/shop') }}">All products</a>
+        @foreach($navCategories->take(10) as $nCat)
+            <a href="{{ route('category.landing', $nCat->slug) }}">{{ $nCat->name }}</a>
+        @endforeach
+        <a href="{{ url('/about') }}" class="pg-strip-end">About</a>
+        <a href="{{ url('/contact') }}">Contact</a>
+        <a href="{{ route('track-order') }}" class="pg-strip-track">Track order</a>
+    </div>
+</div>
 
 <!-- ════════ MEGA: Shop ════════ -->
 <div id="pg-mega-shop" class="pg-mega" role="region" aria-label="Shop categories">

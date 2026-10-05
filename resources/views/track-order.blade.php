@@ -4,17 +4,19 @@
 
 @section('content')
 
-{{-- Page Header --}}
-<div class="bg-[#1a1a1a] py-12 text-center">
-    <h1 class="text-3xl font-bold text-white mb-2">Track Your Order</h1>
-    <p class="text-gray-400 text-sm">Enter your tracking number to see the latest status of your order.</p>
+@include('includes.navbar')
+
+<div class="pg-track">
+<div class="pg-track__head">
+    <h1>Track your order</h1>
+    <p>Enter your tracking number to see the latest status of your order.</p>
 </div>
 
-<div class="max-w-2xl mx-auto px-4 py-16">
+<div class="pg-track__body">
 
     {{-- Search Form --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
-        <h2 class="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
+    <div class="pg-track__card p-8 mb-8">
+        <h2 class="text-lg font-semibold mb-6 flex items-center gap-2">
             <svg class="w-5 h-5 text-[#bb976d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
@@ -26,10 +28,10 @@
                 <input type="text" name="tracking" value="{{ old('tracking', request('tracking')) }}"
                        placeholder="e.g. FRN-2026-XXXXXXXX"
                        required
-                       class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#bb976d] transition-colors uppercase tracking-widest">
+                       class="pg-track__input w-full uppercase tracking-widest">
             </div>
             <button type="submit"
-                    class="w-full py-3 bg-[#bb976d] text-white font-semibold rounded-lg hover:bg-[#a8845a] transition-colors text-sm">
+                    class="pg-track__btn w-full">
                 Track Order
             </button>
         </form>
@@ -39,8 +41,8 @@
     @if(isset($order))
 
     {{-- Tracking Number + Status Badge --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="bg-gradient-to-r from-[#bb976d] to-[#a8845a] px-8 py-6 text-white">
+    <div class="pg-track__card overflow-hidden">
+        <div class="pg-track__banner px-8 py-6">
             <div class="flex items-center justify-between flex-wrap gap-3">
                 <div>
                     <p class="text-sm opacity-80 mb-1">Tracking Number</p>
@@ -179,5 +181,8 @@
     </div>
 
 </div>
+</div>
+
+@include('includes.footer')
 
 @endsection

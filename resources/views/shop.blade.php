@@ -184,7 +184,7 @@
         return url('/shop') . ($params ? '?' . http_build_query($params) : '');
     };
 
-    $hasFilters = $filters['categories'] || $filters['price'] || $filters['search'] !== '';
+    $hasFilters = $filters['categories'] || $filters['price'] || $filters['size'] || $filters['color'] || $filters['search'] !== '';
 
     // One removable chip per active filter value.
     $chips = [];
@@ -195,27 +195,60 @@
         $name = optional($categories->firstWhere('slug', $slug))->name ?? $slug;
         $chips[] = ['label' => $name, 'url' => $shopUrl(['category' => array_values(array_diff($filters['categories'], [$slug]))])];
     }
+    foreach ($filters['size'] as $v) {
+        $chips[] = ['label' => 'Size ' . $v, 'url' => $shopUrl(['size' => array_values(array_diff($filters['size'], [$v]))])];
+    }
+    foreach ($filters['color'] as $v) {
+        $chips[] = ['label' => $v, 'url' => $shopUrl(['color' => array_values(array_diff($filters['color'], [$v]))])];
+    }
     foreach ($filters['price'] as $key) {
         $chips[] = ['label' => $priceBuckets[$key]['label'], 'url' => $shopUrl(['price' => array_values(array_diff($filters['price'], [$key]))])];
     }
 @endphp
 
-<!-- Banner Start -->
-<div class="flex items-center gap-4 flex-wrap bg-overlay p-14 sm:p-16 before:bg-title before:bg-opacity-70" style="background-image:url('{{ asset('assets/img/shortcode/breadcumb.jpg') }}');">
-    <div class="text-center w-full">
-        <h1 class="text-white text-8 md:text-[40px] font-normal leading-none text-center">Shop</h1>
-        <ul class="flex items-center justify-center gap-[10px] text-base md:text-lg leading-none font-normal text-white mt-3 md:mt-4">
-            <li><a href="{{ url('/') }}" class="hover:text-primary duration-200">Home</a></li>
-            <li aria-hidden="true">/</li>
-            <li class="text-primary">Shop</li>
-        </ul>
+{{-- Compact header (4c): breadcrumb, serif title, result count --}}
+@php
+    $shopTitle = $shopCategoryObj->name ?? ($filters['search'] !== '' ? 'Search results' : 'Shop all');
+@endphp
+<div class="pg-shophead">
+    <nav class="pg-shophead__crumbs" aria-label="Breadcrumb">
+        <a href="{{ url('/') }}">Home</a> / @if ($soleCategory) <a href="{{ url('/shop') }}">Shop</a> / {{ $shopTitle }} @else Shop @endif
+    </nav>
+    <div class="pg-shophead__row">
+        <h1>{{ $shopTitle }}</h1>
+        <span>{{ number_format($products->total()) }} {{ \Illuminate\Support\Str::plural('result', $products->total()) }}</span>
     </div>
 </div>
 <!-- Banner End -->
 
-<div class="s-py-100">
+<div class="pg-shopwrap">
     <div class="container-fluid">
-        <div class="max-w-[1720px] mx-auto">
+        <div class="max-w-[1440px] mx-auto">
+
+            {{-- Departments (4a): shown on the unfiltered first page, built from the live categories --}}
+            @if (! $hasFilters && $products->currentPage() === 1 && $categories->isNotEmpty())
+            <section class="pg-depts" aria-labelledby="pg-depts-title">
+                <h2 id="pg-depts-title" class="sr-only">Shop by department</h2>
+                <div class="pg-depts__grid">
+                    @foreach ($categories as $dept)
+                        @php
+                            $deptImg = $dept->image
+                                ? (str_starts_with($dept->image, 'assets/') ? asset($dept->image) : Storage::url($dept->image))
+                                : null;
+                        @endphp
+                        <a class="pg-dept" href="{{ route('category.landing', $dept->slug) }}">
+                            <span class="pg-dept__img">
+                                @if ($deptImg)
+                                    <img src="{{ $deptImg }}" alt="" loading="lazy" decoding="async">
+                                @endif
+                                <b>{{ $dept->name }}</b>
+                            </span>
+                            <span class="pg-dept__count">{{ number_format($categoryCounts[$dept->slug] ?? 0) }} {{ \Illuminate\Support\Str::plural('item', $categoryCounts[$dept->slug] ?? 0) }}</span>
+                        </a>
+                    @endforeach
+                </div>
+            </section>
+            @endif
 
             {{-- Layout container only. The GET filter form is scoped to the sidebar below;
                  wrapping the product grid too would nest the add-to-cart POST forms inside a
@@ -274,6 +307,45 @@
                                 @endforeach
                             </div>
                         </details>
+
+                        {{-- Size: only when some product carries sizes --}}
+                        @if ($sizeOptions->isNotEmpty())
+                        <details class="pg-facet" open>
+                            <summary>
+                                Size
+                                <svg class="pg-facet__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                            </summary>
+                            <div class="pg-facet__body pg-sizes">
+                                @foreach ($sizeOptions as $size)
+                                    @php $n = $sizeCounts[$size] ?? 0; @endphp
+                                    <label class="pg-size {{ $n === 0 ? 'pg-size--off' : '' }}">
+                                        <input type="checkbox" name="size[]" value="{{ $size }}" @checked(in_array($size, $filters['size'], true))>
+                                        <span>{{ $size }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </details>
+                        @endif
+
+                        {{-- Colour: swatches, same rule --}}
+                        @if ($colorOptions->isNotEmpty())
+                        <details class="pg-facet" open>
+                            <summary>
+                                Color
+                                <svg class="pg-facet__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                            </summary>
+                            <div class="pg-facet__body pg-colors">
+                                @foreach ($colorOptions as $color)
+                                    @php $n = $colorCounts[$color] ?? 0; @endphp
+                                    <label class="pg-color {{ $n === 0 ? 'pg-color--off' : '' }}" title="{{ $color }}">
+                                        <input type="checkbox" name="color[]" value="{{ $color }}" @checked(in_array($color, $filters['color'], true))>
+                                        <span class="pg-color__dot" style="background: {{ \App\Models\Product::colorHex($color) }}"></span>
+                                        <span class="sr-only">{{ $color }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </details>
+                        @endif
 
                         {{-- Price buckets --}}
                         <details class="pg-facet" open>

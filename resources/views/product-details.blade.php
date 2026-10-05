@@ -970,7 +970,7 @@
 <!-- Header End -->
 
 <!-- Banner Start -->
-<div class="bg-[#F8F5F0] dark:bg-dark-secondary py-5 md:py-[30px]">
+<div class="pg-pdp-crumbs bg-[#F8F5F0] dark:bg-dark-secondary py-5 md:py-[30px]">
     <div class="container-fluid">
         <ul class="flex items-center gap-[10px] text-base md:text-lg leading-none font-normal text-title dark:text-white max-w-[1720px] mx-auto flex-wrap">
             <li><a href="{{ url('/') }}">Home</a></li>

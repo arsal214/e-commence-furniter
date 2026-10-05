@@ -309,6 +309,12 @@ class HomeController extends Controller
             ->when($except !== 'categories' && $f['categories'], fn($q) => $q->whereHas(
                 'category', fn($c) => $c->whereIn('slug', $f['categories'])
             ))
+            ->when($except !== 'size' && ! empty($f['size']), fn($q) => $q->where(function ($w) use ($f) {
+                foreach ($f['size'] as $v) $w->orWhereJsonContains('sizes', $v);    // sizes OR together
+            }))
+            ->when($except !== 'color' && ! empty($f['color']), fn($q) => $q->where(function ($w) use ($f) {
+                foreach ($f['color'] as $v) $w->orWhereJsonContains('colors', $v);
+            }))
             ->when($except !== 'price' && $f['price'], fn($q) => $q->where(function ($w) use ($f, $eff) {
                 foreach ($f['price'] as $key) {
                     $b = self::SHOP_PRICE_BUCKETS[$key] ?? null;
@@ -328,7 +334,16 @@ class HomeController extends Controller
 
         // Every facet is multi-select, so each arrives as an array. Values are
         // intersected against what actually exists — never trusted straight from the URL.
+        // Size / colour only exist on some products, so the options come from the data:
+        // whatever the active catalogue actually carries. No options → no facet.
+        $optionPool = fn(string $col) => Product::where('is_active', true)->whereNotNull($col)->pluck($col)
+            ->flatten()->filter()->map(fn($v) => trim((string) $v))->filter()->unique()->values();
+        $sizeOptions  = $optionPool('sizes')->sort(SORT_NATURAL | SORT_FLAG_CASE)->values();
+        $colorOptions = $optionPool('colors')->sort(SORT_NATURAL | SORT_FLAG_CASE)->values();
+
         $f = [
+            'size'       => array_values(array_intersect((array) $request->get('size', []), $sizeOptions->all())),
+            'color'      => array_values(array_intersect((array) $request->get('color', []), $colorOptions->all())),
             'search'     => trim((string) $request->get('search', '')),
             'categories' => array_values(array_intersect((array) $request->get('category', []), $validSlugs)),
             'price'      => array_values(array_intersect((array) $request->get('price', []), array_keys(self::SHOP_PRICE_BUCKETS))),
@@ -357,6 +372,18 @@ class HomeController extends Controller
                 ->whereHas('category', fn($c) => $c->where('slug', $cat->slug))->count();
         }
 
+        $countOptions = function (string $col, string $facet) use ($f) {
+            $counts = [];
+            foreach ($this->shopQuery($f, $facet)->pluck($col) as $list) {
+                foreach (array_unique(array_map(fn($v) => trim((string) $v), (array) $list)) as $v) {
+                    if ($v !== '') $counts[$v] = ($counts[$v] ?? 0) + 1;
+                }
+            }
+            return $counts;
+        };
+        $sizeCounts  = $sizeOptions->isNotEmpty()  ? $countOptions('sizes', 'size')   : [];
+        $colorCounts = $colorOptions->isNotEmpty() ? $countOptions('colors', 'color') : [];
+
         $priceCounts = [];
         foreach (self::SHOP_PRICE_BUCKETS as $key => $b) {
             $priceCounts[$key] = (clone $this->shopQuery($f, 'price'))
@@ -375,6 +402,10 @@ class HomeController extends Controller
             'priceBuckets'   => self::SHOP_PRICE_BUCKETS,
             'categoryCounts' => $categoryCounts,
             'priceCounts'    => $priceCounts,
+            'sizeOptions'    => $sizeOptions,
+            'colorOptions'   => $colorOptions,
+            'sizeCounts'     => $sizeCounts,
+            'colorCounts'    => $colorCounts,
         ]);
     }
 
