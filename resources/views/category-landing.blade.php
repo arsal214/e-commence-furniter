@@ -129,6 +129,9 @@
 .cl-card:hover .cl-card-img img { transform: scale(1.06); }
 
 
+/* Quick-action overlay covers the whole image: let taps fall through to the product link, only the buttons catch them. */
+.cl-actions { pointer-events: none; }
+.cl-card:hover .cl-actions > *, .cl-actions:focus-within > * { pointer-events: auto; }
 /* Category hero */
 .clx-hero { text-align: center; padding: 36px 16px 32px; border-top: 1px solid #c9c2b4; background: radial-gradient(700px 220px at 50% 0, rgba(187,151,109,.18), transparent 70%), #f4f1ea; }
 .clx-crumbs { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; padding: 0; list-style: none; font-size: 12px; color: #6b6560; }
@@ -270,7 +273,7 @@
             @endif
 
             {{-- Quick actions overlay --}}
-            <div class="absolute inset-0 flex flex-col items-end justify-center gap-2 pr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+            <div class="cl-actions absolute inset-0 flex flex-col items-end justify-center gap-2 pr-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                 {{-- Wishlist --}}
                 <button type="button"
                         class="wishlist-toggle-btn w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200"
