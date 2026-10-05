@@ -128,6 +128,17 @@
 .cl-card-img img { width:100%; height:100%; object-fit:cover; transition: transform .4s; }
 .cl-card:hover .cl-card-img img { transform: scale(1.06); }
 
+
+/* Category hero */
+.clx-hero { text-align: center; padding: 36px 16px 32px; border-top: 1px solid #c9c2b4; background: radial-gradient(700px 220px at 50% 0, rgba(187,151,109,.18), transparent 70%), #f4f1ea; }
+.clx-crumbs { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; padding: 0; list-style: none; font-size: 12px; color: #6b6560; }
+.clx-crumbs a { color: #6b6560; text-decoration: none; } .clx-crumbs a:hover { color: #8a6a44; }
+.clx-crumbs__cur { color: #172430; font-weight: 600; }
+.clx-eyebrow { display: inline-block; margin-bottom: 10px; font-size: 11px; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: #8a6a44; }
+.clx-title { margin: 0; font: 400 clamp(2.4rem, 6vw, 4rem)/1.05 var(--pg-serif, serif); color: #172430; }
+.clx-rule { display: block; width: 56px; height: 3px; margin: 18px auto 0; border-radius: 3px; background: #bb976d; }
+.clx-desc { max-width: 640px; margin: 16px auto 0; font-size: 16px; line-height: 1.6; color: #4a4640; }
+@media (max-width: 640px) { .clx-hero { padding: 26px 16px 24px; } .clx-desc { font-size: 14px; } }
 /* Also browse: premium image cards */
 .cl-cat-card {
     position: relative; display: block; overflow: hidden; border-radius: 18px;
@@ -164,15 +175,19 @@
 {{-- ══════════════════════════════════════
      1. SPLIT-PANEL HERO
 ══════════════════════════════════════ --}}
-<div class="text-center px-4 py-5 md:py-7 border-t border-[#e5e1d8] bg-[#faf9f6] dark:bg-[#172430]">
-    <ul class="flex items-center justify-center gap-2 text-xs text-gray-500 dark:text-white/60 mb-2">
-        <li><a href="{{ url('/') }}" class="hover:text-[#bb976d]">Home</a></li>
-        <li>/</li>
-        <li><a href="{{ url('/categories') }}" class="hover:text-[#bb976d]">Categories</a></li>
+<div class="clx-hero">
+    <ul class="clx-crumbs">
+        <li><a href="{{ url('/') }}">Home</a></li>
+        <li aria-hidden="true">/</li>
+        <li><a href="{{ url('/categories') }}">Categories</a></li>
+        <li aria-hidden="true">/</li>
+        <li class="clx-crumbs__cur">{{ $category->name }}</li>
     </ul>
-    <h1 class="text-3xl md:text-5xl font-semibold text-[#172430] dark:text-white leading-tight">{{ $category->name }}</h1>
+    <span class="clx-eyebrow">Collection</span>
+    <h1 class="clx-title">{{ $category->name }}</h1>
+    <span class="clx-rule" aria-hidden="true"></span>
     @if($category->description)
-    <p class="mt-2 mx-auto max-w-2xl text-sm md:text-base text-gray-600 dark:text-white/70">{{ Str::limit($category->description, 180) }}</p>
+    <p class="clx-desc">{{ Str::limit($category->description, 180) }}</p>
     @endif
 </div>
 
@@ -319,52 +334,6 @@
     <a href="{{ url('/shop') }}" class="text-[#bb976d] font-semibold hover:underline">Browse all products →</a>
 </div>
 @endif
-
-{{-- ══════════════════════════════════════
-     5. FAQ
-══════════════════════════════════════ --}}
-<div class="max-w-3xl mx-auto mb-14 cl-faq" data-aos="fade-up">
-    <div class="flex items-center gap-3 mb-8">
-        <div class="w-1 h-8 rounded-full" style="background:#bb976d;"></div>
-        <h2 class="text-2xl md:text-3xl font-bold text-[#172430] dark:text-white">
-            Questions about {{ $category->name }}
-        </h2>
-    </div>
-    @php
-    $faqs = [
-        ['q'=>'What materials are used in your '.$category->name.'?',
-         'a'=>'All PeytonGhalib '.$category->name.' products are made from premium, sustainably sourced materials. Each product page lists exact material details, finishes, and care instructions.'],
-        // Day counts read from config('checkout.delivery') via DeliveryEstimate,
-        // the same source the shipping policy and the product-page estimate use.
-        // The old copy offered "white-glove delivery with in-room placement" for
-        // "large furniture items" — a service the checkout has no way to select
-        // and the shipping policy no longer claims.
-        ['q'=>'How long does delivery take for '.$category->name.'?',
-         'a'=>'Standard delivery takes '.\App\Support\DeliveryEstimate::minDays().'–'.\App\Support\DeliveryEstimate::maxDays().' business days. Free delivery on all orders, with no minimum spend. Larger items ship with extra protective packaging and may be delivered on a scheduled window rather than a standard parcel round — we will email you to arrange a convenient time if your order qualifies.'],
-        ['q'=>'Can I return a '.$category->name.' item if it doesn\'t fit?',
-         'a'=>'Yes — 30-day hassle-free returns on all items in original, unused condition. Contact our support team and we\'ll arrange collection or a pre-paid return label.'],
-        ['q'=>'Are '.$category->name.' dimensions accurate on the product page?',
-         'a'=>'All dimensions (H × W × D in cm/inches) are measured to industry standards. We recommend measuring your space before ordering. Lifestyle photos show realistic scale.'],
-    ];
-    @endphp
-    <div class="space-y-3">
-        @foreach($faqs as $faq)
-        <details class="group border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden">
-            <summary class="flex items-center justify-between gap-4 px-6 py-4 cursor-pointer list-none
-                            bg-white dark:bg-[#1e2d39] hover:bg-[#fdf6ee] dark:hover:bg-white/5 transition-colors duration-200">
-                <span class="font-semibold text-sm md:text-base text-[#172430] dark:text-white">{{ $faq['q'] }}</span>
-                <svg class="faq-icon flex-none w-5 h-5 text-gray-400 transition-transform duration-300"
-                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 5v14M5 12h14" stroke-linecap="round"/>
-                </svg>
-            </summary>
-            <div class="px-6 py-4 bg-[#fafaf8] dark:bg-white/5 border-t border-gray-100 dark:border-white/10">
-                <p class="text-sm text-gray-500 dark:text-white/70 leading-relaxed">{{ $faq['a'] }}</p>
-            </div>
-        </details>
-        @endforeach
-    </div>
-</div>
 
 {{-- ══════════════════════════════════════
      6. RELATED CATEGORIES — IMAGE CARDS

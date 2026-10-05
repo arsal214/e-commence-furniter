@@ -591,9 +591,9 @@
                     <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
                 <ul class="pg-dd__list" role="listbox" hidden>
-                    <li role="option" data-value="" class="{{ $curCat ? '' : 'is-sel' }}">All categories</li>
+                    <li role="option" data-value="" data-url="{{ url('/shop') }}" class="{{ $curCat ? '' : 'is-sel' }}">All categories</li>
                     @foreach($navCategories as $nCat)
-                    <li role="option" data-value="{{ $nCat->slug }}" class="{{ $curCat?->id === $nCat->id ? 'is-sel' : '' }}">{{ $nCat->name }}</li>
+                    <li role="option" data-value="{{ $nCat->slug }}" data-url="{{ route('category.landing', $nCat->slug) }}" class="{{ $curCat?->id === $nCat->id ? 'is-sel' : '' }}">{{ $nCat->name }}</li>
                     @endforeach
                 </ul>
             </div>
@@ -607,6 +607,7 @@
                     var li = e.target.closest('li'); if (!li) return;
                     inp.value = li.dataset.value; dd.querySelector('.pg-dd__label').textContent = li.textContent;
                     list.querySelectorAll('.is-sel').forEach(function (x) { x.classList.remove('is-sel'); }); li.classList.add('is-sel'); set(false);
+                    if (li.dataset.url) window.location.href = li.dataset.url;
                 });
                 document.addEventListener('click', function (e) { if (!dd.contains(e.target)) set(false); });
                 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') set(false); });
