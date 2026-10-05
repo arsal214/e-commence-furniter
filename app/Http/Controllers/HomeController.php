@@ -37,6 +37,7 @@ class HomeController extends Controller
                               ->latest()
                               ->take(8)
                               ->get();
+        $newThisWeek = Product::where('is_active', true)->where('created_at', '>=', now()->subDays(7))->count();
         $bestSellers = Product::where('is_active', true)
                               ->where('is_best_seller', true)
                               ->where('stock', '>', 0)
@@ -65,7 +66,7 @@ class HomeController extends Controller
         });
 
         return view('index', compact(
-            'heroTiles', 'sliders', 'newProducts', 'bestSellers',
+            'heroTiles', 'newThisWeek', 'sliders', 'newProducts', 'bestSellers',
             'categories', 'flashDeal', 'customerReviews', 'reviewsVerified',
         ));
     }

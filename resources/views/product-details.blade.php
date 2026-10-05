@@ -1102,7 +1102,7 @@
     position: absolute;
     inset: 0;
     width: 100%;
-    height: 100%;
+    height: 80%;
     object-fit: contain;
     display: block;
 }
@@ -1894,6 +1894,7 @@ img.pd-slide-img:focus-visible {
                     </div>
                     @endif
 
+                    <div class="pdx-optrow">
                     {{-- Colors --}}
                     @if(!empty($item->colors) && count($item->colors))
                     <div class="pdx-block">
@@ -1921,27 +1922,29 @@ img.pd-slide-img:focus-visible {
                     </div>
                     @endif
 
-                    {{-- Form: Qty + Add to Cart --}}
-                    <form action="{{ route('cart.add') }}" method="POST" id="pd-cart-form">
-                        @csrf
-                        <input type="hidden" name="product_id" value="{{ $item->id }}">
-                        @if(!empty($item->sizes))<input type="hidden" name="size"  id="selected-size"  value="{{ $item->sizes[0] ?? '' }}">@endif
-                        @if(!empty($item->colors))<input type="hidden" name="color" id="selected-color" value="{{ $item->colors[0] ?? '' }}">@endif
-
                         {{-- Qty --}}
-                        <div class="pdx-block flex items-center gap-5">
+                        <div class="pdx-qtyblock">
                             <p class="pdx-label">Qty</p>
                             <div class="pd-qty-wrap">
                                 <button type="button" id="pd-dec" class="pd-qty-btn" aria-label="Decrease quantity">
                                     <svg width="14" height="2" viewBox="0 0 12 2" fill="none" aria-hidden="true"><path d="M1 1H11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                                 </button>
-                                <input id="pd-qty" name="qty" type="number" value="1" min="1" aria-label="Quantity"
+                                <input id="pd-qty" name="qty" form="pd-cart-form" type="number" value="1" min="1" aria-label="Quantity"
                                        style="text-align:center;background:transparent;border:none;outline:none;color:#101820;">
                                 <button type="button" id="pd-inc" class="pd-qty-btn" aria-label="Increase quantity">
                                     <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M6 1V11M1 6H11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                                 </button>
                             </div>
                         </div>
+
+                    </div>
+
+                    {{-- Form: Qty + Add to Cart --}}
+                    <form action="{{ route('cart.add') }}" method="POST" id="pd-cart-form">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $item->id }}">
+                        @if(!empty($item->sizes))<input type="hidden" name="size"  id="selected-size"  value="{{ $item->sizes[0] ?? '' }}">@endif
+                        @if(!empty($item->colors))<input type="hidden" name="color" id="selected-color" value="{{ $item->colors[0] ?? '' }}">@endif
 
                         {{-- Mobile keeps the stack: Add to Cart, Buy It Now, wishlist.
                              Desktop re-lays the same three buttons as a grid — cart and
@@ -1959,7 +1962,7 @@ img.pd-slide-img:focus-visible {
                                 <svg class="pdx-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
                                     <path d="M21 12a9 9 0 1 1-6.2-8.6" opacity=".9"/>
                                 </svg>
-                                <span id="pd-add-btn-label">Add to Cart</span>
+                                <span id="pd-add-btn-label">Add to cart &mdash; ${{ number_format($baseNow, 2) }}</span>
                             </button>
 
                             {{-- Buy Now: adds this exact selection to the cart, then goes
@@ -1974,7 +1977,7 @@ img.pd-slide-img:focus-visible {
                                 <svg class="pdx-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
                                     <path d="M21 12a9 9 0 1 1-6.2-8.6" opacity=".9"/>
                                 </svg>
-                                <span id="pdx-buy-now-label">Buy It Now</span>
+                                <span id="pdx-buy-now-label">Buy it now</span>
                             </button>
 
                             <button type="button"
@@ -3396,9 +3399,22 @@ document.addEventListener('keydown', function(e) {
             btn.disabled = !inStock;
             btn.style.opacity = inStock ? '' : '.5';
             btn.style.cursor  = inStock ? '' : 'not-allowed';
-            if (lbl) lbl.textContent = inStock ? 'Add to Cart' : 'Out of Stock';
+            if (lbl) lbl.textContent = inStock ? 'Add to cart' + (pair[0] === 'pd-add-btn' ? pdPriceSuffix() : '') : 'Out of Stock';
         });
     }
+
+    function pdPriceSuffix() {
+        var p = document.getElementById('pd-price-now');
+        return p ? ' \u2014 ' + p.textContent.trim() : '';
+    }
+    (function () {
+        var p = document.getElementById('pd-price-now');
+        if (!p || !window.MutationObserver) return;
+        new MutationObserver(function () {
+            var l = document.getElementById('pd-add-btn-label'), b = document.getElementById('pd-add-btn');
+            if (l && b && !b.disabled) l.textContent = 'Add to cart' + pdPriceSuffix();
+        }).observe(p, { childList: true, characterData: true, subtree: true });
+    })();
 
     document.querySelectorAll('.color-radio, .size-radio').forEach(function (r) {
         r.addEventListener('change', apply);

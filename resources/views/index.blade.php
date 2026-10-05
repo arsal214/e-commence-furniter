@@ -622,84 +622,44 @@ $schemaWebsite = [
 @endpush
 
 <!-- New Arrivals Area Start -->
-<section class="s-py-50">
-    <div class="container-fluid">
-        <div class="flex items-end justify-between gap-4 mb-6 md:mb-8 max-w-[1720px] mx-auto" data-aos="fade-up">
+@php $naCats = $newProducts->pluck('category.name')->filter()->unique()->values(); @endphp
+<section class="na-section">
+    <div class="na-wrap">
+        <div class="na-head">
             <div>
-                <span class="text-xs uppercase tracking-widest text-primary font-semibold">Just landed</span>
-                <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">New Arrivals</h2>
-                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">Fresh products added every week — discover the latest in home decor, lifestyle accessories, and everyday essentials before they sell out.</p>
+                <p class="na-eyebrow">Just landed @if(!empty($newThisWeek)) &middot; {{ $newThisWeek }} this week @endif</p>
+                <h2 class="na-title">New arrivals</h2>
+                <p class="na-sub">Fresh finds every week, from seasonal d&eacute;cor to everyday essentials.</p>
             </div>
-            <a href="{{ url('/shop') }}"
-               class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-title dark:text-white
-                      border border-current px-5 py-2.5 rounded-full hover:text-primary hover:border-primary
-                      duration-300 whitespace-nowrap">
-                View All
-                <svg width="14" height="10" viewBox="0 0 24 14" fill="none"><path d="M23.8198 6.61958L18.3757 1.17541C18.1801 0.947054 17.8364 0.920433 17.608 1.11604C17.3797 1.31161 17.3531 1.65529 17.5487 1.88366C17.5669 1.90494 17.5868 1.92483 17.608 1.94303L22.1212 6.46168L0.567835 6.46168C0.267191 6.46168 0.0234375 6.70543 0.0234375 7.00612C0.0234375 7.30681 0.267191 7.55052 0.567835 7.55052L22.1212 7.55052L17.608 12.0637C17.3797 12.2593 17.3531 12.6029 17.5487 12.8313C17.7443 13.0597 18.0879 13.0863 18.3163 12.8907C18.3376 12.8724 18.3575 12.8526 18.3757 12.8313L23.8198 7.38714C24.0309 7.17488 24.0309 6.83194 23.8198 6.61958Z" fill="currentColor"/></svg>
-            </a>
+            <a href="{{ url('/shop') }}?sort=latest" class="na-all">Shop all new arrivals &rarr;</a>
         </div>
-        <div class="max-w-[1720px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8" data-aos="fade-up" data-aos-delay="100">
+
+        @if ($naCats->count() > 1)
+        <div class="na-pills" role="tablist" aria-label="Filter new arrivals">
+            <button type="button" class="na-pill is-on" data-filter="">All</button>
+            @foreach ($naCats as $c)
+                <button type="button" class="na-pill" data-filter="{{ $c }}">{{ $c }}</button>
+            @endforeach
+        </div>
+        @endif
+
+        <div class="na-grid" id="na-grid">
             @include('includes.Home.new-products')
         </div>
-        <div class="text-center mt-6 md:mt-8">
-            <a href="{{ url('/shop') }}" class="pgh-arrivals-btn">
-                <span>Shop All New Arrivals</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </a>
-        </div>
-        <style>
-        .pgh-arrivals-btn {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            gap: .65rem;
-            padding: 15px 40px;
-            border-radius: 999px;
-            overflow: hidden;
-            background: linear-gradient(135deg, #cdad82 0%, #bb976d 52%, #a8845a 100%);
-            color: #fff;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            white-space: nowrap;
-            box-shadow: 0 10px 26px rgba(187, 151, 109, .34);
-            transition: transform .35s cubic-bezier(.34, 1.3, .64, 1), box-shadow .35s ease;
-        }
-        .pgh-arrivals-btn:hover {
-            color: #fff;
-            transform: translateY(-3px);
-            box-shadow: 0 16px 36px rgba(187, 151, 109, .46);
-        }
-        .pgh-arrivals-btn svg {
-            position: relative;
-            z-index: 1;
-            transition: transform .35s ease;
-        }
-        .pgh-arrivals-btn span { position: relative; z-index: 1; }
-        .pgh-arrivals-btn:hover svg { transform: translateX(5px); }
-        /* Diagonal shine sweep on hover */
-        .pgh-arrivals-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -120%;
-            width: 55%;
-            height: 100%;
-            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .38), transparent);
-            transform: skewX(-20deg);
-            transition: left .6s ease;
-        }
-        .pgh-arrivals-btn:hover::before { left: 140%; }
-        .dark .pgh-arrivals-btn { box-shadow: 0 10px 26px rgba(0, 0, 0, .4); }
-        @media (prefers-reduced-motion: reduce) {
-            .pgh-arrivals-btn, .pgh-arrivals-btn svg, .pgh-arrivals-btn::before { transition: none; }
-        }
-        </style>
     </div>
 </section>
+<script>
+(function () {
+    var pills = document.querySelectorAll('.na-pill'), cards = document.querySelectorAll('#na-grid .na-card');
+    pills.forEach(function (p) {
+        p.addEventListener('click', function () {
+            pills.forEach(function (x) { x.classList.toggle('is-on', x === p); });
+            var f = p.dataset.filter;
+            cards.forEach(function (c) { c.hidden = f && c.dataset.cat !== f; });
+        });
+    });
+})();
+</script>
 <!-- New Arrivals Area End -->
 
 <!-- Why Choose Us Start -->
