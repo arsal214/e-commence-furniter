@@ -127,7 +127,7 @@
 /* Opening paragraph carries the pitch, so it gets the weight of a lead:
    a touch larger, darker, tighter. Everything after it settles back down.
    Description only — shipping info opens with logistics, not a pitch.    */
-#tab-desc .pd-prose > p:first-child{
+.pdx-acc .pd-prose > p:first-child{
   font-size:clamp(1.0625rem,1.02rem + .22vw,1.1875rem);
   line-height:1.65;
   letter-spacing:-.01em;
@@ -2751,83 +2751,94 @@ img.pd-slide-img:focus-visible {
 }());
 </script>
 
-<!-- Tabs: About this item / Shipping Information Start -->
-<div class="s-py-50">
+<!-- Details accordion + rating summary Start -->
+@php
+    $pdRevs   = $item->reviews;
+    $pdRevN   = $pdRevs->count();
+    $pdDist   = collect([5,4,3,2,1])->mapWithKeys(fn ($n) => [$n => $pdRevs->where('rating', $n)->count()]);
+@endphp
+<style>
+.pdx-info{border-top:1px solid #e5e1d8;padding:2.5rem 0 3rem}
+.pdx-info__grid{display:grid;grid-template-columns:1fr;gap:2.5rem}
+@media(min-width:900px){.pdx-info__grid{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:4rem}}
+.pdx-acc{border-bottom:1px solid #e5e1d8}
+.pdx-acc>summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;list-style:none;padding:1.1rem 0;font-size:.95rem;font-weight:500;color:#172430}
+.pdx-acc>summary::-webkit-details-marker{display:none}
+.pdx-acc>summary::after{content:"+";font-size:1.1rem;font-weight:400}
+.pdx-acc[open]>summary::after{content:"2"}
+.pdx-acc__body{padding:0 0 1.4rem;font-size:.9rem;line-height:1.7;color:#555}
+.pdx-acc:first-child{border-top:1px solid #e5e1d8}
+.pdx-rate__title{font-size:.95rem;font-weight:500;color:#172430;padding:1.1rem 0;border-top:1px solid #e5e1d8}
+.pdx-bar{display:flex;align-items:center;gap:.6rem;font-size:.75rem;color:#555;margin:.55rem 0}
+.pdx-bar__lbl{width:1.6rem}
+.pdx-bar__track{flex:1;height:6px;border-radius:99px;background:#e5e1d8;overflow:hidden}
+.pdx-bar__fill{display:block;height:100%;background:#172430;border-radius:99px}
+.dark .pdx-acc>summary,.dark .pdx-rate__title{color:#fff}.dark .pdx-acc__body,.dark .pdx-bar{color:rgba(255,255,255,.7)}
+.dark .pdx-info,.dark .pdx-acc,.dark .pdx-rate__title,.dark .pdx-acc:first-child{border-color:rgba(255,255,255,.12)}
+</style>
+<div class="pdx-info">
     <div class="container-fluid">
-        <div class="max-w-[985px] mx-auto">
+        <div class="max-w-[1200px] mx-auto pdx-info__grid">
 
-            {{-- A segmented pill control, matching the pill shape used by every
-                 button on the site. With Reviews promoted to its own section,
-                 a product without shipping info has only one panel left — and a
-                 lone tab is not a choice, so it renders as a heading instead. --}}
-            @if($item->shipping_info)
-            <div class="pd-tabs-wrap">
-                <div class="pd-tabs" role="tablist" aria-label="Product information">
-                    <button type="button" onclick="switchTab('tab-desc', this)"
-                            class="pdtab-btn pd-tab is-active" role="tab"
-                            aria-selected="true" aria-controls="tab-desc">
-                        <i class="mdi mdi-text-box-outline" aria-hidden="true"></i>
-                        <span>About this item</span>
-                    </button>
-
-                    <button type="button" onclick="switchTab('tab-shipping', this)"
-                            class="pdtab-btn pd-tab" role="tab"
-                            aria-selected="false" aria-controls="tab-shipping">
-                        <i class="mdi mdi-truck-fast-outline" aria-hidden="true"></i>
-                        <span>Shipping Information</span>
-                    </button>
-                </div>
-            </div>
-            @else
-            <h2 class="pd-section-title">
-                <i class="mdi mdi-text-box-outline" aria-hidden="true"></i>
-                About this item
-            </h2>
-            @endif
-
-            {{-- Description Panel --}}
-            <div id="tab-desc" class="pdtab-panel">
-                @if($item->description)
-                    <div class="rich-content pd-prose">
-                        {!! $item->description !!}
+            <div>
+                <details class="pdx-acc" open>
+                    <summary>Description</summary>
+                    <div class="pdx-acc__body">
+                        @if($item->description)
+                            <div class="rich-content pd-prose">{!! $item->description !!}</div>
+                        @else
+                            <p class="italic text-gray-400">No description available for this product.</p>
+                        @endif
                     </div>
-                @else
-                    <p class="text-gray-400 italic">No description available for this product.</p>
-                @endif
+                </details>
 
-                {{-- Specifications table (rendered only when the product has specs) --}}
                 @if(!empty($item->specifications))
-                <div class="mt-8">
-                    <h2 class="text-lg font-bold text-title dark:text-white mb-4">Specifications</h2>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm border border-bdr-clr dark:border-bdr-clr-drk rounded-lg overflow-hidden">
+                <details class="pdx-acc">
+                    <summary>Specifications</summary>
+                    <div class="pdx-acc__body">
+                        <table class="w-full text-sm">
                             <tbody>
-                                @foreach($item->specifications as $i => $spec)
-                                <tr class="{{ $i % 2 === 0 ? 'bg-[#F8F5F0] dark:bg-white/5' : '' }}">
-                                    <th scope="row" class="text-left font-semibold text-title dark:text-white px-4 py-3 w-1/3 align-top">{{ $spec['label'] ?? '' }}</th>
-                                    <td class="text-paragraph dark:text-white/70 px-4 py-3">{{ $spec['value'] ?? '' }}</td>
+                                @foreach($item->specifications as $spec)
+                                <tr class="border-b border-[#eee9df] last:border-0">
+                                    <th scope="row" class="text-left font-medium py-2 pr-4 w-1/3 align-top">{{ $spec['label'] ?? '' }}</th>
+                                    <td class="py-2">{{ $spec['value'] ?? '' }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </details>
+                @endif
+
+                @if($item->shipping_info)
+                <details class="pdx-acc">
+                    <summary>Shipping &amp; returns</summary>
+                    <div class="pdx-acc__body"><div class="rich-content pd-prose">{!! $item->shipping_info !!}</div></div>
+                </details>
                 @endif
             </div>
 
-            {{-- Shipping Panel --}}
-            @if($item->shipping_info)
-            <div id="tab-shipping" class="pdtab-panel hidden">
-                <div class="rich-content pd-prose">
-                    {!! $item->shipping_info !!}
+            <div>
+                <div class="pdx-rate__title" style="border-top:0;padding-top:0">
+                    Reviews{{ $pdRevN ? ' · ' . number_format($item->avgRating(), 1) : '' }}
                 </div>
+                @if($pdRevN)
+                    @foreach($pdDist as $star => $cnt)
+                    <div class="pdx-bar">
+                        <span class="pdx-bar__lbl">{{ $star }}★</span>
+                        <span class="pdx-bar__track"><span class="pdx-bar__fill" style="width:{{ round($cnt / $pdRevN * 100) }}%"></span></span>
+                    </div>
+                    @endforeach
+                    <a href="#reviews" class="inline-block mt-3 text-xs underline text-[#172430] dark:text-white">Read all {{ $pdRevN }} {{ Str::plural('review', $pdRevN) }}</a>
+                @else
+                    <p class="text-sm text-gray-500">No reviews yet.</p>
+                @endif
             </div>
-            @endif
 
         </div>
     </div>
 </div>
-<!-- Tabs End -->
+<!-- Details accordion End -->
 
 <!-- Reviews Section Start -->
 {{-- Reviews live in their own section rather than behind a tab: a tab hides
@@ -3007,42 +3018,7 @@ img.pd-slide-img:focus-visible {
 </section>
 <!-- Reviews Section End -->
 
-<script>
-function switchTab(panelId, btn) {
-    document.querySelectorAll('.pdtab-panel').forEach(function(p){ p.classList.add('hidden'); });
-    document.querySelectorAll('.pdtab-btn').forEach(function(b){
-        b.classList.remove('is-active');
-        b.setAttribute('aria-selected', 'false');
-    });
 
-    var panel = document.getElementById(panelId);
-    if (panel) panel.classList.remove('hidden');
-
-    btn.classList.add('is-active');
-    btn.setAttribute('aria-selected', 'true');
-
-    // The bar scrolls sideways on narrow screens, so a tab activated from
-    // elsewhere on the page (the "See all" rating link) may sit off-screen.
-    if (btn.scrollIntoView) {
-        btn.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
-    }
-}
-
-/* Arrow-key navigation between tabs, which role="tablist" leads a screen
-   reader to expect. */
-document.addEventListener('keydown', function (e) {
-    var current = document.activeElement;
-    if (!current || !current.classList.contains('pdtab-btn')) return;
-    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-
-    var tabs = Array.prototype.slice.call(document.querySelectorAll('.pdtab-btn'));
-    var next = tabs[(tabs.indexOf(current) + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
-
-    e.preventDefault();
-    next.focus();
-    next.click();
-});
-</script>
 
 {{-- ── Frequently bought together ──────────────────────────────────────────
      Companions come from real co-purchase history where the store has enough

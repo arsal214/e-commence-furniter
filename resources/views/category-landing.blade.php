@@ -70,12 +70,21 @@
     color: #bb976d;
 }
 
+.pg-native-select {
+    appearance: none; -webkit-appearance: none; -moz-appearance: none;
+    height: 36px; padding: 0 34px 0 12px; line-height: 34px; font-size: 13px;
+    border: 1px solid #E8E1D7; border-radius: 8px; background-color: #fff; color: #172430; cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B6560' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+}
+.pg-native-select:hover { border-color: #BB976D; }
+.dark .pg-native-select { background-color: #172430; color: #fff; border-color: #2F3B45; }
 /* Sort bar */
 .cl-sort-bar {
     position: sticky; top: 70px; z-index: 40;
     background: #fff;
     border-bottom: 1px solid #ede8e0;
-    padding: 12px 0;
+    padding: 6px 0;
     box-shadow: 0 2px 12px rgba(0,0,0,.05);
 }
 .dark .cl-sort-bar { background: #1e2d39; border-color: rgba(255,255,255,.08); }
@@ -119,24 +128,29 @@
 .cl-card-img img { width:100%; height:100%; object-fit:cover; transition: transform .4s; }
 .cl-card:hover .cl-card-img img { transform: scale(1.06); }
 
-/* Category image cards */
+/* Also browse: premium image cards */
 .cl-cat-card {
-    position: relative;
-    border-radius: 14px;
-    overflow: hidden;
-    aspect-ratio: 3/2;
-    display: block;
+    position: relative; display: block; overflow: hidden; border-radius: 18px;
+    aspect-ratio: 4/5; background: #e9e4db;
+    box-shadow: 0 1px 2px rgba(23,36,48,.06), 0 8px 24px rgba(23,36,48,.08);
+    transition: transform .35s ease, box-shadow .35s ease;
 }
-.cl-cat-card img { width:100%; height:100%; object-fit:cover; transition: transform .4s; }
-.cl-cat-card:hover img { transform: scale(1.06); }
+.cl-cat-card:hover { transform: translateY(-6px); box-shadow: 0 2px 4px rgba(23,36,48,.08), 0 18px 40px rgba(23,36,48,.18); }
+.cl-cat-card img { width:100%; height:100%; object-fit:cover; transition: transform .7s ease; }
+.cl-cat-card:hover img { transform: scale(1.07); }
 .cl-cat-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(23,36,48,.75) 0%, transparent 55%);
-    display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 16px;
-    transition: background .3s;
+    position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 20px; color: #fff;
+    background: linear-gradient(to top, rgba(23,36,48,.82) 0%, rgba(23,36,48,.25) 45%, transparent 70%);
 }
-.cl-cat-card:hover .cl-cat-overlay { background: linear-gradient(to top, rgba(23,36,48,.88) 0%, transparent 60%); }
+.cl-cat-name { font-size: 1.15rem; font-weight: 600; line-height: 1.2; }
+.cl-cat-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; font-size: .75rem; color: rgba(255,255,255,.75); }
+.cl-cat-go {
+    width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(255,255,255,.18); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,.35);
+    transition: background .3s, transform .3s;
+}
+.cl-cat-card:hover .cl-cat-go { background: #bb976d; border-color: #bb976d; transform: translateX(3px); }
 
 /* FAQ */
 .cl-faq details[open] summary { color: #bb976d; }
@@ -150,15 +164,15 @@
 {{-- ══════════════════════════════════════
      1. SPLIT-PANEL HERO
 ══════════════════════════════════════ --}}
-<div class="text-center px-4 py-10 md:py-14 border-t border-[#e5e1d8] bg-[#faf9f6] dark:bg-[#172430]">
-    <ul class="flex items-center justify-center gap-2 text-xs text-gray-500 dark:text-white/60 mb-4">
+<div class="text-center px-4 py-5 md:py-7 border-t border-[#e5e1d8] bg-[#faf9f6] dark:bg-[#172430]">
+    <ul class="flex items-center justify-center gap-2 text-xs text-gray-500 dark:text-white/60 mb-2">
         <li><a href="{{ url('/') }}" class="hover:text-[#bb976d]">Home</a></li>
         <li>/</li>
         <li><a href="{{ url('/categories') }}" class="hover:text-[#bb976d]">Categories</a></li>
     </ul>
     <h1 class="text-3xl md:text-5xl font-semibold text-[#172430] dark:text-white leading-tight">{{ $category->name }}</h1>
     @if($category->description)
-    <p class="mt-3 mx-auto max-w-2xl text-sm md:text-base text-gray-600 dark:text-white/70">{{ Str::limit($category->description, 180) }}</p>
+    <p class="mt-2 mx-auto max-w-2xl text-sm md:text-base text-gray-600 dark:text-white/70">{{ Str::limit($category->description, 180) }}</p>
     @endif
 </div>
 
@@ -174,7 +188,7 @@
                 <div class="flex items-center gap-2">
                     <label class="text-xs text-gray-400 font-medium whitespace-nowrap">Sort by:</label>
                     <select id="cl-sort" onchange="location.search='?sort='+this.value"
-                            class="text-xs border border-gray-200 dark:border-white/10 rounded-lg px-3 py-1.5 bg-white dark:bg-[#172430] text-[#172430] dark:text-white outline-none cursor-pointer">
+                            class="pg-native-select">
                         <option value="latest" @selected(request('sort','latest')==='latest')>Newest</option>
                         <option value="price_asc" @selected(request('sort','latest')==='price_asc')>Price: Low → High</option>
                         <option value="price_desc" @selected(request('sort','latest')==='price_desc')>Price: High → Low</option>
@@ -194,7 +208,7 @@
     </div>
 </div>
 
-<section class="py-10 md:py-14">
+<section class="py-5 md:py-6">
     <div class="container-fluid px-4 sm:px-6">
         <div class="max-w-[1720px] mx-auto">
 
@@ -357,11 +371,11 @@
 ══════════════════════════════════════ --}}
 @if($relatedCategories->isNotEmpty())
 <div data-aos="fade-up">
-    <div class="flex items-center gap-3 mb-6">
-        <div class="w-1 h-7 rounded-full" style="background:#bb976d;"></div>
-        <h2 class="text-xl md:text-2xl font-bold text-[#172430] dark:text-white">Also Browse</h2>
+    <div class="text-center mb-8">
+        <p class="text-xs font-bold uppercase tracking-[.2em] mb-2" style="color:#bb976d;">Discover more</p>
+        <h2 class="text-2xl md:text-3xl font-semibold text-[#172430] dark:text-white">Also Browse</h2>
     </div>
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         @foreach($relatedCategories as $related)
         @php
             $relImg = $related->image
@@ -369,10 +383,13 @@
                 : asset('assets/img/shortcode/breadcumb.jpg');
         @endphp
         <a href="{{ route('category.landing', $related->slug) }}" class="cl-cat-card group">
-            <img src="{{ $relImg }}" alt="{{ $related->name }}">
+            <img src="{{ $relImg }}" alt="{{ $related->name }}" loading="lazy">
             <div class="cl-cat-overlay">
-                <p class="text-white font-bold text-sm leading-tight">{{ $related->name }}</p>
-                <p class="text-white/60 text-xs mt-0.5">{{ $related->products_count }} {{ Str::plural('item', $related->products_count) }}</p>
+                <p class="cl-cat-name">{{ $related->name }}</p>
+                <div class="cl-cat-meta">
+                    <span>{{ $related->products_count }} {{ Str::plural('item', $related->products_count) }}</span>
+                    <span class="cl-cat-go"><svg width="14" height="10" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
             </div>
         </a>
         @endforeach
