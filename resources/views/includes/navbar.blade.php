@@ -681,7 +681,7 @@
 <div id="pg-catstrip" aria-label="Categories">
     <div class="pg-catstrip-inner">
         <a href="{{ url('/shop') }}">All products</a>
-        @foreach($navCategories->take(10) as $nCat)
+        @foreach($navCategories->take(5) as $nCat)
             <a href="{{ route('category.landing', $nCat->slug) }}">{{ $nCat->name }}</a>
         @endforeach
         <a href="{{ url('/about') }}" class="pg-strip-end">About</a>

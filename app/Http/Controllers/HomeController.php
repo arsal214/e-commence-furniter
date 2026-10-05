@@ -56,8 +56,16 @@ class HomeController extends Controller
         // renders an empty state when there are none — it never invents any.
         [$customerReviews, $reviewsVerified] = $this->publishedReviews(8);
 
+        // Hero row: three image tiles; each links to its category (or /shop if missing).
+        $heroTiles = collect(['toys', 'halloween', 'beauty'])->map(function ($k) {
+            $cat = Category::where('is_active', true)->where('name', 'like', "%{$k}%")->first();
+            return ['alt' => 'Shop ' . ucfirst($k),
+                    'img' => asset("assets/img/home-v1/hero-{$k}.webp"),
+                    'url' => $cat ? route('category.landing', $cat->slug) : url('/shop')];
+        });
+
         return view('index', compact(
-            'sliders', 'newProducts', 'bestSellers',
+            'heroTiles', 'sliders', 'newProducts', 'bestSellers',
             'categories', 'flashDeal', 'customerReviews', 'reviewsVerified',
         ));
     }
@@ -442,20 +450,17 @@ class HomeController extends Controller
         $priceMin   = (clone $baseQuery)->min(\DB::raw('COALESCE(sale_price, price)'));
         $priceMax   = (clone $baseQuery)->max(\DB::raw('COALESCE(sale_price, price)'));
 
-        $featuredProduct = (clone $baseQuery)
-            ->withAvg('reviews', 'rating')
-            ->withCount('reviews')
-            ->orderByDesc('reviews_count')
-            ->first();
-
+        $sort = request('sort', 'latest');
         $products = (clone $baseQuery)
             ->with('category')
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
-            ->when($featuredProduct, fn($q) => $q->where('id', '!=', $featuredProduct->id))
-            ->latest()
-            ->take(8)
-            ->get();
+            ->when($sort === 'price_asc',  fn($q) => $q->orderByRaw('COALESCE(sale_price, price) asc'))
+            ->when($sort === 'price_desc', fn($q) => $q->orderByRaw('COALESCE(sale_price, price) desc'))
+            ->when($sort === 'rating',     fn($q) => $q->orderByDesc('reviews_avg_rating'))
+            ->latest('id')
+            ->paginate(24)
+            ->withQueryString();
 
         $relatedCategories = Category::where('is_active', true)
                                      ->where('id', '!=', $category->id)
@@ -467,7 +472,7 @@ class HomeController extends Controller
 
         return view('category-landing', compact(
             'category', 'products', 'relatedCategories',
-            'totalCount', 'priceMin', 'priceMax', 'featuredProduct'
+            'totalCount', 'priceMin', 'priceMax'
         ));
     }
 

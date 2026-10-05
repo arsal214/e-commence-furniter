@@ -114,7 +114,7 @@
 .cl-card-img {
     position: relative;
     overflow: hidden;
-    aspect-ratio: 4/3;
+    aspect-ratio: 1/1; border-radius: 12px;
 }
 .cl-card-img img { width:100%; height:100%; object-fit:cover; transition: transform .4s; }
 .cl-card:hover .cl-card-img img { transform: scale(1.06); }
@@ -150,73 +150,16 @@
 {{-- ══════════════════════════════════════
      1. SPLIT-PANEL HERO
 ══════════════════════════════════════ --}}
-@php
-    $heroImg = $category->image
-        ? (str_starts_with($category->image, 'assets/') ? asset($category->image) : Storage::url($category->image))
-        : asset('assets/img/shortcode/breadcumb.jpg');
-@endphp
-
-<div class="cl-hero">
-    {{-- Image side --}}
-    <div class="cl-hero-img">
-        <img src="{{ $heroImg }}" alt="{{ $category->name }}">
-        {{-- Gradient overlay --}}
-        <div class="absolute inset-0" style="background:linear-gradient(to right, transparent 60%, #172430 100%);"></div>
-        {{-- Breadcrumb on image --}}
-        <div class="absolute top-5 left-6">
-            <ul class="flex items-center gap-2 text-sm text-white/80">
-                <li><a href="{{ url('/') }}" class="hover:text-white transition-colors">Home</a></li>
-                <li class="text-white/40">/</li>
-                <li><a href="{{ url('/categories') }}" class="hover:text-white transition-colors">Categories</a></li>
-                <li class="text-white/40">/</li>
-                <li class="text-[#bb976d]">{{ $category->name }}</li>
-            </ul>
-        </div>
-    </div>
-
-    {{-- Text side --}}
-    <div class="cl-hero-body">
-        <div class="cl-stat-pill mb-4">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-            {{ $category->name }}
-        </div>
-
-        <h1 class="text-white text-3xl md:text-4xl font-extrabold leading-tight mb-3">
-            Buy {{ $category->name }}<br>
-            <span style="color:#bb976d">Online</span>
-        </h1>
-
-        @if($category->description)
-        <p class="text-white/70 text-sm leading-relaxed mb-6 max-w-sm">{{ Str::limit($category->description, 140) }}</p>
-        @endif
-
-        {{-- Stats row --}}
-        <div class="flex items-center gap-6 mb-6 flex-wrap">
-            <div>
-                <p class="text-[#bb976d] text-2xl font-extrabold leading-none">{{ $totalCount }}</p>
-                <p class="text-white/50 text-xs mt-0.5">Products</p>
-            </div>
-            @if($priceMin && $priceMax)
-            <div class="w-px h-8 bg-white/15"></div>
-            <div>
-                <p class="text-white text-2xl font-extrabold leading-none">${{ number_format($priceMin, 0) }}–${{ number_format($priceMax, 0) }}</p>
-                <p class="text-white/50 text-xs mt-0.5">Price range</p>
-            </div>
-            @endif
-            <div class="w-px h-8 bg-white/15"></div>
-            <div>
-                <p class="text-white text-2xl font-extrabold leading-none">30</p>
-                <p class="text-white/50 text-xs mt-0.5">Day returns</p>
-            </div>
-        </div>
-
-        <a href="{{ url('/shop?category='.$category->slug) }}"
-           class="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-white rounded-full transition-all duration-200 hover:-translate-y-0.5"
-           style="background:#bb976d;box-shadow:0 4px 18px rgba(187,151,109,.4);">
-            Shop All {{ $category->name }}
-            <svg width="14" height="10" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-    </div>
+<div class="text-center px-4 py-10 md:py-14 border-t border-[#e5e1d8] bg-[#faf9f6] dark:bg-[#172430]">
+    <ul class="flex items-center justify-center gap-2 text-xs text-gray-500 dark:text-white/60 mb-4">
+        <li><a href="{{ url('/') }}" class="hover:text-[#bb976d]">Home</a></li>
+        <li>/</li>
+        <li><a href="{{ url('/categories') }}" class="hover:text-[#bb976d]">Categories</a></li>
+    </ul>
+    <h1 class="text-3xl md:text-5xl font-semibold text-[#172430] dark:text-white leading-tight">{{ $category->name }}</h1>
+    @if($category->description)
+    <p class="mt-3 mx-auto max-w-2xl text-sm md:text-base text-gray-600 dark:text-white/70">{{ Str::limit($category->description, 180) }}</p>
+    @endif
 </div>
 
 {{-- ══════════════════════════════════════
@@ -224,17 +167,18 @@
 ══════════════════════════════════════ --}}
 <div class="cl-sort-bar">
     <div class="container-fluid px-4 sm:px-6">
-        <div class="max-w-[1720px] mx-auto flex items-center justify-end gap-4 flex-wrap">
+        <div class="max-w-[1720px] mx-auto flex items-center justify-between gap-4 flex-wrap">
+            <span class="text-sm text-gray-500">{{ number_format($totalCount) }} {{ Str::plural('item', $totalCount) }}</span>
             <div class="flex items-center gap-3 flex-wrap">
                 {{-- Sort --}}
                 <div class="flex items-center gap-2">
                     <label class="text-xs text-gray-400 font-medium whitespace-nowrap">Sort by:</label>
-                    <select id="cl-sort" onchange="clSort(this.value)"
+                    <select id="cl-sort" onchange="location.search='?sort='+this.value"
                             class="text-xs border border-gray-200 dark:border-white/10 rounded-lg px-3 py-1.5 bg-white dark:bg-[#172430] text-[#172430] dark:text-white outline-none cursor-pointer">
-                        <option value="latest">Newest</option>
-                        <option value="price_asc">Price: Low → High</option>
-                        <option value="price_desc">Price: High → Low</option>
-                        <option value="rating">Top Rated</option>
+                        <option value="latest" @selected(request('sort','latest')==='latest')>Newest</option>
+                        <option value="price_asc" @selected(request('sort','latest')==='price_asc')>Price: Low → High</option>
+                        <option value="price_desc" @selected(request('sort','latest')==='price_desc')>Price: High → Low</option>
+                        <option value="rating" @selected(request('sort','latest')==='rating')>Top Rated</option>
                     </select>
                 </div>
                 {{-- View all link --}}
@@ -255,82 +199,11 @@
         <div class="max-w-[1720px] mx-auto">
 
 {{-- ══════════════════════════════════════
-     3. FEATURED / EDITOR'S PICK SPOTLIGHT
-══════════════════════════════════════ --}}
-@if($featuredProduct)
-@php
-    $fpImg = !empty($featuredProduct->image)
-        ? (str_starts_with($featuredProduct->image, 'assets/') ? asset($featuredProduct->image) : Storage::url($featuredProduct->image))
-        : asset('assets/img/gallery/product-detls/product-01.jpg');
-    $fpPrice   = $featuredProduct->effective_price;
-    $fpSavePct = $featuredProduct->sale_price && $featuredProduct->price > 0
-        ? round((($featuredProduct->price - $featuredProduct->sale_price) / $featuredProduct->price) * 100)
-        : 0;
-@endphp
-<div class="cl-spotlight mb-10 md:mb-14" data-aos="fade-up">
-    <div class="cl-spotlight-img">
-        <img src="{{ $fpImg }}" alt="{{ $featuredProduct->name }}">
-        <div class="absolute inset-0" style="background:linear-gradient(to right, transparent 50%, rgba(23,36,48,.04));"></div>
-        <span class="absolute top-5 left-5 text-xs font-bold text-white px-3 py-1.5 rounded-full"
-              style="background:#bb976d;letter-spacing:.05em;">★ Editor's Pick</span>
-        @if($fpSavePct > 0)
-        <span class="absolute top-5 right-5 text-xs font-bold text-white px-3 py-1.5 rounded-full"
-              style="background:#E13939;">{{ $fpSavePct }}% OFF</span>
-        @endif
-    </div>
-    <div class="flex flex-col justify-center p-8 md:p-12" style="background:#f9f6f1;">
-        <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color:#bb976d;">{{ $category->name }} — Top Pick</p>
-        <h2 class="text-2xl md:text-3xl font-extrabold text-[#172430] leading-snug mb-3">{{ $featuredProduct->name }}</h2>
-        @if($featuredProduct->description)
-        <p class="text-sm text-gray-500 leading-relaxed mb-5">{{ Str::limit(strip_tags($featuredProduct->description), 130) }}</p>
-        @endif
-
-        {{-- Stars + count --}}
-        <div class="mb-4">
-            @include('includes.Home._stars', [
-                'rating' => $featuredProduct->reviews_avg_rating ?? 0,
-                'count'  => $featuredProduct->reviews_count ?? 0,
-            ])
-        </div>
-
-        {{-- Price --}}
-        <div class="flex items-baseline gap-3 mb-6">
-            <span class="text-3xl font-extrabold text-[#172430]">${{ number_format($fpPrice, 2) }}</span>
-            @if ($featuredProduct->was_price)
-            <span class="text-base text-gray-400 line-through">{{ $featuredProduct->was_price }}</span>
-            @endif
-        </div>
-
-        <div class="flex items-center gap-3 flex-wrap">
-            <a href="{{ route('product-details', $featuredProduct->slug) }}"
-               class="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold text-white rounded-full transition-all hover:-translate-y-0.5"
-               style="background:#172430;box-shadow:0 4px 16px rgba(23,36,48,.3);">
-                View Product
-                <svg width="14" height="10" viewBox="0 0 16 12" fill="none"><path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </a>
-            <form action="{{ route('cart.add') }}" method="POST" class="contents">
-                @csrf
-                <input type="hidden" name="product_id" value="{{ $featuredProduct->id }}">
-                <input type="hidden" name="qty" value="1">
-                <button type="submit"
-                        class="inline-flex items-center gap-2 px-6 py-3 text-sm font-bold rounded-full border-2 transition-all hover:-translate-y-0.5"
-                        style="border-color:#bb976d;color:#bb976d;background:transparent;"
-                        onmouseover="this.style.background='#bb976d';this.style.color='#fff'"
-                        onmouseout="this.style.background='transparent';this.style.color='#bb976d'">
-                    Add to Cart
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
-@endif
-
-{{-- ══════════════════════════════════════
      4. PRODUCT GRID
 ══════════════════════════════════════ --}}
 @if($products->isNotEmpty())
 {{-- Two-up on phones, matching the shop grid. --}}
-<div id="cl-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 mb-10 md:mb-14" data-aos="fade-up">
+<div id="cl-grid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 mb-10 md:mb-14" data-aos="fade-up">
     @foreach($products as $product)
     @php
         $pImg = !empty($product->image)
@@ -423,17 +296,7 @@
     @endforeach
 </div>
 
-{{-- View all CTA --}}
-<div class="text-center mb-14" data-aos="fade-up">
-    <a href="{{ url('/shop?category='.$category->slug) }}"
-       class="group inline-flex items-center gap-3 px-8 py-4 text-white font-bold text-sm rounded-full transition-all duration-300 hover:-translate-y-0.5"
-       style="background:#172430;box-shadow:0 4px 20px rgba(23,36,48,.3);">
-        View All {{ $totalCount }} {{ $category->name }} Products
-        <svg class="transition-transform duration-300 group-hover:translate-x-1" width="16" height="12" viewBox="0 0 16 12" fill="none">
-            <path d="M1 6H15M15 6L10 1M15 6L10 11" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-    </a>
-</div>
+<div class="mb-14">{{ $products->links() }}</div>
 
 @else
 <div class="text-center py-20 text-gray-400 mb-14">
@@ -523,19 +386,5 @@
 
 @include('includes.footer')
 
-<script>
-// Sort cards client-side
-function clSort(val) {
-    var grid = document.getElementById('cl-grid');
-    if (!grid) return;
-    var cards = Array.from(grid.querySelectorAll('.cl-card'));
-    cards.sort(function(a, b) {
-        if (val === 'price_asc')  return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
-        if (val === 'price_desc') return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
-        if (val === 'rating')     return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating);
-        return parseInt(b.dataset.date) - parseInt(a.dataset.date); // latest
-    });
-    cards.forEach(function(c){ grid.appendChild(c); });
-}
-</script>
+
 @endsection

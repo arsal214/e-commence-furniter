@@ -481,26 +481,14 @@ $schemaWebsite = [
     }
 @endphp
 
-<section class="ph-hero" aria-label="Featured">
-    <div class="ph-main">
-        <img src="{{ asset('assets/img/home-v1/home-decor.webp') }}" alt="" width="577" height="433" loading="eager" decoding="async">
-        <h1>Make your space feel like you</h1>
-        <p>Statement lamps, ceramic vases, wall art and everyday essentials. New arrivals added every week, with free shipping and 30-day returns.</p>
-        <div class="ph-ctas">
-            <a href="{{ url('/shop') }}" class="ph-btn">Shop home decor</a>
-            <a href="{{ url('/categories') }}" class="ph-btn ph-btn--ghost">Browse categories</a>
-        </div>
-    </div>
-    <div class="ph-side">
-        <a href="{{ url('/shop') }}" class="ph-tile ph-tile--tint"><b>New arrivals</b><span>Fresh pieces every week &rarr;</span></a>
-        <a href="{{ route('track-order') }}" class="ph-tile ph-tile--line"><b>Track your order</b><span>Live order tracking &rarr;</span></a>
-    </div>
+<section class="ph-hero ph-hero--tiles" aria-label="Featured">
+    <h1 class="sr-only">PeytonGhalib — Home Decor &amp; Everyday Essentials</h1>
+    @foreach($heroTiles as $t)
+    <a href="{{ $t['url'] }}" class="ph-cat">
+        <img src="{{ $t['img'] }}" alt="{{ $t['alt'] }}" width="1009" height="1558" loading="{{ $loop->first ? 'eager' : 'lazy' }}" decoding="async">
+    </a>
+    @endforeach
 </section>
-<div class="ph-trust">
-    <span><b>Free shipping</b>on all orders</span>
-    <span><b>30-day</b>easy returns</span>
-    <span><b>SSL</b>secure checkout</span>
-</div>
 <!-- Hero Section End -->
 
 
@@ -1366,6 +1354,19 @@ $schemaWebsite = [
 @include('includes.footer')
 
 @push('scripts')
+<script>
+(function () {
+    var el = document.querySelector('.ph-hero--tiles');
+    if (!el || !matchMedia('(max-width:900px)').matches || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    var paused = false, i = 0, n = el.children.length - 1; // -1: sr-only h1
+    ['touchstart', 'pointerdown'].forEach(function (e) { el.addEventListener(e, function () { paused = true; }, { passive: true }); });
+    setInterval(function () {
+        if (paused) { paused = false; i = Math.round(el.scrollLeft / el.clientWidth); return; }
+        i = (i + 1) % n;
+        el.scrollTo({ left: i * el.clientWidth, behavior: 'smooth' });
+    }, 3500);
+})();
+</script>
 <script>
     // scripts.js (which supplies jQuery and Owl) is deferred, so it has not run
     // when this inline block is parsed. DOMContentLoaded fires after deferred
