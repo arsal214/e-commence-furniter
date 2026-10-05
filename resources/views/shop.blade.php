@@ -282,45 +282,6 @@
                             </div>
                         </details>
 
-                        {{-- Size: only when some product carries sizes --}}
-                        @if ($sizeOptions->isNotEmpty())
-                        <details class="pg-facet" open>
-                            <summary>
-                                Size
-                                <svg class="pg-facet__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-                            </summary>
-                            <div class="pg-facet__body pg-sizes">
-                                @foreach ($sizeOptions as $size)
-                                    @php $n = $sizeCounts[$size] ?? 0; @endphp
-                                    <label class="pg-size {{ $n === 0 ? 'pg-size--off' : '' }}">
-                                        <input type="checkbox" name="size[]" value="{{ $size }}" @checked(in_array($size, $filters['size'], true))>
-                                        <span>{{ $size }}</span>
-                                    </label>
-                                @endforeach
-                            </div>
-                        </details>
-                        @endif
-
-                        {{-- Colour: swatches, same rule --}}
-                        @if ($colorOptions->isNotEmpty())
-                        <details class="pg-facet" open>
-                            <summary>
-                                Color
-                                <svg class="pg-facet__chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-                            </summary>
-                            <div class="pg-facet__body pg-colors">
-                                @foreach ($colorOptions as $color)
-                                    @php $n = $colorCounts[$color] ?? 0; @endphp
-                                    <label class="pg-color {{ $n === 0 ? 'pg-color--off' : '' }}" title="{{ $color }}">
-                                        <input type="checkbox" name="color[]" value="{{ $color }}" @checked(in_array($color, $filters['color'], true))>
-                                        <span class="pg-color__dot" style="background: {{ \App\Models\Product::colorHex($color) }}"></span>
-                                        <span class="sr-only">{{ $color }}</span>
-                                    </label>
-                                @endforeach
-                            </div>
-                        </details>
-                        @endif
-
                         {{-- Price buckets --}}
                         <details class="pg-facet" open>
                             <summary>
