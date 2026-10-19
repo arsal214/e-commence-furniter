@@ -14,7 +14,7 @@
                         <img class="w-[140px] mb-5" src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" width="140" height="27" loading="lazy">
                     </a>
                     <p class="text-white-light text-sm leading-relaxed">
-                        Your trusted online store for home essentials, kitchen gadgets, electronics, car accessories, toys, garden and more — curated for quality, delivered fast across the USA.
+                        Your trusted online toy store — puzzles, building sets, plush, games and outdoor play for every age, curated for quality and delivered fast across the USA.
                     </p>
                     <div class="flex items-center gap-3 mt-6">
                         <a href="https://www.facebook.com/profile.php?id=61590448962752" target="_blank" rel="noopener noreferrer nofollow"
@@ -68,7 +68,7 @@
                 {{-- ── Col 4 · Newsletter + Contact ── --}}
                 <div>
                     <h3 class="font-bold text-white text-base mb-5 uppercase tracking-wider">Stay Updated</h3>
-                    <p class="text-white-light text-sm mb-4 leading-relaxed">Subscribe for exclusive offers, new arrivals, and interior inspiration.</p>
+                    <p class="text-white-light text-sm mb-4 leading-relaxed">Subscribe for exclusive offers, new arrivals, and play ideas.</p>
 
                     <form action="{{ route('newsletter.subscribe') }}" method="POST" class="ft-news">
                         @csrf

@@ -2,7 +2,7 @@
 @extends('layouts.main')
 
 @section('title', 'All Products | PeytonGhalib')
-@section('meta_description', 'Browse our full product catalogue at PeytonGhalib. Furniture, home decor, ceramics and lifestyle products with fast delivery.')
+@section('meta_description', 'Browse our full product catalogue at PeytonGhalib. Toys, games, puzzles and plush for every age, with free shipping.')
 
 @push('schema')
 @php

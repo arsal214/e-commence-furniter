@@ -99,7 +99,7 @@ class CheckoutController extends Controller
         $cartIds = collect($this->cart->items())->pluck('id')->filter()->values();
         $eff     = 'COALESCE(NULLIF(sale_price, 0), price)';
 
-        $eligible = Product::where('is_active', true)
+        $eligible = Product::visible()
             ->where('stock', '>', 0)
             ->whereRaw("$eff < 10")
             ->when($cartIds->isNotEmpty(), fn ($q) => $q->whereNotIn('id', $cartIds))
@@ -251,8 +251,7 @@ class CheckoutController extends Controller
         // the form — the posted id is user input, and the item may have sold out
         // while the checkout page sat open.
         foreach ($data['order_bump'] ?? [] as $bumpId) {
-            $bump = Product::where('id', $bumpId)
-                ->where('is_active', true)
+            $bump = Product::visible()->where('id', $bumpId)
                 ->first();
 
             if ($bump && $bump->effectiveStockFor(null, null) > $this->cart->getQty($bump->id, null, null)) {

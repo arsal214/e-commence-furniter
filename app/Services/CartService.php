@@ -10,7 +10,22 @@ class CartService
 
     public function items(): array
     {
-        return session($this->sessionKey, []);
+        $cart = session($this->sessionKey, []);
+        if (! $cart) {
+            return [];
+        }
+
+        // Drop lines whose product was deactivated, or whose category was, since it
+        // was added — a hidden product must not be purchasable from an old cart.
+        // ponytail: one indexed query per call; memoise per request if it shows up in profiling.
+        $ids  = array_values(array_unique(array_column($cart, 'id')));
+        $live = Product::visible()->whereIn('id', $ids)->pluck('id')->all();
+        if (count($live) !== count($ids)) {
+            $cart = array_filter($cart, fn ($line) => in_array($line['id'], $live));
+            session([$this->sessionKey => $cart]);
+        }
+
+        return $cart;
     }
 
     public function getQty(int $productId, ?string $color, ?string $size): int

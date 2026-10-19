@@ -1,15 +1,15 @@
 @extends('layouts.main')
 
-@section('title', ($category->meta_title ?: 'Buy ' . $category->name . ' Online') . ' | PeytonGhalib')
+@section('title', ($category->meta_title ?: 'Shop ' . $category->name . ' Online with Free USA Shipping') . ' | PeytonGhalib')
 {{-- Explicit self-canonical to the clean slug so tracking/junk query params
      (?utm_source=…) never spawn duplicate canonical URLs. --}}
 @section('canonical', url('/category/' . $category->slug))
-@section('meta_description', $category->meta_description ?: 'Shop our full range of ' . $category->name . ' at PeytonGhalib. Quality pieces, fast delivery, easy returns — browse and buy online today.')
+@section('meta_description', $category->meta_description ?: 'Shop ' . $category->name . ' at PeytonGhalib. Free shipping across the USA, 30-day returns, and toys for every age.')
 
 @push('schema')
 @php
     $catDesc = $category->meta_description
-        ?: 'Shop our full range of ' . $category->name . ' at PeytonGhalib. Quality pieces, fast delivery, easy returns.';
+        ?: 'Shop ' . $category->name . ' at PeytonGhalib. Free shipping across the USA, 30-day returns, and toys for every age.';
     $catListItems = [];
     foreach ($products as $i => $p) {
         $pImg = !empty($p->image)

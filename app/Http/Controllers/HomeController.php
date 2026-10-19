@@ -29,7 +29,7 @@ class HomeController extends Controller
         // and the cart now rejects out-of-stock lines outright. Without this filter
         // the homepage advertises products whose only possible outcome is an error
         // toast — the same hole that was just closed on the cart cross-sell tray.
-        $newProducts = Product::where('is_active', true)
+        $newProducts = Product::visible()
                               ->where('stock', '>', 0)
                               ->with('category')
                               ->withAvg('reviews', 'rating')
@@ -37,8 +37,8 @@ class HomeController extends Controller
                               ->latest()
                               ->take(8)
                               ->get();
-        $newThisWeek = Product::where('is_active', true)->where('created_at', '>=', now()->subDays(7))->count();
-        $bestSellers = Product::where('is_active', true)
+        $newThisWeek = Product::visible()->where('created_at', '>=', now()->subDays(7))->count();
+        $bestSellers = Product::visible()
                               ->where('is_best_seller', true)
                               ->where('stock', '>', 0)
                               ->with('category')
@@ -60,7 +60,8 @@ class HomeController extends Controller
         // Hero row: three image tiles; each links to its category (or /shop if missing).
         $heroTiles = collect(['toys', 'halloween', 'beauty'])->map(function ($k) {
             $cat = Category::where('is_active', true)->where('name', 'like', "%{$k}%")->first();
-            return ['alt' => 'Shop ' . ucfirst($k),
+            $alts = ['toys' => 'Shop toys and games for kids', 'halloween' => 'Shop Halloween toys and party fun'];
+            return ['alt' => $alts[$k] ?? 'Shop ' . ucfirst($k),
                     'img' => asset("assets/img/home-v1/hero-{$k}.webp"),
                     'url' => $cat ? route('category.landing', $cat->slug) : url('/shop')];
         });
@@ -86,6 +87,7 @@ class HomeController extends Controller
     protected function publishedReviews(int $limit = 8): array
     {
         $reviews = Review::with(['user:id,name', 'product:id,name,slug'])
+            ->whereHas('product', fn ($q) => $q->visible())
             ->whereNotNull('comment')
             ->where('comment', '!=', '')
             ->where('rating', '>=', 4)
@@ -117,12 +119,12 @@ class HomeController extends Controller
 
         return view('about', [
             // Counts are stated as fact on the page, so read them, don't hardcode them.
-            'productCount'  => Product::where('is_active', true)->count(),
+            'productCount'  => Product::visible()->count(),
             'categoryCount' => Category::where('is_active', true)->count(),
             'reviews'       => $reviews,
             'verified'      => $verified,
-            'ratingAvg'     => round((float) Review::avg('rating'), 1),
-            'ratingCount'   => Review::count(),
+            'ratingAvg'     => round((float) Review::whereHas('product', fn ($q) => $q->visible())->avg('rating'), 1),
+            'ratingCount'   => Review::whereHas('product', fn ($q) => $q->visible())->count(),
         ]);
     }
 
@@ -154,7 +156,7 @@ class HomeController extends Controller
         // items.product supplies the order thumbnails on the dashboard
         $orders = Order::where('user_id', $user->id)->with('items.product')->latest()->get();
 
-        $wishlistCount = Wishlist::where('user_id', $user->id)->count();
+        $wishlistCount = Wishlist::where('user_id', $user->id)->whereHas('product', fn ($q) => $q->visible())->count();
 
         return view('my-account', compact('user', 'orders', 'wishlistCount'));
     }
@@ -206,6 +208,7 @@ class HomeController extends Controller
         $user = Auth::user();
 
         $wishlistItems = Wishlist::where('user_id', $user->id)
+                                 ->whereHas('product', fn ($q) => $q->visible())
                                  ->with('product')
                                  ->latest()
                                  ->get();
@@ -310,7 +313,7 @@ class HomeController extends Controller
         $eff = self::EFFECTIVE_PRICE;
 
         return Product::query()
-            ->where('is_active', true)
+            ->visible()
             ->when($except !== 'search' && $f['search'] !== '', fn($q) => $q->where(function ($w) use ($f) {
                 $w->where('name', 'like', '%' . $f['search'] . '%')
                   ->orWhere('description', 'like', '%' . $f['search'] . '%');
@@ -345,7 +348,7 @@ class HomeController extends Controller
         // intersected against what actually exists — never trusted straight from the URL.
         // Size / colour only exist on some products, so the options come from the data:
         // whatever the active catalogue actually carries. No options → no facet.
-        $optionPool = fn(string $col) => Product::where('is_active', true)->whereNotNull($col)->pluck($col)
+        $optionPool = fn(string $col) => Product::visible()->whereNotNull($col)->pluck($col)
             ->flatten()->filter()->map(fn($v) => trim((string) $v))->filter()->unique()->values();
         $sizeOptions  = $optionPool('sizes')->sort(SORT_NATURAL | SORT_FLAG_CASE)->values();
         $colorOptions = $optionPool('colors')->sort(SORT_NATURAL | SORT_FLAG_CASE)->values();
@@ -428,7 +431,7 @@ class HomeController extends Controller
         $product = Product::with('category')
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
-            ->where('is_active', true)
+            ->visible()
             ->where('slug', $slug)
             ->firstOrFail();
 
@@ -445,7 +448,7 @@ class HomeController extends Controller
     {
         $category = Category::where('slug', $slug)->where('is_active', true)->firstOrFail();
 
-        $baseQuery = Product::where('category_id', $category->id)->where('is_active', true);
+        $baseQuery = Product::visible()->where('category_id', $category->id);
 
         $totalCount = (clone $baseQuery)->count();
         $priceMin   = (clone $baseQuery)->min(\DB::raw('COALESCE(sale_price, price)'));
@@ -484,7 +487,7 @@ class HomeController extends Controller
 
     public function productCategory()
     {
-        $products   = Product::where('is_active', true)->with('variants')->latest()->paginate(12);
+        $products   = Product::visible()->with('variants')->latest()->paginate(12);
         $categories = Category::where('is_active', true)->has('activeProducts')->orderBy('name')->get();
         return view('product-category', compact('products', 'categories'));
     }

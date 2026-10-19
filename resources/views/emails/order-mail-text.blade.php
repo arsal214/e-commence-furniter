@@ -7,7 +7,7 @@
     $shippingLabel = ['free' => 'Free Shipping', 'fast' => 'Fast Shipping', 'local' => 'Local Pickup'][$order->shipping] ?? ucfirst($order->shipping);
     $paymentLabel  = ['cod' => 'Cash on Delivery', 'stripe' => 'Card', 'paypal' => 'PayPal'][$order->payment_method] ?? ucfirst($order->payment_method);
 @endphp
-PEYTONGHALIB — Premium Furniture
+PEYTONGHALIB — Toys & Games
 
 {{ strtoupper($eyebrow) }}
 

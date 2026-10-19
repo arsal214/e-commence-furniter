@@ -39,7 +39,7 @@
 <div class="wrapper">
     <div class="header">
         <h1>PeytonGhalib</h1>
-        <p>Premium Furniture Store</p>
+        <p>Toys & Games Store</p>
     </div>
     <div class="hero">
         <div class="hero-icon">&#128666;</div>

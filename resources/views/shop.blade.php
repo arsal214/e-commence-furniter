@@ -6,8 +6,8 @@
     $shopPage    = max(1, (int) request()->get('page', 1));
     $pageSuffix  = $shopPage > 1 ? ' — Page ' . $shopPage : '';
 @endphp
-@section('title', 'Shop' . $pageSuffix . ' | PeytonGhalib')
-@section('meta_description', 'Browse our full collection of furniture, home decor, ceramics and lifestyle products. Filter by category and price at PeytonGhalib.' . ($shopPage > 1 ? ' Page ' . $shopPage . '.' : ''))
+@section('title', 'Shop Toys & Games Online' . $pageSuffix . ' | PeytonGhalib')
+@section('meta_description', 'Browse our full collection of toys, games, puzzles and plush for every age. Filter by category and price at PeytonGhalib.' . ($shopPage > 1 ? ' Page ' . $shopPage . '.' : ''))
 
 @php
     // Canonical strategy — de-duplicates /shop?category=X against the /category/{slug}
@@ -39,7 +39,7 @@
     $shopPageName    = $shopCategoryObj ? $shopCategoryObj->name . ' - PeytonGhalib' : 'Shop All Products - PeytonGhalib';
     $shopPageDesc    = $shopCategoryObj
         ? 'Browse our ' . $shopCategoryObj->name . ' collection at PeytonGhalib.'
-        : 'Browse all furniture, home decor, and lifestyle products at PeytonGhalib.';
+        : 'Browse all toys, games and play products for kids at PeytonGhalib.';
 
     $breadcrumbItems = [
         ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => url('/')],

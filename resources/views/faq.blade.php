@@ -1,8 +1,8 @@
 {{-- resources/views/faq.blade.php --}}
 @extends('layouts.main')
 
-@section('title', 'FAQs | PeytonGhalib')
-@section('meta_description', 'Find answers to frequently asked questions about orders, shipping, returns, payments, and more at PeytonGhalib.')
+@section('title', 'Toy Store FAQs: Shipping, Returns & Payments | PeytonGhalib')
+@section('meta_description', 'Answers about toy orders at PeytonGhalib: free USA shipping, delivery times, 30-day returns, payments, age recommendations, and stock.')
 @section('canonical', url('/faq'))
 
 @php
@@ -14,7 +14,7 @@
     // not offer. Keep the answers here and both stay honest.
     $catList = !empty($categoryNames)
         ? \Illuminate\Support\Str::lower(implode(', ', array_slice($categoryNames, 0, 6)))
-        : 'furniture, home decor, ceramics and lifestyle products';
+        : 'puzzles, building sets, plush, games and outdoor toys';
 
     $faqGroups = [
         [
@@ -28,13 +28,17 @@
                 // page still hardcoding the window, so changing the promise used
                 // to leave it quietly contradicting the other three.
                 ['q' => 'How long does delivery take?',
-                 'a' => 'Standard delivery takes '.\App\Support\DeliveryEstimate::minDays().'–'.\App\Support\DeliveryEstimate::maxDays().' business days, depending on your location. You will receive a tracking link by email as soon as your order has been dispatched, and you can follow it from your account at any time.'],
+                 'a' => 'Standard delivery takes '.\App\Support\DeliveryEstimate::minDays().'–'.\App\Support\DeliveryEstimate::maxDays().' business days after your order ships to a U.S. address. We email you a tracking link as soon as it is on its way, and you can follow it from your account at any time.'],
                 ['q' => 'Do you offer free shipping?',
-                 'a' => 'Yes — shipping is free on every order, with no minimum spend. It is applied automatically at checkout, so there is nothing for you to do.'],
+                 'a' => 'Yes. Every order ships free to any U.S. address, with no minimum spend. We apply it automatically at checkout, so there is nothing to enter.'],
+                ['q' => 'Do you ship outside the United States?',
+                 'a' => 'Not at the moment. PeytonGhalib currently delivers to addresses in the United States only.'],
+                ['q' => 'Can I send a toy as a gift to someone else?',
+                 'a' => 'Yes. Enter the recipient\'s name and address as the shipping address at checkout, and we will send the order straight to them.'],
                 ['q' => 'Can I track my order?',
                  'a' => 'Absolutely. Once your order is dispatched you will receive a confirmation email with your tracking number. You can also sign in and follow your order from Order History, or use the Track Order page with your tracking number.'],
                 ['q' => 'Do you deliver on weekends?',
-                 'a' => 'Weekend delivery depends on your location and the courier. Orders are processed on business days (Monday–Friday), and couriers may still deliver on a Saturday in some areas.'],
+                 'a' => 'Weekend delivery depends on your location and the carrier. We process orders on business days (Monday through Friday), and carriers may still deliver on a Saturday in some areas.'],
             ],
         ],
         [
@@ -43,9 +47,11 @@
             'icon'  => 'refresh',
             'items' => [
                 ['q' => 'What is your return policy?',
-                 'a' => 'We offer a 30-day return policy on most items. Products must be unused, in their original condition, and returned in their original packaging. To start a return, contact our support team with your order number. Once we receive and inspect the item, your refund is processed within 5–7 business days.'],
+                 'a' => 'You can return a toy within 30 days of delivery. It must be unused, in its original packaging, with every piece included. To start a return, email our support team with your order number. Once we receive and inspect the toy, we process your refund within 5–7 business days.'],
+                ['q' => 'Can I return a toy I have already opened?',
+                 'a' => 'You can return an opened toy if it is unused, complete, and in good condition. If it shows signs of use, has missing pieces, or has damaged packaging, we may issue a partial refund instead of a full one.'],
                 ['q' => 'I received a damaged or wrong item. What should I do?',
-                 'a' => 'We are sorry about that. Contact our support team within 48 hours of delivery with your order number and a photo of the item. We will arrange a replacement or a full refund at no cost to you, and we aim to resolve these within 24–48 hours.'],
+                 'a' => 'We are sorry about that. Contact our support team within 48 hours of delivery with your order number and a photo of the toy and its packaging. We will arrange a replacement or a full refund at no cost to you, and we aim to resolve these within 24–48 hours.'],
                 ['q' => 'How long does a refund take?',
                  'a' => 'Refunds are processed within 5–7 business days of us receiving your returned item. How quickly it appears on your statement depends on your bank or card provider. You will get an email confirmation once the refund has been issued.'],
             ],
@@ -62,20 +68,24 @@
                 ['q' => 'Can I cancel or modify my order?',
                  'a' => 'You can cancel or change an order any time before it is dispatched — contact our support team with your order number as soon as you can. Once an order has shipped it cannot be cancelled, but you can return it after delivery.'],
                 ['q' => 'Do I need an account to place an order?',
-                 'a' => 'You need an account to check out, and it takes a moment to create. It also lets you track orders, keep a wishlist, see your purchase history, and check out faster next time.'],
+                 'a' => 'No. You can check out as a guest. We create an account from your order details and email you a link to set a password, so you can track orders, keep a wishlist, and check out faster next time.'],
             ],
         ],
         [
             'id'    => 'products',
-            'title' => 'Products & Stock',
+            'title' => 'Toys, Ages & Stock',
             'icon'  => 'box',
             'items' => [
                 ['q' => 'What product categories do you sell?',
-                 'a' => 'PeytonGhalib covers ' . $catList . ' — and we are always expanding the catalogue. Browse the shop to see everything currently in stock.'],
+                 'a' => 'PeytonGhalib sells ' . $catList . ', and we keep adding new toys. Browse the shop to see everything in stock right now.'],
+                ['q' => 'How do I choose a toy that is right for my child\'s age?',
+                 'a' => 'Check the recommended age on the product page and on the packaging, then match it to your child\'s age and interests. Toys for ages 3 and up can contain small parts that are a choking hazard for younger children, so keep them away from kids under 3.'],
+                ['q' => 'Are batteries included with electronic toys?',
+                 'a' => 'It varies by toy. Check the product description and packaging to see whether batteries are included or required. If you are not sure, email us before you order and we will check for you.'],
                 ['q' => 'Are the products authentic and genuine?',
                  'a' => 'Yes. We source from verified suppliers and trusted brands, and every item is quality-checked before it reaches you. If a product ever fails to match its description, we will make it right.'],
                 ['q' => 'What if an item I want is out of stock?',
-                 'a' => 'Add it to your wishlist and it will be waiting for you when it returns. You can also contact support and we will help you find an alternative or give you an estimated restock date.'],
+                 'a' => 'Add it to your wishlist so you can find it quickly when it returns. You can also contact support, and we will help you find a similar toy or give you an estimated restock date.'],
             ],
         ],
     ];

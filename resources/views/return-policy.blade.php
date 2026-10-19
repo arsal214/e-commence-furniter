@@ -1,11 +1,11 @@
 @extends('layouts.main')
-@section('title', 'Return Policy | PeytonGhalib')
-@section('meta_description', 'PeytonGhalib offers a 30-day hassle-free return policy on all furniture and home decor items. Learn how to return a product easily.')
+@section('title', 'Return Policy: 30-Day Toy Returns | PeytonGhalib')
+@section('meta_description', 'Return unused toys and games within 30 days of delivery for a refund or exchange. Learn how to start a return, what we accept, and how long refunds take.')
 
 @push('schema')
 @php
 $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Return Policy — PeytonGhalib',
-    'description'=>'PeytonGhalib offers a 30-day hassle-free return policy on all furniture and home decor items.',
+    'description'=>'Return unused toys and games within 30 days of delivery for a refund or exchange. Learn how to start a return, what we accept, and how long refunds take.',
     'url'=>url()->current(),
     'breadcrumb'=>['@type'=>'BreadcrumbList','itemListElement'=>[
         ['@type'=>'ListItem','position'=>1,'name'=>'Home','item'=>url('/')],
@@ -27,27 +27,30 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Retu
 </div>
 <section class="s-py-100">
     <div class="container-fluid"><div class="max-w-3xl mx-auto prose dark:prose-invert prose-headings:text-title dark:prose-headings:text-white prose-p:text-paragraph dark:prose-p:text-white-light prose-li:text-paragraph dark:prose-li:text-white-light">
-        <h2>30-Day Return Policy</h2>
-        <p>At PeytonGhalib, your satisfaction is our priority. If you are not completely happy with your purchase, you may return it within <strong>30 days</strong> of delivery for a full refund or exchange.</p>
-        <h3>Eligibility</h3>
+        <h2>30-Day Returns on Toys and Games</h2>
+        <p>We want every toy to land with a smile. If it is not the right fit, you can return it within <strong>30 days</strong> of delivery for a full refund or an exchange.</p>
+        <h3>What We Accept</h3>
         <ul>
-            <li>Items must be unused, undamaged, and in original packaging.</li>
-            <li>Returns must be requested within 30 days of the delivery date.</li>
-            <li>Proof of purchase (order number or receipt) is required.</li>
-            <li>Custom-made or personalised items are non-returnable unless defective.</li>
+            <li>Toys and games that are unused and undamaged, in their original packaging.</li>
+            <li>Puzzles, board games, and play sets with every piece, card, and part included.</li>
+            <li>Returns requested within 30 days of the delivery date.</li>
+            <li>An order number or receipt as proof of purchase.</li>
         </ul>
-        <h3>How to Return</h3>
+        <p>We cannot accept custom-made or personalized items unless they arrive defective.</p>
+        <h3>How to Start a Return</h3>
         <ol>
-            <li>Email <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a> with your order number and reason for return.</li>
-            <li>Our team will respond within 1–2 business days with a return authorisation and instructions.</li>
-            <li>Pack the item securely and attach the return label provided.</li>
-            <li>Drop off at your nearest courier or schedule a collection.</li>
+            <li>Email <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a> with your order number and the reason for the return.</li>
+            <li>We reply within 1–2 business days with a return authorization and instructions.</li>
+            <li>Pack the toy securely in its original packaging and attach the return label we send you.</li>
+            <li>Drop the parcel off at your nearest carrier location or schedule a pickup.</li>
         </ol>
-        <h3>Refund Timeline</h3>
-        <p>Once we receive and inspect the returned item, your refund will be processed within <strong>5–7 business days</strong> to your original payment method.</p>
-        <h3>Damaged or Defective Items</h3>
-        <p>If your item arrives damaged or defective, please contact us within <strong>48 hours</strong> of delivery with photos. We will arrange a free replacement or full refund at no extra cost.</p>
-        <p class="text-sm text-gray-400">Last updated: June 2026</p>
+        <h3>When You Get Your Refund</h3>
+        <p>We inspect your return when it arrives and refund your original payment method within <strong>5–7 business days</strong>.</p>
+        <h3>Damaged, Defective, or Wrong Items</h3>
+        <p>If a toy arrives damaged, defective, or not what you ordered, contact us within <strong>48 hours</strong> of delivery with your order number and a photo. We will send a free replacement or refund you in full.</p>
+        <h3>Product Recalls</h3>
+        <p>You can check current toy recalls at <a href="https://www.cpsc.gov/Recalls" rel="noopener noreferrer" target="_blank">cpsc.gov/Recalls</a>. If you have a question about a toy you bought from us, contact us and we will help.</p>
+        <p class="text-sm text-gray-400">Last updated: October 2026</p>
     </div></div>
 </section>
 @include('includes.footer')

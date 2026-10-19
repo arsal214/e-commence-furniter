@@ -19,7 +19,7 @@ class ProductController extends Controller
             return response()->json([]);
         }
 
-        $results = Product::where('is_active', true)
+        $results = Product::visible()
             ->where(function ($query) use ($q) {
                 $query->where('name', 'like', "%{$q}%")
                       ->orWhere('description', 'like', "%{$q}%");
@@ -52,7 +52,7 @@ class ProductController extends Controller
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
             ->where('slug', $slug)
-            ->where('is_active', true)
+            ->visible()
             ->firstOrFail();
 
         // Related products: same category AND closest in price first, so a premium
@@ -62,7 +62,7 @@ class ProductController extends Controller
         $eff       = 'COALESCE(NULLIF(sale_price, 0), price)';
         $itemPrice = (float) $item->effective_price;
 
-        $newProducts = Product::where('is_active', true)
+        $newProducts = Product::visible()
             ->where('id', '!=', $item->id)
             ->where('category_id', $item->category_id)
             ->orderByRaw("ABS($eff - ?) ASC", [$itemPrice])
@@ -74,7 +74,7 @@ class ProductController extends Controller
         if ($newProducts->count() < 4) {
             $ids = $newProducts->pluck('id')->push($item->id);
             $newProducts = $newProducts->merge(
-                Product::where('is_active', true)
+                Product::visible()
                     ->whereNotIn('id', $ids)
                     ->orderByRaw("ABS($eff - ?) ASC", [$itemPrice])
                     ->take(4 - $newProducts->count())
@@ -112,7 +112,7 @@ class ProductController extends Controller
             $exclude = $picks->pluck('id')->push($item->id);
 
             $picks = $picks->merge(
-                Product::where('is_active', true)
+                Product::visible()
                     ->where('stock', '>', 0)
                     ->whereNotIn('id', $exclude)
                     ->when($item->category_id, fn ($q) => $q->where('category_id', $item->category_id))

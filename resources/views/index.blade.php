@@ -1,6 +1,6 @@
 @extends('layouts.main')
-@section('title', 'PeytonGhalib — Home Decor & Everyday Essentials Online')
-@section('meta_description', 'Shop home essentials, kitchen gadgets, electronics, car accessories, toys & more at PeytonGhalib. Quality products, fast delivery, 30-day returns. Discover your new favourites today.')
+@section('title', 'Toys & Games Online with Free USA Shipping | PeytonGhalib')
+@section('meta_description', 'Shop quality toys, games, puzzles, plush and outdoor play for kids of every age at PeytonGhalib. Free shipping across the USA and 30-day returns.')
 
 {{-- No hero image preload on purpose.
 
@@ -23,7 +23,7 @@ $schemaWebsite = [
     '@type'           => 'WebSite',
     'name'            => 'PeytonGhalib',
     'url'             => url('/'),
-    'description'     => 'Shop home essentials, kitchen gadgets, electronics, car accessories, toys & more at PeytonGhalib. Quality products, fast delivery, 30-day returns. Discover your new favourites today.',
+    'description'     => 'Shop quality toys, games, puzzles, plush and outdoor play for kids of every age at PeytonGhalib. Free shipping across the USA and 30-day returns.',
     'potentialAction' => [
         '@type'       => 'SearchAction',
         'target'      => ['@type' => 'EntryPoint', 'urlTemplate' => url('/shop') . '?search={search_term_string}'],
@@ -460,6 +460,9 @@ $schemaWebsite = [
 {{-- ── PHP data prep ──────────────────────────────────────────── --}}
 @php
     $catIconMap = [
+        'puzzle'   => '<path d="M19.4 7H17V4.6a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2V7H4.6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2H7v2.4a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V17h2.4a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>',
+        'plush'    => '<circle cx="12" cy="13" r="7"/><circle cx="6" cy="5" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M9.5 13h.01M14.5 13h.01M10.5 16c.9.7 2.1.7 3 0"/>',
+        'game'     => '<rect x="2" y="7" width="20" height="12" rx="3"/><path d="M7 11v4M5 13h4M16 12h.01M18 14h.01"/>',
         'sofa'     => '<path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11a2 2 0 1 1 4 0v2h12v-2a2 2 0 1 1 4 0v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/><path d="M6 17v2"/><path d="M18 17v2"/>',
         'chair'    => '<path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11a2 2 0 1 1 4 0v2h12v-2a2 2 0 1 1 4 0v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>',
         'lamp'     => '<path d="M9 18h6"/><path d="M10 22h4"/><path d="m5 6 7-4 7 4"/><path d="M12 2v4"/><rect x="5" y="6" width="14" height="12" rx="2"/>',
@@ -482,7 +485,7 @@ $schemaWebsite = [
 @endphp
 
 <section class="ph-hero ph-hero--tiles" aria-label="Featured">
-    <h1 class="sr-only">PeytonGhalib — Home Decor &amp; Everyday Essentials</h1>
+    <h1 class="sr-only">Toys &amp; Games for Kids of Every Age, with Free Shipping Across the USA</h1>
     @foreach($heroTiles as $t)
     <a href="{{ $t['url'] }}" class="ph-cat">
         <img src="{{ $t['img'] }}" alt="{{ $t['alt'] }}" width="1009" height="1558" loading="{{ $loop->first ? 'eager' : 'lazy' }}" decoding="async">
@@ -499,17 +502,17 @@ $schemaWebsite = [
             <div class="mb-7" data-aos="fade-up">
                 <div class="flex items-end justify-between">
                     <div>
-                        <span class="text-xs uppercase tracking-widest text-primary font-semibold">Browse by Collection</span>
-                        <h2 class="mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Featured Categories</h2>
+                        <span class="text-xs uppercase tracking-widest text-primary font-semibold">Shop by category</span>
+                        <h2 class="mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Toy Categories</h2>
                     </div>
                     <a href="{{ url('/categories') }}"
                        class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-primary
                               border border-primary/30 px-5 py-2.5 rounded-full
                               hover:bg-primary hover:text-white hover:border-primary transition-all duration-200">
-                        All Collections →
+                        All categories →
                     </a>
                 </div>
-                <p class="mt-3 text-sm text-paragraph dark:text-white-light max-w-2xl">Browse our full range of stunning products — from home decor and kitchen gadgets to electronics, car accessories, toys, garden, and everything in between.</p>
+                <p class="mt-3 text-sm text-paragraph dark:text-white-light max-w-2xl">Find the right toy by type, from puzzles and building sets to plush, board games, dolls, ride-ons, and outdoor play.</p>
             </div>
 
             <div class="pgh-cats-scroll" id="pgh-cat-grid" data-aos="fade-up" data-aos-delay="80">
@@ -629,7 +632,7 @@ $schemaWebsite = [
             <div>
                 <p class="na-eyebrow">Just landed @if(!empty($newThisWeek)) &middot; {{ $newThisWeek }} this week @endif</p>
                 <h2 class="na-title">New arrivals</h2>
-                <p class="na-sub">Fresh finds every week, from seasonal d&eacute;cor to everyday essentials.</p>
+                <p class="na-sub">New toys and games every week, for every age and interest.</p>
             </div>
             <a href="{{ url('/shop') }}?sort=latest" class="na-all">Shop all new arrivals &rarr;</a>
         </div>
@@ -820,9 +823,9 @@ $schemaWebsite = [
         {{-- Section Header --}}
         <div class="wcu-header" data-aos="fade-up">
             <span class="wcu-label">Our Promise</span>
-            <h2 class="wcu-title">Why Thousands of Customers Choose PeytonGhalib</h2>
+            <h2 class="wcu-title">Why Families Shop PeytonGhalib</h2>
             <div class="wcu-divider"></div>
-            <p class="wcu-subtitle">We're committed to delivering quality products and a shopping experience you can count on — from the moment you browse to the day your order arrives.</p>
+            <p class="wcu-subtitle">We make buying toys simple: clear prices, free shipping across the USA, and a team that helps from the moment you browse to the day your order arrives.</p>
         </div>
 
         {{-- Cards Grid --}}
@@ -840,7 +843,7 @@ $schemaWebsite = [
                     </svg>
                 </div>
                 <div class="wcu-card-title">Free Shipping</div>
-                <p class="wcu-card-desc">Every order ships free — no minimum spend, no hidden delivery fees. Ever.</p>
+                <p class="wcu-card-desc">Every order ships free to any U.S. address, with no minimum spend and no hidden fees.</p>
             </div>
 
             {{-- 2: Secure Payments --}}
@@ -853,7 +856,7 @@ $schemaWebsite = [
                     </svg>
                 </div>
                 <div class="wcu-card-title">Secure Payments</div>
-                <p class="wcu-card-desc">Bank-grade SSL encryption on every transaction. Your card data stays private.</p>
+                <p class="wcu-card-desc">Payments run through Stripe over an encrypted connection, so your card details stay private.</p>
             </div>
 
             {{-- 3: Easy Returns --}}
@@ -866,7 +869,7 @@ $schemaWebsite = [
                     </svg>
                 </div>
                 <div class="wcu-card-title">30-Day Returns</div>
-                <p class="wcu-card-desc">Changed your mind? Return anything within 30 days, no questions asked.</p>
+                <p class="wcu-card-desc">Not the right toy? Return it unused in its original packaging within 30 days for a refund or exchange.</p>
             </div>
 
             {{-- 4: 24/7 Support --}}
@@ -878,7 +881,7 @@ $schemaWebsite = [
                     </svg>
                 </div>
                 <div class="wcu-card-title">24/7 Support</div>
-                <p class="wcu-card-desc">Our experts are on call around the clock — chat, email, or phone, we're here.</p>
+                <p class="wcu-card-desc">Email our team any day of the week, and we reply within 24 hours.</p>
             </div>
 
             {{-- 5: Loved by Our Customers --}}
@@ -889,8 +892,8 @@ $schemaWebsite = [
                         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                     </svg>
                 </div>
-                <div class="wcu-card-title">Loved by Our Customers</div>
-                <p class="wcu-card-desc">We work to earn five stars on every order — and make it right when something's off.</p>
+                <div class="wcu-card-title">Real Customer Reviews</div>
+                <p class="wcu-card-desc">We want every order to earn five stars, and we make it right when something is off.</p>
             </div>
 
         </div>
@@ -907,12 +910,12 @@ $schemaWebsite = [
         <div class="flex items-end justify-between gap-4 mb-6 md:mb-8 max-w-[1720px] mx-auto" data-aos="fade-up">
             <div>
                 <span class="text-xs uppercase tracking-widest text-primary font-semibold">Customer favourites</span>
-                <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Our Best-Selling Products</h2>
+                <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Best-Selling Toys</h2>
                 {{-- "loved by thousands of shoppers" was an invented count, same
                      class of claim as the ratings already stripped out of the hero
                      for being fabricated against an empty reviews table. Kept
                      non-numeric so it stays true whatever the order volume is. --}}
-                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">These are the products our customers keep coming back for — the ones that sell fastest and get re-ordered most.</p>
+                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">The toys families keep coming back for: the ones that sell fastest and get reordered most.</p>
             </div>
             <a href="{{ url('/shop') }}"
                class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-title dark:text-white
@@ -1134,7 +1137,7 @@ $schemaWebsite = [
         <div class="max-w-xl mx-auto mb-8 md:mb-12 text-center" data-aos="fade-up">
             <span class="text-xs uppercase tracking-widest text-primary font-semibold">What our customers say</span>
             <h2 class="leading-tight mt-2 text-2xl md:text-3xl font-bold text-title dark:text-white">Loved by Shoppers Across the USA</h2>
-            <p class="mt-3 text-paragraph dark:text-white-light">Don't take our word for it — here's what customers say about their PeytonGhalib shopping experience.</p>
+            <p class="mt-3 text-paragraph dark:text-white-light">Here's what customers say about their PeytonGhalib orders.</p>
         </div>
 
         <!-- Reviews Slider -->
@@ -1247,9 +1250,9 @@ $schemaWebsite = [
 
             <div class="flex items-end justify-between gap-4 mb-8" data-aos="fade-up">
                 <div>
-                    <span class="text-xs uppercase tracking-widest text-primary font-semibold">Everything in one place</span>
-                    <h2 class="leading-tight mt-1 text-xl md:text-2xl font-bold text-title dark:text-white">Explore Our Full Range</h2>
-                    <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500">From home and garden to tech, toys, car accessories and beyond — PeytonGhalib has everything you need in one place.</p>
+                    <span class="text-xs uppercase tracking-widest text-primary font-semibold">Find the right toy</span>
+                    <h2 class="leading-tight mt-1 text-xl md:text-2xl font-bold text-title dark:text-white">Explore Our Toy Range</h2>
+                    <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500">Puzzles, plush, board games, and outdoor play: shop toys for every kid and every budget in one place.</p>
                 </div>
                 <a href="{{ url('/shop') }}"
                    class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">

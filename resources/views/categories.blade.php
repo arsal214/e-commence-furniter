@@ -1,8 +1,8 @@
 <!-- resources/views/categories.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'All Categories | PeytonGhalib')
-@section('meta_description', 'Browse all product categories at PeytonGhalib — furniture, home decor, ceramics, lifestyle and more.')
+@section('title', 'Shop Toys by Category | PeytonGhalib')
+@section('meta_description', 'Browse all product categories at PeytonGhalib — toys, games, puzzles, plush, outdoor play and more.')
 
 @push('schema')
 @php
@@ -10,7 +10,7 @@ $schemaCats = [
     '@context'   => 'https://schema.org',
     '@type'      => 'CollectionPage',
     'name'       => 'All Categories — PeytonGhalib',
-    'description'=> 'Browse all product categories at PeytonGhalib — furniture, home decor, ceramics, lifestyle and more.',
+    'description'=> 'Browse all product categories at PeytonGhalib — toys, games, puzzles, plush, outdoor play and more.',
     'url'        => url()->current(),
     'breadcrumb' => [
         '@type'           => 'BreadcrumbList',

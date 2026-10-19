@@ -1,13 +1,13 @@
 {{-- resources/views/about.blade.php --}}
 @extends('layouts.main')
 
-@section('title', 'About Us | PeytonGhalib')
-@section('meta_description', 'Learn about PeytonGhalib — our story, mission, and how we bring home essentials, kitchen, electronics, toys, garden and car accessories together in one place at unbeatable prices.')
+@section('title', 'About PeytonGhalib: Your U.S. Online Toy Store')
+@section('meta_description', 'Learn about PeytonGhalib — our story, mission, and how we bring safe, fun and well-made toys for every age together in one place at fair prices.')
 
 @push('schema')
 @php
 $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'About PeytonGhalib','url'=>url('/about'),
-    'description'=>'Learn about PeytonGhalib — our mission, our products, and our commitment to quality across every category we sell.',
+    'description'=>'PeytonGhalib is a U.S. online toy store with free shipping, 30-day returns, and toys and games for every age.',
     'about'=>['@type'=>'Organization','name'=>'PeytonGhalib','url'=>url('/')]];
 @endphp
 <script type="application/ld+json">{!! json_encode($schemaAbout, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
@@ -315,11 +315,11 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
                 <span aria-current="page">About</span>
             </nav>
 
-            <h1 class="ab-hero__title">Shop your whole life in <em>one place</em>.</h1>
+            <h1 class="ab-hero__title">Toys that make every day <em>playtime</em>.</h1>
             <p class="ab-hero__text">
-                From home essentials and kitchen to electronics, toys, garden and car —
+                From puzzles and building sets to plush, games and outdoor play —
                 {{ number_format($productCount) }} products across {{ number_format($categoryCount) }} categories,
-                all fairly priced and shipped free.
+                all fairly priced and shipped free across the USA.
             </p>
 
             <div class="ab-hero__actions">
@@ -339,28 +339,27 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
 
                 <div class="ab-collage">
                     <img class="ab-collage__img ab-collage__img--tall" src="{{ asset('assets/img/about/about-banner-01.jpg') }}"
-                         alt="A styled living-room setting" loading="lazy" width="400" height="440">
+                         alt="Kids playing with toys at home" loading="lazy" width="400" height="440">
                     <img class="ab-collage__img" src="{{ asset('assets/img/about/about-banner-02.jpg') }}"
-                         alt="Home decor detail" loading="lazy" width="400" height="210">
+                         alt="Colorful building blocks and puzzles" loading="lazy" width="400" height="210">
                     <img class="ab-collage__img" src="{{ asset('assets/img/about/about-banner-03.jpg') }}"
-                         alt="Furniture in a finished room" loading="lazy" width="400" height="210">
+                         alt="A shelf of plush toys and games" loading="lazy" width="400" height="210">
                 </div>
 
                 <div>
                     <span class="ab__eyebrow">Our story</span>
-                    <h2 class="ab__h2" id="ab-story-title">The everyday things, done properly</h2>
+                    <h2 class="ab__h2" id="ab-story-title">Play, done properly</h2>
 
                     <p class="ab-story__p">
-                        PeytonGhalib started with a simple frustration: the ordinary things a home runs on — the
-                        kitchen gadget, the storage box, the phone mount, the kid's birthday present — were scattered
-                        across a dozen different shops, and hardly any of them were worth a second visit. So we built
-                        one place to keep them all.
+                        PeytonGhalib started with a simple frustration: good toys — the birthday present, the rainy-day
+                        puzzle, the first plush friend — were scattered across a dozen different shops, and hardly
+                        any of them were worth a second visit. So we built one place to find them all.
                     </p>
                     <p class="ab-story__p">
                         Today that's {{ number_format($productCount) }} products across
-                        {{ number_format($categoryCount) }} categories: home essentials and kitchen, electronics and
-                        car accessories, toys, garden, pet supplies, lamps, jewelry and gifts. We stock what we'd
-                        happily use ourselves, price it so you don't have to think twice, ship it free, and take it
+                        {{ number_format($categoryCount) }} categories: puzzles and building sets, plush and dolls,
+                        board games, ride-ons and outdoor play. We stock what we'd
+                        happily give our own kids, price it so you don't have to think twice, ship it free, and take it
                         back without an argument if it isn't right.
                     </p>
 
@@ -396,8 +395,8 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
                 <span class="ab__eyebrow">Our promise</span>
                 <h2 class="ab__h2" id="ab-values-title">Why choose PeytonGhalib</h2>
                 <p class="ab__lede" style="margin:0 auto">
-                    Every category we sell, in one place — with honest prices, fast delivery, and a
-                    customer experience that keeps you coming back.
+                    Fair prices, free shipping across the USA, and a team that stands behind every toy
+                    we sell.
                 </p>
             </div>
 
@@ -405,15 +404,15 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
                 // Inline SVG rather than <img>, so icons inherit colour and theme correctly.
                 $values = [
                     ['badge' => 'Always free',  'title' => 'Free shipping',   'icon' => 'truck',
-                     'text'  => 'Enjoy hassle-free shopping with complimentary shipping on all orders — no minimum purchase required.'],
+                     'text'  => 'Every order ships free to any U.S. address, with no minimum purchase.'],
                     ['badge' => '30-day policy','title' => 'Easy returns',    'icon' => 'box',
-                     'text'  => 'Changed your mind? No problem. Our hassle-free return process ensures your complete satisfaction.'],
+                     'text'  => 'Return unused toys in their original packaging within 30 days for a refund or exchange.'],
                     ['badge' => '100% secure',  'title' => 'Secure payment',  'icon' => 'lock',
-                     'text'  => 'Shop with confidence. Our encrypted checkout keeps your payment information safe at every step.'],
+                     'text'  => 'Stripe processes every payment over an encrypted connection, so your card details stay private.'],
                     ['badge' => 'Always here',  'title' => '24/7 support',    'icon' => 'support',
-                     'text'  => 'Our dedicated support team is always ready to help you — any time, any day, any question.'],
-                    ['badge' => 'QC certified', 'title' => 'Quality assured', 'icon' => 'award',
-                     'text'  => 'Every product passes our rigorous QC standards. Trust in quality that goes beyond your expectations.'],
+                     'text'  => 'Email our team any day of the week, and we reply within 24 hours.'],
+                    ['badge' => 'Checked first', 'title' => 'Quality assured', 'icon' => 'award',
+                     'text'  => 'We check each toy before it ships and make it right if it does not match its description.'],
                 ];
             @endphp
 
@@ -542,10 +541,10 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
     <section class="ab-section" style="padding-top:0">
         <div class="ab__wrap">
             <div class="ab-cta">
-                <h2 class="ab-cta__title">Ready to find what you came for?</h2>
+                <h2 class="ab-cta__title">Ready to find the right toy?</h2>
                 <p class="ab-cta__text">
-                    Browse all {{ number_format($categoryCount) }} categories, or send us a note — we're happy to
-                    help you track down exactly what you need.
+                    Browse all {{ number_format($categoryCount) }} categories, or send us a note. We're happy to
+                    help you find the right toy for the right age.
                 </p>
                 <div class="ab-cta__actions">
                     <a class="ab-btn ab-btn--dark" href="{{ url('/shop') }}">

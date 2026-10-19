@@ -68,7 +68,7 @@
                 <div>
                     <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject <span class="text-red-500">*</span></label>
                     <input type="text" name="subject" id="subject" value="{{ old('subject') }}" required maxlength="180"
-                           placeholder="e.g. @{{first_name}}, 20% off our new sofa collection"
+                           placeholder="e.g. @{{first_name}}, 20% off our new toy collection"
                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">

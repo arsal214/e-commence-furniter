@@ -36,7 +36,7 @@ class EmailTemplateSeeder extends Seeder
                 'eyebrow'    => 'Limited Time Offer',
                 'heading'    => 'Our seasonal sale is here',
                 'body_html'  => <<<'HTML'
-<p>For one week only, every piece in our collection is <strong>20% off</strong> — sofas, dining sets, bedroom, the lot.</p>
+<p>For one week only, every piece in our collection is <strong>20% off</strong> — toys, puzzles, plush and games, the lot.</p>
 <p>These are the same pieces we build year round, just at a price we can only hold for a few days. If something has been sitting on your wishlist, this is the moment.</p>
 <ul>
 <li>Free delivery on orders over $500</li>

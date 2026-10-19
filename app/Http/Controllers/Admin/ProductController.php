@@ -97,6 +97,9 @@ class ProductController extends Controller
             'shipping_info'  => ['nullable', 'string'],
             'price'          => ['required', 'numeric', 'min:0'],
             'sale_price'     => ['nullable', 'numeric', 'min:0'],
+            'supplier_cost'  => ['nullable', 'numeric', 'min:0'],
+            'roi_percent'    => ['nullable', 'integer', 'in:20,30,35,40,50,60'],
+            'sale_discount_percent' => ['nullable', 'integer', 'min:0', 'max:90'],
             'image'          => ['nullable', 'image', 'max:4096'],
             'image_color'    => ['nullable', 'string', 'max:100'],
             'images.*'       => ['nullable', 'image', 'max:4096'],
@@ -138,6 +141,7 @@ class ProductController extends Controller
         $data['is_best_seller'] = $request->boolean('is_best_seller');
         $data['is_active']      = $request->boolean('is_active');
         $data['sale_price']  = ($data['sale_price'] ?? null) ?: null;
+        $data = $this->applyRoiPricing($data);
         $data['colors']      = $this->parseVariants($request->input('colors_raw'));
         $data['sizes']       = $this->parseVariants($request->input('sizes_raw'));
         $data['key_features']   = $this->buildKeyFeatures($request);
@@ -219,6 +223,9 @@ class ProductController extends Controller
             'shipping_info'      => ['nullable', 'string'],
             'price'              => ['required', 'numeric', 'min:0'],
             'sale_price'         => ['nullable', 'numeric', 'min:0'],
+            'supplier_cost'  => ['nullable', 'numeric', 'min:0'],
+            'roi_percent'    => ['nullable', 'integer', 'in:20,30,35,40,50,60'],
+            'sale_discount_percent' => ['nullable', 'integer', 'min:0', 'max:90'],
             'image'              => ['nullable', 'image', 'max:4096'],
             'image_color'        => ['nullable', 'string', 'max:100'],
             'images.*'           => ['nullable', 'image', 'max:4096'],
@@ -265,6 +272,7 @@ class ProductController extends Controller
         $data['is_best_seller'] = $request->boolean('is_best_seller');
         $data['is_active']      = $request->boolean('is_active');
         $data['sale_price']  = ($data['sale_price'] ?? null) ?: null;
+        $data = $this->applyRoiPricing($data);
         $data['colors']       = $this->parseVariants($request->input('colors_raw'));
         $data['sizes']        = $this->parseVariants($request->input('sizes_raw'));
         $data['key_features']   = $this->buildKeyFeatures($request);
@@ -502,5 +510,28 @@ class ProductController extends Controller
         $values = array_map('trim', explode(',', $raw));
         $values = array_filter($values, fn($v) => $v !== '');
         return array_values($values) ?: null;
+    }
+
+    /**
+     * Derive price from supplier cost + ROI, and sale price from the sale discount.
+     * e.g. cost 10, ROI 30% => price 13.00; 10% sale => sale price 11.70.
+     * Runs server-side so the stored prices never depend on the browser JS.
+     */
+    private function applyRoiPricing(array $data): array
+    {
+        $cost = $data['supplier_cost'] ?? null;
+        $roi  = $data['roi_percent'] ?? null;
+        $off  = $data['sale_discount_percent'] ?? null;
+
+        if ($cost !== null && $cost !== '' && $roi) {
+            $data['price'] = round((float) $cost * (1 + $roi / 100), 2);
+            $data['sale_price'] = $off ? round($data['price'] * (1 - $off / 100), 2) : null;
+        }
+
+        foreach (['supplier_cost', 'roi_percent', 'sale_discount_percent'] as $k) {
+            $data[$k] = ($data[$k] ?? '') === '' ? null : $data[$k];
+        }
+
+        return $data;
     }
 }

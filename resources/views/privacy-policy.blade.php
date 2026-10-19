@@ -33,7 +33,7 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Priv
         <ul>
             <li><strong>Account data:</strong> Name, email, and password when you register.</li>
             <li><strong>Order data:</strong> Billing address, shipping address, and payment method.</li>
-            <li><strong>Usage data:</strong> Pages visited, products viewed, and search queries (anonymised).</li>
+            <li><strong>Usage data:</strong> Pages visited, products viewed, and search queries (anonymized).</li>
             <li><strong>Communications:</strong> Emails and messages sent to our support team.</li>
         </ul>
         <h3>How We Use Your Data</h3>
@@ -49,10 +49,12 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Priv
         <h3>Your Rights</h3>
         <p>You have the right to access, correct, or delete your personal data at any time. Email <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a> to make a request.</p>
         <h3>Cookies</h3>
-        <p>We use essential cookies for the shopping cart and authentication. Analytics cookies are used (anonymised) to improve site performance.</p>
+        <p>We use essential cookies for the shopping cart and authentication. Analytics cookies are used (anonymized) to improve site performance.</p>
+        <h3>Children's Privacy</h3>
+        <p>PeytonGhalib sells toys, but our website is for parents, guardians, and other adults. We do not knowingly collect personal information from children under 13. If you believe a child has given us personal information, email <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a> and we will delete it.</p>
         <h3>Contact</h3>
-        <p>For privacy concerns, contact our Data Protection Officer at <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a>.</p>
-        <p class="text-sm text-gray-400">Last updated: June 2026</p>
+        <p>For privacy concerns, contact our privacy team at <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a>.</p>
+        <p class="text-sm text-gray-400">Last updated: October 2026</p>
     </div></div>
 </section>
 @include('includes.footer')

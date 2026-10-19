@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace Database\Seeders;
 
@@ -12,31 +12,31 @@ class SliderSeeder extends Seeder
         $sliders = [
             [
                 'title'       => 'Brand-New Arrival Alert Your Next Favorite is Here!',
-                'description' => 'Discover the latest must-have arrivals! Elevate your style with our newest collection of trendsetting furniture.',
+                'description' => 'Discover the latest must-have toys! Fresh puzzles, plush and games for every age, just landed.',
                 'button_text' => 'Shop Now',
                 'button_url'  => '/shop',
                 'year_text'   => '2026',
                 'badge_price' => '$140',
-                'badge_label' => 'Aurora Flexible Sofa',
+                'badge_label' => 'Rainbow Building Blocks',
                 'badge_color' => '#BB976D',
                 'is_active'   => true,
                 'sort_order'  => 1,
             ],
             [
-                'title'       => 'Timeless Designs for Every Living Space',
-                'description' => 'Transform your home with our curated collection of premium furniture crafted for comfort and style.',
+                'title'       => 'Toys They Will Treasure for Years',
+                'description' => 'Hand-picked, well-made toys that spark imagination and make playtime brilliant.',
                 'button_text' => 'Explore Now',
                 'button_url'  => '/shop',
                 'year_text'   => '2026',
                 'badge_price' => '$220',
-                'badge_label' => 'Luxe Dining Set',
+                'badge_label' => 'Wooden Train Set',
                 'badge_color' => '#BB976D',
                 'is_active'   => true,
                 'sort_order'  => 2,
             ],
             [
-                'title'       => 'Modern Comfort Meets Classic Elegance',
-                'description' => 'Shop our premium bedroom and living room collections and bring warmth to every corner of your home.',
+                'title'       => 'Game Night Starts Here',
+                'description' => 'Board games, card games and puzzles the whole family can enjoy together.',
                 'button_text' => 'View Collection',
                 'button_url'  => '/shop',
                 'year_text'   => '2026',

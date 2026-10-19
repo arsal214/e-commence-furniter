@@ -10,7 +10,7 @@ class Product extends Model
     protected $fillable = [
         'category_id', 'name', 'brand', 'slug', 'meta_title', 'meta_description',
         'description', 'key_features', 'review_content', 'shipping_info',
-        'price', 'sale_price', 'image', 'image_color', 'tag', 'is_featured', 'is_best_seller', 'is_active', 'stock', 'sku',
+        'price', 'sale_price', 'supplier_cost', 'roi_percent', 'sale_discount_percent', 'image', 'image_color', 'tag', 'is_featured', 'is_best_seller', 'is_active', 'stock', 'sku',
         'gtin', 'mpn', 'specifications',
         'colors', 'sizes', 'size_chart',
         'supplier_name', 'supplier_url', 'supplier_sku',
@@ -19,6 +19,7 @@ class Product extends Model
     protected $casts = [
         'price'       => 'decimal:2',
         'sale_price'  => 'decimal:2',
+        'supplier_cost' => 'decimal:2',
         'is_featured'    => 'boolean',
         'is_best_seller' => 'boolean',
         'is_active'      => 'boolean',
@@ -26,6 +27,13 @@ class Product extends Model
         'sizes'       => 'array',
         'specifications' => 'array',
     ];
+
+    /** Storefront visibility: the product is active AND its category is active. */
+    public function scopeVisible($query)
+    {
+        return $query->where('products.is_active', true)
+            ->whereHas('category', fn ($c) => $c->where('is_active', true));
+    }
 
     protected static function boot()
     {
@@ -440,8 +448,7 @@ class Product extends Model
 
         $ranking = $ids->values()->all();
 
-        return static::whereIn('id', $ids)
-            ->where('is_active', true)
+        return static::visible()->whereIn('id', $ids)
             ->where('stock', '>', 0)
             ->get()
             // whereIn returns rows in whatever order the DB likes; restore the

@@ -70,6 +70,52 @@
                                class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
                     </div>
 
+                    <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-5 p-4 rounded-lg bg-amber-50 border border-amber-200" id="roi-box">
+                        <div class="sm:col-span-3 text-xs text-amber-700">Internal pricing calculator &mdash; fills Price and Sale Price automatically (supplier cost &times; (1 + ROI), then sale discount off that). Leave blank to enter prices manually.</div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier Price ($)</label>
+                            <input type="number" id="supplier_cost" name="supplier_cost" value="{{ old('supplier_cost', '') }}" step="0.01" min="0"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">ROI</label>
+                            <select id="roi_percent" name="roi_percent" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] bg-white">
+                                <option value="">-- Select --</option>
+                                @foreach([20,30,35,40,50,60] as $r)
+                                <option value="{{ $r }}" {{ (string) old('roi_percent', '') === (string) $r ? 'selected' : '' }}>{{ $r }}%</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Sale Discount (%)</label>
+                            <input type="number" id="sale_discount_percent" name="sale_discount_percent" value="{{ old('sale_discount_percent', '') }}" min="0" max="90" step="1" placeholder="e.g. 10"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] bg-white">
+                        </div>
+                        <div class="sm:col-span-3 text-sm font-semibold text-gray-800" id="roi-preview"></div>
+                    </div>
+                    <script>
+                    (function () {
+                        var c = document.getElementById('supplier_cost'), r = document.getElementById('roi_percent'),
+                            d = document.getElementById('sale_discount_percent'), out = document.getElementById('roi-preview'),
+                            price = document.querySelector('input[name="price"]'), sale = document.querySelector('input[name="sale_price"]');
+                        function r2(n) { return Math.round(n * 100) / 100; }
+                        function calc() {
+                            var cost = parseFloat(c.value), roi = parseFloat(r.value), off = parseFloat(d.value);
+                            if (cost >= 0 && roi) price.value = r2(cost * (1 + roi / 100)).toFixed(2);
+                            var p = parseFloat(price.value);
+                            if ((cost >= 0 && roi) || d.value !== '') sale.value = (p > 0 && off > 0) ? r2(p * (1 - off / 100)).toFixed(2) : '';
+                            var s = parseFloat(sale.value), t = [];
+                            if (p > 0) t.push('Price: $' + p.toFixed(2));
+                            if (s > 0) t.push('Sale: $' + s.toFixed(2));
+                            if (cost >= 0 && p > 0) t.push('Profit: $' + r2((s > 0 ? s : p) - cost).toFixed(2));
+                            out.textContent = t.join('  •  ');
+                        }
+                        [c, r, d].forEach(function (el) { el.addEventListener('input', calc); el.addEventListener('change', calc); });
+                        [price, sale].forEach(function (el) { el.addEventListener('input', function () { if (!c.value || !r.value) calc(); }); });
+                        calc();
+                    })();
+                    </script>
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Price ($) <span class="text-red-500">*</span></label>
                         <input type="number" name="price" value="{{ old('price') }}" step="0.01" min="0" required

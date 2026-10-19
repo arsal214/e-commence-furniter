@@ -855,7 +855,7 @@
                 @endif
             </a>
             <div class="pg-ci-body">
-                <div class="pg-ci-cat">{{ $ci['category'] ?? 'Furniture' }}</div>
+                <div class="pg-ci-cat">{{ $ci['category'] ?? 'Toys' }}</div>
                 <a href="{{ route('product-details', $ci['slug']) }}" class="pg-ci-name">{{ $ci['name'] }}</a>
                 <div class="pg-ci-price">${{ number_format($ci['price'], 2) }}<span class="pg-ci-qty">× {{ $ci['qty'] }}</span></div>
             </div>

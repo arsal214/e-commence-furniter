@@ -1,11 +1,11 @@
 @extends('layouts.main')
-@section('title', 'Shipping Policy | PeytonGhalib')
-@section('meta_description', 'PeytonGhalib offers free delivery on all orders. Learn about our shipping methods, delivery times, and tracking options.')
+@section('title', 'Shipping Policy: Free Toy Delivery Across the USA | PeytonGhalib')
+@section('meta_description', 'Free standard shipping on every PeytonGhalib order to any U.S. address. See delivery times, tracking, and what to do if a toy arrives late or damaged.')
 
 @push('schema')
 @php
 $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Shipping Policy — PeytonGhalib',
-    'description'=>'PeytonGhalib offers free delivery on all orders. Learn about our shipping methods, delivery times, and tracking options.',
+    'description'=>'Free standard shipping on every PeytonGhalib order to any U.S. address. See delivery times, tracking, and what to do if a toy arrives late or damaged.',
     'url'=>url()->current(),
     'breadcrumb'=>['@type'=>'BreadcrumbList','itemListElement'=>[
         ['@type'=>'ListItem','position'=>1,'name'=>'Home','item'=>url('/')],
@@ -27,30 +27,29 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Ship
 </div>
 <section class="s-py-100">
     <div class="container-fluid"><div class="max-w-3xl mx-auto prose dark:prose-invert prose-headings:text-title dark:prose-headings:text-white prose-p:text-paragraph dark:prose-p:text-white-light prose-li:text-paragraph dark:prose-li:text-white-light">
-        <h2>Delivery Information</h2>
-        <p>We ship every PeytonGhalib order with care, so your items arrive safely and on time.</p>
-        <h3>Shipping Options</h3>
-        <ul>
-            {{-- Day counts come from config('checkout.delivery'), the same source
-                 the product-page estimate computes its dates from. Hardcoding them
-                 here is how the two drifted apart before. --}}
-            <li><strong>Free Standard Shipping:</strong> Available on all orders, with no minimum spend. Estimated {{ \App\Support\DeliveryEstimate::minDays() }}–{{ \App\Support\DeliveryEstimate::maxDays() }} business days.</li>
-        </ul>
+        <h2>Free Shipping on Every Toy Order</h2>
+        <p>PeytonGhalib ships toys and games to addresses across the United States. Every order ships free, with no minimum spend, and we pack each one carefully so it arrives ready to play with.</p>
+        <h3>Delivery Time</h3>
+        {{-- Day counts come from config('checkout.delivery'), the same source
+             the product-page estimate computes its dates from. Hardcoding them
+             here is how the two drifted apart before. --}}
+        <p>Standard delivery takes {{ \App\Support\DeliveryEstimate::minDays() }}–{{ \App\Support\DeliveryEstimate::maxDays() }} business days after your order ships. We process orders on business days (Monday through Friday), so an order placed on a weekend or holiday ships the next business day.</p>
         {{-- Express and Local Pickup are not offered: CheckoutController's
              $shippingOptions exposes 'free' only, so listing paid tiers here
              promised a choice the checkout never actually presents. --}}
-        <h3>Oversized Items</h3>
-        <p>Larger items ship with additional protective packaging and may be delivered on a scheduled window rather than a standard parcel round. If your order qualifies, we will contact you by email to arrange a convenient time.</p>
-        <h3>Order Tracking</h3>
-        <p>Once your order ships, you will receive a tracking number via email. You can also track your order at any time from <a href="{{ url('/track-order') }}">peytonghalib.com/track-order</a>.</p>
-        <h3>Shipping Restrictions</h3>
-        {{-- Kept in step with config/checkout.php: the checkout country dropdown
-             is built from that list, so a destination named here that is not in
-             the config cannot actually be ordered. --}}
-        <p>We currently ship to {{ collect(config('checkout.countries', []))->pluck('label')->join(' and ') ?: 'selected countries' }}. For deliveries outside these destinations, contact us for a quote.</p>
-        <h3>Delivery Issues</h3>
-        <p>If your order is delayed or arrives damaged, contact <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a> within 48 hours. We will resolve the issue promptly.</p>
-        <p class="text-sm text-gray-400">Last updated: June 2026</p>
+        <h3>Where We Ship</h3>
+        {{-- Written for a US-only store. config/checkout.php decides what
+             checkout actually accepts, so keep the two in step. --}}
+        <p>We deliver to U.S. addresses, including every state and the other U.S. destinations listed at checkout. We do not ship outside the United States at this time.</p>
+        <h3>Gifts and Delivery Addresses</h3>
+        <p>Sending a toy to a child, a friend, or a classroom? Enter the recipient's address as the shipping address at checkout.</p>
+        <h3>Tracking Your Order</h3>
+        <p>When your order ships, we email you a tracking number. You can follow it any time from your account or on our <a href="{{ url('/track-order') }}">Track Order</a> page.</p>
+        <h3>Larger Toys</h3>
+        <p>Bigger items, such as ride-ons and play sets, ship with extra protective packaging. If an order needs a delivery appointment, we will email you to arrange a convenient time.</p>
+        <h3>Late, Lost, or Damaged Orders</h3>
+        <p>If your order is late, goes missing, or arrives damaged, email <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a> with your order number within 48 hours of delivery. For damage, include a photo of the toy and its packaging. We will send a replacement or refund you in full.</p>
+        <p class="text-sm text-gray-400">Last updated: October 2026</p>
     </div></div>
 </section>
 @include('includes.footer')

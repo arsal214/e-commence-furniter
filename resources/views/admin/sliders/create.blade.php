@@ -69,7 +69,7 @@
                 <label class="block text-xs font-medium text-gray-600 mb-1">Label</label>
                 <input type="text" name="badge_label" value="{{ old('badge_label') }}"
                        class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]"
-                       placeholder="Aurora Flexible Sofa">
+                       placeholder="Rainbow Building Blocks Set">
             </div>
             <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">Blob Color</label>

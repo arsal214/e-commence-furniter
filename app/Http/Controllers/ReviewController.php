@@ -15,7 +15,7 @@ class ReviewController extends Controller
             'comment' => 'nullable|string|max:1000',
         ]);
 
-        $product = Product::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $product = Product::visible()->where('slug', $slug)->firstOrFail();
 
         Review::updateOrCreate(
             ['product_id' => $product->id, 'user_id' => auth()->id()],

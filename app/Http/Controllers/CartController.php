@@ -43,7 +43,7 @@ class CartController extends Controller
         // is the product's own — filtering on it here is exactly the check the
         // add will apply. Without this the tray advertised out-of-stock items and
         // the add came back as an error, which reads as a broken cart.
-        $picks = Product::where('is_active', true)
+        $picks = Product::visible()
             ->where('stock', '>', 0)
             ->whereNotIn('id', $cartIds)
             ->when($catIds->isNotEmpty(), fn ($q) => $q->whereIn('category_id', $catIds))
@@ -54,7 +54,7 @@ class CartController extends Controller
         if ($picks->count() < 4) {
             $exclude = $picks->pluck('id')->merge($cartIds);
             $picks = $picks->merge(
-                Product::where('is_active', true)
+                Product::visible()
                     ->where('stock', '>', 0)
                     ->whereNotIn('id', $exclude)
                     ->orderByRaw("$eff ASC")
@@ -73,7 +73,7 @@ class CartController extends Controller
             'qty'        => 'integer|min:1',
         ]);
 
-        $product = Product::findOrFail($request->product_id);
+        $product = Product::visible()->findOrFail($request->product_id);
         $qty     = (int) $request->input('qty', 1);
         $color   = $request->input('color') ?: null;
         $size    = $request->input('size')  ?: null;
@@ -147,8 +147,7 @@ class CartController extends Controller
             'product_ids.*' => 'integer|exists:products,id',
         ]);
 
-        $products = Product::whereIn('id', $data['product_ids'])
-            ->where('is_active', true)
+        $products = Product::visible()->whereIn('id', $data['product_ids'])
             ->get();
 
         $added   = [];
