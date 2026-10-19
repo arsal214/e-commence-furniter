@@ -3199,7 +3199,7 @@ img.pd-slide-img:focus-visible {
                         <img src="{{ $ogImg }}" alt="" class="w-16 h-16 object-cover rounded-lg flex-none border border-gray-100 dark:border-white/10" loading="lazy" decoding="async">
                         <div class="min-w-0">
                             <p class="text-sm font-medium text-title dark:text-white truncate">{{ $item->name }}</p>
-                            <p class="text-xs text-gray-500 dark:text-white-light">This item · {{ $item->display_price }}</p>
+                            <p class="text-xs text-gray-500 dark:text-white-light">This item · ${{ number_format($item->effective_price, 2) }}</p>
                         </div>
                     </div>
 
@@ -3215,7 +3215,7 @@ img.pd-slide-img:focus-visible {
                             <div class="min-w-0">
                                 <a href="{{ route('product-details', $bundleItem->slug) }}"
                                    class="text-sm font-medium text-title dark:text-white hover:text-primary duration-200 line-clamp-2">{{ $bundleItem->name }}</a>
-                                <p class="text-xs text-gray-500 dark:text-white-light">{{ $bundleItem->display_price }}</p>
+                                <p class="text-xs text-gray-500 dark:text-white-light">${{ number_format($bundleItem->effective_price, 2) }}</p>
                             </div>
                         </label>
                     @endforeach

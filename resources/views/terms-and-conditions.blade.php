@@ -46,7 +46,7 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Term
                 <p>We sell gifts, toys, home goods and more for families. Each product page lists the manufacturer's recommended age range, and you are responsible for choosing products that suit the age and ability of the child who will use them. All prices are displayed in USD and are inclusive of applicable taxes unless stated otherwise. We reserve the right to change prices at any time without prior notice. In the event of a pricing error, we will notify you and give you the option to proceed at the correct price or cancel your order.</p>
 
                 <h2>3. Ordering & Payment</h2>
-                <p>By placing an order, you confirm that the information provided is accurate and that you are authorized to use the chosen payment method. We accept Visa and Mastercard credit and debit cards through Stripe. All transactions are secured with SSL encryption. Your order is confirmed only after successful payment verification.</p>
+                <p>By placing an order, you confirm that the information provided is accurate and that you are authorized to use the chosen payment method. We accept major credit and debit cards through Stripe, and PayPal. All transactions are secured with SSL encryption. Your order is confirmed only after successful payment verification.</p>
                 <ul>
                     <li>Orders are subject to product availability at the time of purchase.</li>
                     <li>You will receive an order confirmation email after successful checkout.</li>

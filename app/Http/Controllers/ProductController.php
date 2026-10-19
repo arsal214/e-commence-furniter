@@ -117,6 +117,7 @@ class ProductController extends Controller
             $picks = $picks->merge(
                 Product::visible()
                     ->where('stock', '>', 0)
+                    ->whereRaw("$eff > 0")
                     ->whereNotIn('id', $exclude)
                     ->when($item->category_id, fn ($q) => $q->where('category_id', $item->category_id))
                     ->orderByRaw("ABS($eff - ?) ASC", [(float) $item->effective_price])

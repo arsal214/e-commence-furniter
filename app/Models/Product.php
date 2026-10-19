@@ -331,8 +331,11 @@ class Product extends Model
      */
     public function effectivePriceFor(?string $color, ?string $size = null): float
     {
-        return $this->variantFor('size', $size)?->effective_price
-            ?? $this->variantFor('color', $color)?->effective_price
+        // A variant left at $0.00 means "no price set": fall back rather than sell it for free.
+        $paid = fn ($v) => $v && $v->effective_price > 0 ? $v->effective_price : null;
+
+        return $paid($this->variantFor('size', $size))
+            ?? $paid($this->variantFor('color', $color))
             ?? $this->effective_price;
     }
 
@@ -368,7 +371,7 @@ class Product extends Model
     public function getFromPriceAttribute(): float
     {
         $prices = $this->variants
-            ->filter(fn ($v) => $v->is_active)
+            ->filter(fn ($v) => $v->is_active && $v->effective_price > 0)
             ->map(fn ($v) => $v->effective_price);
 
         return $prices->isNotEmpty() ? (float) $prices->min() : $this->effective_price;
@@ -382,7 +385,7 @@ class Product extends Model
     public function getHasPriceRangeAttribute(): bool
     {
         $prices = $this->variants
-            ->filter(fn ($v) => $v->is_active)
+            ->filter(fn ($v) => $v->is_active && $v->effective_price > 0)
             ->map(fn ($v) => $v->effective_price);
 
         if ($prices->isEmpty()) {
@@ -451,6 +454,7 @@ class Product extends Model
 
         return static::visible()->whereIn('id', $ids)
             ->where('stock', '>', 0)
+            ->whereRaw('COALESCE(NULLIF(sale_price, 0), price) > 0')
             ->get()
             // whereIn returns rows in whatever order the DB likes; restore the
             // co-purchase ranking the query just established.
