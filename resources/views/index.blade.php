@@ -1164,6 +1164,13 @@ $schemaWebsite = [
                 @forelse($customerReviews as $review)
                 <div class="bg-white dark:bg-[#1a1a2e] rounded-sm p-6 md:p-8 shadow-sm flex flex-col h-full border border-transparent hover:border-primary duration-300">
 
+                    {{-- The customer's own photo, when they attached one to the review. --}}
+                    @if($review->image_url)
+                        <img src="{{ $review->image_url }}" alt="Photo from {{ $review->author_name }}'s review"
+                             width="400" height="300" loading="lazy" decoding="async"
+                             class="w-full h-44 md:h-52 object-cover rounded-sm mb-5 bg-[#F5F0EB]">
+                    @endif
+
                     <!-- Stars -->
                     <div class="flex items-center gap-1 mb-4">
                         @for($s = 1; $s <= 5; $s++)
