@@ -26,7 +26,7 @@
     // On a validation redirect, old() wins (files can't be restored); else saved rows.
     if (old("variants.$dimension") !== null) {
         $variantRows = collect(old("variants.$dimension"))->map(fn ($r) => (object) array_merge(
-            ['id' => null, 'value' => '', 'price' => '', 'sale_price' => '', 'stock' => '', 'sku' => '', 'image' => null],
+            ['id' => null, 'value' => '', 'supplier_cost' => '', 'price' => '', 'sale_price' => '', 'stock' => '', 'sku' => '', 'image' => null],
             (array) $r
         ))->values();
     } else {
@@ -51,13 +51,18 @@
         @php $rid = $row->id ?? null; $rimg = $row->image ?? null; @endphp
         <div class="variant-row rounded-lg border border-gray-200 p-3" data-index="{{ $i }}">
             @if($rid)<input type="hidden" name="variants[{{ $dimension }}][{{ $i }}][id]" value="{{ $rid }}">@endif
-            <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 items-end">
+            <div class="grid grid-cols-2 sm:grid-cols-7 gap-2 items-end">
                 <div class="col-span-2 sm:col-span-1">
                     <label class="block text-[11px] font-medium text-gray-500 mb-1">{{ $optionLabel }}</label>
                     <select name="variants[{{ $dimension }}][{{ $i }}][value]" data-selected="{{ $row->value ?? '' }}"
                             class="{{ $selectClass }} w-full {{ $vInput }}">
                         <option value="">— {{ strtolower($optionLabel) }} —</option>
                     </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-medium text-gray-500 mb-1">Supplier cost</label>
+                    <input type="number" step="0.01" min="0" name="variants[{{ $dimension }}][{{ $i }}][supplier_cost]"
+                           value="{{ $row->supplier_cost ?? '' }}" placeholder="optional" class="variant-cost w-full {{ $vInput }}">
                 </div>
                 <div>
                     <label class="block text-[11px] font-medium text-gray-500 mb-1">Price</label>
@@ -121,11 +126,13 @@
 
     function rowHtml(i) {
         return '' +
-        '<div class="grid grid-cols-2 sm:grid-cols-6 gap-2 items-end">' +
+        '<div class="grid grid-cols-2 sm:grid-cols-7 gap-2 items-end">' +
           '<div class="col-span-2 sm:col-span-1">' +
             '<label class="block text-[11px] font-medium text-gray-500 mb-1">' + optionLabel + '</label>' +
             '<select name="' + fieldName(i, 'value') + '" class="' + selectClass + ' w-full ' + vInput + '"><option value="">' + placeholder + '</option></select>' +
           '</div>' +
+          '<div><label class="block text-[11px] font-medium text-gray-500 mb-1">Supplier cost</label>' +
+            '<input type="number" step="0.01" min="0" name="' + fieldName(i, 'supplier_cost') + '" placeholder="optional" class="variant-cost w-full ' + vInput + '"></div>' +
           '<div><label class="block text-[11px] font-medium text-gray-500 mb-1">Price</label>' +
             '<input type="number" step="0.01" min="0" name="' + fieldName(i, 'price') + '" placeholder="0.00" class="w-full ' + vInput + '"></div>' +
           '<div><label class="block text-[11px] font-medium text-gray-500 mb-1">Sale price</label>' +
@@ -153,6 +160,21 @@
         if (sel && typeof window[fillFnName] === 'function') window[fillFnName](sel);
         if (sel) sel.focus();
     });
+
+    // Live price: supplier cost x (1 + product ROI), sale = sale discount off that.
+    var roiEl = document.getElementById('roi_percent'), offEl = document.getElementById('sale_discount_percent');
+    function r2(n) { return (Math.round(n * 100) / 100).toFixed(2); }
+    function calcRow(row) {
+        var cost = parseFloat(row.querySelector('.variant-cost').value);
+        var roi = roiEl ? parseFloat(roiEl.value) : NaN, off = offEl ? parseFloat(offEl.value) : 0;
+        if (!(cost >= 0) || !roi) return;
+        var p = cost * (1 + roi / 100);
+        row.querySelector('input[name$="[price]"]').value = r2(p);
+        row.querySelector('input[name$="[sale_price]"]').value = off > 0 ? r2(p * (1 - off / 100)) : '';
+    }
+    function calcAll() { rows.querySelectorAll('.variant-row').forEach(function (r) { if (r.querySelector('.variant-cost').value !== '') calcRow(r); }); }
+    rows.addEventListener('input', function (e) { if (e.target.classList.contains('variant-cost')) calcRow(e.target.closest('.variant-row')); });
+    [roiEl, offEl].forEach(function (el) { if (el) { el.addEventListener('input', calcAll); el.addEventListener('change', calcAll); } });
 
     rows.addEventListener('click', function (e) {
         if (!e.target.closest('.variant-remove')) return;

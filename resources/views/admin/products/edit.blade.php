@@ -91,6 +91,79 @@
                             <input type="number" id="sale_discount_percent" name="sale_discount_percent" value="{{ old('sale_discount_percent', $product->sale_discount_percent) }}" min="0" max="90" step="1" placeholder="e.g. 10"
                                    class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] bg-white">
                         </div>
+                        <div class="sm:col-span-3 border-t border-amber-200 pt-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Supplier Source <span class="ml-1 normal-case font-medium text-amber-700">Internal only &mdash; never shown to customers</span></div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier</label>
+                            <select name="supplier_name"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] bg-white">
+                                <option value="">-- Select --</option>
+                                @foreach(['Amazon','Walmart','eBay','AliExpress','Other'] as $sup)
+                                <option value="{{ $sup }}" {{ old('supplier_name', $product->supplier_name) === $sup ? 'selected' : '' }}>{{ $sup }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier SKU / Product ID</label>
+                            <input type="text" name="supplier_sku" value="{{ old('supplier_sku', $product->supplier_sku) }}"
+                                   placeholder="e.g. B08N5WRWNW"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d]">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier Product URL</label>
+                            <input type="url" name="supplier_url" value="{{ old('supplier_url', $product->supplier_url) }}"
+                                   placeholder="https://amazon.com/dp/..."
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d]">
+                            @if($product->supplier_url)
+                            <a href="{{ $product->supplier_url }}" target="_blank" class="text-xs text-[#bb976d] hover:underline mt-1 inline-block">Open supplier page &rarr;</a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                {{-- ── SEO ── --}}
+                <div class="border-t border-gray-100 pt-6">
+                    <div class="flex items-center gap-2 mb-1">
+                        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">SEO</h3>
+                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Search & Sharing</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-4">Override the auto-generated slug, page title, and meta description for this product.</p>
+                    <div class="grid grid-cols-1 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                                URL Slug
+                                <span class="text-gray-400 font-normal ml-1 text-xs">e.g. chunky-knit-throw-blanket-50x60 — lowercase, hyphens only</span>
+                            </label>
+                            <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:border-[#bb976d] transition-colors">
+                                <span class="px-3 py-2.5 text-sm text-gray-400 bg-gray-50 border-r border-gray-300 whitespace-nowrap">/product-details/</span>
+                                <input type="text" name="slug" value="{{ old('slug', $product->slug) }}"
+                                       pattern="[a-z0-9\-]+"
+                                       class="flex-1 px-3 py-2.5 text-sm outline-none bg-white">
+                            </div>
+                            @error('slug')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                                Meta Title
+                                <span class="text-gray-400 font-normal ml-1 text-xs">shown in browser tab &amp; Google results — max 60 chars recommended</span>
+                            </label>
+                            <input type="text" name="meta_title" maxlength="160"
+                                   value="{{ old('meta_title', $product->meta_title) }}"
+                                   placeholder="e.g. Chunky Knit Throw Blanket 50x60 Soft Chenille"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                            <p class="text-xs text-gray-400 mt-1">Leave blank to fall back to product name.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">
+                                Meta Description
+                                <span class="text-gray-400 font-normal ml-1 text-xs">shown below title in Google — max 155 chars recommended</span>
+                            </label>
+                            <textarea name="meta_description" maxlength="320" rows="3"
+                                      placeholder="e.g. Shop a soft chunky knit throw blanket made with chenille yarn, perfect for couch, sofa, bed, and cozy home decor."
+                                      class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors resize-none">{{ old('meta_description', $product->meta_description) }}</textarea>
+                            <p class="text-xs text-gray-400 mt-1">Leave blank to auto-generate from the product description.</p>
+                        </div>
                         <div class="sm:col-span-3 text-sm font-semibold text-gray-800" id="roi-preview"></div>
                     </div>
                     <script>
@@ -371,89 +444,6 @@
                         <input type="file" name="size_chart" accept="image/*" id="sizeChartInput"
                                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
                         <p class="text-xs text-gray-400 mt-1">Upload to replace. Max 8MB.</p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- ── Supplier Source (Internal Only) ── --}}
-            <div class="border-t border-gray-100 pt-5">
-                <div class="flex items-center gap-2 mb-1">
-                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Supplier Source</h3>
-                    <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Internal Only</span>
-                </div>
-                <p class="text-xs text-gray-400 mb-4">Where do you source this product? Never shown to customers.</p>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier</label>
-                        <select name="supplier_name"
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] bg-white">
-                            <option value="">-- Select --</option>
-                            @foreach(['Amazon','Walmart','eBay','AliExpress','Other'] as $sup)
-                            <option value="{{ $sup }}" {{ old('supplier_name', $product->supplier_name) === $sup ? 'selected' : '' }}>{{ $sup }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier SKU / Product ID</label>
-                        <input type="text" name="supplier_sku" value="{{ old('supplier_sku', $product->supplier_sku) }}"
-                               placeholder="e.g. B08N5WRWNW"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d]">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier Product URL</label>
-                        <input type="url" name="supplier_url" value="{{ old('supplier_url', $product->supplier_url) }}"
-                               placeholder="https://amazon.com/dp/..."
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d]">
-                        @if($product->supplier_url)
-                        <a href="{{ $product->supplier_url }}" target="_blank" class="text-xs text-[#bb976d] hover:underline mt-1 inline-block">Open supplier page &rarr;</a>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            {{-- ── SEO ── --}}
-            <div class="border-t border-gray-100 pt-6">
-                <div class="flex items-center gap-2 mb-1">
-                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">SEO</h3>
-                    <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Search & Sharing</span>
-                </div>
-                <p class="text-xs text-gray-400 mb-4">Override the auto-generated slug, page title, and meta description for this product.</p>
-                <div class="grid grid-cols-1 gap-5">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                            URL Slug
-                            <span class="text-gray-400 font-normal ml-1 text-xs">e.g. chunky-knit-throw-blanket-50x60 — lowercase, hyphens only</span>
-                        </label>
-                        <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:border-[#bb976d] transition-colors">
-                            <span class="px-3 py-2.5 text-sm text-gray-400 bg-gray-50 border-r border-gray-300 whitespace-nowrap">/product-details/</span>
-                            <input type="text" name="slug" value="{{ old('slug', $product->slug) }}"
-                                   pattern="[a-z0-9\-]+"
-                                   class="flex-1 px-3 py-2.5 text-sm outline-none bg-white">
-                        </div>
-                        @error('slug')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                            Meta Title
-                            <span class="text-gray-400 font-normal ml-1 text-xs">shown in browser tab &amp; Google results — max 60 chars recommended</span>
-                        </label>
-                        <input type="text" name="meta_title" maxlength="160"
-                               value="{{ old('meta_title', $product->meta_title) }}"
-                               placeholder="e.g. Chunky Knit Throw Blanket 50x60 Soft Chenille"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
-                        <p class="text-xs text-gray-400 mt-1">Leave blank to fall back to product name.</p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                            Meta Description
-                            <span class="text-gray-400 font-normal ml-1 text-xs">shown below title in Google — max 155 chars recommended</span>
-                        </label>
-                        <textarea name="meta_description" maxlength="320" rows="3"
-                                  placeholder="e.g. Shop a soft chunky knit throw blanket made with chenille yarn, perfect for couch, sofa, bed, and cozy home decor."
-                                  class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors resize-none">{{ old('meta_description', $product->meta_description) }}</textarea>
-                        <p class="text-xs text-gray-400 mt-1">Leave blank to auto-generate from the product description.</p>
                     </div>
                 </div>
             </div>

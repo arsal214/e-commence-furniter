@@ -111,6 +111,7 @@ class ProductController extends Controller
             'variants.*'              => ['nullable', 'array'],
             'variants.*.*.id'         => ['nullable', 'integer'],
             'variants.*.*.value'      => ['nullable', 'string', 'max:100'],
+            'variants.*.*.supplier_cost' => ['nullable', 'numeric', 'min:0'],
             'variants.*.*.price'      => ['nullable', 'numeric', 'min:0'],
             'variants.*.*.sale_price' => ['nullable', 'numeric', 'min:0'],
             'variants.*.*.stock'      => ['nullable', 'integer', 'min:0'],
@@ -235,6 +236,7 @@ class ProductController extends Controller
             'variants.*'              => ['nullable', 'array'],
             'variants.*.*.id'         => ['nullable', 'integer'],
             'variants.*.*.value'      => ['nullable', 'string', 'max:100'],
+            'variants.*.*.supplier_cost' => ['nullable', 'numeric', 'min:0'],
             'variants.*.*.price'      => ['nullable', 'numeric', 'min:0'],
             'variants.*.*.sale_price' => ['nullable', 'numeric', 'min:0'],
             'variants.*.*.stock'      => ['nullable', 'integer', 'min:0'],
@@ -430,6 +432,8 @@ class ProductController extends Controller
         $grouped = $request->input('variants', []);
         $files   = $request->file('variants', []);
         $keptIds = [];
+        $roi     = (int) $request->input('roi_percent');
+        $off     = (int) $request->input('sale_discount_percent');
 
         foreach (['color', 'size'] as $type) {
             $rows = $grouped[$type] ?? [];
@@ -438,6 +442,14 @@ class ProductController extends Controller
             foreach ((array) $rows as $i => $row) {
                 $value = trim((string) ($row['value'] ?? ''));
                 $price = $row['price'] ?? '';
+                $cost  = $row['supplier_cost'] ?? '';
+                $hasCost = $cost !== '' && is_numeric($cost);
+
+                // Supplier cost + the product's ROI drives the variant price (same rule as the product).
+                if ($hasCost && $roi) {
+                    $price = round((float) $cost * (1 + $roi / 100), 2);
+                    $row['sale_price'] = $off ? round($price * (1 - $off / 100), 2) : '';
+                }
 
                 if ($value === '' || $price === '' || !is_numeric($price)) {
                     continue; // incomplete row — ignore
@@ -453,6 +465,7 @@ class ProductController extends Controller
                 $attrs = [
                     'type'       => $type,
                     'value'      => $value,
+                    'supplier_cost' => $hasCost ? (float) $cost : null,
                     'price'      => (float) $price,
                     'sale_price' => ($sale !== '' && is_numeric($sale)) ? (float) $sale : null,
                     'stock'      => (int) ($row['stock'] ?? 0),

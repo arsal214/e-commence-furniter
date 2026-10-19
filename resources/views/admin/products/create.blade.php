@@ -91,6 +91,29 @@
                             <input type="number" id="sale_discount_percent" name="sale_discount_percent" value="{{ old('sale_discount_percent', '') }}" min="0" max="90" step="1" placeholder="e.g. 10"
                                    class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] bg-white">
                         </div>
+                        <div class="sm:col-span-3 border-t border-amber-200 pt-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Supplier Source <span class="ml-1 normal-case font-medium text-amber-700">Internal only &mdash; never shown to customers</span></div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier</label>
+                            <select name="supplier_name"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] bg-white">
+                                <option value="">-- Select --</option>
+                                @foreach(['Amazon','Walmart','eBay','AliExpress','Other'] as $sup)
+                                <option value="{{ $sup }}" {{ old('supplier_name') === $sup ? 'selected' : '' }}>{{ $sup }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier SKU / Product ID</label>
+                            <input type="text" name="supplier_sku" value="{{ old('supplier_sku') }}"
+                                   placeholder="e.g. B08N5WRWNW"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d]">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier Product URL</label>
+                            <input type="url" name="supplier_url" value="{{ old('supplier_url') }}"
+                                   placeholder="https://amazon.com/dp/..."
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d]">
+                        </div>
                         <div class="sm:col-span-3 text-sm font-semibold text-gray-800" id="roi-preview"></div>
                     </div>
                     <script>
@@ -299,39 +322,6 @@
                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
                     <img id="sizeChartPreview" src="#" alt="Size chart preview"
                          class="mt-3 max-w-xs rounded-lg border border-gray-200 hidden">
-                </div>
-            </div>
-
-            {{-- ── Supplier Source (Internal Only) ── --}}
-            <div class="border-t border-gray-100 pt-5">
-                <div class="flex items-center gap-2 mb-1">
-                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Supplier Source</h3>
-                    <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Internal Only</span>
-                </div>
-                <p class="text-xs text-gray-400 mb-4">Where do you source this product? Never shown to customers.</p>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier</label>
-                        <select name="supplier_name"
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] bg-white">
-                            <option value="">-- Select --</option>
-                            @foreach(['Amazon','Walmart','eBay','AliExpress','Other'] as $sup)
-                            <option value="{{ $sup }}" {{ old('supplier_name') === $sup ? 'selected' : '' }}>{{ $sup }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier SKU / Product ID</label>
-                        <input type="text" name="supplier_sku" value="{{ old('supplier_sku') }}"
-                               placeholder="e.g. B08N5WRWNW"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d]">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier Product URL</label>
-                        <input type="url" name="supplier_url" value="{{ old('supplier_url') }}"
-                               placeholder="https://amazon.com/dp/..."
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d]">
-                    </div>
                 </div>
             </div>
 
