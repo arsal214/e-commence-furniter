@@ -84,6 +84,21 @@ $text = fn (string $group, string $label, string $default, bool $long = false) =
 return [
     'brand' => 'PeytonGhalib',
 
+    // Admin -> Site Text & SEO shows one tab per page: slug => [label, URL to preview].
+    'tabs' => [
+        'site'            => ['Site-wide', '/'],
+        'home'            => ['Home', '/'],
+        'shop'            => ['Shop', '/shop'],
+        'categories'      => ['Categories', '/categories'],
+        'about'           => ['About', '/about'],
+        'contact'         => ['Contact', '/contact'],
+        'faq'             => ['FAQ', '/faq'],
+        'shipping-policy' => ['Shipping policy', '/shipping-policy'],
+        'return-policy'   => ['Return policy', '/return-policy'],
+        'refund-policy'   => ['Refund policy', '/refund-policy'],
+        'track-order'     => ['Track order', '/track-order'],
+    ],
+
     'copy' => $copy + [
         'brand.description' => $text('Brand', 'One-sentence description (search results, structured data)',
             'PeytonGhalib is an online gift and home store based in Jersey City, NJ. Shop gifts, toys, home décor, kitchen helpers, pet supplies and seasonal finds, shipped across the US.', true),

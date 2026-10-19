@@ -3168,7 +3168,7 @@ img.pd-slide-img:focus-visible {
             <p class="text-sm mb-3">{{ $completeSet->name }}:
                 {{ $completeSet->items->map(fn ($i) => $i->product->name . ' ($' . number_format($i->unitPrice(), 2) . ')')->implode(' + ') }}.
                 Regular ${{ number_format($completeSet->regularTotal(), 2) }}, set price <strong>${{ number_format($completeSet->price, 2) }}</strong>.</p>
-            <form method="POST" action="{{ route('cart.add-bundle') }}">
+            <form method="POST" action="{{ route('cart.add-bundle') }}" class="mt-4">
                 @csrf
                 <input type="hidden" name="bundle_id" value="{{ $completeSet->id }}">
                 <button type="submit" class="pd-btn-cart" style="width:auto;padding-inline:28px">Add the set to cart</button>

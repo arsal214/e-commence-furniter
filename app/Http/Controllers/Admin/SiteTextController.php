@@ -9,12 +9,30 @@ use Illuminate\Http\Request;
 
 class SiteTextController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $fields    = collect(config('site.copy'))->groupBy('group');
+        $tabs      = config('site.tabs');
         $overrides = SiteText::pluck('value', 'key');
 
-        return view('admin.site-text.index', compact('fields', 'overrides'));
+        // One tab per page, each listing that page's fields (search-result text first).
+        $byTab = collect(config('site.copy'))
+            ->map(fn ($def, $key) => $def + ['key' => $key])
+            ->groupBy(fn ($def) => SiteCopy::tabFor($def['key']));
+
+        $panels = [];
+        foreach ($tabs as $slug => [$label, $url]) {
+            $fields = ($byTab[$slug] ?? collect())->sortBy(fn ($d) => str_starts_with($d['key'], 'meta.') ? 0 : 1)->values();
+            $panels[$slug] = [
+                'label'  => $label,
+                'url'    => $url,
+                'fields' => $fields,
+                'edited' => $fields->filter(fn ($d) => filled($overrides[$d['key']] ?? null))->count(),
+            ];
+        }
+
+        $active = array_key_exists($request->query('tab'), $tabs) ? $request->query('tab') : array_key_first($tabs);
+
+        return view('admin.site-text.index', compact('panels', 'overrides', 'active'));
     }
 
     public function update(Request $request)
@@ -38,6 +56,9 @@ class SiteTextController extends Controller
 
         SiteCopy::forget();
 
-        return back()->with('success', 'Site text saved.');
+        // Come back to the tab that was being edited.
+        $tab = array_key_exists((string) $request->input('tab'), config('site.tabs')) ? $request->input('tab') : null;
+
+        return redirect()->route('admin.site-text.index', array_filter(['tab' => $tab]))->with('success', 'Site text saved.');
     }
 }

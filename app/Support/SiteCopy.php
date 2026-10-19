@@ -86,6 +86,23 @@ class SiteCopy
         return self::fill($own !== '' ? $own : 'Shop ' . $category->name . ' at PeytonGhalib. {shipping} and 30-day returns.');
     }
 
+    /** Which admin tab (one per page) a copy key belongs to. */
+    public static function tabFor(string $key): string
+    {
+        $tabs = config('site.tabs');
+
+        if (str_starts_with($key, 'meta.category.')) {
+            return 'categories';
+        }
+        if (preg_match('/^meta\.([a-z\-]+)\.(title|description)$/', $key, $m) && isset($tabs[$m[1]])) {
+            return $m[1];
+        }
+
+        $prefix = explode('.', $key)[0];
+
+        return isset($tabs[$prefix]) ? $prefix : 'site';
+    }
+
     /** Cut at a word boundary, never mid-word, with trailing punctuation removed. */
     public static function limit(string $text, int $max): string
     {
