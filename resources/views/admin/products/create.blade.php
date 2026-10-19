@@ -94,7 +94,7 @@
                         <div class="sm:col-span-3 text-sm font-semibold text-gray-800" id="roi-preview"></div>
                     </div>
                     <script>
-                    (function () {
+                    document.addEventListener('DOMContentLoaded', function () {
                         var c = document.getElementById('supplier_cost'), r = document.getElementById('roi_percent'),
                             d = document.getElementById('sale_discount_percent'), out = document.getElementById('roi-preview'),
                             price = document.querySelector('input[name="price"]'), sale = document.querySelector('input[name="sale_price"]');
@@ -113,7 +113,7 @@
                         [c, r, d].forEach(function (el) { el.addEventListener('input', calc); el.addEventListener('change', calc); });
                         [price, sale].forEach(function (el) { el.addEventListener('input', function () { if (!c.value || !r.value) calc(); }); });
                         calc();
-                    })();
+                    });
                     </script>
 
                     <div>
