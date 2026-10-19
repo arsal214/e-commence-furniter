@@ -12,12 +12,10 @@ use Carbon\CarbonImmutable;
  * "arrives Thu 14th" and a policy page quoting a day range are the same promise
  * by construction, rather than by four people remembering to edit four files.
  *
- * Business days only: Saturday and Sunday are skipped, matching how every page
- * words it. Public holidays are NOT skipped — there is no holiday calendar in
- * the app, and a hardcoded one would be wrong for half the destinations the
- * checkout now accepts. That leaves the estimate slightly optimistic around a
- * public holiday, which is why both ends are presented as an estimate and never
- * as a guaranteed date.
+ * Business days only: weekends and US federal holidays are skipped (the store
+ * ships to the US). Processing days (config checkout.delivery.processing_days)
+ * come first, then the min/max transit days. Still an estimate, never a
+ * guaranteed date.
  */
 class DeliveryEstimate
 {
@@ -46,6 +44,7 @@ class DeliveryEstimate
     public static function window(?CarbonImmutable $from = null): array
     {
         $from ??= CarbonImmutable::now();
+        $from   = self::addBusinessDays($from, max(0, (int) config('checkout.delivery.processing_days', 1)));
 
         $min = self::minDays();
         $max = self::maxDays();
@@ -67,11 +66,46 @@ class DeliveryEstimate
         while ($days > 0) {
             $date = $date->addDay();
 
-            if (! $date->isWeekend()) {
+            if (! $date->isWeekend() && ! self::isFederalHoliday($date)) {
                 $days--;
             }
         }
 
         return $date;
+    }
+
+    /** US federal holidays, with the Saturday→Friday / Sunday→Monday observed rule. */
+    public static function isFederalHoliday(CarbonImmutable $date): bool
+    {
+        $y = $date->year;
+        $fixed = [[1, 1], [6, 19], [7, 4], [11, 11], [12, 25]];
+        $days = [];
+
+        foreach ($fixed as [$m, $d]) {
+            $actual = CarbonImmutable::create($y, $m, $d);
+            $days[] = $actual->isSaturday() ? $actual->subDay() : ($actual->isSunday() ? $actual->addDay() : $actual);
+        }
+
+        // Jan 1 falling on a Saturday is observed Dec 31 of the previous year.
+        $next = CarbonImmutable::create($y + 1, 1, 1);
+        if ($next->isSaturday()) {
+            $days[] = $next->subDay();
+        }
+
+        $nth = fn (int $month, int $dow, int $n) => CarbonImmutable::create($y, $month, 1)->nthOfMonth($n, $dow);
+        $days[] = $nth(1, 1, 3);   // Martin Luther King Jr. Day
+        $days[] = $nth(2, 1, 3);   // Washington's Birthday
+        $days[] = CarbonImmutable::create($y, 5, 1)->lastOfMonth(1); // Memorial Day
+        $days[] = $nth(9, 1, 1);   // Labor Day
+        $days[] = $nth(10, 1, 2);  // Columbus / Indigenous Peoples' Day
+        $days[] = $nth(11, 4, 4);  // Thanksgiving
+
+        foreach ($days as $holiday) {
+            if ($holiday->isSameDay($date)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

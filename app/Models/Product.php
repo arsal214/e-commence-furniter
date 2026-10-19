@@ -10,7 +10,7 @@ class Product extends Model
     protected $fillable = [
         'category_id', 'name', 'brand', 'slug', 'meta_title', 'meta_description',
         'description', 'key_features', 'review_content', 'shipping_info',
-        'price', 'sale_price', 'supplier_cost', 'roi_percent', 'sale_discount_percent', 'image', 'image_color', 'tag', 'is_featured', 'is_best_seller', 'is_active', 'stock', 'sku',
+        'price', 'sale_price', 'supplier_cost', 'roi_percent', 'sale_discount_percent', 'image', 'image_color', 'tag', 'is_featured', 'is_best_seller', 'is_addon', 'is_active', 'stock', 'sku',
         'gtin', 'mpn', 'specifications',
         'colors', 'sizes', 'size_chart',
         'supplier_name', 'supplier_url', 'supplier_sku',
@@ -22,6 +22,7 @@ class Product extends Model
         'supplier_cost' => 'decimal:2',
         'is_featured'    => 'boolean',
         'is_best_seller' => 'boolean',
+        'is_addon'       => 'boolean',
         'is_active'      => 'boolean',
         'colors'      => 'array',
         'sizes'       => 'array',
@@ -493,7 +494,12 @@ class Product extends Model
      */
     public function getDisplayPriceAttribute(): string
     {
-        return '$' . number_format($this->effective_price, 2);
+        // One price for every card: "From $X" (lowest active variant) only when
+        // option prices differ, otherwise the plain price. The cart still charges
+        // the exact option picked (effectivePriceFor).
+        return $this->has_price_range
+            ? 'From $' . number_format($this->from_price, 2)
+            : '$' . number_format($this->effective_price, 2);
     }
 
     /**
@@ -501,7 +507,9 @@ class Product extends Model
      */
     public function getWasPriceAttribute(): ?string
     {
-        return $this->has_strike ? '$' . number_format($this->price, 2) : null;
+        // No struck price beside a "From" figure: it would compare the base list
+        // price with the lowest variant, which is not a real discount.
+        return $this->has_strike && ! $this->has_price_range ? '$' . number_format($this->price, 2) : null;
     }
 
     /**

@@ -100,6 +100,15 @@
                     <span>Subtotal</span>
                     <span>${{ number_format($order->subtotal, 2) }}</span>
                 </div>
+                @if ($order->discount > 0)
+                    <div class="co-sum__row" style="color:#2f7d4f">
+                        <span>Welcome deal</span>
+                        <span>&minus;${{ number_format($order->discount, 2) }}</span>
+                    </div>
+                @endif
+                @if (session('welcome_notice'))
+                    <p class="co-sum__row" style="color:#b45309;font-size:13px">{{ session('welcome_notice') }}</p>
+                @endif
                 <div class="co-sum__row">
                     <span>Shipping</span>
                     <span>{{ $order->shipping_cost > 0 ? '$' . number_format($order->shipping_cost, 2) : 'Free' }}</span>

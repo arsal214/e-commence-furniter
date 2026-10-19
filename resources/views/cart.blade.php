@@ -49,15 +49,26 @@
                                         : asset('assets/img/gallery/cart/cart-01.jpg');
                                 @endphp
 
+                                @if (! empty($item['slug']))
                                 <a href="{{ route('product-details', $item['slug']) }}">
                                     <img class="co-line__thumb" src="{{ $src }}" alt="{{ $item['name'] }}"
                                          width="76" height="76" loading="lazy">
                                 </a>
+                                @else
+                                    <img class="co-line__thumb" src="{{ $src }}" alt="{{ $item['name'] }}" width="76" height="76" loading="lazy">
+                                @endif
 
                                 <div style="min-width:0">
                                     <p class="co-line__name">
-                                        <a href="{{ route('product-details', $item['slug']) }}">{{ $item['name'] }}</a>
+                                        @if (! empty($item['slug']))
+                                            <a href="{{ route('product-details', $item['slug']) }}">{{ $item['name'] }}</a>
+                                        @else
+                                            {{ $item['name'] }}
+                                        @endif
                                     </p>
+                                    @if (! empty($item['bundle_id']))
+                                        <p class="co-line__variant">Set: every item included</p>
+                                    @endif
 
                                     @if (!empty($item['color']) || !empty($item['size']))
                                         <p class="co-line__variant">
@@ -127,7 +138,7 @@
                     {{-- Was "Shipping is calculated at the next step", which implied a
                          cost that never materialises — CheckoutController exposes only
                          the free option, so nothing is ever calculated. --}}
-                    <p class="co-panel__hint">Shipping is free on every order.</p>
+                    <p class="co-panel__hint">{{ $shippingPromo }}.</p>
 
                     {{-- Free shipping status.
                          A completed bar, not a "you're $X away" counter: shipping is
@@ -135,6 +146,7 @@
                          would be counting toward a threshold that does not exist.
                          Stating it as already earned is both true and the stronger
                          message — most stores can only promise this above a spend. --}}
+                    @if (! $shippingEnabled)
                     <div class="co-ship" role="status">
                         <div class="co-ship__head">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -148,34 +160,53 @@
                             {{ \App\Support\DeliveryEstimate::minDays() }}–{{ \App\Support\DeliveryEstimate::maxDays() }} business days.
                         </p>
                     </div>
+                    @else
+                    {{-- Threshold progress, computed on the server from the live cart. --}}
+                    <div class="co-ship" role="status">
+                        <div class="co-ship__head">
+                            <span>{{ $shippingRemaining === null ? 'Nice! Your order ships free.' : "You're $" . number_format($shippingRemaining, 2) . ' away from free shipping.' }}</span>
+                        </div>
+                        <div class="co-ship__track" aria-hidden="true"><div class="co-ship__fill" style="width:{{ min(100, round($cartTotal / $shippingThreshold * 100)) }}%"></div></div>
+                        <p class="co-ship__note">
+                            {{ $shippingPromo }}; ${{ number_format(config('checkout.flat_shipping_rate'), 2) }} flat rate below that.
+                            Estimated {{ \App\Support\DeliveryEstimate::minDays() }}–{{ \App\Support\DeliveryEstimate::maxDays() }} business days.
+                        </p>
+                    </div>
+                    @endif
 
+                    <div data-welcome-cart class="pgw-cart" hidden></div>
                     <div class="co-sum__row">
                         <span>Subtotal ({{ $itemCount }} item{{ $itemCount === 1 ? '' : 's' }})</span>
                         <span>${{ number_format($cartTotal, 2) }}</span>
                     </div>
+                    @if (($welcomeDiscount ?? 0) > 0)
+                        <div class="co-sum__row" style="color:#2f7d4f">
+                            <span>Welcome deal</span>
+                            <span>&minus;${{ number_format($welcomeDiscount, 2) }}</span>
+                        </div>
+                    @endif
                     <div class="co-sum__row">
                         <span>Shipping</span>
-                        <span>Free</span>
+                        <span>{{ $shippingCost > 0 ? '$' . number_format($shippingCost, 2) : 'Free' }}</span>
                     </div>
 
                     <div class="co-sum__rule"></div>
 
                     <div class="co-sum__total">
                         <span>Total</span>
-                        <b>${{ number_format($cartTotal, 2) }}</b>
+                        <b>${{ number_format($cartTotal - ($welcomeDiscount ?? 0) + $shippingCost, 2) }}</b>
                     </div>
 
-                    @auth
-                        <a class="co-submit" href="{{ url('/checkout') }}" style="text-decoration:none">
-                            Proceed to checkout
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </a>
+                    {{-- Guests check out without an account; the thank-you page offers one. --}}
+                    @if ($addonBlocked)
+                        <p class="co-panel__hint" role="alert" style="color:#b45309">Add-on items ship free with orders of ${{ rtrim(rtrim(number_format($shippingThreshold, 2), '0'), '.') }} or more. Add another item to check out.</p>
+                        <span class="co-submit" aria-disabled="true" style="opacity:.5;pointer-events:none">Proceed to checkout</span>
                     @else
-                        <button class="co-submit" type="button" data-signin-open>
-                            Proceed to checkout
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </button>
-                    @endauth
+                    <a class="co-submit" href="{{ url('/checkout') }}" style="text-decoration:none">
+                        Proceed to checkout
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    @endif
 
                     <a class="co-back" href="{{ url('/shop') }}">Continue shopping</a>
 
@@ -193,6 +224,19 @@
             </div>
 
         </div>
+
+        @foreach ($bundleOffers as $bundle)
+            <section class="co-panel" aria-label="Complete the set">
+                <h2 class="co-panel__title">Complete the set &mdash; save ${{ number_format($bundle->savings(), 2) }}</h2>
+                <p class="co-panel__hint">{{ $bundle->name }}: {{ $bundle->items->map(fn ($i) => $i->product->name . ' ($' . number_format($i->unitPrice(), 2) . ')')->implode(' + ') }}.
+                    Regular ${{ number_format($bundle->regularTotal(), 2) }}, set price <strong>${{ number_format($bundle->price, 2) }}</strong>.</p>
+                <form method="POST" action="{{ route('cart.add-bundle') }}">
+                    @csrf
+                    <input type="hidden" name="bundle_id" value="{{ $bundle->id }}">
+                    <button class="co-ghost" type="submit">Add the set to cart</button>
+                </form>
+            </section>
+        @endforeach
 
         {{-- ── Cross-sell: companion products, full-width under the cart grid ──
              "Add" does a normal POST (data-full-submit) so the cart list refreshes. --}}
@@ -235,29 +279,6 @@
     @endif
 
     {{-- Sign-in gate for guests --}}
-    @guest
-        <div class="co-modal" id="signin-modal" role="dialog" aria-modal="true" aria-labelledby="signin-title" hidden>
-            <div class="co-modal__scrim" data-signin-close></div>
-
-            <div class="co-modal__box">
-                <button class="co-modal__close" type="button" data-signin-close aria-label="Close">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                </button>
-
-                <div class="co-modal__icon" aria-hidden="true">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
-                </div>
-
-                <h2 class="co-modal__title" id="signin-title">Sign in to check out</h2>
-                <p class="co-modal__text">Your cart is saved. Sign in or create an account to complete your order.</p>
-
-                <div class="co-modal__actions">
-                    <a class="co-submit" href="{{ url('/login') }}?redirect={{ urlencode(url('/checkout')) }}" style="text-decoration:none">Sign in</a>
-                    <a class="co-ghost" href="{{ url('/register') }}">Register</a>
-                </div>
-            </div>
-        </div>
-    @endguest
 
 </x-checkout.shell>
 

@@ -129,6 +129,7 @@ class ProductController extends Controller
             'stock'         => ['required', 'integer', 'min:0'],
             'is_featured'    => ['nullable', 'boolean'],
             'is_best_seller' => ['nullable', 'boolean'],
+            'is_addon'       => ['nullable', 'boolean'],
             'is_active'      => ['nullable', 'boolean'],
             'colors_raw'    => ['nullable', 'string'],
             'sizes_raw'     => ['nullable', 'string'],
@@ -140,6 +141,7 @@ class ProductController extends Controller
         $data['slug']           = Str::slug($data['name']);
         $data['is_featured']    = $request->boolean('is_featured');
         $data['is_best_seller'] = $request->boolean('is_best_seller');
+        $data['is_addon']       = $request->boolean('is_addon');
         $data['is_active']      = $request->boolean('is_active');
         $data['sale_price']  = ($data['sale_price'] ?? null) ?: null;
         $data = $this->applyRoiPricing($data);
@@ -259,6 +261,7 @@ class ProductController extends Controller
             'stock'         => ['required', 'integer', 'min:0'],
             'is_featured'    => ['nullable', 'boolean'],
             'is_best_seller' => ['nullable', 'boolean'],
+            'is_addon'       => ['nullable', 'boolean'],
             'is_active'      => ['nullable', 'boolean'],
             'colors_raw'    => ['nullable', 'string'],
             'sizes_raw'     => ['nullable', 'string'],
@@ -272,6 +275,7 @@ class ProductController extends Controller
 
         $data['is_featured']    = $request->boolean('is_featured');
         $data['is_best_seller'] = $request->boolean('is_best_seller');
+        $data['is_addon']       = $request->boolean('is_addon');
         $data['is_active']      = $request->boolean('is_active');
         $data['sale_price']  = ($data['sale_price'] ?? null) ?: null;
         $data = $this->applyRoiPricing($data);

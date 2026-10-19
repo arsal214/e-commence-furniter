@@ -1,8 +1,8 @@
 <!-- resources/views/product-category.blade.php -->
 @extends('layouts.main')
 
-@section('title', 'All Products | PeytonGhalib')
-@section('meta_description', 'Browse our full product catalogue at PeytonGhalib. Toys, games, puzzles and plush for every age, with free shipping.')
+@section('title', \App\Support\SiteCopy::title('shop'))
+@section('meta_description', \App\Support\SiteCopy::description('shop'))
 
 @push('schema')
 @php

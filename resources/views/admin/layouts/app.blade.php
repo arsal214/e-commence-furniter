@@ -124,6 +124,30 @@
                 <i class="mdi mdi-lightning-bolt text-lg"></i>
                 Flash Deal
             </a>
+            <a href="{{ route('admin.welcome-offer.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                      {{ request()->routeIs('admin.welcome-offer*') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                <i class="mdi mdi-ticket-percent text-lg"></i>
+                Welcome Offer
+            </a>
+            <a href="{{ route('admin.bundles.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                      {{ request()->routeIs('admin.bundles*') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                <i class="mdi mdi-package-variant-closed text-lg"></i>
+                Bundles
+            </a>
+            <a href="{{ route('admin.site-text.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                      {{ request()->routeIs('admin.site-text*') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                <i class="mdi mdi-text-box-edit text-lg"></i>
+                Site Text &amp; SEO
+            </a>
+            <a href="{{ route('admin.store-settings.index') }}"
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+                      {{ request()->routeIs('admin.store-settings*') ? 'bg-[#bb976d] text-white' : 'text-white/70 hover:bg-white/10 hover:text-white' }}">
+                <i class="mdi mdi-cog text-lg"></i>
+                Store Settings
+            </a>
         </nav>
 
         <div class="px-4 py-4 border-t border-white/10">

@@ -69,25 +69,28 @@ class ProductController extends Controller
             ->take(4)
             ->get();
 
-        // Fall back to the nearest-priced items from any category (not the newest),
-        // so the tail is still tier-appropriate rather than random.
-        if ($newProducts->count() < 4) {
-            $ids = $newProducts->pluck('id')->push($item->id);
-            $newProducts = $newProducts->merge(
-                Product::visible()
-                    ->whereNotIn('id', $ids)
-                    ->orderByRaw("ABS($eff - ?) ASC", [$itemPrice])
-                    ->take(4 - $newProducts->count())
-                    ->get()
-            );
-        }
+        // No filler from other categories: a related-products rail that pairs a coat with a
+        // camera is worse than a shorter rail. The view hides the section when it is empty.
 
         $this->trackViewContent($item, $request);
+
+        // Meta ViewContent: a fresh id per view, shared with the browser event (a fixed id per
+        // product would let Meta drop every view after the first).
+        $metaViewContentId = app(\App\Services\MetaEventsService::class)->newEventId('ViewContent');
+        app(\App\Services\MetaEventsService::class)->track('ViewContent', $metaViewContentId, array_filter([
+            'content_type' => 'product', 'content_ids' => [(string) $item->id], 'content_name' => $item->name,
+            'content_category' => $item->category?->name, 'value' => round((float) $item->effective_price, 2),
+        ]), app(\App\Services\MetaEventsService::class)->buildUser($request), $request->fullUrl());
+
+        $completeSet = \App\Models\Bundle::offeredFor([$item->id], 1)->first();
 
         $delivery      = DeliveryEstimate::window();
         $boughtTogether = $this->bundleFor($item);
 
-        return view('product-details', compact('item', 'newProducts', 'delivery', 'boughtTogether'));
+        // Delivery dates are per-day; a CDN/shared cache must not replay yesterday's page.
+        return response()
+            ->view('product-details', compact('item', 'newProducts', 'delivery', 'boughtTogether', 'completeSet', 'metaViewContentId'))
+            ->header('Cache-Control', 'private, no-cache, must-revalidate');
     }
 
     /**

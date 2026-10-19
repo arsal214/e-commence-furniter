@@ -416,6 +416,12 @@
                     <span class="text-sm font-medium text-gray-700">Best seller</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="is_addon" value="1"
+                           {{ old('is_addon', $product->is_addon) ? 'checked' : '' }}
+                           class="w-4 h-4 rounded border-gray-300 accent-[#bb976d]">
+                    <span class="text-sm font-medium text-gray-700">Add-on item (ships free with orders over the threshold)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" name="is_active" value="1"
                            {{ old('is_active', $product->is_active) ? 'checked' : '' }}
                            class="w-4 h-4 rounded border-gray-300 accent-[#bb976d]">

@@ -19,7 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // no session and no token. The signature on the URL is the credential.
         $middleware->validateCsrfTokens(except: [
             'unsubscribe',
+            'stripe/webhook',
         ]);
+        // Meta's own cookies are written by the pixel, not Laravel, so they must reach us unencrypted.
+        $middleware->encryptCookies(except: ['_fbp', '_fbc']);
         // SEO: 301 trailing-slash URLs to their slashless canonical.
         $middleware->web(prepend: [
             \App\Http\Middleware\RedirectTrailingSlash::class,
@@ -27,6 +30,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // SEO: noindex header on utility / private / search pages.
         // Security: CSP, HSTS, clickjacking (X-Frame-Options), COOP.
         $middleware->web(append: [
+            \App\Http\Middleware\ApplyStoreSettings::class,
+            \App\Http\Middleware\CaptureAttribution::class,
             \App\Http\Middleware\SeoNoindex::class,
             \App\Http\Middleware\SecurityHeaders::class,
         ]);

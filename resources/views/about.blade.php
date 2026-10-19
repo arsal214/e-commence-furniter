@@ -1,13 +1,13 @@
 {{-- resources/views/about.blade.php --}}
 @extends('layouts.main')
 
-@section('title', 'About PeytonGhalib: Your U.S. Online Toy Store')
-@section('meta_description', 'Learn about PeytonGhalib — our story, mission, and how we bring safe, fun and well-made toys for every age together in one place at fair prices.')
+@section('title', \App\Support\SiteCopy::title('about'))
+@section('meta_description', \App\Support\SiteCopy::description('about'))
 
 @push('schema')
 @php
 $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'About PeytonGhalib','url'=>url('/about'),
-    'description'=>'PeytonGhalib is a U.S. online toy store with free shipping, 30-day returns, and toys and games for every age.',
+    'description'=>\App\Support\SiteCopy::description('about'),
     'about'=>['@type'=>'Organization','name'=>'PeytonGhalib','url'=>url('/')]];
 @endphp
 <script type="application/ld+json">{!! json_encode($schemaAbout, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
@@ -315,11 +315,11 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
                 <span aria-current="page">About</span>
             </nav>
 
-            <h1 class="ab-hero__title">Toys that make every day <em>playtime</em>.</h1>
+            <h1 class="ab-hero__title">{{ \App\Support\SiteCopy::get('about.hero_title') }}</h1>
             <p class="ab-hero__text">
-                From puzzles and building sets to plush, games and outdoor play —
-                {{ number_format($productCount) }} products across {{ number_format($categoryCount) }} categories,
-                all fairly priced and shipped free across the USA.
+                {{ \App\Support\SiteCopy::get('about.hero_lead') }}
+                {{ number_format($productCount) }} products across {{ number_format($categoryCount) }} categories.
+                @if (\App\Support\SiteCopy::get('about.owner_line') !== '') {{ \App\Support\SiteCopy::get('about.owner_line') }} @endif
             </p>
 
             <div class="ab-hero__actions">
@@ -348,20 +348,10 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
 
                 <div>
                     <span class="ab__eyebrow">Our story</span>
-                    <h2 class="ab__h2" id="ab-story-title">Play, done properly</h2>
+                    <h2 class="ab__h2" id="ab-story-title">{{ \App\Support\SiteCopy::get('about.story_title') }}</h2>
 
-                    <p class="ab-story__p">
-                        PeytonGhalib started with a simple frustration: good toys — the birthday present, the rainy-day
-                        puzzle, the first plush friend — were scattered across a dozen different shops, and hardly
-                        any of them were worth a second visit. So we built one place to find them all.
-                    </p>
-                    <p class="ab-story__p">
-                        Today that's {{ number_format($productCount) }} products across
-                        {{ number_format($categoryCount) }} categories: puzzles and building sets, plush and dolls,
-                        board games, ride-ons and outdoor play. We stock what we'd
-                        happily give our own kids, price it so you don't have to think twice, ship it free, and take it
-                        back without an argument if it isn't right.
-                    </p>
+                    <p class="ab-story__p">\n                        {{ \App\Support\SiteCopy::get('about.story_1') }}\n                    </p>
+                    <p class="ab-story__p">\n                        {{ number_format($productCount) }} products across {{ number_format($categoryCount) }} categories. {{ \App\Support\SiteCopy::get('about.story_2') }}\n                    </p>
 
                     {{-- Counts come from the catalogue, so they can't go stale --}}
                     <div class="ab-stats">
@@ -394,25 +384,22 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
             <div style="text-align:center; max-width:44rem; margin:0 auto">
                 <span class="ab__eyebrow">Our promise</span>
                 <h2 class="ab__h2" id="ab-values-title">Why choose PeytonGhalib</h2>
-                <p class="ab__lede" style="margin:0 auto">
-                    Fair prices, free shipping across the USA, and a team that stands behind every toy
-                    we sell.
-                </p>
+                <p class="ab__lede" style="margin:0 auto">\n                    {{ \App\Support\SiteCopy::get('about.values_lede') }}\n                </p>
             </div>
 
             @php
                 // Inline SVG rather than <img>, so icons inherit colour and theme correctly.
                 $values = [
                     ['badge' => 'Always free',  'title' => 'Free shipping',   'icon' => 'truck',
-                     'text'  => 'Every order ships free to any U.S. address, with no minimum purchase.'],
+                     'text'  => app(\App\Services\ShippingService::class)->enabled() ? 'Orders of $' . (int) config('checkout.free_shipping_threshold') . '+ ship free to any U.S. address.' : 'Every order ships free to any U.S. address, with no minimum purchase.'],
                     ['badge' => '30-day policy','title' => 'Easy returns',    'icon' => 'box',
-                     'text'  => 'Return unused toys in their original packaging within 30 days for a refund or exchange.'],
+                     'text'  => \App\Support\SiteCopy::get('about.return_text')],
                     ['badge' => '100% secure',  'title' => 'Secure payment',  'icon' => 'lock',
                      'text'  => 'Stripe processes every payment over an encrypted connection, so your card details stay private.'],
-                    ['badge' => 'Always here',  'title' => '24/7 support',    'icon' => 'support',
-                     'text'  => 'Email our team any day of the week, and we reply within 24 hours.'],
+                    ['badge' => 'Every day',  'title' => \App\Support\SiteCopy::get('about.support_title'),    'icon' => 'support',
+                     'text'  => \App\Support\SiteCopy::get('about.support_text')],
                     ['badge' => 'Checked first', 'title' => 'Quality assured', 'icon' => 'award',
-                     'text'  => 'We check each toy before it ships and make it right if it does not match its description.'],
+                     'text'  => \App\Support\SiteCopy::get('about.quality_text')],
                 ];
             @endphp
 
@@ -541,11 +528,8 @@ $schemaAbout = ['@context'=>'https://schema.org','@type'=>'AboutPage','name'=>'A
     <section class="ab-section" style="padding-top:0">
         <div class="ab__wrap">
             <div class="ab-cta">
-                <h2 class="ab-cta__title">Ready to find the right toy?</h2>
-                <p class="ab-cta__text">
-                    Browse all {{ number_format($categoryCount) }} categories, or send us a note. We're happy to
-                    help you find the right toy for the right age.
-                </p>
+                <h2 class="ab-cta__title">{{ \App\Support\SiteCopy::get('about.cta_title') }}</h2>
+                <p class="ab-cta__text">\n                    {{ \App\Support\SiteCopy::get('about.cta_text') }}\n                </p>
                 <div class="ab-cta__actions">
                     <a class="ab-btn ab-btn--dark" href="{{ url('/shop') }}">
                         Start shopping

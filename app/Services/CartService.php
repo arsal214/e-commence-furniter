@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Bundle;
 use App\Models\Product;
 
 class CartService
@@ -15,13 +16,54 @@ class CartService
             return [];
         }
 
+        // Bundle lines are priced and validated as a set (see Bundle); product lines below.
+        $bundleLines  = array_filter($cart, fn ($line) => ! empty($line['bundle_id']));
+        $productLines = array_diff_key($cart, $bundleLines);
+
         // Drop lines whose product was deactivated, or whose category was, since it
         // was added — a hidden product must not be purchasable from an old cart.
         // ponytail: one indexed query per call; memoise per request if it shows up in profiling.
-        $ids  = array_values(array_unique(array_column($cart, 'id')));
-        $live = Product::visible()->whereIn('id', $ids)->pluck('id')->all();
-        if (count($live) !== count($ids)) {
-            $cart = array_filter($cart, fn ($line) => in_array($line['id'], $live));
+        $ids  = array_values(array_unique(array_column($productLines, 'id')));
+        $live = Product::visible()->with('variants')->whereIn('id', $ids)->get()->keyBy('id');
+        $dirty = count($live) !== count($ids);
+
+        if ($dirty) {
+            $productLines = array_filter($productLines, fn ($line) => $live->has($line['id']));
+        }
+
+        // The session only remembers WHICH product/option was added. The price is
+        // re-read from the database on every call, so an admin price change reaches
+        // carts that were filled earlier and the amount charged is never a stale copy.
+        foreach ($productLines as $key => $line) {
+            $fresh = $live[$line['id']]->effectivePriceFor($line['color'] ?? null, $line['size'] ?? null);
+            if (round((float) $line['price'], 2) !== round($fresh, 2)) {
+                $productLines[$key]['price'] = $fresh;
+                $dirty = true;
+            }
+        }
+
+        // A bundle stays in the cart only while every component is active and in stock,
+        // and always at the price stored on the bundle, never a copy from the session.
+        $bundles = $bundleLines
+            ? Bundle::live()->with('items.product.category', 'items.product.variants', 'items.variant')
+                ->whereIn('id', array_column($bundleLines, 'bundle_id'))->get()->keyBy('id')
+            : collect();
+        foreach ($bundleLines as $key => $line) {
+            $bundle = $bundles->get($line['bundle_id']);
+            if (! $bundle || $bundle->availableQty() < 1) {
+                unset($bundleLines[$key]);
+                $dirty = true;
+                continue;
+            }
+            if (round((float) $line['price'], 2) !== round((float) $bundle->price, 2)) {
+                $bundleLines[$key]['price'] = (float) $bundle->price;
+                $dirty = true;
+            }
+        }
+
+        $cart = $productLines + $bundleLines;
+
+        if ($dirty) {
             session([$this->sessionKey => $cart]);
         }
 
@@ -59,6 +101,25 @@ class CartService
                 'qty'   => $qty,
                 'color' => $color,
                 'size'  => $size,
+            ];
+        }
+
+        session([$this->sessionKey => $cart]);
+    }
+
+    /** Add a whole set as one cart line, priced from the bundle row. */
+    public function addBundle(Bundle $bundle, int $qty = 1): void
+    {
+        $cart = $this->items();
+        $key  = 'bundle|' . $bundle->id;
+
+        if (isset($cart[$key])) {
+            $cart[$key]['qty'] += $qty;
+        } else {
+            $cart[$key] = [
+                'key' => $key, 'id' => null, 'bundle_id' => $bundle->id, 'name' => $bundle->name, 'slug' => null,
+                'price' => (float) $bundle->price, 'sku' => null, 'image' => $bundle->image(),
+                'qty' => $qty, 'color' => null, 'size' => null,
             ];
         }
 

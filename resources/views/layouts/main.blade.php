@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>@yield('title', 'PeytonGhalib - Toys & Games for Kids of Every Age')</title>
+        <title>@yield('title', \App\Support\SiteCopy::title('home'))</title>
         <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon" sizes="any">
         <link rel="apple-touch-icon" href="{{ asset('favicon.ico') }}">
         {{-- Dark mode is retired: force light synchronously before CSS is parsed so a
@@ -112,7 +112,7 @@
              path, and no <noscript> fallback is needed because a plain
              <link rel="stylesheet"> works without JavaScript. --}}
         <!-- Primary Meta Tags -->
-        <meta name="description" content="@yield('meta_description', 'PeytonGhalib — Shop quality toys, games, puzzles, plush and outdoor play for kids of every age at PeytonGhalib. Free shipping across the USA and 30-day returns.')">
+        <meta name="description" content="@yield('meta_description', \App\Support\SiteCopy::description('home'))">
 <meta name="author" content="PeytonGhalib">
         <meta name="robots" content="@yield('robots', 'index, follow')">
         <link rel="canonical" href="@yield('canonical', url()->current())">
@@ -120,16 +120,16 @@
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="@yield('og_type', 'website')">
         <meta property="og:url" content="{{ url()->current() }}">
-        <meta property="og:title" content="@yield('title', 'PeytonGhalib — Toys & Games Online | Free Shipping')">
-        <meta property="og:description" content="@yield('meta_description', 'PeytonGhalib — Shop quality toys, games, puzzles, plush and outdoor play for kids of every age at PeytonGhalib. Free shipping across the USA and 30-day returns.')">
+        <meta property="og:title" content="@yield('title', \App\Support\SiteCopy::title('home'))">
+        <meta property="og:description" content="@yield('meta_description', \App\Support\SiteCopy::description('home'))">
         <meta property="og:image" content="@yield('og_image', asset('assets/img/logo.png'))">
         <meta property="og:site_name" content="PeytonGhalib">
         <meta property="og:locale" content="en_US">
         <!-- Twitter Card -->
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:url" content="{{ url()->current() }}">
-        <meta name="twitter:title" content="@yield('title', 'PeytonGhalib — Toys & Games Online | Free Shipping')">
-        <meta name="twitter:description" content="@yield('meta_description', 'PeytonGhalib — Shop quality toys, games, puzzles, plush and outdoor play for kids of every age at PeytonGhalib. Free shipping across the USA and 30-day returns.')">
+        <meta name="twitter:title" content="@yield('title', \App\Support\SiteCopy::title('home'))">
+        <meta name="twitter:description" content="@yield('meta_description', \App\Support\SiteCopy::description('home'))">
         <meta name="twitter:image" content="@yield('og_image', asset('assets/img/logo.png'))">
         <meta name="wishlist-ids" content="{{ json_encode(\App\Models\Wishlist::productIdsForCurrentUser()) }}">
         <meta name="is-logged-in" content="{{ auth()->check() ? 'true' : 'false' }}">
@@ -214,7 +214,7 @@
         @php
         $schemaOrg = ['@context'=>'https://schema.org','@type'=>'Organization','name'=>'PeytonGhalib','url'=>url('/'),
             'logo'=>['@type'=>'ImageObject','url'=>asset('assets/img/favicon.png')],
-            'description'=>'PeytonGhalib is an online toy store: toys, games, puzzles, plush and outdoor play for kids of every age, with free shipping across the USA.',
+            'description'=>\App\Support\SiteCopy::get('brand.description'),
             'telephone'=>'+19294699864',
             'address'=>['@type'=>'PostalAddress','streetAddress'=>'200 Orient Ave STE 2B','addressLocality'=>'Jersey City','addressRegion'=>'NJ','postalCode'=>'07305','addressCountry'=>'US'],
             'contactPoint'=>['@type'=>'ContactPoint','contactType'=>'customer service','telephone'=>'+19294699864','url'=>url('/contact')],
@@ -223,23 +223,6 @@
         <script type="application/ld+json">{!! json_encode($schemaOrg, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
         {{-- Page-specific schemas pushed from each template --}}
         @stack('schema')
-        <!-- old  Meta Pixel Code -->
-        {{-- <script>
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '1007586992128470');
-        fbq('track', 'PageView');
-        </script>
-        <noscript><img height="1" width="1" style="display:none"
-        src="https://www.facebook.com/tr?id=1007586992128470&ev=PageView&noscript=1"
-        /></noscript> --}}
-        <!-- End Meta Pixel Code -->
 
 
         <!-- Meta Pixel Code -->
@@ -387,6 +370,8 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
             }
 
             function onExitIntent(e) {
+                // The new-customer welcome offer owns the exit-intent moment while it is live.
+                if (window.__pgWelcomeLive) return;
                 if (e.clientY <= 0 && shouldShow()) {
                     showPopup();
                 }
@@ -452,6 +437,7 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
                 if(el) setTimeout(function(){ el.style.transition='opacity .5s'; el.style.opacity='0'; setTimeout(function(){ el.remove(); },500); }, 4000);
             });
         </script>
+        @include('includes.welcome-offer')
         @stack('scripts')
 
 
@@ -1005,9 +991,18 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
              response because the browser navigates away). --}}
         <script>
         window.trackMetaAddToCart = function (p) {
-            if (typeof fbq !== 'function' || !p) return;
+            if (!p) return;
             var value = Number(p.value);
             if (!isFinite(value) || value <= 0) return;   // a 0-value event is rejected too
+
+            // GA4 add_to_cart, same item id as Meta content_ids and GA4 view_item/purchase.
+            if (typeof gtag === 'function') {
+                gtag('event', 'add_to_cart', {
+                    currency: @json(config('services.meta.currency', 'USD')), value: Number(value.toFixed(2)),
+                    items: [{ item_id: String(p.id), item_name: p.name || '', price: Number(p.unit_price) || 0, quantity: Number(p.qty) || 1 }]
+                });
+            }
+            if (typeof fbq !== 'function') return;
 
             var payload = {
                 value: Number(value.toFixed(2)),
@@ -1024,7 +1019,8 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
             // the row with; without it every add reads as a bare numeric id.
             if (p.name) payload.content_name = String(p.name);
 
-            fbq('track', 'AddToCart', payload);
+            // meta_event_id is the id the server used for its Conversions API copy of this add.
+            fbq('track', 'AddToCart', payload, p.meta_event_id ? { eventID: p.meta_event_id } : undefined);
         };
 
         {{-- Capture phase so it still runs where a listener calls preventDefault(). --}}
@@ -1040,12 +1036,20 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
             var qty   = Number(form.querySelector('[name="qty"]')?.value) || 1;
             if (!isFinite(price) || price <= 0) return;
 
+            // The page navigates away, so there is no response to read an id from: mint it here
+            // and post it with the form; the server's Conversions API copy reuses it.
+            var metaId = 'AddToCart.' + Math.random().toString(36).slice(2, 12) + Date.now().toString(36);
+            var hidden = document.createElement('input');
+            hidden.type = 'hidden'; hidden.name = 'meta_event_id'; hidden.value = metaId;
+            form.appendChild(hidden);
+
             window.trackMetaAddToCart({
                 id: form.dataset.atcId,
                 name: form.dataset.atcName,
                 qty: qty,
                 unit_price: price,
-                value: price * qty
+                value: price * qty,
+                meta_event_id: metaId
             });
         }, true);
         </script>

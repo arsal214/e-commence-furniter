@@ -1,6 +1,6 @@
 @extends('layouts.main')
-@section('title', ($item->meta_title ?? $item->name ?? 'Product Details') . ' | PeytonGhalib')
-@section('meta_description', $item->meta_description ?? \Illuminate\Support\Str::limit(strip_tags($item->description ?? 'Shop ' . ($item->name ?? 'this product') . ' at PeytonGhalib. Quality toys and games for kids of every age, with free shipping.'), 155))
+@section('title', \App\Support\SiteCopy::productTitle($item))
+@section('meta_description', \App\Support\SiteCopy::productDescription($item))
 @section('og_type', 'product')
 @php
     $ogImg = !empty($item->image)
@@ -1840,11 +1840,16 @@ img.pd-slide-img:focus-visible {
                     <div class="pd-price-block pdx">
                         <div class="pdx-price-row">
                             <span id="pd-price-now" class="pdx-price">${{ number_format($baseNow, 2) }}</span>
-                            <span id="pd-price-was" class="pdx-was" style="{{ $baseWas ? '' : 'display:none' }}">${{ number_format($baseWas ?? 0, 2) }}</span>
+                            <span id="pd-price-was" class="pdx-was" style="{{ $baseWas ? '' : 'display:none' }}">{{ $baseWas ? '$' . number_format($baseWas, 2) : '' }}</span>
                             <span id="pd-price-badge" class="pdx-off" style="{{ $baseWas ? '' : 'display:none' }}"></span>
                         </div>
                         <p id="pd-price-save" class="pdx-save" style="{{ $baseWas ? '' : 'display:none' }}"></p>
                     </div>
+                    @if ($item->is_addon && app(\App\Services\ShippingService::class)->enabled())
+                        <p class="pgw-pline" style="border-style:solid">Add-on item: ships free when your order is ${{ (int) config('checkout.free_shipping_threshold') }} or more.</p>
+                    @endif
+                    {{-- Filled by includes/welcome-offer.blade.php only while an offer is live for this visitor. --}}
+                    <div class="pgw-pline" data-welcome-product data-price="{{ number_format($baseNow, 2, '.', '') }}" hidden></div>
 
                     {{-- Key features are rendered once, as the two-column "Why you'll
                          like it" list further down — they were previously repeated
@@ -1999,7 +2004,7 @@ img.pd-slide-img:focus-visible {
                                 'Secure checkout',
                                 'SSL encrypted',
                                 '30-day money back',
-                                'Free shipping',
+                                app(\App\Services\ShippingService::class)->enabled() ? 'Free shipping $' . (int) config('checkout.free_shipping_threshold') . '+' : 'Free shipping',
                             ] as $badge)
                             <span class="pdx-trust__i">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
@@ -2023,7 +2028,11 @@ img.pd-slide-img:focus-visible {
                                 </svg>
                             </span>
                             <div>
-                                <p class="pdx-delivery__head"><em>FREE</em> delivery on this order</p>
+                                @if (app(\App\Services\ShippingService::class)->enabled())
+                                    <p class="pdx-delivery__head"><em>FREE</em> delivery on orders ${{ (int) config('checkout.free_shipping_threshold') }}+ <span style="font-weight:400">(${{ number_format(config('checkout.flat_shipping_rate'), 2) }} under ${{ (int) config('checkout.free_shipping_threshold') }})</span></p>
+                                @else
+                                    <p class="pdx-delivery__head"><em>FREE</em> delivery on this order</p>
+                                @endif
                                 <p class="pdx-delivery__date">
                                     Estimated
                                     <strong>{{ $delivery['earliest']->format('D j M') }}</strong>
@@ -2045,7 +2054,11 @@ img.pd-slide-img:focus-visible {
                             </span>
                             <span>
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-                                No minimum spend
+                                @if (app(\App\Services\ShippingService::class)->enabled())
+                                    Free shipping ${{ (int) config('checkout.free_shipping_threshold') }}+
+                                @else
+                                    No minimum spend
+                                @endif
                             </span>
                         </p>
                     </div>
@@ -2053,7 +2066,9 @@ img.pd-slide-img:focus-visible {
                     {{-- Four feature cards --}}
                     @php
                         $pdxFeatures = [
-                            ['t' => 'Free shipping',  'd' => 'On every order',      'i' => 'truck'],
+                            app(\App\Services\ShippingService::class)->enabled()
+                                ? ['t' => 'Free shipping',  'd' => 'On orders $' . (int) config('checkout.free_shipping_threshold') . '+', 'i' => 'truck']
+                                : ['t' => 'Free shipping',  'd' => 'On every order',      'i' => 'truck'],
                             ['t' => '30-day returns', 'd' => 'Easy, no quibbles',   'i' => 'return'],
                             ['t' => 'Secure checkout','d' => 'SSL encrypted',       'i' => 'lock'],
                             ['t' => 'Quality checked','d' => 'Before it ships',     'i' => 'star'],
@@ -2108,6 +2123,7 @@ img.pd-slide-img:focus-visible {
                                   style="min-width:52px;background:#2E77BC">
                                 <span style="font-family:Arial,sans-serif;font-weight:800;font-size:11px;color:#fff;letter-spacing:0.5px">AMEX</span>
                             </span>
+                            @if(config('services.paypal.client_id'))
                             {{-- PayPal --}}
                             <span class="inline-flex items-center justify-center border border-gray-200 bg-white rounded-md h-8 px-3" title="PayPal"
                                   style="min-width:52px">
@@ -2115,11 +2131,14 @@ img.pd-slide-img:focus-visible {
                                     <span style="color:#003087">Pay</span><span style="color:#009CDE">Pal</span>
                                 </span>
                             </span>
+                            @endif
+                            @if(config('checkout.apple_pay'))
                             {{-- Apple Pay --}}
                             <span class="inline-flex items-center justify-center border border-gray-200 rounded-md h-8 px-3" title="Apple Pay"
                                   style="min-width:52px;background:#000">
                                 <span style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',Arial,sans-serif;font-weight:500;font-size:11px;color:#fff;letter-spacing:-0.2px"> Pay</span>
                             </span>
+                            @endif
                         </div>
 
                         <p class="pdx-pay__note">
@@ -2204,7 +2223,7 @@ img.pd-slide-img:focus-visible {
     <div class="pd-sticky-bar__main">
         <div class="pd-sticky-bar__price">
             <span id="pd-sticky-now" class="pd-sticky-bar__now">${{ $activePrice }}</span>
-            <span id="pd-sticky-was" class="pd-sticky-bar__was" style="{{ $baseWas ? '' : 'display:none' }}">${{ number_format($baseWas ?? 0, 2) }}</span>
+            <span id="pd-sticky-was" class="pd-sticky-bar__was" style="{{ $baseWas ? '' : 'display:none' }}">{{ $baseWas ? '$' . number_format($baseWas, 2) : '' }}</span>
         </div>
         <button type="submit" form="pd-cart-form" id="pd-sticky-btn" class="pd-sticky-bar__btn"
                 {{ $pdInStock ? '' : 'disabled aria-disabled=true' }}>
@@ -3141,6 +3160,24 @@ img.pd-slide-img:focus-visible {
      so the total reads as "this plus these", which is the whole point — a
      checkbox list that lets you deselect the item you are looking at is just a
      second recommendations rail. --}}
+@if(! empty($completeSet))
+<div class="s-py-50 pt-0">
+    <div class="container-fluid">
+        <div class="max-w-[985px] mx-auto border border-[#e5d9c8] bg-[#faf5ee] rounded-xl p-5 sm:p-6">
+            <h2 class="text-xl sm:text-2xl leading-none font-bold dark:text-black mb-2">Complete the set &mdash; save ${{ number_format($completeSet->savings(), 2) }}</h2>
+            <p class="text-sm mb-3">{{ $completeSet->name }}:
+                {{ $completeSet->items->map(fn ($i) => $i->product->name . ' ($' . number_format($i->unitPrice(), 2) . ')')->implode(' + ') }}.
+                Regular ${{ number_format($completeSet->regularTotal(), 2) }}, set price <strong>${{ number_format($completeSet->price, 2) }}</strong>.</p>
+            <form method="POST" action="{{ route('cart.add-bundle') }}">
+                @csrf
+                <input type="hidden" name="bundle_id" value="{{ $completeSet->id }}">
+                <button type="submit" class="pd-btn-cart" style="width:auto;padding-inline:28px">Add the set to cart</button>
+            </form>
+        </div>
+    </div>
+</div>
+@endif
+
 @if($boughtTogether->isNotEmpty())
 <div class="s-py-50 pt-0">
     <div class="container-fluid">
@@ -3187,7 +3224,7 @@ img.pd-slide-img:focus-visible {
                 <div class="pd-fbt-foot flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:flex-wrap mt-5 pt-5 border-t border-gray-100 dark:border-white/10">
                     <div>
                         <p class="text-xs text-gray-500 dark:text-white-light">Total for <span id="fbt-count">{{ $boughtTogether->count() + 1 }}</span> items</p>
-                        <p class="text-xl font-bold text-title dark:text-white" id="fbt-total">$0.00</p>
+                        <p class="text-xl font-bold text-title dark:text-white" id="fbt-total">${{ number_format((float) $item->effective_price + $boughtTogether->sum(fn ($b) => (float) $b->effective_price), 2) }}</p>
                     </div>
                     {{-- The anchor product is not a checkbox, so it is submitted here.
                          Without it the bundle would add only the companions. --}}
@@ -3239,6 +3276,7 @@ img.pd-slide-img:focus-visible {
 @endif
 
 <!-- Related Product Start -->
+@if ($newProducts->isNotEmpty())
 <div class="s-py-50-100">
     <div class="container-fluid">
         <div class="max-w-[547px] mx-auto text-center">
@@ -3253,6 +3291,7 @@ img.pd-slide-img:focus-visible {
         </div>
     </div>
 </div>
+@endif
 <!-- Related Product End -->
 
 {{-- Static demo quick-view removed: it rendered dummy 'Classic Relaxable Chair'
@@ -3459,9 +3498,16 @@ document.addEventListener('keydown', function(e) {
     payload.content_category = @json($item->category->name);
     @endif
 
-    {{-- Deterministic on the product id so a Conversions API twin added later
-         collapses into this event instead of counting a second view. --}}
-    fbq('track', 'ViewContent', payload, { eventID: @json('ViewContent.product-' . $item->id) });
+    {{-- One id per page view, generated in ProductController and sent to Meta server-side too,
+         so the two copies count once. (A fixed id per product would make Meta drop later views.) --}}
+    fbq('track', 'ViewContent', payload, { eventID: @json($metaViewContentId) });
+    if (typeof gtag === 'function') {
+        gtag('event', 'view_item', {
+            currency: payload.currency, value: payload.value,
+            items: [{ item_id: payload.content_ids[0], item_name: payload.content_name, price: payload.value
+                @if ($item->category), item_category: @json($item->category->name)@endif }]
+        });
+    }
 })();
 </script>
 @endpush

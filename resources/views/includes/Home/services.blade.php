@@ -3,7 +3,7 @@ $services = [
     [
         'img' => 'assets/img/svg/car.svg', 
         'title' => "Free Shipping", 
-        'desc' => "Enjoy free shipping on all orders, making your shopping experience even more convenient. Get your favorite products delivered.", 
+        'desc' => app(\App\Services\ShippingService::class)->enabled() ? 'Enjoy free shipping on orders of $' . (int) config('checkout.free_shipping_threshold') . ' or more, delivered to your door.' : "Enjoy free shipping on all orders, making your shopping experience even more convenient. Get your favorite products delivered.", 
         'data' => "100", 
     ],
     [

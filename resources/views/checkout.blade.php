@@ -54,7 +54,7 @@
                                 Email <span class="co-field__req" aria-hidden="true">*</span><span class="co-sr">(required)</span>
                             </label>
                             <input class="co-field__input" id="email" name="email" type="email" inputmode="email"
-                                   value="{{ old('email', auth()->user()?->email) }}"
+                                   value="{{ old('email', auth()->user()?->email ?? $welcomeEmail) }}"
                                    placeholder="name@example.com" autocomplete="email"
                                    data-validate data-label="Email" required
                                    @error('email') aria-invalid="true" @enderror
@@ -369,6 +369,12 @@
                     </div>
                     {{-- Only rendered once the bump is actually ticked, so the summary
                          never shows a line for something the customer has not chosen. --}}
+                    @if (($welcomeDiscount ?? 0) > 0)
+                        <div class="co-sum__row" style="color:#2f7d4f">
+                            <span>Welcome deal ({{ $welcomeEmail }})</span>
+                            <span>&minus;${{ number_format($welcomeDiscount, 2) }}</span>
+                        </div>
+                    @endif
                     <div class="co-sum__row" id="co-bump-row" hidden>
                         <span id="co-bump-label">Added extra</span>
                         <span id="co-bump-amount">$0.00</span>
@@ -382,7 +388,7 @@
 
                     <div class="co-sum__total">
                         <span>Total</span>
-                        <b id="co-total">${{ number_format($cartTotal, 2) }}</b>
+                        <b id="co-total">${{ number_format($cartTotal - ($welcomeDiscount ?? 0), 2) }}</b>
                     </div>
                     </details>
                 </section>
@@ -448,7 +454,9 @@
     var form = document.querySelector('[data-co-form]');
     if (!form) return;
 
-    var SUBTOTAL = {{ (float) $cartTotal }};
+    var SUBTOTAL = {{ (float) $cartTotal - (float) ($welcomeDiscount ?? 0) }};
+    var GOODS = {{ (float) $cartTotal }};                     // pre-discount: what the free-shipping threshold is judged on
+    var SHIP_RULE = @json($shipRule);                        // null = shipping is free on every order
 
     /* ── Totals ─────────────────────────────────────────────────
        Cost comes from the radio's data-cost, rendered from the
@@ -486,6 +494,9 @@
         var checked = form.querySelector('input[name="shipping"]:checked');
         var cost    = checked ? parseFloat(checked.dataset.cost || '0') : 0;
         var extra   = bumpCost();
+        if (SHIP_RULE && checked && checked.value === 'free') {
+            cost = (GOODS + extra + 0.00001 >= SHIP_RULE.threshold) ? 0 : SHIP_RULE.flat;   // display only; the server recomputes
+        }
 
         if (shippingEl) shippingEl.textContent = cost > 0 ? money(cost) : 'Free';
 
@@ -1007,7 +1018,7 @@
      abandoning is a genuine second initiation and should be counted. --}}
 @php
     $icContents = collect($cartItems)->map(fn ($line) => [
-        'id'         => (string) $line['id'],
+        'id'         => (string) ($line['id'] ?? ('bundle-' . ($line['bundle_id'] ?? ''))),
         'quantity'   => (int) $line['qty'],
         'item_price' => round((float) $line['price'], 2),
     ])->values()->all();
@@ -1019,10 +1030,19 @@
 @if (!empty($icContents) && (float) $cartTotal > 0)
 <script>
 (function () {
-    if (typeof fbq !== 'function') return;
     if (window.__pgMetaInitiateCheckoutFired) return;
     window.__pgMetaInitiateCheckoutFired = true;
 
+    if (typeof gtag === 'function') {
+        gtag('event', 'begin_checkout', {
+            currency: @json(config('services.meta.currency', 'USD')),
+            value: {{ number_format((float) $cartTotal, 2, '.', '') }},
+            @if (! empty($welcomeDiscount) && ! empty($welcomeCode)) coupon: @json($welcomeCode), @endif
+            items: {!! json_encode(collect($icContents)->map(fn ($c, $i) => ['item_id' => $c['id'], 'item_name' => $icNames[$i] ?? '', 'price' => $c['item_price'], 'quantity' => $c['quantity']])->values()->all(), JSON_UNESCAPED_SLASHES) !!}
+        });
+    }
+
+    if (typeof fbq !== 'function') return;
     fbq('track', 'InitiateCheckout', {
         content_type: 'product',
         content_ids:  {!! json_encode($icContentIds, JSON_UNESCAPED_SLASHES) !!},
@@ -1031,7 +1051,7 @@
         num_items:    {{ (int) $icNumItems }},
         value:        {{ number_format((float) $cartTotal, 2, '.', '') }},
         currency:     @json(config('services.meta.currency', 'USD'))
-    });
+    }, { eventID: @json($metaIcEventId) });
 })();
 </script>
 @endif

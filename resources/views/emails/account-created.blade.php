@@ -30,7 +30,7 @@
 <div class="wrapper">
     <div class="header">
         <h1>PeytonGhalib</h1>
-        <p>Toys & Games Store</p>
+        <p>Gifts & Home Store</p>
     </div>
     <div class="body">
         <div class="greeting">Your account is ready, {{ $user->name }}!</div>

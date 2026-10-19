@@ -87,6 +87,14 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('email-images', [Admin\EmailImageController::class, 'store'])->name('admin.email-images.store');
     Route::get('flash-deal',     [Admin\FlashDealController::class, 'index'])->name('admin.flash-deal.index');
     Route::put('flash-deal',     [Admin\FlashDealController::class, 'update'])->name('admin.flash-deal.update');
+    Route::get('store-settings', [Admin\StoreSettingsController::class, 'index'])->name('admin.store-settings.index');
+    Route::put('store-settings', [Admin\StoreSettingsController::class, 'update'])->name('admin.store-settings.update');
+    Route::get('site-text',      [Admin\SiteTextController::class, 'index'])->name('admin.site-text.index');
+    Route::put('site-text',      [Admin\SiteTextController::class, 'update'])->name('admin.site-text.update');
+    Route::get('bundles',        [Admin\BundleController::class, 'index'])->name('admin.bundles.index');
+    Route::put('bundles/{bundle}', [Admin\BundleController::class, 'update'])->name('admin.bundles.update');
+    Route::get('welcome-offer',  [Admin\WelcomeOfferController::class, 'index'])->name('admin.welcome-offer.index');
+    Route::put('welcome-offer',  [Admin\WelcomeOfferController::class, 'update'])->name('admin.welcome-offer.update');
 });
 
 // ──────────────────────────────────────────────
@@ -104,6 +112,7 @@ Route::get('/error', [HomeController::class, 'error']);
 
 Route::get('/coming-soon', [HomeController::class, 'comingSoon']);
 Route::get('/thank-you',   [HomeController::class, 'thankYou'])->name('thank-you');
+Route::post('/thank-you/account', [HomeController::class, 'createAccountFromOrder'])->middleware('throttle:5,1')->name('thank-you.account');
 Route::get('/track-order', [HomeController::class, 'trackOrder'])->name('track-order');
 
 Route::redirect('/shipping-method', '/shipping-policy', 301); // SEO: duplicate of shipping-policy
@@ -134,9 +143,13 @@ Route::get('/cart',          [CartController::class, 'index'])->name('cart');
 Route::post('/cart/add',     [CartController::class, 'add'])->name('cart.add');
 // Bundle add ("Frequently bought together" on the product page).
 Route::post('/cart/add-many', [CartController::class, 'addMany'])->name('cart.add-many');
+Route::post('/cart/add-bundle', [CartController::class, 'addBundle'])->name('cart.add-bundle');
 Route::post('/cart/update',  [CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove',  [CartController::class, 'remove'])->name('cart.remove');
 Route::post('/cart/clear',   [CartController::class, 'clear'])->name('cart.clear');
+
+// Stripe -> us. Signature-verified inside the controller; no session/CSRF.
+Route::post('/stripe/webhook', \App\Http\Controllers\StripeWebhookController::class)->name('stripe.webhook');
 
 
 Route::get('/short-code', [HomeController::class, 'shortCode']);
@@ -151,3 +164,7 @@ Route::post('/newsletter', [ContactController::class, 'newsletter'])->name('news
 Route::match(['get', 'post'], '/unsubscribe', [MarketingController::class, 'unsubscribe'])
     ->middleware('signed')
     ->name('marketing.unsubscribe');
+
+// New-customer welcome offer. Server-decided; the JSON only drives what the page shows.
+Route::get('/welcome/status', [\App\Http\Controllers\WelcomeOfferController::class, 'status'])->name('welcome.status');
+Route::post('/welcome/claim', [\App\Http\Controllers\WelcomeOfferController::class, 'claim'])->middleware('throttle:5,60')->name('welcome.claim');

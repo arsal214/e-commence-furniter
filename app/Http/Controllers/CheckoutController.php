@@ -9,7 +9,9 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\CartService;
+use App\Services\OrderSettlement;
 use App\Services\PayPalService;
+use App\Services\WelcomeOfferService;
 use App\Services\TikTokEventsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +28,10 @@ class CheckoutController extends Controller
         protected CartService $cart,
         protected TikTokEventsService $tiktok,
         protected PayPalService $paypal,
+        protected OrderSettlement $settlement,
+        protected WelcomeOfferService $welcome,
+        protected \App\Services\ShippingService $shipping,
+        protected \App\Services\MetaEventsService $meta,
     ) {}
 
     /**
@@ -63,13 +69,34 @@ class CheckoutController extends Controller
             return redirect()->route('cart')->with('error', 'Your cart is empty.');
         }
 
+        $cartSubtotal = $this->cart->total();
+        if ($this->shipping->addonOnlyBelowThreshold($this->cart->items(), $cartSubtotal)) {
+            return redirect()->route('cart')->with('error', $this->addonMessage());
+        }
+        $shippingCost = $this->shipping->cost($cartSubtotal);
+
         $shippingOptions = [
-            'free'  => ['label' => 'Free Shipping',  'cost' => 0],
+            'free'  => ['label' => $this->shipping->enabled() ? 'Standard shipping' : 'Free Shipping', 'cost' => $shippingCost],
             // 'fast'  => ['label' => 'Fast Shipping',   'cost' => 10],
             // 'local' => ['label' => 'Local Pickup',    'cost' => 15],
         ];
 
+        // Meta InitiateCheckout: server twin of the browser event, same event_id.
+        $icEventId = $this->meta->newEventId('InitiateCheckout');
+        $icData    = $this->meta->cartData($this->cart->items());
+        $this->meta->track('InitiateCheckout', $icEventId, $icData, $this->meta->buildUser(request()), request()->fullUrl());
+
+        $claim   = \App\Models\WelcomeClaim::find(session('welcome_claim_id'));
+        $preview = $claim
+            ? $this->welcome->validateAtCheckout($claim->email, $this->cart->total(), 0.0)
+            : null;
+
         return view('checkout', [
+            'metaIcEventId'   => $icEventId,
+            'shipRule'        => $this->shipping->enabled() ? ['threshold' => $this->shipping->threshold(), 'flat' => $this->shipping->flatRate()] : null,
+            'welcomeEmail'    => $claim?->email,
+            'welcomeDiscount' => $preview['discount'] ?? 0.0,
+            'welcomeCode'     => $claim?->code,
             'cartItems'       => $this->cart->items(),
             'cartTotal'       => $this->cart->total(),
             'shippingOptions' => $shippingOptions,
@@ -113,12 +140,14 @@ class CheckoutController extends Controller
             ->sortBy(fn ($p) => $p->effective_price)
             ->first();
 
-        $random = $eligible
+        // Second slot: the next-cheapest item in the same categories. Never a random
+        // item from elsewhere in the catalogue: an unrelated add-on looks like noise.
+        $second = $eligible->whereIn('category_id', $cartCategoryIds)
             ->reject(fn ($p) => $relevant && $p->id === $relevant->id)
-            ->shuffle()
+            ->sortBy(fn ($p) => $p->effective_price)
             ->first();
 
-        return collect([$relevant, $random])->filter()->values();
+        return collect([$relevant, $second])->filter()->values();
     }
 
     /**
@@ -194,6 +223,12 @@ class CheckoutController extends Controller
         return [substr($pattern, 1, $end - 1), substr($pattern, $end + 1)];
     }
 
+    protected function addonMessage(): string
+    {
+        return 'Add-on items ship free with orders of ' . $this->shipping->money($this->shipping->threshold())
+            . ' or more. Add another item to check out.';
+    }
+
     public function store(Request $request)
     {
         if ($this->cart->count() === 0) {
@@ -226,7 +261,7 @@ class CheckoutController extends Controller
             'address'        => 'required|string|max:255',
             'address2'       => 'nullable|string|max:255',
             'notes'          => 'nullable|string',
-            'payment_method' => 'required|in:cod,stripe,paypal',
+            'payment_method' => 'required|in:stripe,paypal',
             'shipping'       => 'required|in:free,fast,local',
             'agree'          => 'accepted',
             'order_bump'     => 'nullable|array',
@@ -259,17 +294,36 @@ class CheckoutController extends Controller
             }
         }
 
-        $shippingCosts = ['free' => 0, 'fast' => 10, 'local' => 15];
+        $subtotal = $this->cart->total();
+        if ($this->shipping->addonOnlyBelowThreshold($this->cart->items(), $subtotal)) {
+            return redirect()->route('cart')->with('error', $this->addonMessage());
+        }
+
+        $shippingCosts = ['free' => $this->shipping->cost($subtotal), 'fast' => 10, 'local' => 15];
         $shippingCost  = $shippingCosts[$data['shipping']];
-        $subtotal      = $this->cart->total();
-        $total         = $subtotal + $shippingCost;
+
+        // Welcome offer: decided here from the database; nothing the browser sends
+        // can change it. A rejected claim just means no discount, with a reason shown.
+        $quote    = $this->welcome->validateAtCheckout($data['email'], $subtotal, $shippingCost, [
+            'address' => $data['address'], 'address2' => $data['address2'] ?? null,
+            'zip' => $data['zip'] ?? null, 'country' => $data['country'],
+        ]);
+        $discount = $quote['discount'];
+        $shippingCost = max(0.0, $shippingCost - $quote['shipping_discount']);
+        $total    = max(0.0, round($subtotal - $discount + $shippingCost, 2));
+
+        if ($quote['reason'] && $quote['reason'] !== 'below_minimum') {
+            session()->flash('welcome_notice', \App\Services\WelcomeOfferService::REASONS[$quote['reason']]);
+        }
 
         // Resolve the buyer's account (guest checkout, flow B).
         //  - logged in         → use their account
         //  - email is known    → attach the order to that account, but never log an
         //                        anonymous visitor in or touch its password
-        //  - brand-new email   → auto-create an account with a temporary password and
-        //                        the must_reset flag; credentials are emailed below
+        //  - brand-new email   → guest order (user_id null); the thank-you page offers
+        //                        an account. Legacy auto-create (temporary password,
+        //                        must_reset flag, credentials emailed) stays behind
+        //                        checkout.auto_create_account.
         $newUser       = null;
         $plainPassword = null;
         $buyerId       = auth()->id();
@@ -278,7 +332,7 @@ class CheckoutController extends Controller
             $existing = User::where('email', $data['email'])->first();
             if ($existing) {
                 $buyerId = $existing->id;
-            } else {
+            } elseif (config('checkout.auto_create_account')) {
                 $plainPassword = Str::password(12);
                 $newUser = User::create([
                     'name'                => $data['name'],
@@ -309,6 +363,17 @@ class CheckoutController extends Controller
             'shipping'        => $data['shipping'],
             'subtotal'        => $subtotal,
             'shipping_cost'   => $shippingCost,
+            'discount'        => $discount,
+            'utm_source'      => session('attribution.utm_source'),
+            'utm_medium'      => session('attribution.utm_medium'),
+            'utm_campaign'    => session('attribution.utm_campaign'),
+            'utm_content'     => session('attribution.utm_content'),
+            'utm_term'        => session('attribution.utm_term'),
+            'meta_fbp'        => $request->cookie('_fbp'),
+            'meta_fbc'        => $request->cookie('_fbc') ?: (session('attribution.fbclid') ? 'fb.1.' . now()->getTimestampMs() . '.' . session('attribution.fbclid') : null),
+            'client_ip'       => $request->ip(),
+            'client_user_agent' => substr((string) $request->userAgent(), 0, 512),
+            'welcome_claim_id' => $discount > 0 || $quote['shipping_discount'] > 0 ? $quote['claim']?->id : null,
             'total'           => $total,
             'status'          => 'pending',
             'tracking_number' => 'FRN-' . date('Y') . '-' . strtoupper(Str::random(8)),
@@ -316,6 +381,11 @@ class CheckoutController extends Controller
 
         // Save order items
         foreach ($this->cart->items() as $item) {
+            if (! empty($item['bundle_id'])) {
+                $this->expandBundleLine($order, $item);
+                continue;
+            }
+
             OrderItem::create([
                 'order_id'   => $order->id,
                 'product_id' => $item['id'],
@@ -331,7 +401,7 @@ class CheckoutController extends Controller
 
         // A freshly auto-created account: sign the buyer in for this session and
         // email their temporary credentials. Done here (not per payment branch) so
-        // both COD and the Stripe hand-off get the same treatment.
+        // both the PayPal and Stripe hand-offs get the same treatment.
         if ($newUser) {
             Auth::login($newUser);
             try {
@@ -340,24 +410,6 @@ class CheckoutController extends Controller
                 \Log::warning('Account-created email failed for ' . $newUser->email . ': ' . $e->getMessage());
                 \App\Models\EmailLog::recordFailure($newUser->email, AccountCreatedMail::class, $e->getMessage(), $newUser->id);
             }
-        }
-
-        if ($data['payment_method'] === 'cod') {
-            $this->cart->clear();
-            $order->load('items');
-            $this->trackCompletePayment($order, $request);
-            try {
-                Mail::to($order->email)->send(new OrderConfirmationMail($order));
-            } catch (\Exception $e) {
-                \Log::warning('Order confirmation email failed for order #' . $order->tracking_number . ': ' . $e->getMessage());
-                \App\Models\EmailLog::recordFailure($order->email, OrderConfirmationMail::class, $e->getMessage(), $order->user_id, $order->id);
-            }
-            // Kept in the session (not flashed) so a page refresh still shows the order.
-            // The purchase pixel stays on the flashed order_total, so it fires only once.
-            session()->put('recent_order', $order->tracking_number);
-
-            return redirect()->route('thank-you')
-                ->with('order_total', $total);
         }
 
         if ($data['payment_method'] === 'paypal') {
@@ -381,6 +433,7 @@ class CheckoutController extends Controller
         $intent = PaymentIntent::create([
             'amount'   => (int) round($total * 100), // cents
             'currency' => 'usd',
+            'automatic_payment_methods' => ['enabled' => true], // Apple Pay / Google Pay / Link per dashboard settings
             'metadata' => ['order_id' => $order->id],
         ]);
 
@@ -397,6 +450,43 @@ class CheckoutController extends Controller
             'clientSecret' => $intent->client_secret,
             'stripeKey'    => config('services.stripe.key'),
         ]);
+    }
+
+    /**
+     * A bundle in the cart becomes one order line per component product, so
+     * fulfilment and stock work on real products. The bundle price is spread over
+     * the components in proportion to their regular prices; the last line absorbs
+     * the rounding so the lines add up to exactly what the customer was charged.
+     */
+    protected function expandBundleLine(Order $order, array $line): void
+    {
+        $bundle = \App\Models\Bundle::with('items.product', 'items.variant')->findOrFail($line['bundle_id']);
+        $sets   = (int) $line['qty'];
+        $charge = round((float) $line['price'] * $sets, 2);
+        $parts  = $bundle->items->map(fn ($i) => ['item' => $i, 'weight' => $i->unitPrice() * $i->qty * $sets]);
+        $weight = max(0.01, $parts->sum('weight'));
+        $left   = $charge;
+
+        foreach ($parts->values() as $n => $part) {
+            $i     = $part['item'];
+            $total = $n === $parts->count() - 1 ? $left : round($charge * $part['weight'] / $weight, 2);
+            $left  = round($left - $total, 2);
+            $qty   = $i->qty * $sets;
+
+            OrderItem::create([
+                'order_id'    => $order->id,
+                'product_id'  => $i->product_id,
+                'name'        => $i->product->name,
+                'color'       => $i->variant?->type === 'color' ? $i->variant->value : null,
+                'size'        => $i->variant?->type === 'size' ? $i->variant->value : null,
+                'sku'         => $i->variant?->sku ?? $i->product->sku,
+                'price'       => round($total / $qty, 2),
+                'qty'         => $qty,
+                'total'       => $total,
+                'bundle_id'   => $bundle->id,
+                'bundle_name' => $bundle->name,
+            ]);
+        }
     }
 
     /**
@@ -491,6 +581,7 @@ class CheckoutController extends Controller
         return PaymentIntent::create([
             'amount'   => $amount,
             'currency' => 'usd',
+            'automatic_payment_methods' => ['enabled' => true], // Apple Pay / Google Pay / Link per dashboard settings
             'metadata' => ['order_id' => $order->id],
         ]);
     }
@@ -536,28 +627,21 @@ class CheckoutController extends Controller
         if ($intent->status === 'succeeded') {
             $order = Order::with('items')->where('stripe_payment_intent', $intent->id)->first();
             if ($order) {
-                $alreadyPaid = $order->payment_status === 'paid';
-                $order->update([
-                    'payment_status'  => 'paid',
-                    'status'          => 'processing',
-                    // This route is only ever reached through Stripe, so the
-                    // method is settled — including for an order taken as COD
-                    // and later paid by card through the pay link.
-                    'payment_method'  => 'stripe',
-                    // Re-stamped so orders created before this column existed
-                    // still get labelled once they succeed.
-                    'stripe_livemode' => $this->stripeLivemode(),
-                ]);
+                // Idempotent: the webhook may have settled this already. The amount
+                // Stripe reports must match the total recomputed from the database.
+                $this->settlement->markPaid(
+                    $order, 'stripe', (int) $intent->amount,
+                    StripeWebhookController::fingerprint($intent->id), $this->stripeLivemode(),
+                );
+                $order->refresh();
 
-                if (! $alreadyPaid) {
-                    $this->trackCompletePayment($order, $request);
+                if ($order->payment_status === 'paid') {
+                    if ($this->settlement->claimPurchaseTracking($order)) {
+                        $this->trackCompletePayment($order, $request);
+                    }
+                    $this->settlement->sendConfirmation($order);
                 }
-                try {
-                    Mail::to($order->email)->send(new OrderConfirmationMail($order));
-                } catch (\Exception $e) {
-                    \Log::warning('Stripe order confirmation email failed for order #' . $order->tracking_number . ': ' . $e->getMessage());
-                    \App\Models\EmailLog::recordFailure($order->email, OrderConfirmationMail::class, $e->getMessage(), $order->user_id, $order->id);
-                }
+                $this->settlement->reportPurchase($order);
             }
             $this->cart->clear();
 
@@ -606,15 +690,13 @@ class CheckoutController extends Controller
         }
 
         $order->load('items');
-        $order->update(['payment_status' => 'paid', 'status' => 'processing']);
-        $this->trackCompletePayment($order, $request);
-
-        try {
-            Mail::to($order->email)->send(new OrderConfirmationMail($order));
-        } catch (\Exception $e) {
-            \Log::warning('PayPal order confirmation email failed for order #' . $order->tracking_number . ': ' . $e->getMessage());
-            \App\Models\EmailLog::recordFailure($order->email, OrderConfirmationMail::class, $e->getMessage(), $order->user_id, $order->id);
+        $this->settlement->markPaid($order, 'paypal');
+        $order->refresh();
+        if ($this->settlement->claimPurchaseTracking($order)) {
+            $this->trackCompletePayment($order, $request);
         }
+        $this->settlement->sendConfirmation($order);
+        $this->settlement->reportPurchase($order);
 
         $this->cart->clear();
         session()->put('recent_order', $order->tracking_number);

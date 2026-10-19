@@ -1,6 +1,6 @@
 @extends('layouts.main')
-@section('title', 'Toys & Games Online with Free USA Shipping | PeytonGhalib')
-@section('meta_description', 'Shop quality toys, games, puzzles, plush and outdoor play for kids of every age at PeytonGhalib. Free shipping across the USA and 30-day returns.')
+@section('title', \App\Support\SiteCopy::title('home'))
+@section('meta_description', \App\Support\SiteCopy::description('home'))
 
 {{-- No hero image preload on purpose.
 
@@ -23,7 +23,7 @@ $schemaWebsite = [
     '@type'           => 'WebSite',
     'name'            => 'PeytonGhalib',
     'url'             => url('/'),
-    'description'     => 'Shop quality toys, games, puzzles, plush and outdoor play for kids of every age at PeytonGhalib. Free shipping across the USA and 30-day returns.',
+    'description'     => \App\Support\SiteCopy::description('home'),
     'potentialAction' => [
         '@type'       => 'SearchAction',
         'target'      => ['@type' => 'EntryPoint', 'urlTemplate' => url('/shop') . '?search={search_term_string}'],
@@ -485,7 +485,7 @@ $schemaWebsite = [
 @endphp
 
 <section class="ph-hero ph-hero--tiles" aria-label="Featured">
-    <h1 class="sr-only">Toys &amp; Games for Kids of Every Age, with Free Shipping Across the USA</h1>
+    <h1 class="sr-only">{{ \App\Support\SiteCopy::get('home.h1') }}</h1>
     @foreach($heroTiles as $t)
     <a href="{{ $t['url'] }}" class="ph-cat">
         <img src="{{ $t['img'] }}" alt="{{ $t['alt'] }}" width="1009" height="1558" loading="{{ $loop->first ? 'eager' : 'lazy' }}" decoding="async">
@@ -503,7 +503,7 @@ $schemaWebsite = [
                 <div class="flex items-end justify-between">
                     <div>
                         <span class="text-xs uppercase tracking-widest text-primary font-semibold">Shop by category</span>
-                        <h2 class="mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Toy Categories</h2>
+                        <h2 class="mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">{{ \App\Support\SiteCopy::get('home.categories_heading') }}</h2>
                     </div>
                     <a href="{{ url('/categories') }}"
                        class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-primary
@@ -512,7 +512,7 @@ $schemaWebsite = [
                         All categories →
                     </a>
                 </div>
-                <p class="mt-3 text-sm text-paragraph dark:text-white-light max-w-2xl">Find the right toy by type, from puzzles and building sets to plush, board games, dolls, ride-ons, and outdoor play.</p>
+                <p class="mt-3 text-sm text-paragraph dark:text-white-light max-w-2xl">{{ \App\Support\SiteCopy::get('home.categories_intro') }}</p>
             </div>
 
             <div class="pgh-cats-scroll" id="pgh-cat-grid" data-aos="fade-up" data-aos-delay="80">
@@ -632,7 +632,7 @@ $schemaWebsite = [
             <div>
                 <p class="na-eyebrow">Just landed @if(!empty($newThisWeek)) &middot; {{ $newThisWeek }} this week @endif</p>
                 <h2 class="na-title">New arrivals</h2>
-                <p class="na-sub">New toys and games every week, for every age and interest.</p>
+                <p class="na-sub">{{ \App\Support\SiteCopy::get('home.new_arrivals_sub') }}</p>
             </div>
             <a href="{{ url('/shop') }}?sort=latest" class="na-all">Shop all new arrivals &rarr;</a>
         </div>
@@ -825,7 +825,7 @@ $schemaWebsite = [
             <span class="wcu-label">Our Promise</span>
             <h2 class="wcu-title">Why Families Shop PeytonGhalib</h2>
             <div class="wcu-divider"></div>
-            <p class="wcu-subtitle">We make buying toys simple: clear prices, free shipping across the USA, and a team that helps from the moment you browse to the day your order arrives.</p>
+            <p class="wcu-subtitle">{{ \App\Support\SiteCopy::get('home.why_subtitle') }}</p>
         </div>
 
         {{-- Cards Grid --}}
@@ -843,7 +843,7 @@ $schemaWebsite = [
                     </svg>
                 </div>
                 <div class="wcu-card-title">Free Shipping</div>
-                <p class="wcu-card-desc">Every order ships free to any U.S. address, with no minimum spend and no hidden fees.</p>
+                <p class="wcu-card-desc">{{ app(\App\Services\ShippingService::class)->enabled() ? 'Orders of $' . (int) config('checkout.free_shipping_threshold') . '+ ship free to any U.S. address, with a flat $' . number_format(config('checkout.flat_shipping_rate'), 2) . ' rate below that.' : 'Every order ships free to any U.S. address, with no minimum spend and no hidden fees.' }}</p>
             </div>
 
             {{-- 2: Secure Payments --}}
@@ -869,7 +869,7 @@ $schemaWebsite = [
                     </svg>
                 </div>
                 <div class="wcu-card-title">30-Day Returns</div>
-                <p class="wcu-card-desc">Not the right toy? Return it unused in its original packaging within 30 days for a refund or exchange.</p>
+                <p class="wcu-card-desc">{{ \App\Support\SiteCopy::get('home.return_card') }}</p>
             </div>
 
             {{-- 4: 24/7 Support --}}
@@ -910,12 +910,12 @@ $schemaWebsite = [
         <div class="flex items-end justify-between gap-4 mb-6 md:mb-8 max-w-[1720px] mx-auto" data-aos="fade-up">
             <div>
                 <span class="text-xs uppercase tracking-widest text-primary font-semibold">Customer favourites</span>
-                <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">Best-Selling Toys</h2>
+                <h2 class="leading-tight mt-1 text-2xl md:text-3xl font-bold text-title dark:text-white">{{ \App\Support\SiteCopy::get('home.bestsellers_heading') }}</h2>
                 {{-- "loved by thousands of shoppers" was an invented count, same
                      class of claim as the ratings already stripped out of the hero
                      for being fabricated against an empty reviews table. Kept
                      non-numeric so it stays true whatever the order volume is. --}}
-                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">The toys families keep coming back for: the ones that sell fastest and get reordered most.</p>
+                <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500 hidden sm:block">{{ \App\Support\SiteCopy::get('home.bestsellers_sub') }}</p>
             </div>
             <a href="{{ url('/shop') }}"
                class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-title dark:text-white
@@ -1250,9 +1250,9 @@ $schemaWebsite = [
 
             <div class="flex items-end justify-between gap-4 mb-8" data-aos="fade-up">
                 <div>
-                    <span class="text-xs uppercase tracking-widest text-primary font-semibold">Find the right toy</span>
-                    <h2 class="leading-tight mt-1 text-xl md:text-2xl font-bold text-title dark:text-white">Explore Our Toy Range</h2>
-                    <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500">Puzzles, plush, board games, and outdoor play: shop toys for every kid and every budget in one place.</p>
+                    <span class="text-xs uppercase tracking-widest text-primary font-semibold">{{ \App\Support\SiteCopy::get('home.explore_eyebrow') }}</span>
+                    <h2 class="leading-tight mt-1 text-xl md:text-2xl font-bold text-title dark:text-white">{{ \App\Support\SiteCopy::get('home.explore_heading') }}</h2>
+                    <p class="mt-1.5 text-sm text-gray-400 dark:text-gray-500">{{ \App\Support\SiteCopy::get('home.explore_sub') }}</p>
                 </div>
                 <a href="{{ url('/shop') }}"
                    class="hidden sm:inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline whitespace-nowrap">

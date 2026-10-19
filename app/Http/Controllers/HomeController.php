@@ -31,7 +31,7 @@ class HomeController extends Controller
         // toast — the same hole that was just closed on the cart cross-sell tray.
         $newProducts = Product::visible()
                               ->where('stock', '>', 0)
-                              ->with('category')
+                              ->with('category', 'variants')
                               ->withAvg('reviews', 'rating')
                               ->withCount('reviews')
                               ->latest()
@@ -41,7 +41,7 @@ class HomeController extends Controller
         $bestSellers = Product::visible()
                               ->where('is_best_seller', true)
                               ->where('stock', '>', 0)
-                              ->with('category')
+                              ->with('category', 'variants')
                               ->withAvg('reviews', 'rating')
                               ->withCount('reviews')
                               ->latest()
@@ -239,6 +239,32 @@ class HomeController extends Controller
         // No order in session (direct visit, expired session) still renders —
         // the view falls back to a generic thank-you with a way to find the order.
         return view('thank-you', compact('order'));
+    }
+
+    /**
+     * Optional account after a guest purchase. The order in the session is the
+     * credential: the account takes that order's email, and only guest orders
+     * (user_id null) on that email are attached to it.
+     */
+    public function createAccountFromOrder(Request $request)
+    {
+        $data  = $request->validate(['password' => ['required', 'string', 'min:8', 'confirmed']]);
+        $order = Order::where('tracking_number', session('recent_order'))->whereNull('user_id')->first();
+
+        if (! $order || \App\Models\User::where('email', $order->email)->exists()) {
+            return redirect()->route('thank-you');
+        }
+
+        $user = \App\Models\User::create([
+            'name'     => $order->name,
+            'email'    => $order->email,
+            'role'     => 'customer',
+            'password' => \Illuminate\Support\Facades\Hash::make($data['password']),
+        ]);
+        Order::whereNull('user_id')->where('email', $order->email)->update(['user_id' => $user->id]);
+        \Illuminate\Support\Facades\Auth::login($user);
+
+        return redirect()->route('thank-you')->with('account_created', true);
     }
 
     public function trackOrder(Request $request)
@@ -456,7 +482,7 @@ class HomeController extends Controller
 
         $sort = request('sort', 'latest');
         $products = (clone $baseQuery)
-            ->with('category')
+            ->with('category', 'variants')
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
             ->when($sort === 'price_asc',  fn($q) => $q->orderByRaw('COALESCE(sale_price, price) asc'))

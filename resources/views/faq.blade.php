@@ -1,8 +1,8 @@
 {{-- resources/views/faq.blade.php --}}
 @extends('layouts.main')
 
-@section('title', 'Toy Store FAQs: Shipping, Returns & Payments | PeytonGhalib')
-@section('meta_description', 'Answers about toy orders at PeytonGhalib: free USA shipping, delivery times, 30-day returns, payments, age recommendations, and stock.')
+@section('title', \App\Support\SiteCopy::title('faq'))
+@section('meta_description', \App\Support\SiteCopy::description('faq'))
 @section('canonical', url('/faq'))
 
 @php
@@ -13,8 +13,8 @@
     // over $50, and the page advertised Cash on Delivery, which checkout does
     // not offer. Keep the answers here and both stay honest.
     $catList = !empty($categoryNames)
-        ? \Illuminate\Support\Str::lower(implode(', ', array_slice($categoryNames, 0, 6)))
-        : 'puzzles, building sets, plush, games and outdoor toys';
+        ? \Illuminate\Support\Str::lower(implode(', ', $categoryNames))
+        : 'toys, home essentials, kitchen, pet supplies, jewelry, lamps and more';
 
     $faqGroups = [
         [
@@ -30,10 +30,12 @@
                 ['q' => 'How long does delivery take?',
                  'a' => 'Standard delivery takes '.\App\Support\DeliveryEstimate::minDays().'–'.\App\Support\DeliveryEstimate::maxDays().' business days after your order ships to a U.S. address. We email you a tracking link as soon as it is on its way, and you can follow it from your account at any time.'],
                 ['q' => 'Do you offer free shipping?',
-                 'a' => 'Yes. Every order ships free to any U.S. address, with no minimum spend. We apply it automatically at checkout, so there is nothing to enter.'],
+                 'a' => app(\App\Services\ShippingService::class)->enabled()
+                    ? 'Orders of $' . (int) config('checkout.free_shipping_threshold') . ' or more ship free to any U.S. address; smaller orders pay a flat $' . number_format(config('checkout.flat_shipping_rate'), 2) . '. Add-on items ship free when your order reaches the minimum. It is applied automatically at checkout.'
+                    : 'Yes. Every order ships free to any U.S. address, with no minimum spend. We apply it automatically at checkout, so there is nothing to enter.'],
                 ['q' => 'Do you ship outside the United States?',
                  'a' => 'Not at the moment. PeytonGhalib currently delivers to addresses in the United States only.'],
-                ['q' => 'Can I send a toy as a gift to someone else?',
+                ['q' => 'Can I send my order as a gift to someone else?',
                  'a' => 'Yes. Enter the recipient\'s name and address as the shipping address at checkout, and we will send the order straight to them.'],
                 ['q' => 'Can I track my order?',
                  'a' => 'Absolutely. Once your order is dispatched you will receive a confirmation email with your tracking number. You can also sign in and follow your order from Order History, or use the Track Order page with your tracking number.'],
@@ -47,11 +49,11 @@
             'icon'  => 'refresh',
             'items' => [
                 ['q' => 'What is your return policy?',
-                 'a' => 'You can return a toy within 30 days of delivery. It must be unused, in its original packaging, with every piece included. To start a return, email our support team with your order number. Once we receive and inspect the toy, we process your refund within 5–7 business days.'],
-                ['q' => 'Can I return a toy I have already opened?',
-                 'a' => 'You can return an opened toy if it is unused, complete, and in good condition. If it shows signs of use, has missing pieces, or has damaged packaging, we may issue a partial refund instead of a full one.'],
+                 'a' => 'You can return an item within 30 days of delivery. It must be unused, in its original packaging, with every piece included. To start a return, email our support team with your order number. Once we receive and inspect the item, we process your refund within 5–7 business days.'],
+                ['q' => 'Can I return an item I have already opened?',
+                 'a' => 'You can return an opened item if it is unused, complete, and in good condition. If it shows signs of use, has missing pieces, or has damaged packaging, we may issue a partial refund instead of a full one.'],
                 ['q' => 'I received a damaged or wrong item. What should I do?',
-                 'a' => 'We are sorry about that. Contact our support team within 48 hours of delivery with your order number and a photo of the toy and its packaging. We will arrange a replacement or a full refund at no cost to you, and we aim to resolve these within 24–48 hours.'],
+                 'a' => 'We are sorry about that. Contact our support team within 48 hours of delivery with your order number and a photo of the item and its packaging. We will arrange a replacement or a full refund at no cost to you, and we aim to resolve these within 24–48 hours.'],
                 ['q' => 'How long does a refund take?',
                  'a' => 'Refunds are processed within 5–7 business days of us receiving your returned item. How quickly it appears on your statement depends on your bank or card provider. You will get an email confirmation once the refund has been issued.'],
             ],
@@ -62,7 +64,7 @@
             'icon'  => 'card',
             'items' => [
                 ['q' => 'What payment methods do you accept?',
-                 'a' => 'We accept Visa and Mastercard credit and debit cards. Payments are handled by Stripe over an encrypted connection — your card details are entered with Stripe and never touch our servers.'],
+                 'a' => 'We accept Visa, Mastercard and American Express cards' . (config('services.paypal.client_id') ? ', plus PayPal' : '') . (config('checkout.apple_pay') ? ', Apple Pay and Google Pay' : '') . '. Payments are handled by Stripe over an encrypted connection — your card details are entered with Stripe and never touch our servers.'],
                 ['q' => 'Is my payment information secure?',
                  'a' => 'Yes. All payments are processed through Stripe, an encrypted, PCI-compliant payment gateway. We do not store your card details, and the whole site is served over SSL.'],
                 ['q' => 'Can I cancel or modify my order?',
@@ -73,11 +75,11 @@
         ],
         [
             'id'    => 'products',
-            'title' => 'Toys, Ages & Stock',
+            'title' => 'Products & Stock',
             'icon'  => 'box',
             'items' => [
                 ['q' => 'What product categories do you sell?',
-                 'a' => 'PeytonGhalib sells ' . $catList . ', and we keep adding new toys. Browse the shop to see everything in stock right now.'],
+                 'a' => 'PeytonGhalib sells ' . $catList . ', and we keep adding new products. Browse the shop to see everything in stock right now.'],
                 ['q' => 'How do I choose a toy that is right for my child\'s age?',
                  'a' => 'Check the recommended age on the product page and on the packaging, then match it to your child\'s age and interests. Toys for ages 3 and up can contain small parts that are a choking hazard for younger children, so keep them away from kids under 3.'],
                 ['q' => 'Are batteries included with electronic toys?',
@@ -85,7 +87,7 @@
                 ['q' => 'Are the products authentic and genuine?',
                  'a' => 'Yes. We source from verified suppliers and trusted brands, and every item is quality-checked before it reaches you. If a product ever fails to match its description, we will make it right.'],
                 ['q' => 'What if an item I want is out of stock?',
-                 'a' => 'Add it to your wishlist so you can find it quickly when it returns. You can also contact support, and we will help you find a similar toy or give you an estimated restock date.'],
+                 'a' => 'Add it to your wishlist so you can find it quickly when it returns. You can also contact support, and we will help you find a similar item or give you an estimated restock date.'],
             ],
         ],
     ];

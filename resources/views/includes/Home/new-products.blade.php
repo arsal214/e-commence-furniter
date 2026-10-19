@@ -45,6 +45,7 @@
                     @if ($product->discount_percent)<span class="na-price__save">Save {{ $product->discount_percent }}%</span>@endif
                 @endif
             </div>
+            @include('includes.sold-badge', ['pid' => $product->id])
             @if ($product->stock > 0 && $product->stock <= 5)
                 <p class="na-low">Only {{ $product->stock }} left</p>
             @endif

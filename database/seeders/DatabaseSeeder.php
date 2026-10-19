@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             SliderSeeder::class,
             EmailTemplateSeeder::class,
+            WelcomeOfferSeeder::class,
+            BundleSeeder::class,
         ]);
     }
 }

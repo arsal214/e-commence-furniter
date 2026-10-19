@@ -1,11 +1,11 @@
 @extends('layouts.main')
-@section('title', 'Shipping Policy: Free Toy Delivery Across the USA | PeytonGhalib')
-@section('meta_description', 'Free standard shipping on every PeytonGhalib order to any U.S. address. See delivery times, tracking, and what to do if a toy arrives late or damaged.')
+@section('title', \App\Support\SiteCopy::title('shipping-policy'))
+@section('meta_description', \App\Support\SiteCopy::description('shipping-policy'))
 
 @push('schema')
 @php
 $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Shipping Policy — PeytonGhalib',
-    'description'=>'Free standard shipping on every PeytonGhalib order to any U.S. address. See delivery times, tracking, and what to do if a toy arrives late or damaged.',
+    'description'=>\App\Support\SiteCopy::description('shipping-policy'),
     'url'=>url()->current(),
     'breadcrumb'=>['@type'=>'BreadcrumbList','itemListElement'=>[
         ['@type'=>'ListItem','position'=>1,'name'=>'Home','item'=>url('/')],
@@ -27,8 +27,12 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Ship
 </div>
 <section class="s-py-100">
     <div class="container-fluid"><div class="max-w-3xl mx-auto prose dark:prose-invert prose-headings:text-title dark:prose-headings:text-white prose-p:text-paragraph dark:prose-p:text-white-light prose-li:text-paragraph dark:prose-li:text-white-light">
-        <h2>Free Shipping on Every Toy Order</h2>
-        <p>PeytonGhalib ships toys and games to addresses across the United States. Every order ships free, with no minimum spend, and we pack each one carefully so it arrives ready to play with.</p>
+        <h2>{{ app(\App\Services\ShippingService::class)->promo() }}</h2>
+        @if (app(\App\Services\ShippingService::class)->enabled())
+        <p>PeytonGhalib ships to addresses across the United States. Orders of ${{ (int) config('checkout.free_shipping_threshold') }} or more ship free; smaller orders pay a flat ${{ number_format(config('checkout.flat_shipping_rate'), 2) }}. Add-on items are marked on their product page and ship free when your order reaches ${{ (int) config('checkout.free_shipping_threshold') }}.</p>
+        @else
+        <p>PeytonGhalib ships to addresses across the United States. Every order ships free, with no minimum spend, and we pack each one carefully so it arrives in good shape.</p>
+        @endif
         <h3>Delivery Time</h3>
         {{-- Day counts come from config('checkout.delivery'), the same source
              the product-page estimate computes its dates from. Hardcoding them
@@ -42,13 +46,13 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Ship
              checkout actually accepts, so keep the two in step. --}}
         <p>We deliver to U.S. addresses, including every state and the other U.S. destinations listed at checkout. We do not ship outside the United States at this time.</p>
         <h3>Gifts and Delivery Addresses</h3>
-        <p>Sending a toy to a child, a friend, or a classroom? Enter the recipient's address as the shipping address at checkout.</p>
+        <p>Sending a gift to a child, a friend, or a classroom? Enter the recipient's address as the shipping address at checkout.</p>
         <h3>Tracking Your Order</h3>
         <p>When your order ships, we email you a tracking number. You can follow it any time from your account or on our <a href="{{ url('/track-order') }}">Track Order</a> page.</p>
-        <h3>Larger Toys</h3>
+        <h3>Larger Items</h3>
         <p>Bigger items, such as ride-ons and play sets, ship with extra protective packaging. If an order needs a delivery appointment, we will email you to arrange a convenient time.</p>
         <h3>Late, Lost, or Damaged Orders</h3>
-        <p>If your order is late, goes missing, or arrives damaged, email <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a> with your order number within 48 hours of delivery. For damage, include a photo of the toy and its packaging. We will send a replacement or refund you in full.</p>
+        <p>If your order is late, goes missing, or arrives damaged, email <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a> with your order number within 48 hours of delivery. For damage, include a photo of the item and its packaging. We will send a replacement or refund you in full.</p>
         <p class="text-sm text-gray-400">Last updated: October 2026</p>
     </div></div>
 </section>

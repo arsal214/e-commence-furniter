@@ -31,6 +31,7 @@ return [
     'stripe' => [
         'key'    => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
 
     'paypal' => [
@@ -67,14 +68,19 @@ return [
         'project_id' => env('CLARITY_PROJECT_ID', 'xyl7ci1v7o'),
     ],
 
-    // Browser pixel only — there is no server-side Conversions API integration.
-    // These two keys are all the fbq() snippets in layouts/main, layouts/no-header
-    // and the event templates read.
+    // Browser pixel (layouts/main, layouts/no-header, event templates) plus the server-side
+    // Conversions API twin in App\Services\MetaEventsService (same pixel, same event_ids).
     'meta' => [
         'pixel_id' => env('META_PIXEL_ID', '1675737636873475'),
         // Every fbq event that carries a value must declare the same currency the
         // ad account is billed in, or Meta rejects the conversion.
         'currency' => env('META_CURRENCY', 'USD'),
+
+        // Conversions API (server-side events). Inert until a token is set.
+        'capi_enabled' => (bool) env('META_CAPI_ENABLED', true),
+        'capi_token' => env('META_CAPI_TOKEN'),
+        'test_event_code' => env('META_TEST_EVENT_CODE'),   // set while verifying in Events Manager -> Test Events
+        'graph_version' => env('META_GRAPH_VERSION', 'v21.0'),
     ],
 
 ];
