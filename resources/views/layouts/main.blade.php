@@ -729,6 +729,13 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
             }
             .pg-atc__link:hover { color: #BB976D; }
             .dark .pg-atc__link { color: #A9B2BB; }
+            .pg-atc__bundle { margin-top: 14px; padding: 12px 14px; border: 1px dashed #BB976D; border-radius: 12px; background: #FAF5EE; font-size: 13px; line-height: 1.45; color: #172430; }
+            .pg-atc__bundle[hidden] { display: none; }
+            .pg-atc__bundle strong { font-weight: 700; }
+            .pg-atc__bundle-title { font-size: 14px; font-weight: 700; margin: 0 0 4px; }
+            .pg-atc__bundle button { margin-top: 10px; width: 100%; min-height: 40px; border: 0; border-radius: 8px; background: #172430; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; }
+            .pg-atc__bundle button:hover { background: #BB976D; }
+            .dark .pg-atc__bundle { background: rgba(187,151,109,.12); color: #fff; }
             .pg-atc-loading { opacity: .65; cursor: progress; pointer-events: none; }
             @media (prefers-reduced-motion: reduce) {
                 .pg-atc__panel, .pg-atc__backdrop { transition: none; }
@@ -773,6 +780,14 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
                     <span id="pg-atc-count"></span>
                     <span>Subtotal:&nbsp;<strong id="pg-atc-total"></strong></span>
                 </div>
+                {{-- Offered when a live set contains what was just added. Filled from the add-to-cart answer. --}}
+                <form id="pg-atc-bundle" class="pg-atc__bundle" method="POST" action="{{ route('cart.add-bundle') }}" hidden>
+                    @csrf
+                    <input type="hidden" name="bundle_id" id="pg-atc-bundle-id" value="">
+                    <p class="pg-atc__bundle-title" id="pg-atc-bundle-title"></p>
+                    <p id="pg-atc-bundle-text" style="margin:0"></p>
+                    <button type="submit">Add from the set &amp; save</button>
+                </form>
                 <div class="pg-atc__actions">
                     <button type="button" class="pg-atc__btn pg-atc__btn--secondary" data-pg-atc-close>Continue Shopping</button>
                     <a href="{{ route('checkout') }}" class="pg-atc__btn pg-atc__btn--primary">
@@ -905,6 +920,18 @@ src="https://www.facebook.com/tr?id={{ urlencode(config('services.meta.pixel_id'
                 var n = c.count || 0;
                 elCount.textContent = n + (n === 1 ? ' item in cart' : ' items in cart');
                 elTotal.textContent = c.total || '';
+
+                // Set offer below the product: "add from the set and save".
+                var bf = document.getElementById('pg-atc-bundle'), b = data.bundle;
+                if (b) {
+                    document.getElementById('pg-atc-bundle-id').value = b.id;
+                    document.getElementById('pg-atc-bundle-title').textContent = 'Complete the set \u2014 save ' + b.saves;
+                    document.getElementById('pg-atc-bundle-text').textContent = b.name + ': ' + b.includes.join(' + ') +
+                        '. Regular ' + b.regular + ', set price ' + b.price + '. Your item moves into the set, so you only pay once.';
+                    bf.hidden = false;
+                } else {
+                    bf.hidden = true;
+                }
 
                 modal.hidden = false;
                 document.body.classList.add('pg-noscroll');

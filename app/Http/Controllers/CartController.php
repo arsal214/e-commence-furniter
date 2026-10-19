@@ -187,6 +187,24 @@ class CartController extends Controller
      * Shape the JSON the "added to cart" modal consumes: the product just acted on
      * plus the live cart totals for the badge and the modal summary line.
      */
+    /** The set that completes this product, when one is live, in stock, and really cheaper than its parts. */
+    protected function bundleOffer(Product $product): ?array
+    {
+        $bundle = \App\Models\Bundle::offeredFor([$product->id], 1)->first();
+        if (! $bundle || isset($this->cart->items()['bundle|' . $bundle->id])) {
+            return null;
+        }
+
+        return [
+            'id'       => $bundle->id,
+            'name'     => $bundle->name,
+            'price'    => '$' . number_format((float) $bundle->price, 2),
+            'regular'  => '$' . number_format($bundle->regularTotal(), 2),
+            'saves'    => '$' . number_format($bundle->savings(), 2),
+            'includes' => $bundle->items->map(fn ($i) => $i->product->name)->values()->all(),
+        ];
+    }
+
     protected function cartPayload(string $status, string $message, Product $product, int $qty, ?float $unitPrice = null): array
     {
         $image = $product->image
@@ -195,7 +213,7 @@ class CartController extends Controller
 
         $unitPrice ??= $product->effective_price;
 
-        return [
+        $payload = [
             'status'  => $status,
             'message' => $message,
             'product' => [
@@ -215,6 +233,12 @@ class CartController extends Controller
                 'total' => '$' . number_format($this->cart->total(), 2),
             ],
         ];
+
+        if (in_array($status, ['success', 'partial'], true)) {
+            $payload['bundle'] = $this->bundleOffer($product);
+        }
+
+        return $payload;
     }
 
     /** Meta event id of the AddToCart just tracked; echoed to the browser so both twins share it. */
@@ -270,9 +294,14 @@ class CartController extends Controller
             return back()->with('error', 'Sorry, that set is not available right now.');
         }
 
-        $this->cart->addBundle($bundle, $qty);
+        $swapped = $this->cart->addBundle($bundle, $qty);
 
-        return redirect()->route('cart')->with('success', '"' . $bundle->name . '" added to your cart.');
+        $message = '"' . $bundle->name . '" added to your cart.';
+        if ($swapped) {
+            $message .= ' Your ' . implode(' and ', $swapped) . ' moved into the set, so you only pay once.';
+        }
+
+        return redirect()->route('cart')->with('success', $message);
     }
 
     public function update(Request $request)

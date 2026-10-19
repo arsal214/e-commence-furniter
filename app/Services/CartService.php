@@ -107,11 +107,50 @@ class CartService
         session([$this->sessionKey => $cart]);
     }
 
-    /** Add a whole set as one cart line, priced from the bundle row. */
-    public function addBundle(Bundle $bundle, int $qty = 1): void
+    /**
+     * Add a whole set as one cart line, priced from the bundle row.
+     *
+     * With $swap (the default) the set REPLACES the loose items it contains: if the shopper
+     * already holds the throw and then takes "Cozy Night In", the throw moves into the set
+     * instead of being bought twice. Only the quantity the set covers is taken out.
+     *
+     * @return string[] names of the products that were swapped into the set
+     */
+    public function addBundle(Bundle $bundle, int $qty = 1, bool $swap = true): array
     {
-        $cart = $this->items();
-        $key  = 'bundle|' . $bundle->id;
+        $cart    = $this->items();
+        $key     = 'bundle|' . $bundle->id;
+        $swapped = [];
+
+        if ($swap) {
+            $bundle->loadMissing('items.product', 'items.variant');
+            foreach ($bundle->items as $item) {
+                $need = $item->qty * $qty;
+                foreach ($cart as $lineKey => $line) {
+                    if ($need <= 0) {
+                        break;
+                    }
+                    if (! empty($line['bundle_id']) || (int) ($line['id'] ?? 0) !== (int) $item->product_id) {
+                        continue;
+                    }
+
+                    $match = $item->variant
+                        ? strtolower(trim((string) ($item->variant->type === 'color' ? ($line['color'] ?? '') : ($line['size'] ?? '')))) === strtolower(trim($item->variant->value))
+                        : (empty($line['color']) && empty($line['size']));
+                    if (! $match) {
+                        continue;
+                    }
+
+                    $take = min($need, (int) $line['qty']);
+                    $need -= $take;
+                    $cart[$lineKey]['qty'] -= $take;
+                    if ($cart[$lineKey]['qty'] <= 0) {
+                        unset($cart[$lineKey]);
+                    }
+                    $swapped[] = $item->product->name;
+                }
+            }
+        }
 
         if (isset($cart[$key])) {
             $cart[$key]['qty'] += $qty;
@@ -124,6 +163,8 @@ class CartService
         }
 
         session([$this->sessionKey => $cart]);
+
+        return array_values(array_unique($swapped));
     }
 
     public function update(string $cartKey, int $qty): void

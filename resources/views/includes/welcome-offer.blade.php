@@ -28,7 +28,8 @@
     .pgw-pline button{background:none;border:0;color:#8a6a40;font-weight:700;text-decoration:underline;cursor:pointer;padding:0 0 0 6px}
 </style>
 
-<div id="pgw-bar" class="pgw-bar" role="region" aria-label="Welcome offer" hidden>
+{{-- data-autopen: milliseconds after load before the offer opens by itself. Product pages open it for every new visitor (once per session); other pages wait for Unlock, scroll depth or exit intent. --}}
+<div id="pgw-bar" class="pgw-bar" role="region" aria-label="Welcome offer" data-autopen="{{ request()->is('product-details/*') ? 1500 : 0 }}" hidden>
     <span id="pgw-bar-text"></span>
     <button type="button" class="pgw-cta" id="pgw-bar-btn"></button>
     <button type="button" class="pgw-x" id="pgw-bar-x" aria-label="Dismiss welcome offer">&times;</button>
@@ -163,6 +164,15 @@
         lastFocus = document.activeElement; $('pgw-modal').hidden = false; $('pgw-email').focus();
     }
     function closeModal() { $('pgw-modal').hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+    /* New visitor lands on a product page: show the welcome deal once, shortly after the page is up. */
+    var landed = false;
+    function landingOpen() {
+        if (landed) return; landed = true;
+        var ms = parseInt($('pgw-bar').dataset.autopen, 10) || 0;
+        if (!ms || !state || !state.enabled || state.claim) return;
+        if (store(function () { return sessionStorage.getItem('pgw_modal'); })) return;
+        setTimeout(openModal, ms);
+    }
     function autoOpen() {
         if (Date.now() - shownAt < 8000 || (state && state.claim) || store(function () { return sessionStorage.getItem('pgw_modal'); })) return;
         openModal();
@@ -205,7 +215,7 @@
 
     function load() {
         fetch('/welcome/status', { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
-            .then(function (r) { return r.json(); }).then(function (j) { state = j; window.__pgWelcomeLive = !!j.enabled; render(); }).catch(function () {});
+            .then(function (r) { return r.json(); }).then(function (j) { state = j; window.__pgWelcomeLive = !!j.enabled; render(); landingOpen(); }).catch(function () {});
     }
 
     /* Start after first paint; scroll-depth and exit-intent are secondary triggers. */
