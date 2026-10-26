@@ -76,6 +76,7 @@
                     @endif
                 @endif
             </div>
+            @include('includes.sold-badge', ['pid' => $product->id])
             {{-- Genuine scarcity only, straight off the stock column. --}}
             @if ($product->stock > 0 && $product->stock <= 5)
                 <p class="mt-1.5 text-[11px] font-semibold text-[#E13939]">Only {{ $product->stock }} left</p>

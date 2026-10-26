@@ -14,7 +14,7 @@
                         <img class="w-[140px] mb-5" src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" width="140" height="27" loading="lazy">
                     </a>
                     <p class="text-white-light text-sm leading-relaxed">
-                        Your trusted online toy store — puzzles, building sets, plush, games and outdoor play for every age, curated for quality and delivered fast across the USA.
+                        {{ \App\Support\SiteCopy::get('footer.tagline') }}
                     </p>
                     <div class="flex items-center gap-3 mt-6">
                         <a href="https://www.facebook.com/profile.php?id=61590448962752" target="_blank" rel="noopener noreferrer nofollow"

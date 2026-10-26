@@ -51,7 +51,7 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Priv
         <h3>Cookies</h3>
         <p>We use essential cookies for the shopping cart and authentication. Analytics cookies are used (anonymized) to improve site performance.</p>
         <h3>Children's Privacy</h3>
-        <p>PeytonGhalib sells toys, but our website is for parents, guardians, and other adults. We do not knowingly collect personal information from children under 13. If you believe a child has given us personal information, email <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a> and we will delete it.</p>
+        <p>PeytonGhalib sells gifts, toys and household items, but our website is for parents, guardians, and other adults. We do not knowingly collect personal information from children under 13. If you believe a child has given us personal information, email <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a> and we will delete it.</p>
         <h3>Contact</h3>
         <p>For privacy concerns, contact our privacy team at <a href="mailto:info@peytonghalib.com">info@peytonghalib.com</a>.</p>
         <p class="text-sm text-gray-400">Last updated: October 2026</p>

@@ -12,7 +12,10 @@ class Order extends Model
         'address', 'address2', 'notes', 'payment_method',
         'payment_status', 'stripe_payment_intent', 'stripe_livemode',
         'paypal_order_id', 'paypal_livemode', 'shipping',
-        'subtotal', 'shipping_cost', 'total', 'status',
+        'subtotal', 'shipping_cost', 'discount', 'welcome_claim_id', 'total', 'status',
+        'confirmation_sent_at', 'purchase_tracked_at',
+        'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term',
+        'meta_fbp', 'meta_fbc', 'client_ip', 'client_user_agent', 'meta_event_sent_at',
         'tracking_number', 'supplier_name', 'supplier_order_id',
         'supplier_tracking', 'carrier', 'shipped_at',
         'payment_token', 'payment_requested_at', 'payment_request_count',
@@ -20,6 +23,9 @@ class Order extends Model
 
     protected $casts = [
         'shipped_at'           => 'datetime',
+        'confirmation_sent_at' => 'datetime',
+        'purchase_tracked_at'  => 'datetime',
+        'meta_event_sent_at'   => 'datetime',
         'payment_requested_at' => 'datetime',
         'stripe_livemode'      => 'boolean',
         'paypal_livemode'      => 'boolean',

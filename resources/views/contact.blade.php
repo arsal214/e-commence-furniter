@@ -1,8 +1,8 @@
 {{-- resources/views/contact.blade.php --}}
 @extends('layouts.main')
 
-@section('title', 'Contact PeytonGhalib: Toy Orders, Returns & Support')
-@section('meta_description', 'Contact PeytonGhalib with questions about a toy, an order, or a return. Email or call our U.S. support team and we reply within 24 hours.')
+@section('title', \App\Support\SiteCopy::title('contact'))
+@section('meta_description', \App\Support\SiteCopy::description('contact'))
 @section('canonical', url('/contact'))
 
 @push('schema')
@@ -273,7 +273,7 @@ $schemaContact = ['@context'=>'https://schema.org','@type'=>'ContactPage','name'
         <span class="ct__eyebrow">Get in touch</span>
         <h1 class="ct__title">We'd love to hear from you</h1>
         <p class="ct__lede">
-            Have a question about a toy, an order, or a return?
+            {{ \App\Support\SiteCopy::get('contact.intro') }}
             Send us a message and we'll reply within 24 hours.
         </p>
 

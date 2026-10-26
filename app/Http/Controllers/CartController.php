@@ -9,15 +9,27 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    public function __construct(protected CartService $cart, protected TikTokEventsService $tiktok) {}
+    public function __construct(protected CartService $cart, protected TikTokEventsService $tiktok, protected \App\Services\WelcomeOfferService $welcome, protected \App\Services\ShippingService $shipping) {}
 
     public function index()
     {
         $items = $this->cart->items();
 
+        $subtotal = $this->cart->total();
+
         return view('cart', [
             'cartItems' => $items,
-            'cartTotal' => $this->cart->total(),
+            'cartTotal' => $subtotal,
+            'shippingEnabled'   => $this->shipping->enabled(),
+            'shippingCost'      => $this->shipping->cost($subtotal),
+            'shippingRemaining' => $this->shipping->remaining($subtotal),
+            'shippingThreshold' => $this->shipping->threshold(),
+            'addonBlocked'      => $this->shipping->addonOnlyBelowThreshold($items, $subtotal),
+            'shippingPromo'     => $this->shipping->promo(),
+            // Sets that complete something already in the cart (and aren't in it yet).
+            'bundleOffers'      => \App\Models\Bundle::offeredFor(collect($items)->pluck('id'), 2)
+                ->reject(fn ($b) => isset($items['bundle|' . $b->id])),
+            'welcomeDiscount' => $this->welcome->sessionDiscount($subtotal),
             'crossSell' => $this->crossSell($items),
         ]);
     }
@@ -51,19 +63,9 @@ class CartController extends Controller
             ->take(4)
             ->get();
 
-        if ($picks->count() < 4) {
-            $exclude = $picks->pluck('id')->merge($cartIds);
-            $picks = $picks->merge(
-                Product::visible()
-                    ->where('stock', '>', 0)
-                    ->whereNotIn('id', $exclude)
-                    ->orderByRaw("$eff ASC")
-                    ->take(4 - $picks->count())
-                    ->get()
-            );
-        }
-
-        return $picks;
+        // Same-category only: an unrelated filler item (a coat beside a camera) wastes the slot.
+        // Fewer suggestions, or none, is the right answer when the catalogue has no match.
+        return $catIds->isEmpty() ? collect() : $picks;
     }
 
     public function add(Request $request)
@@ -185,6 +187,24 @@ class CartController extends Controller
      * Shape the JSON the "added to cart" modal consumes: the product just acted on
      * plus the live cart totals for the badge and the modal summary line.
      */
+    /** The set that completes this product, when one is live, in stock, and really cheaper than its parts. */
+    protected function bundleOffer(Product $product): ?array
+    {
+        $bundle = \App\Models\Bundle::offeredFor([$product->id], 1)->first();
+        if (! $bundle || isset($this->cart->items()['bundle|' . $bundle->id])) {
+            return null;
+        }
+
+        return [
+            'id'       => $bundle->id,
+            'name'     => $bundle->name,
+            'price'    => '$' . number_format((float) $bundle->price, 2),
+            'regular'  => '$' . number_format($bundle->regularTotal(), 2),
+            'saves'    => '$' . number_format($bundle->savings(), 2),
+            'includes' => $bundle->items->map(fn ($i) => $i->product->name)->values()->all(),
+        ];
+    }
+
     protected function cartPayload(string $status, string $message, Product $product, int $qty, ?float $unitPrice = null): array
     {
         $image = $product->image
@@ -193,7 +213,7 @@ class CartController extends Controller
 
         $unitPrice ??= $product->effective_price;
 
-        return [
+        $payload = [
             'status'  => $status,
             'message' => $message,
             'product' => [
@@ -206,17 +226,37 @@ class CartController extends Controller
                 'id'         => (string) $product->id,
                 'unit_price' => round((float) $unitPrice, 2),
                 'value'      => round((float) $unitPrice * $qty, 2),
+                'meta_event_id' => $this->metaEventId,
             ],
             'cart' => [
                 'count' => $this->cart->count(),
                 'total' => '$' . number_format($this->cart->total(), 2),
             ],
         ];
+
+        if (in_array($status, ['success', 'partial'], true)) {
+            $payload['bundle'] = $this->bundleOffer($product);
+        }
+
+        return $payload;
     }
+
+    /** Meta event id of the AddToCart just tracked; echoed to the browser so both twins share it. */
+    protected ?string $metaEventId = null;
 
     protected function trackAddToCart(Product $product, int $qty, Request $request, ?float $unitPrice = null): void
     {
         $unitPrice ??= $product->effective_price;
+
+        // The browser may have minted the id already (full-page submit); otherwise we do and return it.
+        $given = (string) $request->input('meta_event_id');
+        $this->metaEventId = preg_match('/^AddToCart\.[A-Za-z0-9]{8,40}$/', $given) ? $given : app(\App\Services\MetaEventsService::class)->newEventId('AddToCart');
+        app(\App\Services\MetaEventsService::class)->track('AddToCart', $this->metaEventId, [
+            'content_type' => 'product', 'content_ids' => [(string) $product->id], 'content_name' => $product->name,
+            'contents' => [['id' => (string) $product->id, 'quantity' => $qty, 'item_price' => round((float) $unitPrice, 2)]],
+            'value' => round($unitPrice * $qty, 2),
+        ], app(\App\Services\MetaEventsService::class)->buildUser($request), $request->headers->get('referer') ?: $request->fullUrl());
+
         $eventId    = $this->tiktok->newEventId('AddToCart');
         $properties = [
             'content_type' => 'product',
@@ -241,6 +281,29 @@ class CartController extends Controller
         $this->tiktok->queueBrowserEvent('AddToCart', $eventId, $properties);
     }
 
+    public function addBundle(Request $request)
+    {
+        $request->validate(['bundle_id' => 'required|integer', 'qty' => 'sometimes|integer|min:1|max:10']);
+
+        $bundle = \App\Models\Bundle::live()->with('items.product.category', 'items.variant')->find($request->bundle_id);
+        $qty    = (int) $request->input('qty', 1);
+        $held   = (int) ($this->cart->items()['bundle|' . $request->bundle_id]['qty'] ?? 0);
+
+        // Server decides: every component must be active and in stock for the set to sell.
+        if (! $bundle || ! $bundle->isPurchasable() || $held + $qty > $bundle->availableQty()) {
+            return back()->with('error', 'Sorry, that set is not available right now.');
+        }
+
+        $swapped = $this->cart->addBundle($bundle, $qty);
+
+        $message = '"' . $bundle->name . '" added to your cart.';
+        if ($swapped) {
+            $message .= ' Your ' . implode(' and ', $swapped) . ' moved into the set, so you only pay once.';
+        }
+
+        return redirect()->route('cart')->with('success', $message);
+    }
+
     public function update(Request $request)
     {
         $request->validate([
@@ -250,6 +313,14 @@ class CartController extends Controller
 
         $qty       = (int) $request->qty;
         $cartItems = $this->cart->items();
+
+        if ($qty > 0 && ! empty($cartItems[$request->cart_key]['bundle_id'])) {
+            $bundle = \App\Models\Bundle::with('items.product.category', 'items.variant')->find($cartItems[$request->cart_key]['bundle_id']);
+            $max    = $bundle ? $bundle->availableQty() : 0;
+            if ($qty > $max) {
+                return back()->with('error', $max > 0 ? 'Only ' . $max . ' of this set are in stock.' : 'This set is out of stock.');
+            }
+        }
 
         if ($qty > 0 && isset($cartItems[$request->cart_key])) {
             $line    = $cartItems[$request->cart_key];

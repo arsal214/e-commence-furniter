@@ -12,7 +12,7 @@
     // Only dark: utilities that exist in the compiled template CSS are used here.
     // The Vite/Tailwind build emits dark: as a media query, which would ignore the
     // site's localStorage class toggle.
-    $shippingLabels = ['free' => 'Free Shipping', 'fast' => 'Fast Shipping', 'local' => 'Local Pickup'];
+    $shippingLabels = ['free' => 'Standard shipping', 'fast' => 'Fast Shipping', 'local' => 'Local Pickup'];
 @endphp
 
 @if ($order)
@@ -194,6 +194,23 @@
                 </dl>
             </div>
 
+            {{-- Optional account for guest buyers --}}
+            @if (session('account_created'))
+                <p class="px-6 sm:px-8 py-4 border-t border-gray-100 dark:border-bdr-clr-drk text-sm text-title dark:text-white">Your account is ready &mdash; you can track this order from My Account.</p>
+            @elseif (! $order->user_id)
+                <form method="POST" action="{{ route('thank-you.account') }}" class="px-6 sm:px-8 py-5 border-t border-gray-100 dark:border-bdr-clr-drk">
+                    @csrf
+                    <h3 class="text-sm font-bold text-title dark:text-white">Save your details for next time</h3>
+                    <p class="mt-1 text-sm text-paragraph dark:text-white-light">Create an account with {{ $order->email }} to track this order. Optional.</p>
+                    <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <input type="password" name="password" required minlength="8" autocomplete="new-password" placeholder="Password (8+ characters)" aria-label="Password" class="border border-gray-200 rounded-lg px-3 py-2 text-sm">
+                        <input type="password" name="password_confirmation" required minlength="8" autocomplete="new-password" placeholder="Confirm password" aria-label="Confirm password" class="border border-gray-200 rounded-lg px-3 py-2 text-sm">
+                        <button type="submit" class="rounded-lg bg-[#bb976d] text-white text-sm font-semibold px-4 py-2">Create account</button>
+                    </div>
+                    @error('password')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+                </form>
+            @endif
+
             {{-- Delivery + payment --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 px-6 sm:px-8 py-6 border-t border-gray-100 dark:border-bdr-clr-drk bg-snow dark:bg-white/10">
                 <div>
@@ -368,6 +385,14 @@
         // Meta de-duplicates Purchases on transaction_id across browser and
         // Conversions API, and across a repeat delivery of the same event.
         $pixelTransactionId = $order?->tracking_number ?: ($order?->id ? 'order-' . $order->id : null);
+
+        // GA4 items use the same product ids as the pixel's content_ids.
+        $gaItems = $order ? $order->items->map(fn ($item) => [
+            'item_id' => (string) $item->product_id, 'item_name' => $item->name,
+            'price' => (float) $item->price, 'quantity' => (int) $item->qty,
+        ])->values()->all() : [];
+        $gaCoupon = $order && (float) $order->discount > 0 && $order->welcome_claim_id
+            ? \App\Models\WelcomeClaim::whereKey($order->welcome_claim_id)->value('code') : null;
     @endphp
 {{-- A zero or negative value is rejected by Meta exactly like a missing one, and
      a rejected Purchase counts against the pixel's error rate. Skipping the call
@@ -376,8 +401,6 @@
 @if ($pixelValue > 0)
 <script>
 (function () {
-    if (typeof fbq !== 'function') return;
-
     @if ($pixelTransactionId)
     {{-- Second line of defence behind the flashed-session gate above. That gate
          stops a refresh, but a restore from bfcache or a browser that replays
@@ -391,6 +414,18 @@
     } catch (e) { /* private mode: the session gate above still covers refresh */ }
     @endif
 
+    if (typeof gtag === 'function') {
+        gtag('event', 'purchase', {
+            transaction_id: @json((string) $pixelTransactionId),
+            value: {{ number_format($pixelValue, 2, '.', '') }},
+            currency: @json(config('services.meta.currency', 'USD')),
+            shipping: {{ number_format((float) ($order?->shipping_cost ?? 0), 2, '.', '') }},
+            @if ($gaCoupon) coupon: @json($gaCoupon), @endif
+            items: {!! json_encode($gaItems, JSON_UNESCAPED_SLASHES) !!}
+        });
+    }
+
+    if (typeof fbq !== 'function') return;
     fbq('track', 'Purchase', {
         value: {{ number_format($pixelValue, 2, '.', '') }},
         currency: @json(config('services.meta.currency', 'USD')),

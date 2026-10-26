@@ -43,10 +43,10 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Term
                 <p>By accessing or using the PeytonGhalib website and placing orders, you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, please do not use our services. We reserve the right to update these terms at any time, and continued use of our platform constitutes acceptance of any changes.</p>
 
                 <h2>2. Products & Pricing</h2>
-                <p>We sell toys and games for children and families. Each product page lists the manufacturer's recommended age range, and you are responsible for choosing toys that suit the age and ability of the child who will use them. All prices are displayed in USD and are inclusive of applicable taxes unless stated otherwise. We reserve the right to change prices at any time without prior notice. In the event of a pricing error, we will notify you and give you the option to proceed at the correct price or cancel your order.</p>
+                <p>We sell gifts, toys, home goods and more for families. Each product page lists the manufacturer's recommended age range, and you are responsible for choosing products that suit the age and ability of the child who will use them. All prices are displayed in USD and are inclusive of applicable taxes unless stated otherwise. We reserve the right to change prices at any time without prior notice. In the event of a pricing error, we will notify you and give you the option to proceed at the correct price or cancel your order.</p>
 
                 <h2>3. Ordering & Payment</h2>
-                <p>By placing an order, you confirm that the information provided is accurate and that you are authorized to use the chosen payment method. We accept Visa and Mastercard credit and debit cards through Stripe. All transactions are secured with SSL encryption. Your order is confirmed only after successful payment verification.</p>
+                <p>By placing an order, you confirm that the information provided is accurate and that you are authorized to use the chosen payment method. We accept major credit and debit cards through Stripe, and PayPal. All transactions are secured with SSL encryption. Your order is confirmed only after successful payment verification.</p>
                 <ul>
                     <li>Orders are subject to product availability at the time of purchase.</li>
                     <li>You will receive an order confirmation email after successful checkout.</li>
@@ -58,7 +58,7 @@ $schemaPage = ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>'Term
                 <p>We aim to dispatch all orders within 1–2 business days. We deliver to addresses in the United States only, and delivery times depend on your location. While we strive to meet estimated delivery times, we are not liable for delays caused by carriers or circumstances beyond our control. Risk of loss and title for products pass to you upon delivery.</p>
 
                 <h2>5. Returns & Refunds</h2>
-                <p>We offer a 30-day return policy for most items, provided they are unused, in original condition, and in original packaging. Certain product categories (e.g. personalized items, and toys that show signs of use or are missing pieces) are non-returnable. Refunds are processed within 5–7 business days of receiving the returned item. We do not cover return shipping costs unless the item is faulty or incorrectly sent.</p>
+                <p>We offer a 30-day return policy for most items, provided they are unused, in original condition, and in original packaging. Certain product categories (e.g. personalized items, and products that show signs of use or are missing pieces) are non-returnable. Refunds are processed within 5–7 business days of receiving the returned item. We do not cover return shipping costs unless the item is faulty or incorrectly sent.</p>
 
                 <h2>6. Order Cancellation</h2>
                 <p>You may cancel an order before it has been dispatched. Once an order has shipped, our standard returns process applies. To request a cancellation, contact our support team immediately with your order number. We process cancellations promptly during business hours.</p>

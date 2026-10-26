@@ -39,7 +39,7 @@
                 {{-- "No Minimum" is the whole point: shipping is genuinely free on
                      every order, so this is a real differentiator rather than the
                      usual "free over $X" that most stores mean by it. --}}
-                <span>Free Shipping &middot; No Minimum</span>
+                <span>@if (app(\App\Services\ShippingService::class)->enabled()) Free Shipping on ${{ (int) config('checkout.free_shipping_threshold') }}+ @else Free Shipping &middot; No Minimum @endif</span>
             </a>
         </div>
 
@@ -734,7 +734,7 @@
             <p class="pg-mega-col-label">Featured</p>
             <img src="{{ asset('assets/img/home-v1/pdct-cgry-01.jpg') }}" alt="New Arrivals" class="pg-mega-feat-img" width="400" height="300" loading="lazy">
             <p class="pg-mega-feat-title">New Arrivals</p>
-            <p class="pg-mega-feat-desc">Discover the latest pieces crafted for modern living spaces.</p>
+            <p class="pg-mega-feat-desc">{{ \App\Support\SiteCopy::get('nav.new_arrivals_desc') }}</p>
             <a href="{{ url('/shop') }}?sort=newest" class="pg-mega-feat-cta">
                 Shop Now
                 <svg width="12" height="8" viewBox="0 0 16 10" fill="none"><path d="M1 5H15M15 5L11 1M15 5L11 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -844,8 +844,9 @@
     </div>
     <div class="pg-drw-body">
         @forelse($cart->items() as $ci)
+        @php $ciHref = ! empty($ci['slug']) ? route('product-details', $ci['slug']) : url('/cart'); /* a bundle line has no product page */ @endphp
         <div class="pg-ci">
-            <a href="{{ route('product-details', $ci['slug']) }}">
+            <a href="{{ $ciHref }}">
                 @if(!empty($ci['image']) && str_starts_with($ci['image'], 'assets/'))
                     <img class="pg-ci-img" src="{{ asset($ci['image']) }}" alt="{{ $ci['name'] }}">
                 @elseif(!empty($ci['image']))
@@ -855,8 +856,8 @@
                 @endif
             </a>
             <div class="pg-ci-body">
-                <div class="pg-ci-cat">{{ $ci['category'] ?? 'Toys' }}</div>
-                <a href="{{ route('product-details', $ci['slug']) }}" class="pg-ci-name">{{ $ci['name'] }}</a>
+                <div class="pg-ci-cat">{{ $ci['category'] ?? (! empty($ci['bundle_id']) ? 'Set' : 'Item') }}</div>
+                <a href="{{ $ciHref }}" class="pg-ci-name">{{ $ci['name'] }}</a>
                 <div class="pg-ci-price">${{ number_format($ci['price'], 2) }}<span class="pg-ci-qty">× {{ $ci['qty'] }}</span></div>
             </div>
             <form action="{{ route('cart.remove') }}" method="POST" style="margin:0;">

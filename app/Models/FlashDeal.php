@@ -21,7 +21,7 @@ class FlashDeal extends Model
         return self::firstOrCreate([], [
             'is_active'      => false,
             'title'          => 'Flash Deal',
-            'subtitle'       => 'Exclusive savings on toys & games.',
+            'subtitle'       => 'Exclusive savings on gifts, toys & home finds.',
             'discount_label' => 'Up to 40% OFF',
             'badge_text'     => 'Limited Time',
             'ends_at'        => null,

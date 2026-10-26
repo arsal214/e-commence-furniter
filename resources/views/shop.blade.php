@@ -6,8 +6,8 @@
     $shopPage    = max(1, (int) request()->get('page', 1));
     $pageSuffix  = $shopPage > 1 ? ' — Page ' . $shopPage : '';
 @endphp
-@section('title', 'Shop Toys & Games Online' . $pageSuffix . ' | PeytonGhalib')
-@section('meta_description', 'Browse our full collection of toys, games, puzzles and plush for every age. Filter by category and price at PeytonGhalib.' . ($shopPage > 1 ? ' Page ' . $shopPage . '.' : ''))
+@section('title', \App\Support\SiteCopy::title('shop', $pageSuffix))
+@section('meta_description', \App\Support\SiteCopy::description('shop', $shopPage > 1 ? ' Page ' . $shopPage . '.' : ''))
 
 @php
     // Canonical strategy — de-duplicates /shop?category=X against the /category/{slug}
@@ -39,7 +39,7 @@
     $shopPageName    = $shopCategoryObj ? $shopCategoryObj->name . ' - PeytonGhalib' : 'Shop All Products - PeytonGhalib';
     $shopPageDesc    = $shopCategoryObj
         ? 'Browse our ' . $shopCategoryObj->name . ' collection at PeytonGhalib.'
-        : 'Browse all toys, games and play products for kids at PeytonGhalib.';
+        : \App\Support\SiteCopy::get('shop.description_fallback');
 
     $breadcrumbItems = [
         ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => url('/')],

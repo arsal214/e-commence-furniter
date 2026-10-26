@@ -31,12 +31,12 @@
 <div class="wrapper">
     <div class="header">
         <h1>PeytonGhalib</h1>
-        <p>Toys & Games Store</p>
+        <p>Gifts & Home Store</p>
     </div>
     <div class="body">
         <div class="greeting">Welcome, {{ $user->name }}!</div>
         <p class="intro">
-            We're thrilled to have you as part of the PeytonGhalib family. Your account has been created successfully and you're all set to explore our curated collection of toys and games.
+            We're thrilled to have you as part of the PeytonGhalib family. Your account has been created successfully and you're all set to explore our curated collection of gifts, toys and home finds.
         </p>
 
         <div class="highlight-box">
@@ -49,7 +49,7 @@
                 <div class="perk-icon">&#9733;</div>
                 <div class="perk-text">
                     <div class="perk-title">Exclusive Designs</div>
-                    <div class="perk-desc">Browse hundreds of handpicked toys and games for every age and interest.</div>
+                    <div class="perk-desc">Browse hundreds of handpicked gifts, toys and home finds for every interest.</div>
                 </div>
             </div>
             <div class="perk-item">
@@ -63,7 +63,7 @@
                 <div class="perk-icon">&#128274;</div>
                 <div class="perk-text">
                     <div class="perk-title">Secure Checkout</div>
-                    <div class="perk-desc">Shop with confidence using our secure payment options including Stripe and Cash on Delivery.</div>
+                    <div class="perk-desc">Shop with confidence using our secure payment options including cards through Stripe, and PayPal.</div>
                 </div>
             </div>
         </div>

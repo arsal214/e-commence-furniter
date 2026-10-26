@@ -1,6 +1,7 @@
 @extends('layouts.main')
 
-@section('title', 'Track Your Order')
+@section('title', \App\Support\SiteCopy::title('track-order'))
+@section('meta_description', \App\Support\SiteCopy::description('track-order'))
 
 @section('content')
 

@@ -1,15 +1,14 @@
 @extends('layouts.main')
 
-@section('title', ($category->meta_title ?: 'Shop ' . $category->name . ' Online with Free USA Shipping') . ' | PeytonGhalib')
+@section('title', \App\Support\SiteCopy::categoryTitle($category))
 {{-- Explicit self-canonical to the clean slug so tracking/junk query params
      (?utm_source=…) never spawn duplicate canonical URLs. --}}
 @section('canonical', url('/category/' . $category->slug))
-@section('meta_description', $category->meta_description ?: 'Shop ' . $category->name . ' at PeytonGhalib. Free shipping across the USA, 30-day returns, and toys for every age.')
+@section('meta_description', \App\Support\SiteCopy::categoryDescription($category))
 
 @push('schema')
 @php
-    $catDesc = $category->meta_description
-        ?: 'Shop ' . $category->name . ' at PeytonGhalib. Free shipping across the USA, 30-day returns, and toys for every age.';
+    $catDesc = \App\Support\SiteCopy::categoryDescription($category);
     $catListItems = [];
     foreach ($products as $i => $p) {
         $pImg = !empty($p->image)
@@ -323,6 +322,7 @@
                 <span class="text-xs text-gray-400 line-through">{{ $product->was_price }}</span>
                 @endif
             </div>
+            @include('includes.sold-badge', ['pid' => $product->id])
         </div>
     </div>
     @endforeach
