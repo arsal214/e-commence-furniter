@@ -53,10 +53,25 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    /**
+     * Finds a product from what a browser sends: its uuid. A plain row number is still accepted so that
+     * older forms and API callers keep working, but no page prints one any more.
+     */
+    public static function fromRef(string|int|null $ref): ?self
+    {
+        $ref = trim((string) $ref);
+        if ($ref === '' || strlen($ref) > 40) {
+            return null;
+        }
+
+        return ctype_digit($ref) ? static::find((int) $ref) : static::where('uuid', Str::upper($ref))->first();
+    }
+
     protected static function boot()
     {
         parent::boot();
         static::creating(function ($product) {
+            $product->uuid = Str::upper((string) Str::uuid()); // a copied product is a new product: always a fresh id
             if (empty($product->slug)) {
                 $product->slug = Str::slug($product->name);
             }

@@ -5,7 +5,7 @@
 
 @section('content')
 @php
-  $steps = ['pending' => 'Order placed', 'processing' => 'Processing', 'shipped' => 'Shipped', 'delivered' => 'Delivered'];
+  $steps = ['pending' => 'Order placed', 'processing' => 'Processing', 'shipped' => 'Shipped', 'out_for_delivery' => 'Out for delivery', 'delivered' => 'Delivered'];
   $index = $order ? array_search($order->status, array_keys($steps), true) : false;
 @endphp
 
@@ -28,11 +28,11 @@
     <section class="pg-card">
       <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
         <h2 style="margin:0;font-size:18px">{{ $order->tracking_number }}</h2>
-        <span class="sc-pill {{ $order->status === 'cancelled' ? 'bad' : ($order->status === 'delivered' ? 'ok' : 'warn') }}">{{ ucfirst($order->status) }}</span>
+        <span class="sc-pill {{ $order->status === 'cancelled' ? 'bad' : ($order->status === 'delivered' ? 'ok' : 'warn') }}">{{ $order->statusLabel() }}</span>
       </div>
 
       @if ($order->status !== 'cancelled' && $index !== false)
-        <ol style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;font-size:12px">
+        <ol style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center;font-size:12px">
           @foreach ($steps as $key => $label)
             @php $done = array_search($key, array_keys($steps), true) <= $index; @endphp
             <li><div class="pg-steps" style="margin:0 0 6px"><i class="{{ $done ? 'on' : '' }}"></i></div><span style="font-weight:{{ $done ? 700 : 400 }}">{{ $label }}</span></li>

@@ -33,6 +33,7 @@ class OrderController extends Controller
             'pending'    => Order::where('status', 'pending')->count(),
             'processing' => Order::where('status', 'processing')->count(),
             'shipped'    => Order::where('status', 'shipped')->count(),
+            'out_for_delivery' => Order::where('status', 'out_for_delivery')->count(),
             'delivered'  => Order::where('status', 'delivered')->count(),
             'cancelled'  => Order::where('status', 'cancelled')->count(),
         ];
@@ -151,7 +152,7 @@ class OrderController extends Controller
     public function update(Request $request, Order $order)
     {
         $data = $request->validate([
-            'status'            => 'sometimes|in:pending,processing,shipped,delivered,cancelled',
+            'status'            => 'sometimes|in:pending,processing,shipped,out_for_delivery,delivered,cancelled',
             'payment_status'    => 'sometimes|in:pending,paid',
             'supplier_name'     => 'nullable|string|max:100',
             'supplier_order_id' => 'nullable|string|max:200',

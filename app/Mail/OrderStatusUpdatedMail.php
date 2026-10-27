@@ -17,7 +17,7 @@ class OrderStatusUpdatedMail extends Mailable
      * Statuses a customer should hear about. 'pending' is the state an order is
      * born in, so moving back to it is an internal correction, not news.
      */
-    public const NOTIFIABLE = ['processing', 'shipped', 'delivered', 'cancelled'];
+    public const NOTIFIABLE = ['processing', 'shipped', 'out_for_delivery', 'delivered', 'cancelled'];
 
     public function __construct(public Order $order) {}
 
@@ -76,6 +76,15 @@ class OrderStatusUpdatedMail extends Mailable
                 'intro'        => "Your order has left our warehouse, {$name}. Use the tracking details below to follow it to your door.",
                 'noteTitle'    => 'Delivery questions?',
                 'noteBody'     => "Reply to this email and we'll chase it up with the carrier for you.",
+                'showTracking' => true,
+            ],
+            'out_for_delivery' => [
+                'subject'      => 'Your Order Is Out for Delivery',
+                'eyebrow'      => 'Out for Delivery',
+                'heading'      => 'Your order is out for delivery.',
+                'intro'        => "Your order is on the delivery vehicle today, {$name}. It should reach you soon — keep an eye out for the carrier.",
+                'noteTitle'    => 'Not going to be home?',
+                'noteBody'     => "Reply to this email and we'll help arrange the delivery with the carrier.",
                 'showTracking' => true,
             ],
             'delivered' => [

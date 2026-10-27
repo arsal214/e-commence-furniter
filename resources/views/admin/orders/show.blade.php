@@ -9,6 +9,7 @@ $statusColors = [
     'pending'    => 'bg-yellow-100 text-yellow-700',
     'processing' => 'bg-blue-100 text-blue-700',
     'shipped'    => 'bg-indigo-100 text-indigo-700',
+    'out_for_delivery' => 'bg-purple-100 text-purple-700',
     'delivered'  => 'bg-green-100 text-green-700',
     'cancelled'  => 'bg-red-100 text-red-700',
 ];
@@ -270,7 +271,7 @@ $paymentColors = [
                 <div class="flex justify-between items-center">
                     <span class="text-gray-500">Order Status</span>
                     <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-600' }}">
-                        {{ ucfirst($order->status) }}
+                        {{ $order->statusLabel() }}
                     </span>
                 </div>
                 <div class="flex justify-between items-center">
@@ -331,8 +332,8 @@ $paymentColors = [
                     <label class="block text-xs font-medium text-gray-600 mb-1">Order Status</label>
                     <select name="status"
                             class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C] bg-white text-gray-800">
-                        @foreach(['pending','processing','shipped','delivered','cancelled'] as $s)
-                        <option value="{{ $s }}" {{ $order->status === $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
+                        @foreach(['pending','processing','shipped','out_for_delivery','delivered','cancelled'] as $s)
+                        <option value="{{ $s }}" {{ $order->status === $s ? 'selected' : '' }}>{{ ucfirst(str_replace('_', ' ', $s)) }}</option>
                         @endforeach
                     </select>
                 </div>

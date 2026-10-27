@@ -125,7 +125,7 @@ PATCHES = [
     ('product', r"(\{\{ \$pdp\['off'\] \?\? '' \}\}</span><\?php endif; \?></div>)",
      r'\1<div class="pgw-pline" data-welcome-product data-price="{{ $pdp["priceNum"] }}" hidden></div>'),
     ('product', r"(<\?php if\(!empty\(\$pdp\['hasColors'\]\)\): \?><div)",
-     r'<form method="POST" action="{{ route("cart.add") }}" id="buy" data-track="{{ json_encode(["id" => $pdp["id"], "name" => $pdp["name"], "price" => (float) $pdp["priceNum"]]) }}" style="display:contents">@csrf'
+     r'<form method="POST" action="{{ route("cart.add") }}" id="buy" data-track="{{ json_encode(["id" => $pdp["tid"], "name" => $pdp["name"], "price" => (float) $pdp["priceNum"]]) }}" style="display:contents">@csrf'
      r'<input type="hidden" name="product_id" value="{{ $pdp["id"] }}">'
      r'<?php if(!empty($pdp["hasColors"])): ?><input type="hidden" name="color" id="f-color" value="{{ $pdp["colorName"] }}"><?php endif; ?>'
      r'<?php if(!empty($pdp["hasSizes"])): ?><input type="hidden" name="size" id="f-size" value="{{ $pdp["sizeName"] }}"><?php endif; ?>\1'),

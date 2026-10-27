@@ -106,6 +106,7 @@
                         'pending'    => 'bg-yellow-100 text-yellow-700',
                         'processing' => 'bg-blue-100 text-blue-700',
                         'shipped'    => 'bg-indigo-100 text-indigo-700',
+                        'out_for_delivery' => 'bg-purple-100 text-purple-700',
                         'delivered'  => 'bg-green-100 text-green-700',
                         'cancelled'  => 'bg-red-100 text-red-700',
                     ];
@@ -119,7 +120,7 @@
                         <p class="text-xs text-gray-400">${{ number_format($order->total, 2) }} · {{ $order->created_at->diffForHumans() }}</p>
                     </div>
                     <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-600' }}">
-                        {{ ucfirst($order->status) }}
+                        {{ $order->statusLabel() }}
                     </span>
                     <a href="{{ route('admin.orders.show', $order) }}" class="text-xs text-[#EA580C] hover:underline ml-1">View</a>
                 </li>

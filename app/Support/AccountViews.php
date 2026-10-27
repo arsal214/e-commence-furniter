@@ -15,7 +15,7 @@ class AccountViews
     public const TABS = ['overview' => 'Overview', 'orders' => 'Orders & tracking', 'returns' => 'Returns & claims', 'reviews' => 'Your reviews', 'wishlist' => 'Saved items',
         'rewards' => 'Rewards', 'giftcards' => 'Gift cards', 'wallet' => 'Addresses', 'messages' => 'Messages', 'following' => 'Following', 'notifications' => 'Notifications', 'settings' => 'Login & security'];
 
-    private const STATUS = ['pending' => ['Preparing', '#FEF3C7', '#92400E', 1], 'shipped' => ['Shipped', '#DBEAFE', '#1E40AF', 2],
+    private const STATUS = ['pending' => ['Preparing', '#FEF3C7', '#92400E', 1], 'shipped' => ['Shipped', '#DBEAFE', '#1E40AF', 2], 'out_for_delivery' => ['Out for delivery', '#EDE9FE', '#5B21B6', 2],
         'delivered' => ['Delivered', '#ECFDF3', '#15803D', 3], 'refunded' => ['Refunded', '#F3F4F6', '#374151', 0]];
 
     public static function build(User $user, string $tab): array
@@ -25,7 +25,7 @@ class AccountViews
         $toReview = self::toReview($user);
         $active = collect($orders)->first(fn ($o) => ! $o['delivered'] && $o['status'] !== 'Refunded');
 
-        $card = fn (Product $p) => ['id' => $p->id, 'href' => route('product-details', $p->slug), 'name' => $p->name, 'price' => MarketViews::money($p->from_price),
+        $card = fn (Product $p) => ['id' => $p->uuid, 'href' => route('product-details', $p->slug), 'name' => $p->name, 'price' => MarketViews::money($p->from_price),
             'sub' => $p->category?->name ?? '', 'tint' => MarketViews::tint(($p->category?->parent ?? $p->category)?->slug), 'img' => $p->image ? Product::imageUrl($p->image) : null, 'hasDrop' => false, 'drop' => ''];
 
         $titles = ['overview' => 'Account overview'] + self::TABS;
@@ -72,6 +72,9 @@ class AccountViews
             $order = $first->order;
             $ship = $first->seller_id ? $shipments->get($order->id . '-' . $first->seller_id) : null;
             $state = $ship?->status ?? (['shipped' => 'shipped', 'delivered' => 'delivered', 'cancelled' => 'refunded'][$order->status] ?? 'pending');
+            if ($order->status === 'out_for_delivery' && in_array($state, ['pending', 'shipped'], true)) {
+                $state = 'out_for_delivery'; // staff marked the parcel out for delivery
+            }
             [$label, $bg, $fg, $step] = self::STATUS[$state];
 
             $cards[] = [
@@ -79,7 +82,7 @@ class AccountViews
                 'storeName' => $first->seller?->store_name ?? 'Peyton Ghalib', 'storeHref' => $first->seller?->isLive() ? $first->seller->url() : url('/'),
                 'status' => $label, 'sb' => $bg, 'sc' => $fg, 'delivered' => $state === 'delivered', 'trackUrl' => route('track-order', ['tracking' => $order->tracking_number]),
                 'eta' => ['pending' => 'Waiting for the seller to ship', 'shipped' => 'On its way' . ($ship?->shipped_at ? ' · expected by ' . $ship->shipped_at->copy()->addDays(DeliveryEstimate::maxDays())->format('M j') : ''),
-                    'delivered' => 'Delivered' . ($ship?->delivered_at ? ' ' . $ship->delivered_at->format('M j') : ''), 'refunded' => 'Refunded'][$state],
+                    'out_for_delivery' => 'Out for delivery today', 'delivered' => 'Delivered' . ($ship?->delivered_at ? ' ' . $ship->delivered_at->format('M j') : ''), 'refunded' => 'Refunded'][$state],
                 'line' => 'Order ' . $order->tracking_number . ' · ' . ($first->seller?->store_name ?? 'Peyton Ghalib'),
                 'carrier' => $ship?->tracking_number ? "{$ship->carrier} · {$ship->tracking_number}" : '',
                 'steps' => collect(['Order placed', 'Preparing', 'Shipped', 'Delivered'])->map(fn ($t, $i) => ['t' => $t, 'bg' => $i <= $step && $state !== 'refunded' ? '#C2410C' : '#E5E7EB',

@@ -92,7 +92,7 @@ class MarketViews
         $wished = in_array($p->id, \App\Models\Wishlist::productIdsForCurrentUser(), true);
 
         return [
-            'id' => $p->id, 'href' => route('product-details', $p->slug), 'name' => $p->name, 'price' => self::money($price),
+            'id' => $p->uuid, 'href' => route('product-details', $p->slug), 'name' => $p->name, 'price' => self::money($price),
             'was' => $was ? self::money($was) : '', 'off' => $was ? '−' . round((1 - $price / $was) * 100) . '%' : '', 'hasOff' => (bool) $was,
             'rating' => ($p->reviews_count ?? 0) > 0 ? number_format((float) $p->reviews_avg_rating, 1) : '', 'reviews' => number_format((int) ($p->reviews_count ?? 0)),
             'hasRating' => ($p->reviews_count ?? 0) > 0, 'sold' => \App\Services\SoldCounts::label($p->id),

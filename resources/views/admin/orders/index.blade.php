@@ -11,6 +11,7 @@ $statusColors = [
     'pending'    => 'bg-yellow-100 text-yellow-700',
     'processing' => 'bg-blue-100 text-blue-700',
     'shipped'    => 'bg-indigo-100 text-indigo-700',
+    'out_for_delivery' => 'bg-purple-100 text-purple-700',
     'delivered'  => 'bg-green-100 text-green-700',
     'cancelled'  => 'bg-red-100 text-red-700',
 ];
@@ -26,10 +27,10 @@ $currentStatus = request('status');
        class="px-3 py-1.5 text-sm rounded-lg font-medium transition-colors {{ !$currentStatus ? 'bg-[#EA580C] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50' }}">
         All <span class="ml-1 text-xs opacity-70">{{ $counts['all'] }}</span>
     </a>
-    @foreach(['pending','processing','shipped','delivered','cancelled'] as $s)
+    @foreach(['pending','processing','shipped','out_for_delivery','delivered','cancelled'] as $s)
     <a href="{{ route('admin.orders.index', ['status' => $s]) }}"
        class="px-3 py-1.5 text-sm rounded-lg font-medium transition-colors {{ $currentStatus === $s ? 'bg-[#EA580C] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50' }}">
-        {{ ucfirst($s) }} <span class="ml-1 text-xs opacity-70">{{ $counts[$s] }}</span>
+        {{ ucfirst(str_replace('_', ' ', $s)) }} <span class="ml-1 text-xs opacity-70">{{ $counts[$s] }}</span>
     </a>
     @endforeach
 </div>
@@ -72,7 +73,7 @@ $currentStatus = request('status');
                 </td>
                 <td class="px-5 py-3">
                     <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-600' }}">
-                        {{ ucfirst($order->status) }}
+                        {{ $order->statusLabel() }}
                     </span>
                 </td>
                 <td class="px-5 py-3 text-gray-500 text-xs">

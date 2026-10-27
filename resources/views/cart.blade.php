@@ -36,7 +36,7 @@
             <b style="font-size:16px;font-weight:800">{{ $p->display_price }}</b>
             <form method="POST" action="{{ route('cart.add') }}" data-track="{{ json_encode(['id' => $p->id, 'name' => $p->name, 'price' => round((float) $p->effective_price, 2)]) }}" style="margin-top:auto">
               @csrf
-              <input type="hidden" name="product_id" value="{{ $p->id }}">
+              <input type="hidden" name="product_id" value="{{ $p->uuid }}">
               <input type="hidden" name="qty" value="1">
               <button type="submit" aria-label="Add {{ $p->name }} to cart" style="width:100%;height:44px;border-radius:999px;border:1.5px solid #111827;background:#fff;font-weight:700;cursor:pointer">+ Add</button>
             </form>

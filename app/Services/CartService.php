@@ -70,6 +70,23 @@ class CartService
         return $cart;
     }
 
+    /** What a cart page prints for a line: it identifies the line without showing the product's row number. */
+    public static function ref(string $key): string
+    {
+        return substr(hash_hmac('sha256', $key, (string) config('app.key')), 0, 24);
+    }
+
+    /** The real line key for what a form sent: a ref from the page, or (older callers) the key itself. */
+    public function resolveKey(string $given): string
+    {
+        $cart = session('cart', []);
+        if (isset($cart[$given])) {
+            return $given;
+        }
+
+        return collect(array_keys($cart))->first(fn ($k) => hash_equals(self::ref((string) $k), $given)) ?? $given;
+    }
+
     public function getQty(int $productId, ?string $color, ?string $size): int
     {
         $key  = $this->makeKey($productId, $color, $size);

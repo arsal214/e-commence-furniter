@@ -120,11 +120,12 @@ class CartController extends Controller
     public function add(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'required',
             'qty'        => 'integer|min:1',
         ]);
 
-        $product = Product::visible()->findOrFail($request->product_id);
+        $found   = Product::fromRef($request->product_id);
+        $product = Product::visible()->findOrFail($found?->id ?? 0);
         $qty     = (int) $request->input('qty', 1);
         $color   = $request->input('color') ?: null;
         $size    = $request->input('size')  ?: null;
@@ -196,10 +197,13 @@ class CartController extends Controller
     {
         $data = $request->validate([
             'product_ids'   => 'required|array|min:1|max:10',
-            'product_ids.*' => 'integer|exists:products,id',
+            'product_ids.*' => 'required',
         ]);
 
-        $products = Product::visible()->whereIn('id', $data['product_ids'])
+        $ids = collect($data['product_ids'])->map(fn ($ref) => Product::fromRef($ref)?->id)->filter()->all();
+        abort_if($ids === [], 422, 'Those products could not be found.');
+
+        $products = Product::visible()->whereIn('id', $ids)
             ->get();
 
         $added   = [];
@@ -362,18 +366,19 @@ class CartController extends Controller
         ]);
 
         $qty       = (int) $request->qty;
+        $cartKey   = $this->cart->resolveKey($request->cart_key);
         $cartItems = $this->cart->items();
 
-        if ($qty > 0 && ! empty($cartItems[$request->cart_key]['bundle_id'])) {
-            $bundle = \App\Models\Bundle::with('items.product.category', 'items.variant')->find($cartItems[$request->cart_key]['bundle_id']);
+        if ($qty > 0 && ! empty($cartItems[$cartKey]['bundle_id'])) {
+            $bundle = \App\Models\Bundle::with('items.product.category', 'items.variant')->find($cartItems[$cartKey]['bundle_id']);
             $max    = $bundle ? $bundle->availableQty() : 0;
             if ($qty > $max) {
                 return back()->with('error', $max > 0 ? 'Only ' . $max . ' of this set are in stock.' : 'This set is out of stock.');
             }
         }
 
-        if ($qty > 0 && isset($cartItems[$request->cart_key])) {
-            $line    = $cartItems[$request->cart_key];
+        if ($qty > 0 && isset($cartItems[$cartKey])) {
+            $line    = $cartItems[$cartKey];
             $product = Product::find($line['id']);
             if ($product) {
                 // Respect the stock of the exact colour/size in this cart line.
@@ -389,7 +394,7 @@ class CartController extends Controller
             }
         }
 
-        $this->cart->update($request->cart_key, $qty);
+        $this->cart->update($cartKey, $qty);
 
         return back()->with('success', 'Cart updated.');
     }
@@ -397,7 +402,7 @@ class CartController extends Controller
     public function remove(Request $request)
     {
         $request->validate(['cart_key' => 'required|string']);
-        $this->cart->remove($request->cart_key);
+        $this->cart->remove($this->cart->resolveKey($request->cart_key));
 
         return back()->with('success', 'Item removed from cart.');
     }

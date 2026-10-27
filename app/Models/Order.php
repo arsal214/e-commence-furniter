@@ -72,6 +72,12 @@ class Order extends Model
      * 'live' | 'test' | null. Null covers COD and any Stripe order placed before
      * the column existed, where the mode genuinely isn't known.
      */
+    /** The order status in words for people: "out_for_delivery" reads "Out for delivery". */
+    public function statusLabel(): string
+    {
+        return ucfirst(str_replace('_', ' ', (string) $this->status));
+    }
+
     /** How the customer paid, in words for them: the card processor is never named. */
     public function paymentLabel(): string
     {

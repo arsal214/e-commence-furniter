@@ -87,7 +87,7 @@ class PageViews
         $opt = fn ($v) => ['price' => (float) $v->effective_price, 'list' => (float) $v->price, 'stock' => (int) $v->stock, 'image' => $v->image ? $url($v->image) : null];
 
         return ['pdp' => [
-            'id' => $p->id, 'name' => $p->name, 'sub' => $p->category?->name ?? '', 'subHref' => $p->category ? route('category.landing', $p->category->slug) : url('/shop'),
+            'id' => $p->uuid, 'tid' => $p->id, 'name' => $p->name, 'sub' => $p->category?->name ?? '', 'subHref' => $p->category ? route('category.landing', $p->category->slug) : url('/shop'),
             'catName' => $root?->name ?? 'Shop', 'catHref' => $root ? route('category.landing', $root->slug) : url('/shop'), 'tint' => MarketViews::tint($root?->slug, $root?->id),
             'img' => $gallery->isNotEmpty() ? $url($gallery[0]) : null,
             'thumbs' => $gallery->count() > 1 ? $gallery->map(fn ($g, $i) => ['label' => 'Photo ' . ($i + 1), 'img' => $url($g), 'bd' => $i === 0 ? '#111827' : '#E5E7EB'])->all() : [],
@@ -121,7 +121,7 @@ class PageViews
                 'date' => $r->created_at->format('M j, Y'), 'badge' => $r->is_verified ? 'Verified purchase' : 'Review', 'text' => (string) $r->comment, 'hasPhotos' => false, 'photos' => [],
                 'reply' => (string) $r->seller_reply, 'replyBy' => $seller?->store_name ?? 'the seller'])->all(),
             'related' => $related->map(fn ($x) => MarketViews::card($x))->all(),
-            'fbt' => $bundle->map(fn ($b) => ['id' => $b->id, 'name' => $b->name, 'href' => route('product-details', $b->slug), 'price' => MarketViews::money($b->effective_price)])->all(),
+            'fbt' => $bundle->map(fn ($b) => ['id' => $b->uuid, 'name' => $b->name, 'href' => route('product-details', $b->slug), 'price' => MarketViews::money($b->effective_price)])->all(),
             'set' => $set ? ['id' => $set->id, 'saves' => MarketViews::money($set->savings()), 'name' => $set->name,
                 'parts' => $set->items->map(fn ($i) => $i->product->name . ' (' . MarketViews::money($i->unitPrice()) . ')')->implode(' + '),
                 'regular' => MarketViews::money($set->regularTotal()), 'price' => MarketViews::money($set->price)] : null,
@@ -165,7 +165,7 @@ class PageViews
             $lineTotal = (float) $line['price'] * (int) $line['qty'];
             $groups[$gk]['sum'] += $lineTotal;
             $groups[$gk]['items'][] = [
-                'key' => $line['key'] ?? $key, 'qty' => (int) $line['qty'], 'name' => $line['name'], 'href' => $p ? route('product-details', $p->slug) : url('/shop'),
+                'key' => \App\Services\CartService::ref((string) ($line['key'] ?? $key)), 'qty' => (int) $line['qty'], 'name' => $line['name'], 'href' => $p ? route('product-details', $p->slug) : url('/shop'),
                 'sub' => $p?->category?->name ?? (! empty($line['bundle_id']) ? 'Set' : ''), 'tint' => MarketViews::tint(($p?->category?->parent ?? $p?->category)?->slug), 'img' => $p?->image ? Product::imageUrl($p->image) : null,
                 'variant' => collect([$line['color'] ?? null, $line['size'] ?? null])->filter()->implode(' · ') ?: 'Standard', 'unitStr' => MarketViews::money($line['price']), 'line' => MarketViews::money($lineTotal),
                 'less' => max(0, (int) $line['qty'] - 1), 'more' => (int) $line['qty'] + 1,

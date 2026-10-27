@@ -186,7 +186,7 @@ it('renders the product page with seller, options, schema and the welcome-offer 
     $html = $this->get(route('product-details', $p->slug))->assertOk()
         ->assertSee('Harbor')->assertSee('Rising Seller')->assertSee('60-day returns')->assertSee('seller pays return shipping')
         ->assertSee('data-welcome-product', false)->assertSee('application/ld+json', false)->assertSee('Buyer Protection')
-        ->assertSee('name="product_id" value="' . $p->id . '"', false)->getContent();
+        ->assertSee('name="product_id" value="' . $p->uuid . '"', false)->getContent();
     expect($html)->toContain('value="Cognac"')->toContain('value="Large"');
     // The sold-out colour cannot be picked.
     expect($html)->toMatch('/data-value="Black"[^>]*disabled/');

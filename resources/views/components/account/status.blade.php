@@ -12,6 +12,7 @@
     $tone = match ($key) {
         'delivered'  => 'success',
         'shipped'    => 'info',
+        'out_for_delivery' => 'info',
         'processing' => 'progress',
         'cancelled'  => 'danger',
         default      => 'pending',   // pending, or anything unrecognised

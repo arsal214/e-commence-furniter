@@ -30,8 +30,8 @@
     $line      = '#E8E1D7';
     $warm      = '#FAF7F3';
 
-    $steps   = ['Placed', 'Processing', 'Shipped', 'Delivered'];
-    $current = ['pending' => 1, 'processing' => 2, 'shipped' => 3, 'delivered' => 4][$order->status] ?? 1;
+    $steps   = ['Placed', 'Processing', 'Shipped', 'Out for delivery', 'Delivered'];
+    $current = ['pending' => 1, 'processing' => 2, 'shipped' => 3, 'out_for_delivery' => 4, 'delivered' => 5][$order->status] ?? 1;
 
     $shippingLabel = ['free' => 'Free Shipping', 'fast' => 'Fast Shipping', 'local' => 'Local Pickup'][$order->shipping] ?? ucfirst($order->shipping);
     $isPaid        = $order->payment_status === 'paid';
@@ -241,13 +241,13 @@
                             <tr>
                                 @foreach ($steps as $i => $step)
                                     @php $done = $i + 1 <= $current; @endphp
-                                    <td width="25%" bgcolor="{{ $done ? $gold : $line }}" style="background-color:{{ $done ? $gold : $line }}; height:4px; line-height:4px; font-size:4px; border-right:2px solid #FFFFFF;">&nbsp;</td>
+                                    <td width="{{ round(100 / count($steps)) }}%" bgcolor="{{ $done ? $gold : $line }}" style="background-color:{{ $done ? $gold : $line }}; height:4px; line-height:4px; font-size:4px; border-right:2px solid #FFFFFF;">&nbsp;</td>
                                 @endforeach
                             </tr>
                             <tr>
                                 @foreach ($steps as $i => $step)
                                     @php $done = $i + 1 <= $current; @endphp
-                                    <td width="25%" valign="top" style="padding:8px 6px 0 0; font-family:Arial,Helvetica,sans-serif; font-size:11px; line-height:16px; font-weight:{{ $done ? 'bold' : 'normal' }}; color:{{ $done ? $goldText : $muted }};">
+                                    <td width="{{ round(100 / count($steps)) }}%" valign="top" style="padding:8px 6px 0 0; font-family:Arial,Helvetica,sans-serif; font-size:11px; line-height:16px; font-weight:{{ $done ? 'bold' : 'normal' }}; color:{{ $done ? $goldText : $muted }};">
                                         {{-- Weight + a text mark carry the state, so it isn't colour-only --}}
                                         {!! $done ? '&#10003; ' : '' !!}{{ $step }}
                                     </td>
