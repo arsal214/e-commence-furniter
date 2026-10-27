@@ -138,7 +138,7 @@ class MarketViews
         return $memo[$key] = [
             'ic' => self::icons(), 'isDesk' => true, 'isMobile' => false, 'navCats' => $navCats, 'menuCats' => $menuCats,
             'cartCount' => $count, 'searchInput' => (string) $request->query('q', ''),
-            'locLabel' => $zip ? e($zip) : 'Set your ZIP', 'locZip' => $zip ?: '', 'locNote' => $zip ? 'Set by you' : 'Add a US delivery ZIP to see delivery dates', 'zipInput' => $zip ?: '',
+            'locLabel' => $zip ? e($zip) : 'Set your ZIP', 'locZip' => $zip ?: '', 'locNote' => $zip ? ($request->cookie('pg_zip_src') === 'ip' ? 'Estimated from your connection · enter your ZIP to change it' : 'Set by you') : 'Add a US delivery ZIP to see delivery dates', 'zipInput' => $zip ?: '',
             'hasLocErr' => false, 'locErr' => '', 'gpsLabel' => 'Use my current location',
             'menuHello' => 'Hello, ' . ($user ? explode(' ', trim($user->name))[0] : 'Sign in'), 'menuUserHref' => $user ? url('/my-account') : route('login'),
             'footCols' => [
@@ -146,7 +146,7 @@ class MarketViews
                 ['h' => 'Customer service', 'links' => [['t' => 'Track your order', 'href' => route('track-order')], ['t' => 'Shipping policy', 'href' => route('shipping-policy')],
                     ['t' => 'Return policy', 'href' => route('return-policy')], ['t' => 'Buyer Protection', 'href' => url('/buyer-protection')]]],
                 ['h' => 'Shop with us', 'links' => [['t' => "Today's deals", 'href' => url('/category/deals')], ['t' => 'All products', 'href' => route('shop')], ['t' => 'Sitemap', 'href' => url('/sitemap')]]],
-                ['h' => 'Sell with us', 'links' => [['t' => 'Sell on Peyton Ghalib', 'href' => route('seller.landing')], ['t' => 'Seller pricing: $19.99/mo', 'href' => route('seller.pricing')], ['t' => 'Start selling', 'href' => route('seller.signup')], ['t' => 'Seller Agreement', 'href' => url('/seller-agreement')]]],
+                ['h' => 'Sell with us', 'links' => [['t' => 'How selling works', 'href' => route('seller.landing')], ['t' => 'Open your store', 'href' => route('seller.signup')], ['t' => 'Seller Agreement', 'href' => url('/seller-agreement')]]],
             ],
             'legalLinks' => [['t' => 'Terms of Service', 'href' => url('/terms-and-conditions')], ['t' => 'Privacy Policy', 'href' => route('privacy-policy')], ['t' => 'Cookie Policy', 'href' => url('/cookies')], ['t' => 'Do Not Sell or Share', 'href' => url('/do-not-sell')]],
             'socials' => [['t' => 'Instagram', 'href' => 'https://www.instagram.com/peytonghalibexpress/'], ['t' => 'Facebook', 'href' => 'https://www.facebook.com/profile.php?id=61590448962752'], ['t' => 'TikTok', 'href' => 'https://www.tiktok.com/@peytonghalib'], ['t' => 'Pinterest', 'href' => 'https://www.pinterest.com/peytonexpress/']],
@@ -176,12 +176,8 @@ class MarketViews
         $stores = Seller::live()->withCount(['products as shop_count' => fn ($q) => $q->visible()])->orderByDesc('delivered_sales')->orderBy('id')->get()
             ->filter(fn ($s) => $s->shop_count > 0)->take(6);
 
-        $tiles = collect($deals->count() >= 4 ? $deals : $with()->latest('products.id')->limit(4)->get())->take(4)->map(fn ($p) => ['href' => route('product-details', $p->slug),
-            'tint' => self::tint(($p->category?->parent ?? $p->category)?->slug), 'sub' => $p->category?->name ?? '', 'price' => self::money($p->from_price), 'img' => $p->image ? Product::imageUrl($p->image) : null])->all();
-        $promos = array_map(fn ($c) => $c + ['hasKicker' => $c['kicker'] !== '', 'hasCta' => $c['cta'] !== '', 'isGrid' => ! empty($c['grid']), 'isImage' => empty($c['grid']), 'tiles' => ! empty($c['grid']) ? $tiles : []], self::promos());
-
         return [
-            'promos' => $promos, 'catTiles' => $tree->map(fn ($c) => ['name' => $c->name, 'href' => route('category.landing', $c->slug), 'tint' => self::tint($c->slug, $c->id), 'initial' => mb_substr($c->name, 0, 1)])->all(),
+            'promos' => self::promos(), 'catTiles' => $tree->map(fn ($c) => ['name' => $c->name, 'href' => route('category.landing', $c->slug), 'tint' => self::tint($c->slug, $c->id), 'initial' => mb_substr($c->name, 0, 1)])->all(),
             'cd' => [$pad(intdiv($left, 3600)), $pad(intdiv($left % 3600, 60)), $pad($left % 60)], 'deals' => $deals->map(fn ($p) => self::card($p))->all(),
             'trust' => [
                 ['icon' => $ic['shield'], 'h' => 'Buyer Protection', 'p' => "Full refund if an order doesn't arrive or isn't as described."],
@@ -191,7 +187,7 @@ class MarketViews
             ],
             'recommended' => $with()->latest('products.id')->limit(25)->get()->map(fn ($p) => self::card($p))->all(), 'canMore' => true,
             'storeCards' => $stores->map(fn ($s) => ['name' => $s->store_name, 'href' => route('store.show', $s->slug), 'city' => trim("{$s->city}, {$s->state}", ', '),
-                'rating' => '', 'followers' => $s->shop_count . ' ' . str('product')->plural($s->shop_count), 'level' => ucfirst($s->level) . ' Seller',
+                'rating' => '', 'followers' => '', 'level' => ucfirst($s->level) . ' Seller',
                 'lvBg' => ['new' => '#F3F4F6', 'rising' => '#DBEAFE', 'top' => '#EDE9FE', 'elite' => '#FEF3C7'][$s->level] ?? '#F3F4F6',
                 'lvFg' => ['new' => '#374151', 'rising' => '#1E40AF', 'top' => '#5B21B6', 'elite' => '#92400E'][$s->level] ?? '#374151',
                 'initial' => mb_substr($s->store_name, 0, 1), 'tint' => self::tint(null, $s->id), 'sale' => '', 'hasSale' => false, 'fLabel' => 'Visit', 'fBg' => '#FFFFFF', 'fFg' => '#111827'])->all(),
@@ -199,15 +195,36 @@ class MarketViews
         ];
     }
 
+    /**
+     * The hero rail: ten finished cards (photo, headline and button are in the picture) from public/assets/cards.
+     * Each links to its category when the shop has one, else to a search; the order is shuffled on every page load.
+     */
     private static function promos(): array
     {
-        return [
-            ['kicker' => 'Get trick-or-treat ready', 'title' => 'Free shipping on Halloween finds', 'cta' => 'Shop Halloween', 'href' => url('/category/seasonal-holiday'), 'bg' => '#0057FF', 'fg' => '#FFFFFF', 'cb' => '#FFD23F', 'cf' => '#111827'],
-            ['kicker' => '', 'title' => 'Costumes & décor under $50', 'cta' => '', 'href' => url('/category/seasonal-holiday'), 'bg' => '#7EE0A1', 'fg' => '#111827'],
-            ['kicker' => '', 'title' => 'Shop holiday gift ideas', 'cta' => '', 'href' => url('/category/seasonal-holiday'), 'bg' => '#E11D2E', 'fg' => '#FFFFFF'],
-            ['kicker' => 'Low prices every day', 'title' => 'Fall finds under $40', 'cta' => '', 'href' => url('/category/deals'), 'bg' => '#8B3FD9', 'fg' => '#FFFFFF', 'grid' => true],
-            ['kicker' => 'For US businesses', 'title' => 'Sell with 0% commission', 'cta' => 'Start selling', 'href' => route('seller.landing'), 'bg' => '#EA580C', 'fg' => '#111827', 'cb' => '#111827', 'cf' => '#FFFFFF'],
-            ['kicker' => 'Earn on every order', 'title' => '1 point per $1. 100 points = $1 off', 'cta' => 'See rewards', 'href' => url('/my-account'), 'bg' => '#0F2A5F', 'fg' => '#FFFFFF', 'cb' => '#FFFFFF', 'cf' => '#0F2A5F'],
+        // [file number, headline, category slugs to try in order, search words if none exist, max price]
+        $cards = [
+            [1, 'Cozy fall finds', ['seasonal-holiday-fall-decor', 'seasonal-holiday'], 'fall decor', null],
+            [2, 'Desk refresh', ['office', 'stationery'], 'desk', null],
+            [3, 'Kitchen favorites', ['kitchen-accessories', 'home-kitchen-cookware', 'home-kitchen'], 'kitchen', null],
+            [4, 'Gifts under $25', ['gifts', 'seasonal-holiday-holiday'], 'gift', 25],
+            [5, 'Weekend bag edit', ['bags', 'fashion-bags'], 'bag', null],
+            [6, 'Hosting made easy', ['home-kitchen-dinnerware', 'kitchen-accessories'], 'serving', null],
+            [7, 'Spooky party picks', ['halloween', 'seasonal-holiday-halloween'], 'halloween', null],
+            [8, 'Bedtime reset', ['home-kitchen-bedding', 'cushions', 'home-essentials'], 'bedding', null],
+            [9, 'Toys & games kids love', ['toys', 'toys-games'], 'toys', null],
+            [10, 'Beauty picks under $25', ['beauty-products', 'beauty-health'], 'beauty', 25],
         ];
+        $live = \App\Models\Category::where('is_active', true)->whereIn('slug', collect($cards)->pluck(2)->flatten())->pluck('slug')->all();
+
+        return collect($cards)->map(function ($c) use ($live) {
+            [$n, $title, $slugs, $q, $max] = $c;
+            $slug = collect($slugs)->first(fn ($s) => in_array($s, $live, true));
+            $query = $max ? ['max' => $max] : [];
+            $href = $slug ? route('category.landing', $slug) : route('search');
+            $query = $slug ? $query : ['q' => $q] + $query;
+
+            return ['isPicture' => true, 'href' => $href . ($query ? '?' . http_build_query($query) : ''), 'alt' => $title, 'img' => asset("assets/cards/hero-{$n}.png"),
+                'kicker' => '', 'cta' => '', 'bg' => '#F3F4F6'];
+        })->shuffle()->values()->all();
     }
 }

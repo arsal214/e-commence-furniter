@@ -1,7 +1,7 @@
 
   <div style="max-width:1320px;margin:0 auto;padding:20px clamp(12px,4vw,40px) 0;position:relative">
     <div data-cards data-rail="1" style="display:grid;grid-auto-flow:column;grid-auto-columns:minmax(min(280px,80%),calc((100% - 48px) / 4));gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:4px">
-      <?php foreach($promos ?? [] as $__k => $c): ?>
+      <?php foreach($promos ?? [] as $__k => $c): ?><?php if(!empty($c['isPicture'])): ?><a href="{{ $c['href'] }}" style="scroll-snap-align:start;display:block;height:clamp(440px,42vw,580px);border-radius:24px;overflow:hidden;background:{{ $c['bg'] }}"><img src="{{ $c['img'] }}" alt="{{ $c['alt'] }}" width="600" height="1160"<?php if($__k >= 4): ?> loading="lazy"<?php endif; ?> decoding="async" style="width:100%;height:100%;object-fit:cover;display:block"></a><?php continue; endif; ?>
         <div style="scroll-snap-align:start;position:relative;height:clamp(440px,42vw,580px);border-radius:24px;overflow:hidden;background:{{ $c['bg'] ?? '' }};color:{{ $c['fg'] ?? '' }};display:flex;flex-direction:column">
           <div style="padding:22px 22px 0;display:flex;flex-direction:column;gap:6px;position:relative;z-index:1">
             <?php if(!empty($c['hasKicker'])): ?><span style="font-size:clamp(15px,1.3vw,19px);font-weight:600">{{ $c['kicker'] ?? '' }}</span><?php endif; ?>
@@ -82,7 +82,7 @@
           <div style="height:86px;background:{{ $s['tint'] ?? '' }}"></div>
           <div style="padding:0 18px 18px;display:flex;flex-direction:column;gap:10px">
             <div style="display:flex;align-items:flex-end;gap:12px;margin-top:-28px"><span style="width:60px;height:60px;border-radius:16px;background:#111827;color:#FFFFFF;border:3px solid #FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px">{{ $s['initial'] ?? '' }}</span><span style="height:26px;padding:0 10px;border-radius:999px;background:{{ $s['lvBg'] ?? '' }};color:{{ $s['lvFg'] ?? '' }};font-size:12px;font-weight:800;display:flex;align-items:center;margin-bottom:4px">{{ $s['level'] ?? '' }}</span></div>
-            <a href="{{ $s['href'] ?? '' }}" style="color:#111827;display:flex;flex-direction:column;gap:3px"><b style="font-size:17px;font-weight:800">{{ $s['name'] ?? '' }} <span style="color:#15803D;font-size:14px">✓</span></b><span style="font-size:13px;color:#4B5563">{{ $s['city'] ?? '' }} · ★ {{ $s['rating'] ?? '' }} · {{ $s['followers'] ?? '' }} followers</span></a>
+            <a href="{{ $s['href'] ?? '' }}" style="color:#111827;display:flex;flex-direction:column;gap:3px"><b style="font-size:17px;font-weight:800">{{ $s['name'] ?? '' }} <span style="color:#15803D;font-size:14px">✓</span></b><span style="font-size:13px;color:#4B5563">{{ $s['city'] ?? '' }} · {{ $s['level'] ?? '' }}</span></a>
             <?php if(!empty($s['hasSale'])): ?><span style="font-size:13px;font-weight:700;color:#B91C1C">{{ $s['sale'] ?? '' }}</span><?php endif; ?>
             <div style="display:flex;gap:8px"><button data-act="s.onFollow" style="flex:1;height:42px;border-radius:999px;border:1.5px solid #111827;background:{{ $s['fBg'] ?? '' }};color:{{ $s['fFg'] ?? '' }};font-weight:700;font-size:14px;cursor:pointer">{{ $s['fLabel'] ?? '' }}</button><a href="{{ $s['href'] ?? '' }}" style="flex:1;height:42px;border-radius:999px;background:#F3F4F6;color:#111827;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px">Visit store</a></div>
           </div>

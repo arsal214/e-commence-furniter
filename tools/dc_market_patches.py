@@ -8,6 +8,11 @@ NO_STYLE = r'( style="[^"]*")'
 BTN = 'display:flex;align-items:center;justify-content:center;color:#111827;font-size:13.3px;'
 
 PATCHES = [
+    # ── home: store cards show the city and level, never how many products a store has published ──
+    ('home', r"""\{\{ \$s\['city'\] \?\? '' \}\} · ★ \{\{ \$s\['rating'\] \?\? '' \}\} · \{\{ \$s\['followers'\] \?\? '' \}\} followers</span>""",
+     """{{ $s['city'] ?? '' }} · {{ $s['level'] ?? '' }}</span>"""),
+    # ── home: the hero rail shows ready-made picture cards (see MarketViews::promos) ──
+    ('home', r'<\?php foreach\(\$promos \?\? \[\] as \$__k => \$c\): \?>', """<?php foreach($promos ?? [] as $__k => $c): ?><?php if(!empty($c['isPicture'])): ?><a href="{{ $c['href'] }}" style="scroll-snap-align:start;display:block;height:clamp(440px,42vw,580px);border-radius:24px;overflow:hidden;background:{{ $c['bg'] }}"><img src="{{ $c['img'] }}" alt="{{ $c['alt'] }}" width="600" height="1160"<?php if($__k >= 4): ?> loading="lazy"<?php endif; ?> decoding="async" style="width:100%;height:100%;object-fit:cover;display:block"></a><?php continue; endif; ?>"""),
     # ── login / create account ─────────────────────────────────────────────────
     ('login', r'<button data-act="tabIn" style="([^"]*)">(.*?)</button>', "<a href=\"{{ route('login') }}\" style=\"" + BTN + r'\1">\2</a>'),
     ('login', r'<button data-act="tabUp" style="([^"]*)">(.*?)</button>', "<a href=\"{{ route('register') }}\" style=\"" + BTN + r'\1">\2</a>'),

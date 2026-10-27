@@ -8,6 +8,9 @@ return [
     'fee_percent' => (float) env('MARKET_FEE_PERCENT', 2.9),
     'fee_fixed' => (float) env('MARKET_FEE_FIXED', 0.30),
 
+    // Optional ipapi.co key; the free tier works without one (see App\Services\GeoIp).
+    'geo_ip_key' => env('GEO_IP_KEY'),
+
     // Without carrier tracking feeds, a shipped parcel counts as delivered this many days after it
     // shipped unless the buyer has an open claim. A buyer can also confirm delivery earlier.
     'auto_deliver_days' => (int) env('MARKET_AUTO_DELIVER_DAYS', 7),

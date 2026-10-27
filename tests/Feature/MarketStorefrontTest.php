@@ -34,8 +34,9 @@ function msProd(Category $c, ?Seller $s, array $over = []): Product
 
 it('renders the design home page with the h1, its promo cards and no broken sections when the store is empty', function () {
     $this->get('/')->assertOk()->assertSee('width=device-width', false)->assertSee('Shop direct from independent American sellers')
-        ->assertSee('Sell with 0% commission')->assertSee('Free shipping on Halloween finds')->assertSee('Buyer Protection')
-        ->assertSee('Today&#039;s deals', false)->assertSee('Sell on Peyton Ghalib')->assertDontSee('Undefined');
+        ->assertSee('assets/cards/hero-', false)->assertSee('Buyer Protection')
+        ->assertSee('Today&#039;s deals', false)->assertSee('Sell on Peyton Ghalib')->assertDontSee('Undefined')
+        ->assertSee('Open your store')->assertDontSee('Seller pricing: $19.99/mo');
 });
 
 it('shows only visible products on the home page, never a hidden seller or an unapproved listing', function () {
@@ -57,7 +58,8 @@ it('lists a store on the home page only while it is live and has products', func
     msStore('empty-store');
     msProd($c, msStore('late-store', ['subscription_status' => 'past_due']));
 
-    $this->get('/')->assertSee('Has Products')->assertDontSee('Empty Store')->assertDontSee('Late Store');
+    $html = $this->get('/')->assertSee('Has Products')->assertDontSee('Empty Store')->assertDontSee('Late Store')->getContent();
+    expect($html)->not->toMatch('/\d+ products?/'); // how many a store has published is never shown
 });
 
 // ── categories ───────────────────────────────────────────────────────────────────────

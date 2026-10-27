@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Seller;
+use App\Services\GeoIp;
 use App\Services\MarketCatalog;
 use App\Support\PageViews;
 use App\Support\SiteCopy;
@@ -28,7 +29,26 @@ class MarketController extends Controller
     {
         $zip = $request->validate(['zip' => ['required', 'regex:/^\d{5}$/']])['zip'];
 
-        return response()->json(['zip' => $zip])->cookie('pg_zip', $zip, 60 * 24 * 365, null, null, null, false);
+        // A ZIP the shopper typed replaces any estimate.
+        return response()->json(['zip' => $zip])->cookie('pg_zip', $zip, 60 * 24 * 365, null, null, null, false)->withoutCookie('pg_zip_src');
+    }
+
+    /**
+     * First visit with no ZIP: estimate it from the IP address, once. pg_zip_try stops repeat lookups for
+     * a day whether or not it worked, and a ZIP the shopper already set is never touched.
+     */
+    public function detectLocation(Request $request, GeoIp $geo)
+    {
+        if ($request->cookie('pg_zip') || $request->cookie('pg_zip_try')) {
+            return response()->json(['zip' => null]);
+        }
+
+        $zip = $geo->zip($request->ip());
+        $res = response()->json(['zip' => $zip])->cookie('pg_zip_try', '1', 60 * 24, null, null, null, false);
+
+        return $zip
+            ? $res->cookie('pg_zip', $zip, 60 * 24 * 365, null, null, null, false)->cookie('pg_zip_src', 'ip', 60 * 24 * 365, null, null, null, false)
+            : $res;
     }
 
     public function shop(Request $request)

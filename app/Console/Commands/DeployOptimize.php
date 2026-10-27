@@ -48,6 +48,7 @@ class DeployOptimize extends Command
 
         if (! $this->option('skip-images')) {
             $steps[] = ['images:webp', [], 'Generating WebP twins'];
+            $steps[] = ['images:webp', ['--path' => 'assets/cards'], 'Generating WebP twins for the hero cards'];
         }
 
         foreach ($steps as [$command, $args, $label]) {

@@ -133,7 +133,7 @@
   "sections": [
    {
     "h": "Information we collect",
-    "p": "Account details (name, email, phone), delivery addresses, order history, messages with sellers and support, reviews, device and usage data, and payment details processed by Stripe (we receive only the card brand and last four digits)."
+    "p": "Account details (name, email, phone), delivery addresses, order history, messages with sellers and support, reviews, device and usage data, an approximate location from your IP address (used to suggest a delivery ZIP and cached for up to 7 days), and payment details processed by Stripe (we receive only the card brand and last four digits)."
    },
    {
     "h": "How we use it",

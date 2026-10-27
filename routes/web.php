@@ -226,6 +226,7 @@ Route::redirect('/shipping-method', '/shipping-policy', 301); // SEO: duplicate 
 
 Route::get('/shop',             [\App\Http\Controllers\MarketController::class, 'shop'])->name('shop');
 Route::post('/location',         [\App\Http\Controllers\MarketController::class, 'location'])->middleware('throttle:30,1,location')->name('location');
+Route::post('/location/detect',  [\App\Http\Controllers\MarketController::class, 'detectLocation'])->middleware('throttle:10,1,locdetect')->name('location.detect');
 Route::get('/search',           [\App\Http\Controllers\MarketController::class, 'search'])->name('search');
 Route::get('/store/{slug}',     [\App\Http\Controllers\MarketController::class, 'store'])->name('store.show');
 Route::get('/shop-v1',          fn() => redirect('/shop', 301));

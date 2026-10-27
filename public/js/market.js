@@ -26,7 +26,16 @@
       .catch(function () { if (err) { err.hidden = false; err.textContent = 'Could not save your ZIP. Try again.'; } });
   }
 
-  // ── rails (flash deals, recently viewed, promo cards) ─────────────────────────
+  // First visit with no ZIP: ask the server for an IP-based estimate once per tab session, then reload to show it.
+  (function detectZip() {
+    var box = $('[data-if="locOpen"]'); var input = box && $('input', box);
+    if (!input || input.value) return;
+    try { if (sessionStorage.getItem('pg_zip_asked')) return; sessionStorage.setItem('pg_zip_asked', '1'); } catch (e) { return; }
+    post('/location/detect').then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d && d.zip) location.reload(); }).catch(function () {});
+  })();
+
+  // ── rails (flash deals, recently viewed, promo cards)─────────────────────────
   function rail(btn, dir) {
     var wrap = btn.closest('[data-rail-wrap]') || btn.parentElement.parentElement;
     var r = (wrap && $('[data-rail]', wrap)) || $('[data-cards]');
