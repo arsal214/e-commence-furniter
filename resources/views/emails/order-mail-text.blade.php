@@ -5,7 +5,7 @@
     $adminNote     = $adminNote ?? null;
     $cta           = $cta ?? null;
     $shippingLabel = ['free' => 'Free Shipping', 'fast' => 'Fast Shipping', 'local' => 'Local Pickup'][$order->shipping] ?? ucfirst($order->shipping);
-    $paymentLabel  = ['cod' => 'Cash on Delivery', 'stripe' => 'Card', 'paypal' => 'PayPal'][$order->payment_method] ?? ucfirst($order->payment_method);
+    $paymentLabel  = $order->paymentLabel();
 @endphp
 PEYTONGHALIB — Gifts & Home Store
 

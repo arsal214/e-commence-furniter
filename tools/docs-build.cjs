@@ -9,7 +9,7 @@ const fill = {
   '[support email]': 'info@peytonghalib.com', '[legal email]': 'info@peytonghalib.com', '[privacy email]': 'info@peytonghalib.com',
   '[dmca email]': 'info@peytonghalib.com', '[accessibility email]': 'info@peytonghalib.com',
   '[support phone]': '+1 (929) 469-9864',
-  '[Confirm how card-processing costs are handled before publishing.]': 'Card-processing fees (Stripe\'s standard rate, currently 2.9% + $0.30 per order) are deducted from each order\'s payout.',
+  '[Confirm how card-processing costs are handled before publishing.]': 'Card-processing fees (currently 2.9% + $0.30 per order) are deducted from each order\'s payout.',
 };
 // Programs that are not built yet (seller referrals are built), and sample copy (job openings) the business has not confirmed.
 const skip = new Set(['careers', 'press']);

@@ -44,7 +44,7 @@ class SellerViews
         })->all();
 
         return [
-            'nav' => $nav, 'pageTitle' => self::TITLES[$route] ?? 'Seller Center', 'storeName' => $seller->store_name, 'storeUrl' => $seller->isLive() ? route('store.show', $seller->slug) : url('/'),
+            'nav' => $nav, 'pageTitle' => self::TITLES[$route] ?? 'Seller Center', 'storeName' => $seller->store_name, 'storeUrl' => $seller->isLive() ? $seller->url() : url('/'),
             'initials' => mb_strtoupper(collect(explode(' ', trim($seller->store_name ?: $seller->owner_name ?: 'S')))->take(2)->map(fn ($w) => mb_substr($w, 0, 1))->implode('')),
             'isDesk' => true, 'isMobile' => false, 'pending' => $seller->status === 'in_review', 'billingFailed' => $seller->subscription_status === 'past_due',
             'vacation' => false, 'vacMsg' => '', 'menu' => false, 'hasToast' => false, 'toast' => '',
@@ -93,7 +93,7 @@ class SellerViews
             'checkDone' => "{$done} of " . count($list), 'checkPct' => round($done / count($list) * 100) . '%',
             'lowStock' => $seller->products()->where('is_active', true)->where('stock', '<=', 5)->orderBy('stock')->limit(5)->get()->map(fn (Product $p) => ['name' => $p->name, 'left' => $p->stock == 0 ? 'Out of stock' : $p->stock . ' left'])->all(),
             'toShip' => Shipment::with('order')->where('seller_id', $seller->id)->where('status', 'pending')->whereHas('order', fn ($o) => $o->where('payment_status', 'paid'))->oldest()->limit(3)->get()->map(fn (Shipment $s) => self::orderLine($s) + ['no' => $s->order->tracking_number])->all(),
-            'planLine' => $seller->subscription_status === 'active' ? 'billed monthly through Stripe' : 'payment needed',
+            'planLine' => $seller->subscription_status === 'active' ? 'billed monthly' : 'payment needed',
         ];
     }
 
@@ -128,12 +128,18 @@ class SellerViews
 
     private static function orderLine(Shipment $s): array
     {
-        $lines = $s->lines()->get();
+        $lines = $s->lines()->with('product')->get();
         $first = $lines->first();
         $more = $lines->count() - 1;
         $o = $s->order;
 
+        // What a seller needs to pack and ship: who, where, what. The buyer's email is deliberately not here.
         return ['items' => ($first ? $first->name . ' × ' . $first->qty : 'Order') . ($more > 0 ? " +{$more} more" : ''), 'buyer' => $o->name, 'city' => trim("{$o->address}, {$o->city}, {$o->state} {$o->zip}", ', '),
+            'phone' => (string) $o->phone, 'addrLines' => array_values(array_filter([$o->address, $o->address2, trim("{$o->city}, {$o->state} {$o->zip}", ', ')])),
+            'note' => trim((string) $o->notes), 'paid' => $o->payment_status === 'paid',
+            'lines' => $lines->map(fn ($l) => ['name' => $l->name, 'variant' => collect([$l->color ? "Color: {$l->color}" : null, $l->size ? "Size: {$l->size}" : null])->filter()->implode(' · '),
+                'sku' => (string) $l->sku, 'qty' => (int) $l->qty, 'unit' => self::money($l->price), 'total' => self::money($l->total),
+                'img' => $l->product?->image ? Product::imageUrl($l->product->image) : null])->all(),
             'due' => $s->status === 'pending' ? 'Ship by ' . ($o->created_at->copy()->addDays(max(1, (int) $s->seller->handling_days))->format('M j')) : ''];
     }
 
@@ -173,7 +179,7 @@ class SellerViews
         return [
             'nextLabel' => $next['amount'] > 0 ? 'NEXT PAYOUT' : 'NO PAYOUT WAITING', 'nextAmount' => self::money($next['amount']), 'nextTo' => $next['when'],
             'holdLine' => 'Daily payouts · ' . ucfirst($seller->level) . ' Seller hold: ' . ($level['hold'] === 0 ? 'same day as delivery' : $level['hold'] . ' ' . str('day')->plural($level['hold']) . ' after delivery') . ($held ? " · {$held} open " . str('claim')->plural($held) . ' on hold' : ''),
-            'bankLine' => ($seller->business_name ?: $seller->store_name) . ($seller->stripe_account_id ? ' · Stripe ••' . substr($seller->stripe_account_id, -4) : ' · no bank connected'), 'bankReady' => (bool) $seller->stripe_account_id,
+            'bankLine' => ($seller->business_name ?: $seller->store_name) . ($seller->stripe_account_id ? ' · Account ••' . substr($seller->stripe_account_id, -4) : ' · no bank connected'), 'bankReady' => (bool) $seller->stripe_account_id,
             'payoutsUpcoming' => $upcoming->all(),
             'payoutsHist' => Payout::where('seller_id', $seller->id)->latest('id')->limit(30)->get()->map(fn (Payout $p) => ['d' => $p->created_at->format('M j'), 'v' => self::money($p->amount),
                 's' => $p->status === 'paid' ? 'Paid' : ($p->status === 'failed' ? 'Failed: ' . $p->failure_reason : ucfirst($p->status)), 'c' => $p->status === 'paid' ? '#15803D' : '#92400E'])->all(),
@@ -200,7 +206,7 @@ class SellerViews
     {
         $status = ['active' => 'Active', 'past_due' => 'Payment failed', 'cancelled' => 'Cancelled', 'none' => 'Not subscribed'][$seller->subscription_status] ?? 'Unknown';
 
-        return ['planStatus' => $status, 'planLine' => $seller->subscription_status === 'active' ? 'billed monthly through Stripe' : 'your store is hidden until the plan is paid',
+        return ['planStatus' => $status, 'planLine' => $seller->subscription_status === 'active' ? 'billed monthly' : 'your store is hidden until the plan is paid',
             'invoices' => app(SellerBilling::class)->invoices($seller)];
     }
 }

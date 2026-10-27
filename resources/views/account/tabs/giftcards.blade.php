@@ -30,7 +30,7 @@
     <label style="{{ $label }}">Or another amount ($10–$500)<input name="amount_other" type="number" min="10" max="500" step="1" inputmode="numeric" placeholder="e.g. 75" style="{{ $input }}" oninput="if(this.value){var r=this.closest('form').querySelector('input[name=amount]:checked');if(r)r.checked=false;this.name='amount'}else{this.name='amount_other'}"></label>
     <label style="{{ $label }}">Recipient email (optional)<input name="recipient_email" type="email" value="{{ old('recipient_email') }}" maxlength="255" placeholder="Leave empty to get the code yourself" style="{{ $input }}"></label>
     <label style="{{ $label }}">Message (optional)<input name="message" value="{{ old('message') }}" maxlength="300" style="{{ $input }}"></label>
-    <button type="submit" style="align-self:flex-start;height:46px;padding:0 22px;border-radius:999px;border:0;background:#C2410C;color:#fff;font-weight:800;cursor:pointer">Pay with Stripe</button>
+    <button type="submit" style="align-self:flex-start;height:46px;padding:0 22px;border-radius:999px;border:0;background:#C2410C;color:#fff;font-weight:800;cursor:pointer">Continue to payment</button>
     <span style="font-size:12px;color:#6B7280">Digital gift cards are emailed right after payment and can't be refunded for cash. <a href="{{ url('/rewards-terms') }}" style="font-weight:700">Gift card terms</a></span>
   </form>
 </div>

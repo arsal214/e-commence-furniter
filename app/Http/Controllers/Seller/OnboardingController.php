@@ -300,7 +300,7 @@ class OnboardingController extends Controller
         }
 
         if (! $ready) {
-            return redirect()->route('seller.bank')->with('error', 'Your bank details are not finished yet. Please complete the Stripe form.');
+            return redirect()->route('seller.bank')->with('error', 'Your bank details are not finished yet. Please complete the bank details form.');
         }
 
         // Submitting for review: from here the team checks documents by hand.

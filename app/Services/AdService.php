@@ -47,7 +47,7 @@ class AdService
         }
 
         return (clone $matching)->whereIn('products.seller_id', $ids)->where('products.stock', '>', 0)
-            ->with('seller:id,store_name,slug,level', 'variants', 'category.parent')->withAvg('reviews', 'rating')->withCount('reviews')
+            ->with('seller:id,uuid,store_name,slug,level', 'variants', 'category.parent')->withAvg('reviews', 'rating')->withCount('reviews')
             ->inRandomOrder()->limit(self::SLOTS)->get();
     }
 

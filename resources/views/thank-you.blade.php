@@ -89,7 +89,7 @@
                 <p class="pg-muted" style="margin:6px 0 0">{{ $order->name }}<br>{{ $order->address }}@if ($order->address2)<br>{{ $order->address2 }}@endif
                 @if ($order->city || $order->zip)<br>{{ trim($order->city . ', ' . $order->state . ' ' . $order->zip, ' ,') }}@endif</p></div>
             <div><b>Payment</b>
-                <p class="pg-muted" style="margin:6px 0 0">{{ ucfirst(str_replace('_', ' ', $order->payment_method)) }} · @if ($isPaid)<span style="color:var(--pg-ok);font-weight:700">Paid</span>@else<span style="color:var(--pg-warn);font-weight:700">Pending</span>@endif<br>
+                <p class="pg-muted" style="margin:6px 0 0">{{ $order->paymentLabel() }} · @if ($isPaid)<span style="color:var(--pg-ok);font-weight:700">Paid</span>@else<span style="color:var(--pg-warn);font-weight:700">Pending</span>@endif<br>
                 Estimated delivery {{ \App\Support\DeliveryEstimate::minDays() }}–{{ \App\Support\DeliveryEstimate::maxDays() }} business days.</p></div>
         </div>
         <p class="pg-muted" style="margin:0">Each seller ships their own items, so packages from different stores can arrive on different days. Questions? <a href="{{ route('contact.show') }}">Contact us</a>. You are covered by Buyer Protection.</p>

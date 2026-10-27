@@ -115,6 +115,7 @@ class MarketViews
         $current = $request->route('slug');
         $user = $request->user();
         $zip = $request->cookie('pg_zip');
+        $isSeller = $user?->isSeller() ?? false; // store owners get Seller Center where shoppers get Account
 
         $navCats = $tree->map(function ($c) use ($current, $request) {
             $on = $request->routeIs('category.landing') && $current === $c->slug;
@@ -129,7 +130,7 @@ class MarketViews
         $onProduct = $route === 'product-details';
         $tabs = collect([
             ['Home', url('/'), 'home', $request->is('/')], ['Categories', url('/sitemap'), 'grid', $request->is('sitemap') || $route === 'category.landing'],
-            ['Deals', url('/category/deals'), 'tag', $request->is('category/deals')], ['Account', $user ? url('/my-account') : route('login'), 'user', $request->is('my-account*')],
+            ['Deals', url('/category/deals'), 'tag', $request->is('category/deals')], [$isSeller ? 'Seller' : 'Account', $isSeller ? url('/seller') : ($user ? url('/my-account') : route('login')), 'user', $request->is($isSeller ? 'seller*' : 'my-account*')],
             ["Cart ({$count})", route('cart'), 'cart', $route === 'cart'],
         ])->map(fn ($t) => ['label' => $t[0], 'href' => $t[1], 'color' => $t[3] ? '#C2410C' : '#4B5563', 'icon' => self::icon(self::PATHS[$t[2]], $t[3] ? '#C2410C' : '#4B5563')])->all();
         $showTabs = ! $onProduct && $route !== 'checkout';
@@ -140,7 +141,9 @@ class MarketViews
             'cartCount' => $count, 'searchInput' => (string) $request->query('q', ''),
             'locLabel' => $zip ? e($zip) : 'Set your ZIP', 'locZip' => $zip ?: '', 'locNote' => $zip ? ($request->cookie('pg_zip_src') === 'ip' ? 'Estimated from your connection · enter your ZIP to change it' : 'Set by you') : 'Add a US delivery ZIP to see delivery dates', 'zipInput' => $zip ?: '',
             'hasLocErr' => false, 'locErr' => '', 'gpsLabel' => 'Use my current location',
-            'menuHello' => 'Hello, ' . ($user ? explode(' ', trim($user->name))[0] : 'Sign in'), 'menuUserHref' => $user ? url('/my-account') : route('login'),
+            'menuHello' => 'Hello, ' . ($user ? explode(' ', trim($user->name))[0] : 'Sign in'), 'menuUserHref' => $isSeller ? url('/seller') : ($user ? url('/my-account') : route('login')),
+            'acctHref' => $isSeller ? url('/seller') : url('/my-account'), 'acctLabel' => $isSeller ? 'Seller Center' : 'Account & orders',
+            'sellHref' => $isSeller ? url('/seller') : url('/sell'), 'sellLabel' => $isSeller ? 'Seller Center' : 'Sell on Peyton Ghalib',
             'footCols' => [
                 ['h' => 'Company', 'links' => [['t' => 'About us', 'href' => url('/about')], ['t' => 'Contact us', 'href' => route('contact.show')], ['t' => 'FAQ', 'href' => url('/faq')], ['t' => 'Accessibility', 'href' => url('/accessibility')]]],
                 ['h' => 'Customer service', 'links' => [['t' => 'Track your order', 'href' => route('track-order')], ['t' => 'Shipping policy', 'href' => route('shipping-policy')],
@@ -163,7 +166,7 @@ class MarketViews
     public static function home(): array
     {
         $tree = self::ordered(app(MarketCatalog::class)->tree());
-        $with = fn () => Product::visible()->with('seller:id,store_name,slug,level', 'variants', 'category.parent')->withAvg('reviews', 'rating')->withCount('reviews');
+        $with = fn () => Product::visible()->with('seller:id,uuid,store_name,slug,level', 'variants', 'category.parent')->withAvg('reviews', 'rating')->withCount('reviews');
         $ic = self::icons();
 
         $deals = $with()->whereRaw('products.sale_price > 0 AND products.sale_price < products.price')->orderByRaw('(products.price - products.sale_price) / products.price DESC')->limit(10)->get();
@@ -183,10 +186,10 @@ class MarketViews
                 ['icon' => $ic['shield'], 'h' => 'Buyer Protection', 'p' => "Full refund if an order doesn't arrive or isn't as described."],
                 ['icon' => $ic['badge'], 'h' => 'Verified US sellers', 'p' => 'Every store passes business and identity checks.'],
                 ['icon' => $ic['ret'], 'h' => 'Easy returns', 'p' => 'Start a return from your orders in a few taps.'],
-                ['icon' => $ic['lock'], 'h' => 'Secure checkout', 'p' => 'Payments encrypted and processed by Stripe.'],
+                ['icon' => $ic['lock'], 'h' => 'Secure checkout', 'p' => 'Payments are encrypted and processed securely.'],
             ],
             'recommended' => $with()->latest('products.id')->limit(25)->get()->map(fn ($p) => self::card($p))->all(), 'canMore' => true,
-            'storeCards' => $stores->map(fn ($s) => ['name' => $s->store_name, 'href' => route('store.show', $s->slug), 'city' => trim("{$s->city}, {$s->state}", ', '),
+            'storeCards' => $stores->map(fn ($s) => ['name' => $s->store_name, 'href' => $s->url(), 'city' => trim("{$s->city}, {$s->state}", ', '),
                 'rating' => '', 'followers' => '', 'level' => ucfirst($s->level) . ' Seller',
                 'lvBg' => ['new' => '#F3F4F6', 'rising' => '#DBEAFE', 'top' => '#EDE9FE', 'elite' => '#FEF3C7'][$s->level] ?? '#F3F4F6',
                 'lvFg' => ['new' => '#374151', 'rising' => '#1E40AF', 'top' => '#5B21B6', 'elite' => '#92400E'][$s->level] ?? '#374151',

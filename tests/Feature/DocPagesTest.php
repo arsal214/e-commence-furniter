@@ -14,7 +14,7 @@ it('serves every company, help and legal page with the real company details fill
 });
 
 it('states the seller terms the business actually runs on', function () {
-    $this->get('/seller-agreement')->assertOk()->assertSee('$19.99')->assertSee('0% commission')->assertSee('Stripe')->assertDontSee('[Confirm');
+    $this->get('/seller-agreement')->assertOk()->assertSee('$19.99')->assertSee('0% commission')->assertDontSee('Stripe')->assertDontSee('[Confirm');
 });
 
 it('shows the help center with its questions and the sitemap with every category and page', function () {

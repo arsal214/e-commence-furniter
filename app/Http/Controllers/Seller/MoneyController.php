@@ -46,7 +46,7 @@ class MoneyController extends Controller
 
         return response()->streamDownload(function () use ($rows) {
             $out = fopen('php://output', 'w');
-            fputcsv($out, ['Date', 'Amount (USD)', 'Status', 'Stripe transfer']);
+            fputcsv($out, ['Date', 'Amount (USD)', 'Status', 'Transfer reference']);
             foreach ($rows as $p) {
                 fputcsv($out, [$p->created_at->toDateString(), $p->amount, $p->status, $p->stripe_transfer_id]);
             }
@@ -66,7 +66,7 @@ class MoneyController extends Controller
         } catch (\Throwable $e) {
             report($e);
 
-            return back()->with('error', 'We could not open Stripe just now. Please try again in a moment.');
+            return back()->with('error', 'We could not open your payout account just now. Please try again in a moment.');
         }
     }
 

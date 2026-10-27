@@ -13,7 +13,7 @@
     <span class="pg-muted">Billed monthly in USD. Cancel any time. No setup fees, no listing fees.</span>
     @foreach($includes as $item)<span class="pg-check">✓ {{ $item }}</span>@endforeach
     <a class="pg-btn" href="{{ route('seller.signup') }}" style="margin-top:8px">Start selling</a>
-    <span class="pg-muted">Card processing (2.9% + $0.30 per order) is charged by Stripe and comes out of each order before payout. If a monthly payment fails, your store is hidden from shoppers until it goes through. Everything is restored automatically.</span>
+    <span class="pg-muted">Card processing (2.9% + $0.30 per order) is deducted from each order before payout. If a monthly payment fails, your store is hidden from shoppers until it goes through. Everything is restored automatically.</span>
   </div>
 </div></section>
 @endsection

@@ -7,6 +7,7 @@ is reported by dc-transpile.py so a changed design is noticed instead of silentl
 NO_STYLE = r'( style="[^"]*")'
 
 PATCHES = [
+    ('top', r'(<a href="[^"]*" style="color:#FDBA74;font-weight:700">View marketplace →</a>)', r"""\g<1><a href="{{ url('/my-account/settings') }}" style="color:#D1D5DB">Account settings</a>"""),
     # ── frame ──────────────────────────────────────────────────────────────────
     ('top', r'Harbor &amp; Hide Goods', "{{ $storeName ?? '' }}"),
     ('top', r'>DB</span>', ">{{ $initials ?? '' }}</span>"),
@@ -25,6 +26,9 @@ PATCHES = [
     ('dashboard', r'Seller plan · \$19\.99/mo · next charge Nov 26', "Seller plan · $19.99/mo · {{ $planLine ?? '' }}"),
     ('dashboard', r'<button data-act="toggleFail"[^>]*>\{\{ \$failLabel \?\? \'\' \}\}</button>', ''),
     # ── orders ─────────────────────────────────────────────────────────────────
+    # An order shows its full pick list and ship-to details (never the buyer's email); see seller/center/order-details.blade.php.
+    ('orders', r""" · \{\{ \$x\['buyer'\] \?\? '' \}\}, \{\{ \$x\['city'\] \?\? '' \}\}</span>""", '</span>'),
+    ('orders', r"""(\{\{ \$x\['due'\] \?\? '' \}\}</span></span></div>)""", r"""\g<1>@include('seller.center.order-details', ['x' => $x])"""),
     ('orders', r'<button data-act="x\.buyUsps"[^>]*>[^<]*</button>', ''),
     ('orders', r'<button data-act="x\.buyUps"[^>]*>[^<]*</button>', ''),
     ('orders', r'<a href="/account/messages"[^>]*>Message buyer</a>', ''),
@@ -42,9 +46,9 @@ PATCHES = [
     ('payouts', r'Daily payouts · Rising Seller hold: 2 days after delivery', "{{ $holdLine ?? '' }}"),
     ('payouts', r'Harbor &amp; Hide Goods LLC · Chase •• 6789 <span style="color:#15803D;font-weight:700">✓ Verified</span>',
      "{{ $bankLine ?? '' }} @if(!empty($bankReady))<span style=\"color:#15803D;font-weight:700\">✓ Connected</span>@endif"),
-    ('payouts', r'Routing 061000104 · Checking · via Stripe Connect', 'Payouts are sent through Stripe Connect.'),
+    ('payouts', r'Routing 061000104 · Checking · via Stripe Connect', 'Payouts are sent to your bank account.'),
     ('payouts', r'<button' + NO_STYLE + r'>Change bank account</button>', r'<button data-post="/seller/payouts/bank"\1>Manage bank account</button>'),
-    ('payouts', r'Changes require re-verification and pause payouts for up to 2 business days\.', 'Stripe re-verifies a changed account before paying out.'),
+    ('payouts', r'Changes require re-verification and pause payouts for up to 2 business days\.', 'A changed account is re-verified before paying out.'),
     ('payouts', r'<a href="/seller/payouts"( style="font-size:13px;font-weight:700">Export CSV)', r'<a href="/seller/payouts/export"\1'),
     # ── levels ─────────────────────────────────────────────────────────────────
     ('levels', r'Rising Seller · \$8,420 lifetime sales', "{{ $levelLine ?? '' }}"),

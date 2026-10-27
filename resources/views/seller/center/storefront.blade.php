@@ -26,7 +26,7 @@
     </label>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
       <button type="submit" style="height:46px;padding:0 24px;border-radius:999px;border:0;background:#C2410C;color:#FFFFFF;font-weight:800;cursor:pointer">Save storefront</button>
-      @if($seller->isLive())<a href="{{ route('store.show', $seller->slug) }}" style="font-weight:700;font-size:14px">Preview store</a>@endif
+      @if($seller->isLive())<a href="{{ $seller->url() }}" style="font-weight:700;font-size:14px">Preview store</a>@endif
     </div>
   </div>
 </form>

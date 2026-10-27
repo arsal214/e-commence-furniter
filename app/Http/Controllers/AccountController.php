@@ -13,6 +13,11 @@ class AccountController extends Controller
     {
         abort_unless(array_key_exists($tab, AccountViews::TABS), 404);
 
+        // A store owner's home is Seller Center; the other account tabs (settings, addresses, ...) stay reachable.
+        if ($tab === 'overview' && $request->user()->isSeller()) {
+            return redirect('/seller');
+        }
+
         return view('account.page', AccountViews::build($request->user(), $tab));
     }
 

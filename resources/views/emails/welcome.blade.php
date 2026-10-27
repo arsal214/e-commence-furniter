@@ -63,7 +63,7 @@
                 <div class="perk-icon">&#128274;</div>
                 <div class="perk-text">
                     <div class="perk-title">Secure Checkout</div>
-                    <div class="perk-desc">Shop with confidence using our secure payment options including cards through Stripe, and PayPal.</div>
+                    <div class="perk-desc">Shop with confidence using our secure payment options including major credit and debit cards and PayPal.</div>
                 </div>
             </div>
         </div>

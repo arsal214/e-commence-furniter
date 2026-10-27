@@ -21,7 +21,7 @@
         <div>
             <section class="co-panel" aria-labelledby="co-card-title">
                 <h2 class="co-panel__title" id="co-card-title">Card details</h2>
-                <p class="co-panel__hint">Entered directly with Stripe — we never see or store your card number.</p>
+                <p class="co-panel__hint">Your card details are encrypted — we never see or store your card number.</p>
 
                 {{-- Reserved height: the Payment Element mounts async, and a
                      collapsing skeleton would shift the button under the cursor. --}}
@@ -52,7 +52,7 @@
 
                 <p class="co-secure">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-                    Secured by Stripe · 256-bit encryption
+                    Secure payment · 256-bit encryption
                 </p>
 
                 <div class="co-cards" aria-hidden="true">

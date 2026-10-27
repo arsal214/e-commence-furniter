@@ -81,7 +81,7 @@
   "sections": [
    {
     "h": "1. Who we are",
-    "p": "Peyton Ghalib LLC (\"Peyton Ghalib\", \"we\") operates an online marketplace where independent sellers list and sell products to buyers in the United States. Sellers are the sellers of record for their products; we provide the platform, payment processing through our partner Stripe, and Buyer Protection."
+    "p": "Peyton Ghalib LLC (\"Peyton Ghalib\", \"we\") operates an online marketplace where independent sellers list and sell products to buyers in the United States. Sellers are the sellers of record for their products; we provide the platform, payment processing through our payment partners, and Buyer Protection."
    },
    {
     "h": "2. Eligibility",
@@ -97,7 +97,7 @@
    },
    {
     "h": "5. Payments",
-    "p": "Payments are processed by Stripe. We do not store your full card number. Gift cards and reward points may be applied at checkout under their own terms."
+    "p": "Payments are processed by our payment providers. We do not store your full card number. Gift cards and reward points may be applied at checkout under their own terms."
    },
    {
     "h": "6. Shipping, returns and Buyer Protection",
@@ -133,7 +133,7 @@
   "sections": [
    {
     "h": "Information we collect",
-    "p": "Account details (name, email, phone), delivery addresses, order history, messages with sellers and support, reviews, device and usage data, an approximate location from your IP address (used to suggest a delivery ZIP and cached for up to 7 days), and payment details processed by Stripe (we receive only the card brand and last four digits)."
+    "p": "Account details (name, email, phone), delivery addresses, order history, messages with sellers and support, reviews, device and usage data, an approximate location from your IP address (used to suggest a delivery ZIP and cached for up to 7 days), and payment details processed by our payment provider (we receive only the card brand and last four digits)."
    },
    {
     "h": "How we use it",
@@ -141,7 +141,7 @@
    },
    {
     "h": "How we share it",
-    "p": "With the seller you buy from (name, delivery address and phone for fulfillment), with service providers such as Stripe, shipping carriers and SMS providers, and when required by law. We do not sell your personal information for money."
+    "p": "With the seller you buy from (name, delivery address and phone for fulfillment), with service providers such as payment processors, shipping carriers and SMS providers, and when required by law. We do not sell your personal information for money."
    },
    {
     "h": "Your choices",
@@ -286,7 +286,7 @@
    },
    {
     "h": "3. Subscription and fees",
-    "p": "The seller plan costs $19.99 per month, billed in advance. Peyton Ghalib charges 0% commission on sales. Card-processing fees (Stripe's standard rate, currently 2.9% + $0.30 per order) are deducted from each order's payout."
+    "p": "The seller plan costs $19.99 per month, billed in advance. Peyton Ghalib charges 0% commission on sales. Card-processing fees (currently 2.9% + $0.30 per order) are deducted from each order's payout."
    },
    {
     "h": "4. Failed payments",
@@ -294,7 +294,7 @@
    },
    {
     "h": "5. Payouts",
-    "p": "We pay out daily via Stripe Connect for orders that have been delivered, after a short hold that depends on your seller level: New — 3 days, Rising — 2 days, Top — 1 day, Elite — same day. We may hold funds related to open claims."
+    "p": "We pay out daily to your bank account for orders that have been delivered, after a short hold that depends on your seller level: New — 3 days, Rising — 2 days, Top — 1 day, Elite — same day. We may hold funds related to open claims."
    },
    {
     "h": "6. Listings",

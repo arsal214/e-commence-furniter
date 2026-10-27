@@ -17,7 +17,7 @@ class AuthController extends Controller
     public function showLogin(Request $request)
     {
         if (Auth::check()) {
-            return redirect(Auth::user()->isAdmin() ? '/admin' : '/my-account');
+            return redirect(Auth::user()->homeUrl());
         }
         // Store intended redirect from query param (e.g. ?redirect=/checkout)
         if ($request->query('redirect')) {
@@ -42,9 +42,8 @@ class AuthController extends Controller
                 return redirect()->route('account.set-password');
             }
 
-            return redirect()->intended(
-                Auth::user()->isAdmin() ? '/admin' : '/my-account'
-            );
+            // A store owner always starts at the dashboard; shoppers and admins go back to where they were headed.
+            return Auth::user()->isSeller() ? redirect('/seller') : redirect()->intended(Auth::user()->homeUrl());
         }
 
         return back()->withErrors([

@@ -11,7 +11,6 @@
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,45%),1fr));gap:10px;margin-top:24px">
       <div style="border:1px solid #E5E7EB;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:2px"><b style="font-size:20px;font-weight:800">★ {{ $store['rating'] ?? '' }}</b><span style="font-size:13px;color:#4B5563">Store rating</span></div>
-      <div style="border:1px solid #E5E7EB;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:2px"><b style="font-size:20px;font-weight:800">{{ $store['products'] ?? '' }}</b><span style="font-size:13px;color:#4B5563">Products</span></div>
       <div style="border:1px solid #E5E7EB;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:2px"><b style="font-size:20px;font-weight:800">{{ $store['ships'] ?? '' }}</b><span style="font-size:13px;color:#4B5563">Ships within</span></div>
       <div style="border:1px solid #E5E7EB;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:2px"><b style="font-size:20px;font-weight:800">{{ $store['returns'] ?? '' }}</b><span style="font-size:13px;color:#4B5563">Return window</span></div>
     </div>

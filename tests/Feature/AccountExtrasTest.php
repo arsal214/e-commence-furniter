@@ -80,14 +80,14 @@ it('lets a shopper follow and unfollow a live store, and shows its new products'
     Product::create(['seller_id' => $s->id, 'category_id' => $cat->id, 'name' => 'Maple Spoon', 'slug' => 'maple-spoon', 'price' => 9, 'stock' => 5, 'is_active' => true, 'moderation_status' => 'approved']);
 
     $this->post('/store/maple/follow')->assertRedirect(route('login'));
-    $this->get('/store/maple')->assertOk()->assertSee('0 followers')->assertSee('Follow');
+    $this->get($s->url())->assertOk()->assertSee('0 followers')->assertSee('Follow');
 
     $this->actingAs($me)->post('/store/maple/follow')->assertSessionHas('success');
     expect(StoreFollow::count())->toBe(1);
     $this->actingAs($me)->post('/store/maple/follow'); // a second tap undoes it, never doubles it
     expect(StoreFollow::count())->toBe(0);
     $this->actingAs($me)->post('/store/maple/follow');
-    $this->actingAs($me)->get('/store/maple')->assertSee('1 follower')->assertSee('Following');
+    $this->actingAs($me)->get($s->url())->assertSee('1 follower')->assertSee('Following');
     $this->actingAs($me)->get('/my-account/following')->assertOk()->assertSee('Maple')->assertSee('Maple Spoon');
 
     $s->update(['subscription_status' => 'past_due']); // a hidden store disappears from the list and cannot be followed

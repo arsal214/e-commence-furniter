@@ -112,7 +112,7 @@ it('shows what is coming and what was paid, with no made-up bank details', funct
     Payout::create(['seller_id' => $a->seller->id, 'amount' => 55.5, 'status' => 'paid', 'paid_at' => now(), 'release_at' => now()]);
     Payout::create(['seller_id' => $a->seller->id, 'amount' => 9.0, 'status' => 'failed', 'failure_reason' => 'Account closed', 'release_at' => now()]);
 
-    $html = $this->actingAs($a)->get('/seller/payouts')->assertOk()->assertSee('NEXT PAYOUT')->assertSee('$96.80')->assertSee('Stripe ••9876')->assertSee('$55.50')->assertSee('Failed: Account closed')
+    $html = $this->actingAs($a)->get('/seller/payouts')->assertOk()->assertSee('NEXT PAYOUT')->assertSee('$96.80')->assertSee('Account ••9876')->assertDontSee('Stripe')->assertSee('$55.50')->assertSee('Failed: Account closed')
         ->assertSee('Elite Seller hold: same day')->assertSee('/seller/payouts/export', false)->getContent();
     expect($html)->not->toContain('Chase')->not->toContain('061000104')->not->toContain('Harbor');
 });

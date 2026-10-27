@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Seller extends Model
 {
@@ -41,6 +42,19 @@ class Seller extends Model
 
     /** Sign-up steps in order. A seller can open any step up to the one they have reached. */
     public const STEPS = ['verify', 'plan', 'business', 'owner', 'bank', 'done'];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Seller $s) {
+            $s->uuid ??= Str::upper((string) Str::uuid());
+        });
+    }
+
+    /** The store's public address: /stores/{slug}/page/{uuid}. The uuid, not the row id, identifies it. */
+    public function url(): string
+    {
+        return route('store.show', [$this->slug, $this->uuid]);
+    }
 
     public function coupons()
     {

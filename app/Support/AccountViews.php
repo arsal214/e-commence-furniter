@@ -76,7 +76,7 @@ class AccountViews
 
             $cards[] = [
                 'no' => $order->tracking_number, 'date' => $order->created_at->format('M j, Y'), 'total' => MarketViews::money($lines->sum('total')),
-                'storeName' => $first->seller?->store_name ?? 'Peyton Ghalib', 'storeHref' => $first->seller?->isLive() ? route('store.show', $first->seller->slug) : url('/'),
+                'storeName' => $first->seller?->store_name ?? 'Peyton Ghalib', 'storeHref' => $first->seller?->isLive() ? $first->seller->url() : url('/'),
                 'status' => $label, 'sb' => $bg, 'sc' => $fg, 'delivered' => $state === 'delivered', 'trackUrl' => route('track-order', ['tracking' => $order->tracking_number]),
                 'eta' => ['pending' => 'Waiting for the seller to ship', 'shipped' => 'On its way' . ($ship?->shipped_at ? ' · expected by ' . $ship->shipped_at->copy()->addDays(DeliveryEstimate::maxDays())->format('M j') : ''),
                     'delivered' => 'Delivered' . ($ship?->delivered_at ? ' ' . $ship->delivered_at->format('M j') : ''), 'refunded' => 'Refunded'][$state],
@@ -120,7 +120,7 @@ class AccountViews
         return \App\Models\StoreFollow::with('seller')->where('user_id', $user->id)->latest('id')->get()->filter(fn ($f) => $f->seller?->isLive())->map(function ($f) {
             $s = $f->seller;
 
-            return ['initial' => mb_strtoupper(mb_substr($s->store_name, 0, 1)), 'name' => $s->store_name, 'slug' => $s->slug, 'href' => route('store.show', $s->slug), 'city' => trim("{$s->city}, {$s->state}", ', '),
+            return ['initial' => mb_strtoupper(mb_substr($s->store_name, 0, 1)), 'name' => $s->store_name, 'slug' => $s->slug, 'href' => $s->url(), 'city' => trim("{$s->city}, {$s->state}", ', '),
                 'items' => Product::visible()->where('seller_id', $s->id)->latest('id')->limit(3)->get()->map(fn ($p) => ['href' => route('product-details', $p->slug), 'name' => $p->name, 'price' => MarketViews::money($p->from_price)])->all()];
         })->values()->all();
     }
@@ -148,7 +148,7 @@ class AccountViews
     private static function messages(User $user): array
     {
         $svc = app(\App\Services\MessageService::class);
-        $threads = \App\Models\Conversation::with('seller:id,store_name,slug', 'lastMessage')->where('buyer_id', $user->id)->whereHas('messages')->orderByDesc('last_message_at')->limit(50)->get();
+        $threads = \App\Models\Conversation::with('seller:id,uuid,store_name,slug', 'lastMessage')->where('buyer_id', $user->id)->whereHas('messages')->orderByDesc('last_message_at')->limit(50)->get();
         $request = request();
 
         $composeTo = null;
@@ -166,7 +166,7 @@ class AccountViews
         $thread = null;
         if ($open) {
             $svc->markRead($open, 'buyer');
-            $thread = ['id' => $open->id, 'name' => $open->seller->store_name, 'href' => route('store.show', $open->seller->slug),
+            $thread = ['id' => $open->id, 'name' => $open->seller->store_name, 'href' => $open->seller->url(),
                 'messages' => $open->messages()->orderBy('id')->limit(200)->get()->map(fn ($m) => ['body' => $m->body, 'mine' => $m->from === 'buyer', 'time' => $m->created_at->format('M j, g:i A')])->all()];
         }
 

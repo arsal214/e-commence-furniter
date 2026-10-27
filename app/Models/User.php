@@ -57,6 +57,17 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
+    public function isSeller(): bool
+    {
+        return $this->role === 'seller';
+    }
+
+    /** Where this person lands after signing in: admins, sellers and shoppers each have their own home. */
+    public function homeUrl(): string
+    {
+        return $this->isAdmin() ? '/admin' : ($this->isSeller() ? '/seller' : '/my-account');
+    }
+
     public function seller()
     {
         return $this->hasOne(Seller::class);

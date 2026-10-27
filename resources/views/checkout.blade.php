@@ -248,7 +248,7 @@
                         <span class="co-choice__mark" aria-hidden="true"></span>
                         <span>
                             <span class="co-choice__label">Debit / Credit card</span>
-                            <span class="co-choice__note">Processed securely by Stripe</span>
+                            <span class="co-choice__note">Processed securely</span>
                         </span>
                     </label>
 

@@ -10,7 +10,7 @@
   <title>{{ $siteTitle }}</title>
   <link rel="icon" type="image/svg+xml" href="{{ asset('assets/logo/logo-mark.svg') }}">
   <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
-  <link rel="apple-touch-icon" href="{{ asset('favicon.ico') }}">
+  <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
   <meta name="description" content="{{ $siteDesc }}">
   <meta name="robots" content="@yield('robots', 'index, follow')">
   <link rel="canonical" href="@yield('canonical', url()->current())">

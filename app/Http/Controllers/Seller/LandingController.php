@@ -46,7 +46,7 @@ class LandingController extends Controller
                 ['Verified email', "We'll send a 6-digit code"],
             ],
             'faq' => [
-                ['Is there really no commission?', 'Yes. You pay $19.99 a month and we take 0% of your sales. Card processing (2.9% + $0.30 per order) is charged by our payment partner Stripe and comes out of each order before your payout.'],
+                ['Is there really no commission?', 'Yes. You pay $19.99 a month and we take 0% of your sales. Card processing (2.9% + $0.30 per order) is deducted from each order before your payout.'],
                 ['How long does approval take?', 'Most applications are reviewed by our team within 1–2 business days. New products are also reviewed before they go live.'],
                 ['When do I get paid?', 'Daily, for orders that have been delivered. Higher seller levels get paid sooner after delivery.'],
                 ['What if my monthly payment fails?', 'Your store is hidden from shoppers right away and comes back automatically as soon as the payment succeeds.'],

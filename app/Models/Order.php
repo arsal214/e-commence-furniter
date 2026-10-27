@@ -72,6 +72,12 @@ class Order extends Model
      * 'live' | 'test' | null. Null covers COD and any Stripe order placed before
      * the column existed, where the mode genuinely isn't known.
      */
+    /** How the customer paid, in words for them: the card processor is never named. */
+    public function paymentLabel(): string
+    {
+        return ['stripe' => 'Card', 'paypal' => 'PayPal', 'cod' => 'Cash on delivery', 'gift_card' => 'Gift card'][$this->payment_method] ?? ucfirst(str_replace('_', ' ', (string) $this->payment_method));
+    }
+
     public function getStripeModeAttribute(): ?string
     {
         if ($this->payment_method !== 'stripe' || $this->stripe_livemode === null) {

@@ -12,7 +12,7 @@
     'Seller plan, $19.99/month' => $seller->subscription_status === 'active',
     'Business details and registration certificate' => $seller->documents->contains('type', 'registration'),
     'Owner details and ID' => $seller->documents->contains('type', 'id_front'),
-    'Bank account (Stripe)' => (bool) $seller->stripe_account_id,
+    'Bank account' => (bool) $seller->stripe_account_id,
   ] as $label => $ok)
     <li style="display:flex;justify-content:space-between;gap:12px"><span>{{ $label }}</span><b style="color:{{ $ok ? 'var(--pg-ok)' : 'var(--pg-warn)' }}">{{ $ok ? '✓ Done' : 'Missing' }}</b></li>
   @endforeach

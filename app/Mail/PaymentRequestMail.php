@@ -55,7 +55,7 @@ class PaymentRequestMail extends Mailable
                     'amount'  => '$' . number_format($this->order->total, 2),
                     'label'   => 'Pay Securely Now',
                     'url'     => $this->order->pay_url,
-                    'caption' => 'Card payment handled by Stripe. Your order reference is ' . $this->order->tracking_number . '.',
+                    'caption' => 'Secure card payment. Your order reference is ' . $this->order->tracking_number . '.',
                 ],
                 // The tracking panel would sit directly under the pay panel and
                 // compete with it; the reference is already in the caption.

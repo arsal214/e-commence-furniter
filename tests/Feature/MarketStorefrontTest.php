@@ -155,12 +155,21 @@ it('shows a live store with its own products only and 404s a hidden or unknown o
     msProd($c, $a, ['name' => 'A Product']);
     msProd($c, $b, ['name' => 'B Product']);
 
-    $this->get('/store/store-a')->assertOk()->assertSee('A Product')->assertSee('Hand made in Georgia')->assertDontSee('B Product');
+    $this->get($a->url())->assertOk()->assertSee('A Product')->assertSee('Hand made in Georgia')->assertDontSee('B Product');
+    expect($a->url())->toMatch('#/stores/store-a/page/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$#'); // the id is a uuid, not a row number
+
+    expect($this->get($a->url())->getContent())->not->toMatch('#>\s*[\d,]+\s*</b><span[^>]*>Products<#'); // no published-products count
+
+    // The old address and a stale store name both lead to the current address.
+    $this->get('/store/store-a')->assertStatus(301)->assertRedirect($a->url());
+    $this->get('/stores/old-name/page/' . $a->uuid)->assertStatus(301)->assertRedirect($a->url());
+    $this->get('/stores/store-a/page/' . $b->uuid)->assertRedirect($b->url()); // a mismatched pair is corrected, not trusted
+    $this->get('/stores/store-a/page/00000000-0000-0000-0000-000000000000')->assertNotFound();
 
     $b->update(['subscription_status' => 'past_due']);
-    $this->get('/store/store-b')->assertNotFound();
-    msStore('pending-store', ['status' => 'in_review']);
-    $this->get('/store/pending-store')->assertNotFound();
+    $this->get($b->url())->assertNotFound();
+    $pending = msStore('pending-store', ['status' => 'in_review']);
+    $this->get($pending->url())->assertNotFound();
     $this->get('/store/nope')->assertNotFound();
 });
 
@@ -199,7 +208,7 @@ it('escapes seller-written text everywhere it is shown', function () {
     $s = msStore('s1', ['store_name' => '<b>Evil</b> Store', 'about' => '<script>x()</script>']);
     $p = msProd($c, $s, ['name' => '<img src=x onerror=alert(1)>', 'description' => '<script>steal()</script>']);
 
-    foreach (['/', '/shop', '/store/s1', route('product-details', $p->slug), '/search?q=img'] as $url) {
+    foreach (['/', '/shop', $s->url(), route('product-details', $p->slug), '/search?q=img'] as $url) {
         $html = $this->get($url)->assertOk()->getContent();
         expect($html)->not->toContain('<script>steal()')->not->toContain('<script>x()')->not->toContain('<img src=x onerror')->not->toContain('<b>Evil</b>');
     }

@@ -115,8 +115,8 @@ it('does not start conversations with stores that are not live', function () {
 });
 
 it('offers the Message buttons on store and product pages', function () {
-    msgStore('maple');
-    $this->get('/store/maple')->assertOk()->assertSee('/my-account/messages?to=maple', false);
+    $owner = msgStore('maple');
+    $this->get($owner->seller->url())->assertOk()->assertSee('/my-account/messages?to=maple', false);
     $buyer = User::factory()->create();
     $this->actingAs($buyer)->get('/my-account/messages?to=maple')->assertOk()->assertSee('New message to Maple');
 });

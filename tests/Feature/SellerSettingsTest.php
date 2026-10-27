@@ -31,7 +31,7 @@ it('saves processing time and return policy, and shows them to shoppers', functi
 
     $s = $u->seller->fresh();
     expect([$s->handling_days, $s->return_window_days, $s->return_shipping_payer])->toBe([3, 60, 'seller']);
-    $this->get(route('store.show', 'maple'))->assertSee('3 days')->assertSee('60 days');
+    $this->get($s->url())->assertSee('3 days')->assertSee('60 days');
 });
 
 it('refuses settings values the design does not offer', function () {

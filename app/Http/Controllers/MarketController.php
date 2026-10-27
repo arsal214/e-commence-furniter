@@ -99,20 +99,32 @@ class MarketController extends Controller
         return $this->page($request, $base, [
             'title' => "{$q} | Search | Peyton Ghalib", 'description' => "Search results for {$q} on Peyton Ghalib.", 'robots' => 'noindex, follow',
             'heading' => "Results for \"{$q}\"", 'kicker' => 'SEARCH RESULTS', 'crumb' => "Search: {$q}",
-            'subs' => $stores->map(fn ($s) => ['name' => 'Store: ' . $s->store_name, 'href' => route('store.show', $s->slug), 'on' => false])->all(),
+            'subs' => $stores->map(fn ($s) => ['name' => 'Store: ' . $s->store_name, 'href' => $s->url(), 'on' => false])->all(),
         ]);
     }
 
-    public function store(Request $request, string $slug)
+    public function store(Request $request, string $slug, string $uuid)
     {
-        $store = Seller::live()->where('slug', $slug)->firstOrFail();
-        $products = Product::visible()->where('products.seller_id', $store->id)->with('seller:id,store_name,slug,level', 'variants')
+        $store = Seller::live()->where('uuid', $uuid)->firstOrFail();
+
+        // A renamed store keeps working under its old name: send it to the current address.
+        if ($store->slug !== $slug) {
+            return redirect($store->url(), 301);
+        }
+
+        $products = Product::visible()->where('products.seller_id', $store->id)->with('seller:id,uuid,store_name,slug,level', 'variants')
             ->withAvg('reviews', 'rating')->withCount('reviews')->orderByDesc('products.id')->paginate(24)->withQueryString();
 
         return view('market.store', PageViews::store($store, $products) + [
             'title' => "{$store->store_name} | Peyton Ghalib",
             'description' => $store->about ? str($store->about)->limit(150)->toString() : "Shop {$store->store_name}, a verified US seller on Peyton Ghalib.",
         ]);
+    }
+
+    /** Links made before stores had their own id: /store/{slug} goes to the new address. */
+    public function storeLegacy(string $slug)
+    {
+        return redirect(Seller::live()->where('slug', $slug)->firstOrFail()->url(), 301);
     }
 
     /** A click on a promoted listing: counted and billed once, then on to the product. */
@@ -144,7 +156,7 @@ class MarketController extends Controller
         $max = $request->filled('max') && is_numeric($request->query('max')) ? max(0, (float) $request->query('max')) : null;
         $sort = in_array($request->query('sort'), ['newest', 'price_asc', 'price_desc', 'rating'], true) ? $request->query('sort') : 'newest';
 
-        return $base->with('seller:id,store_name,slug,level', 'variants', 'category.parent')->withAvg('reviews', 'rating')->withCount('reviews')
+        return $base->with('seller:id,uuid,store_name,slug,level', 'variants', 'category.parent')->withAvg('reviews', 'rating')->withCount('reviews')
             ->when($min !== null, fn ($q) => $q->whereRaw(self::EFFECTIVE . ' >= CAST(? AS DECIMAL(10,2))', [$min]))
             ->when($max !== null, fn ($q) => $q->whereRaw(self::EFFECTIVE . ' <= CAST(? AS DECIMAL(10,2))', [$max]))
             ->when($request->boolean('instock'), fn ($q) => $q->where('products.stock', '>', 0))

@@ -91,7 +91,7 @@ class PageViews
             'catName' => $root?->name ?? 'Shop', 'catHref' => $root ? route('category.landing', $root->slug) : url('/shop'), 'tint' => MarketViews::tint($root?->slug, $root?->id),
             'img' => $gallery->isNotEmpty() ? $url($gallery[0]) : null,
             'thumbs' => $gallery->count() > 1 ? $gallery->map(fn ($g, $i) => ['label' => 'Photo ' . ($i + 1), 'img' => $url($g), 'bd' => $i === 0 ? '#111827' : '#E5E7EB'])->all() : [],
-            'storeSlug' => $seller?->slug ?? '', 'store' => $seller?->store_name ?? 'Peyton Ghalib', 'storeHref' => $seller?->isLive() ? route('store.show', $seller->slug) : url('/shop'),
+            'storeSlug' => $seller?->slug ?? '', 'store' => $seller?->store_name ?? 'Peyton Ghalib', 'storeHref' => $seller?->isLive() ? $seller->url() : url('/shop'),
             'level' => $seller ? self::LEVEL[$seller->level] : 'Peyton Ghalib', 'lvBg' => '#FFF1E8', 'lvFg' => '#9A3412',
             'storeInitial' => mb_strtoupper(mb_substr($seller?->store_name ?? 'P', 0, 1)), 'city' => $seller ? trim("{$seller->city}, {$seller->state}", ', ') : 'the US',
             'storeMeta' => ($sellerRating ? '★ ' . number_format((float) $sellerRating, 1) . ' · ' : '') . ($seller?->approved_at ? 'On Peyton Ghalib since ' . $seller->approved_at->format('Y') : 'Peyton Ghalib'),
@@ -153,14 +153,14 @@ class PageViews
 
     public static function cart(array $items, float $subtotal, ShippingService $shipping, float $welcomeDiscount, array $coupon = ['code' => null, 'discount' => 0.0], array $points = ['points' => 0, 'discount' => 0.0, 'available' => 0, 'on' => false], float $gift = 0.0): array
     {
-        $products = Product::with('seller:id,store_name,slug,level,city,state', 'category.parent')->whereIn('id', collect($items)->pluck('id')->filter())->get()->keyBy('id');
+        $products = Product::with('seller:id,uuid,store_name,slug,level,city,state', 'category.parent')->whereIn('id', collect($items)->pluck('id')->filter())->get()->keyBy('id');
         $groups = [];
 
         foreach ($items as $key => $line) {
             $p = $products->get($line['id'] ?? 0);
             $seller = $p?->seller;
             $gk = $seller?->id ?? 'house';
-            $groups[$gk] ??= ['store' => $seller?->store_name ?? 'Peyton Ghalib', 'href' => $seller?->isLive() ? route('store.show', $seller->slug) : url('/shop'),
+            $groups[$gk] ??= ['store' => $seller?->store_name ?? 'Peyton Ghalib', 'href' => $seller?->isLive() ? $seller->url() : url('/shop'),
                 'level' => $seller ? self::LEVEL[$seller->level] : '', 'lvBg' => '#FFF1E8', 'lvFg' => '#9A3412', 'city' => $seller ? trim("{$seller->city}, {$seller->state}", ', ') : 'the US', 'items' => [], 'sum' => 0.0];
             $lineTotal = (float) $line['price'] * (int) $line['qty'];
             $groups[$gk]['sum'] += $lineTotal;

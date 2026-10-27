@@ -36,4 +36,4 @@
   <label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" name="is_default" value="1" @checked($addresses->isEmpty() || old('is_default')) style="width:18px;height:18px;accent-color:#C2410C"> Use as my default address at checkout</label>
   <button type="submit" style="align-self:flex-start;height:46px;padding:0 22px;border-radius:999px;border:0;background:#C2410C;color:#fff;font-weight:800;cursor:pointer">Save address</button>
 </form>
-<span style="font-size:13px;color:#4B5563">Card details are entered on the secure payment step and handled by Stripe. Peyton Ghalib never stores your card number.</span>
+<span style="font-size:13px;color:#4B5563">Card details are entered on the secure payment step. Peyton Ghalib never stores your card number.</span>

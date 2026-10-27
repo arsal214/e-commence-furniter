@@ -228,7 +228,8 @@ Route::get('/shop',             [\App\Http\Controllers\MarketController::class, 
 Route::post('/location',         [\App\Http\Controllers\MarketController::class, 'location'])->middleware('throttle:30,1,location')->name('location');
 Route::post('/location/detect',  [\App\Http\Controllers\MarketController::class, 'detectLocation'])->middleware('throttle:10,1,locdetect')->name('location.detect');
 Route::get('/search',           [\App\Http\Controllers\MarketController::class, 'search'])->name('search');
-Route::get('/store/{slug}',     [\App\Http\Controllers\MarketController::class, 'store'])->name('store.show');
+Route::get('/stores/{slug}/page/{uuid}', [\App\Http\Controllers\MarketController::class, 'store'])->where('uuid', '[0-9A-Fa-f-]{36}')->name('store.show');
+Route::get('/store/{slug}', [\App\Http\Controllers\MarketController::class, 'storeLegacy']); // old address: sent on to the new one
 Route::get('/shop-v1',          fn() => redirect('/shop', 301));
 Route::redirect('/categories', '/sitemap', 301); // the old categories page
 Route::redirect('/category/beauty-produts', '/category/beauty-products', 301); // SEO: typo fix (must precede dynamic route)

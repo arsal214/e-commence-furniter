@@ -8,6 +8,14 @@ NO_STYLE = r'( style="[^"]*")'
 BTN = 'display:flex;align-items:center;justify-content:center;color:#111827;font-size:13.3px;'
 
 PATCHES = [
+    # ── the payment processor is never named to shoppers ──
+    ('checkout', r'Encrypted · processed by Stripe', 'Encrypted · processed securely'),
+    ('cart', r'Secure payments by Stripe', 'Secure payments'),
+    # ── header: a store owner sees Seller Center where a shopper sees Account and "Sell on Peyton Ghalib" ──
+    ('top', r'<a href="/my-account" (style="[^"]*" aria-label="Account")>', r"""<a href="{{ $acctHref ?? '/my-account' }}" \g<1>>"""),
+    ('top', r'Account &amp; orders', r"""{{ $acctLabel ?? 'Account & orders' }}"""),
+    ('top', r'<a href="/sell" (style="[^"]*"(?: style-hover="[^"]*")?)>Sell on Peyton Ghalib</a>', r"""<a href="{{ $sellHref ?? '/sell' }}" \g<1>>{{ $sellLabel ?? 'Sell on Peyton Ghalib' }}</a>"""),
+    ('top', r'(<a href=")/sell(" [^>]*>)Sell on Peyton Ghalib(<span)', r"""\g<1>{{ $sellHref ?? '/sell' }}\g<2>{{ $sellLabel ?? 'Sell on Peyton Ghalib' }}\g<3>"""),
     # ── home: store cards show the city and level, never how many products a store has published ──
     ('home', r"""\{\{ \$s\['city'\] \?\? '' \}\} · ★ \{\{ \$s\['rating'\] \?\? '' \}\} · \{\{ \$s\['followers'\] \?\? '' \}\} followers</span>""",
      """{{ $s['city'] ?? '' }} · {{ $s['level'] ?? '' }}</span>"""),
@@ -77,7 +85,8 @@ PATCHES = [
     ('store', r'<div style="display:flex;gap:8px;padding-bottom:4px"><button data-act="store\.onFollow".*?</a></div>',
      '<div style="display:flex;gap:8px;padding-bottom:4px"><?php if(auth()->check()): ?><form method="POST" action="{{ route("store.follow", $store["slug"]) }}">@csrf<button type="submit" style="height:46px;padding:0 24px;border-radius:999px;border:1.5px solid #111827;background:{{ $store["fBg"] }};color:{{ $store["fFg"] }};font-weight:800;cursor:pointer">{{ $store["fLabel"] }}</button></form><?php else: ?><a href="{{ route("login") }}" style="height:46px;padding:0 24px;border-radius:999px;border:1.5px solid #111827;color:#111827;display:flex;align-items:center;font-weight:800">Follow</a><?php endif; ?></div>'),
     ('store', r"On Peyton Ghalib since \{\{ \$store\['since'\] \?\? '' \}\}", "On Peyton Ghalib since {{ $store['since'] ?? '' }} · {{ $store['followers'] }}"),
-    ('store', r"\{\{ \$store\['followers'\] \?\? '' \}\}</b><span([^>]*)>Followers", r"{{ $store['products'] ?? '' }}</b><span\1>Products"),
+    # The followers tile goes: the count is already in the header line, and how many products a store has published is never shown.
+    ('store', r"""\s*<div style="[^"]*"><b style="[^"]*">\{\{ \$store\['followers'\] \?\? '' \}\}</b><span[^>]*>Followers</span></div>""", ''),
     ('store', r"\{\{ \$store\['resp'\] \?\? '' \}\}</b><span([^>]*)>Typical reply time", r"{{ $store['ships'] ?? '' }}</b><span\1>Ships within"),
     ('store', r"Over \{\{ \$store\['freeOver'\] \?\? '' \}\}</b><span([^>]*)>Free shipping", r"{{ $store['returns'] ?? '' }}</b><span\1>Return window"),
     ('store', r'<\?php if\(!empty\(\$store\[\'hasSale\'\]\)\): \?>.*?<\?php endif; \?>', ''),
