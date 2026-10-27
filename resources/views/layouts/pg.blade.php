@@ -19,11 +19,11 @@
   <meta property="og:title" content="{{ $siteTitle }}">
   <meta property="og:description" content="{{ $siteDesc }}">
   <meta property="og:url" content="@yield('canonical', url()->current())">
-  <meta property="og:image" content="@yield('og_image', asset('assets/img/logo.png'))">
+  <meta property="og:image" content="@yield('og_image', asset('assets/img/logo-og.jpg'))">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ $siteTitle }}">
   <meta name="twitter:description" content="{{ $siteDesc }}">
-  <meta name="twitter:image" content="@yield('og_image', asset('assets/img/logo.png'))">
+  <meta name="twitter:image" content="@yield('og_image', asset('assets/img/logo-og.jpg'))">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
