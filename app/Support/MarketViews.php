@@ -180,7 +180,7 @@ class MarketViews
             ->filter(fn ($s) => $s->shop_count > 0)->take(6);
 
         return [
-            'promos' => self::promos(), 'catTiles' => $tree->map(fn ($c) => ['name' => $c->name, 'href' => route('category.landing', $c->slug), 'tint' => self::tint($c->slug, $c->id), 'initial' => mb_substr($c->name, 0, 1)])->all(),
+            'promos' => self::promos(), 'catTiles' => $tree->map(fn ($c) => ['name' => $c->name, 'href' => route('category.landing', $c->slug), 'tint' => self::tint($c->slug, $c->id), 'img' => $c->image ? Product::imageUrl($c->image) : null, 'initial' => mb_substr($c->name, 0, 1)])->all(),
             'cd' => [$pad(intdiv($left, 3600)), $pad(intdiv($left % 3600, 60)), $pad($left % 60)], 'deals' => $deals->map(fn ($p) => self::card($p))->all(),
             'trust' => [
                 ['icon' => $ic['shield'], 'h' => 'Buyer Protection', 'p' => "Full refund if an order doesn't arrive or isn't as described."],

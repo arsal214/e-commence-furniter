@@ -44,7 +44,8 @@ class PageController extends Controller
     public function sitemap(MarketCatalog $catalog)
     {
         return view('market.sitemap', [
-            'mapCats' => $catalog->tree()->map(fn ($c) => ['name' => $c->name, 'href' => route('category.landing', $c->slug),
+            'mapCats' => $catalog->tree()->map(fn ($c) => ['name' => $c->name, 'href' => route('category.landing', $c->slug), 'tint' => \App\Support\MarketViews::tint($c->slug, $c->id),
+                'img' => $c->image ? \App\Models\Product::imageUrl($c->image) : null,
                 'subs' => $c->children->map(fn ($s) => ['name' => $s->name, 'href' => route('category.landing', $s->slug)])->all()])->all(),
             'mapPages' => collect(Docs::all())->map(fn ($d, $slug) => ['t' => $d['title'], 'href' => url(Docs::PATHS[$slug])])->values()->all(),
             'title' => 'All categories & pages | Peyton Ghalib', 'description' => 'Every category and help page on Peyton Ghalib.',

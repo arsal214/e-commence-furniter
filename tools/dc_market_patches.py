@@ -8,6 +8,11 @@ NO_STYLE = r'( style="[^"]*")'
 BTN = 'display:flex;align-items:center;justify-content:center;color:#111827;font-size:13.3px;'
 
 PATCHES = [
+    # ── category pictures: the uploaded image over the tinted initial (a missing file falls back to the initial) ──
+    ('home', r"""(<span style="width:100%;max-width:112px;aspect-ratio:1;border-radius:50%;)(background:\{\{ \$c\['tint'\] \?\? '' \}\};display:flex[^"]*">)\{\{ \$c\['initial'\] \?\? '' \}\}</span>""",
+     r"""\g<1>position:relative;overflow:hidden;\g<2>{{ $c['initial'] ?? '' }}<?php if(!empty($c['img'])): ?><img src="{{ $c['img'] }}" alt="" loading="lazy" onerror="this.remove()" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"><?php endif; ?></span>"""),
+    ('sitemap', r"""<a href="\{\{ \$c\['href'\] \?\? '' \}\}" style="font-size:17px;font-weight:800;color:#111827">\{\{ \$c\['name'\] \?\? '' \}\} →</a>""",
+     r"""<div style="display:flex;align-items:center;gap:10px"><?php if(!empty($c['img'])): ?><img src="{{ $c['img'] }}" alt="" loading="lazy" onerror="this.remove()" style="flex:none;width:44px;height:44px;border-radius:12px;object-fit:cover;background:#FFFFFF"><?php endif; ?><a href="{{ $c['href'] ?? '' }}" style="font-size:17px;font-weight:800;color:#111827">{{ $c['name'] ?? '' }} →</a></div>"""),
     # ── the payment processor is never named to shoppers ──
     ('checkout', r'Encrypted · processed by Stripe', 'Encrypted · processed securely'),
     ('cart', r'Secure payments by Stripe', 'Secure payments'),
