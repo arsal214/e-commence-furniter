@@ -10,11 +10,6 @@ use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
-    public function show()
-    {
-        return view('contact');
-    }
-
     public function newsletter(Request $request)
     {
         $data = $request->validate(['email' => 'required|email']);

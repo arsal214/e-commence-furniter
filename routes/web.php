@@ -216,28 +216,20 @@ Route::get('/faq', [\App\Http\Controllers\PageController::class, 'help'])->name(
 Route::get('/sitemap', [\App\Http\Controllers\PageController::class, 'sitemap'])->name('sitemap');
 
 
-Route::get('/error', [HomeController::class, 'error']);
 
-Route::get('/coming-soon', [HomeController::class, 'comingSoon']);
 Route::get('/thank-you',   [HomeController::class, 'thankYou'])->name('thank-you');
 Route::post('/thank-you/account', [HomeController::class, 'createAccountFromOrder'])->middleware('throttle:5,1')->name('thank-you.account');
 Route::post('/track-order/{tracking}/claim', [\App\Http\Controllers\ClaimController::class, 'store'])->middleware('throttle:6,60,claim')->name('claim.store');
 Route::get('/track-order', [HomeController::class, 'trackOrder'])->middleware('throttle:30,1,track-order')->name('track-order');
 
 Route::redirect('/shipping-method', '/shipping-policy', 301); // SEO: duplicate of shipping-policy
-Route::get('/payment-method',        [HomeController::class, 'paymentMethod']);
-Route::get('/invoice',               [HomeController::class, 'invoice']);
-Route::get('/payment-confirmation',  [HomeController::class, 'paymentConfirmation']);
-Route::get('/payment-success',       [HomeController::class, 'paymentSuccess']);
-Route::get('/payment-failure',       [HomeController::class, 'paymentFailure']);
 
 Route::get('/shop',             [\App\Http\Controllers\MarketController::class, 'shop'])->name('shop');
 Route::post('/location',         [\App\Http\Controllers\MarketController::class, 'location'])->middleware('throttle:30,1,location')->name('location');
 Route::get('/search',           [\App\Http\Controllers\MarketController::class, 'search'])->name('search');
 Route::get('/store/{slug}',     [\App\Http\Controllers\MarketController::class, 'store'])->name('store.show');
 Route::get('/shop-v1',          fn() => redirect('/shop', 301));
-Route::get('/quick-view/{slug}', [HomeController::class, 'quickView'])->name('quick-view');
-Route::get('/categories',       [HomeController::class, 'categories']);
+Route::redirect('/categories', '/sitemap', 301); // the old categories page
 Route::redirect('/category/beauty-produts', '/category/beauty-products', 301); // SEO: typo fix (must precede dynamic route)
 Route::get('/category/deals',   [\App\Http\Controllers\MarketController::class, 'deals'])->name('deals');
 Route::get('/category/{slug}',  [\App\Http\Controllers\MarketController::class, 'category'])->name('category.landing');
@@ -264,7 +256,6 @@ Route::post('/cart/points', [CartController::class, 'points'])->name('cart.point
 Route::post('/stripe/webhook', \App\Http\Controllers\StripeWebhookController::class)->name('stripe.webhook');
 
 
-Route::get('/short-code', [HomeController::class, 'shortCode']);
 
 Route::redirect('/contactus', '/contact', 301);
 Route::post('/contactus', [ContactController::class, 'send'])->name('contact.send');

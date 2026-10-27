@@ -10,16 +10,15 @@ use Illuminate\Console\Command;
  * Measured on this app: rendering the homepage with a cold view cache takes
  * ~900 ms, versus ~23 ms once the Blade templates are compiled. That difference
  * lands directly in TTFB, and TTFB lands directly in FCP and LCP — so on a
- * shared VPS the first visitor to hit each of the 134 templates after a deploy
+ * shared VPS the first visitor to hit each template after a deploy
  * pays close to a second of avoidable server time.
  *
  * config:cache and route:cache remove the per-request cost of re-parsing config
  * files and rebuilding the route table on top of that.
  *
- * Asset steps are included because both produce files that are referenced but
- * never generated at runtime: without images:webp the .htaccess WebP rewrite
- * silently falls through to the full-size JPEGs, and without assets:split-vendor
- * there is no scripts.slim.js for the layouts to load at all.
+ * The WebP step produces files that are referenced but never generated at runtime:
+ * without images:webp the .htaccess WebP rewrite silently falls through to the
+ * full-size JPEGs.
  */
 class DeployOptimize extends Command
 {
@@ -45,8 +44,6 @@ class DeployOptimize extends Command
             // Categories are cached for 6h and busted on admin writes; a deploy
             // may ship different rendering, so start from a clean slate.
             ['cache:clear', [], 'Flushing application cache'],
-
-            ['assets:split-vendor', [], 'Stripping unused vendor libraries from the theme bundle'],
         ];
 
         if (! $this->option('skip-images')) {

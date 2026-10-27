@@ -32,7 +32,7 @@ function p5Desc(string $html): string
 }
 
 it('uses the new titles and descriptions on the static pages, brand exactly once', function () {
-    $pages = ['/' => 'home', '/shop' => 'shop', '/categories' => 'categories', '/about' => 'about', '/contact' => 'contact',
+    $pages = ['/' => 'home', '/shop' => 'shop', '/about' => 'about', '/contact' => 'contact',
         '/faq' => 'faq', '/shipping-policy' => 'shipping-policy', '/return-policy' => 'return-policy', '/refund-policy' => 'refund-policy', '/track-order' => 'track-order'];
 
     foreach ($pages as $url => $key) {
