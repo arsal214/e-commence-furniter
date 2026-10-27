@@ -29,8 +29,8 @@ class MarketplaceSeeder extends Seeder
     {
         $password = env('SEED_SELLER_PASSWORD') ?: Str::password(14, symbols: false);
 
-        $miniMart = $this->seller('MiniMart', 'minimart@peytonghalib.com', $password);
-        $deli = $this->seller('E19 Deli', 'e19deli@peytonghalib.com', $password);
+        $miniMart = $this->seller('MiniMart', 'minimart@gmail.com', $password);
+        $deli = $this->seller('E19 Deli', 'e19@gmail.com', $password);
 
         DB::transaction(function () use ($miniMart, $deli) {
             $active = DB::table('products')->whereNull('seller_id')->where('is_active', true)->update(['seller_id' => $miniMart->id]);
@@ -42,7 +42,7 @@ class MarketplaceSeeder extends Seeder
 
         $this->command?->info('Shipments created for existing orders: ' . $this->backfillShipments($miniMart));
 
-        $this->command?->warn("Seller logins: minimart@peytonghalib.com and e19deli@peytonghalib.com, password: {$password}");
+        $this->command?->warn("Seller logins: minimart@gmail.com and e19@gmail.com, password: {$password}");
         $this->command?->warn('EIN and owner details are placeholders. Replace them before going live.');
     }
 
