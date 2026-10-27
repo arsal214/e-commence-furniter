@@ -8,6 +8,7 @@
     $siteDesc = html_entity_decode(trim($__env->yieldContent('meta_description')), ENT_QUOTES) ?: \App\Support\SiteCopy::description('home');
   @endphp
   <title>{{ $siteTitle }}</title>
+  <link rel="icon" type="image/svg+xml" href="{{ asset('assets/logo/logo-mark.svg') }}">
   <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
   <link rel="apple-touch-icon" href="{{ asset('favicon.ico') }}">
   <meta name="description" content="{{ $siteDesc }}">

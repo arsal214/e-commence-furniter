@@ -259,7 +259,7 @@ class CartController extends Controller
     {
         $image = $product->image
             ? (str_starts_with($product->image, 'assets/') ? asset($product->image) : \Storage::url($product->image))
-            : asset('assets/img/logo.svg');
+            : asset('assets/logo/logo-mark.svg');
 
         $unitPrice ??= $product->effective_price;
 

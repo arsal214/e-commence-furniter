@@ -224,7 +224,7 @@
                         <span class="co-check__box" aria-hidden="true">
                             <svg width="12" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                         </span>
-                        <img src="{{ $bump->image ? (str_starts_with($bump->image, 'assets/') ? asset($bump->image) : \Storage::url($bump->image)) : asset('assets/img/logo.svg') }}"
+                        <img src="{{ $bump->image ? (str_starts_with($bump->image, 'assets/') ? asset($bump->image) : \Storage::url($bump->image)) : asset('assets/logo/logo-mark.svg') }}"
                              alt="" class="co-bump__img" loading="lazy" decoding="async">
                         <span class="co-bump__body">
                             <span class="co-bump__name">{{ $bump->name }}</span>

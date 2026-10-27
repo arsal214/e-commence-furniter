@@ -134,7 +134,9 @@
 .pgh-auth__head { text-align: center; margin-bottom: 20px; }
 
 .pgh-auth__logo { height: 30px; width: auto; margin-bottom: 14px; }
-.dark .pgh-auth__logo { filter: brightness(0) invert(1); }
+.pgh-auth__logo--dark { display: none; }
+.dark .pgh-auth__logo--light { display: none; }
+.dark .pgh-auth__logo--dark { display: block; }
 
 .pgh-auth__eyebrow {
     display: inline-block;
@@ -643,7 +645,8 @@
 
             <div class="pgh-auth__head">
                 <a href="{{ url('/') }}" aria-label="PeytonGhalib home">
-                    <img class="pgh-auth__logo" src="{{ asset('assets/img/logo.svg') }}" alt="PeytonGhalib" width="120" height="30">
+                    <img class="pgh-auth__logo pgh-auth__logo--light" src="{{ asset('assets/logo/logo-full-light-bg.svg') }}" alt="Peyton Ghalib" width="144" height="30">
+                    <img class="pgh-auth__logo pgh-auth__logo--dark" src="{{ asset('assets/logo/logo-full-dark-bg.svg') }}" alt="" width="144" height="30">
                 </a>
 
                 @if ($eyebrow)
