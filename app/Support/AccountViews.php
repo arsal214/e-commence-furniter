@@ -80,7 +80,7 @@ class AccountViews
             $cards[] = [
                 'no' => $order->tracking_number, 'date' => $order->created_at->format('M j, Y'), 'total' => MarketViews::money($lines->sum('total')),
                 'storeName' => $first->seller?->store_name ?? 'Peyton Ghalib', 'storeHref' => $first->seller?->isLive() ? $first->seller->url() : url('/'),
-                'status' => $label, 'sb' => $bg, 'sc' => $fg, 'delivered' => $state === 'delivered', 'trackUrl' => route('track-order', ['tracking' => $order->tracking_number]),
+                'status' => $label, 'sb' => $bg, 'sc' => $fg, 'delivered' => $state === 'delivered', 'trackUrl' => route('track-order', ['tracking' => $order->tracking_number]), 'sellerRef' => $first->seller?->uuid, 'canRefund' => $state !== 'refunded',
                 'eta' => ['pending' => 'Waiting for the seller to ship', 'shipped' => 'On its way' . ($ship?->shipped_at ? ' · expected by ' . $ship->shipped_at->copy()->addDays(DeliveryEstimate::maxDays())->format('M j') : ''),
                     'out_for_delivery' => 'Out for delivery today', 'delivered' => 'Delivered' . ($ship?->delivered_at ? ' ' . $ship->delivered_at->format('M j') : ''), 'refunded' => 'Refunded'][$state],
                 'line' => 'Order ' . $order->tracking_number . ' · ' . ($first->seller?->store_name ?? 'Peyton Ghalib'),
@@ -113,9 +113,9 @@ class AccountViews
             ->where(fn ($q) => $q->where('user_id', $user->id)->orWhere('email', $user->email))->latest('id')->limit(30)->get()
             ->map(fn ($d) => ['no' => $d->order?->tracking_number, 'store' => $d->seller?->store_name ?? 'Peyton Ghalib', 'reason' => DisputeLabels::reason($d->reason), 'amount' => MarketViews::money($d->amount),
                 'when' => $d->created_at->format('M j, Y'), 'status' => ['open' => 'In review', 'refunded' => 'Refunded', 'closed_seller' => 'Closed'][$d->status] ?? ucfirst($d->status),
-                'note' => $d->resolution_note, 'done' => $d->status !== 'open'])->all();
+                'note' => $d->resolution_note, 'sellerNote' => $d->seller_declined_at ? (string) $d->seller_note : null, 'done' => $d->status !== 'open'])->all();
 
-        return ['claims' => $claims, 'claimOrders' => collect($orders)->take(8)->map(fn ($o) => ['no' => $o['no'], 'store' => $o['storeName'], 'url' => $o['trackUrl'], 'status' => $o['status']])->all()];
+        return ['claims' => $claims, 'claimOrders' => collect($orders)->take(8)->map(fn ($o) => ['no' => $o['no'], 'store' => $o['storeName'], 'url' => $o['trackUrl'], 'status' => $o['status'], 'sellerRef' => $o['sellerRef'] ?? null, 'canRefund' => $o['canRefund'] ?? false])->all()];
     }
 
     private static function follows(User $user): array

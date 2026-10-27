@@ -50,6 +50,16 @@ class Seller extends Model
         });
     }
 
+    public static function idFromRef(string|int|null $ref): ?int
+    {
+        $ref = trim((string) $ref);
+        if ($ref === '' || strlen($ref) > 40) {
+            return null;
+        }
+
+        return ctype_digit($ref) ? static::whereKey((int) $ref)->value('id') : static::where('uuid', Str::upper($ref))->value('id');
+    }
+
     /** The store's public address: /stores/{slug}/page/{uuid}. The uuid, not the row id, identifies it. */
     public function url(): string
     {

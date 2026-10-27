@@ -168,7 +168,7 @@
         // AddToCart and Purchase must all send the same id for the same product.
         $pixelContents = $order
             ? $order->items->map(fn ($item) => [
-                'id'         => (string) $item->product_id,
+                'id'         => (string) ($item->product?->uuid ?? $item->product_id),
                 'quantity'   => (int) $item->qty,
                 'item_price' => (float) $item->price,
             ])->values()->all()
@@ -190,7 +190,7 @@
 
         // GA4 items use the same product ids as the pixel's content_ids.
         $gaItems = $order ? $order->items->map(fn ($item) => [
-            'item_id' => (string) $item->product_id, 'item_name' => $item->name,
+            'item_id' => (string) ($item->product?->uuid ?? $item->product_id), 'item_name' => $item->name,
             'price' => (float) $item->price, 'quantity' => (int) $item->qty,
         ])->values()->all() : [];
         $gaCoupon = $order && (float) $order->discount > 0 && $order->welcome_claim_id

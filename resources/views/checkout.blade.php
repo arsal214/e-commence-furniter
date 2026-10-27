@@ -1012,8 +1012,9 @@
      Per-page-load flag, not sessionStorage: returning to checkout after
      abandoning is a genuine second initiation and should be counted. --}}
 @php
+    $icUuids = \App\Models\Product::whereIn('id', collect($cartItems)->pluck('id')->filter())->pluck('uuid', 'id');
     $icContents = collect($cartItems)->map(fn ($line) => [
-        'id'         => (string) ($line['id'] ?? ('bundle-' . ($line['bundle_id'] ?? ''))),
+        'id'         => (string) (isset($line['id']) ? ($icUuids[$line['id']] ?? $line['id']) : ('bundle-' . ($line['bundle_id'] ?? ''))),
         'quantity'   => (int) $line['qty'],
         'item_price' => round((float) $line['price'], 2),
     ])->values()->all();

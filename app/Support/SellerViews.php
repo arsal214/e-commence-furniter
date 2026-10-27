@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Dispute;
+use App\Support\DisputeLabels;
 use App\Models\OrderItem;
 use App\Models\Payout;
 use App\Models\PointEntry;
@@ -126,17 +127,21 @@ class SellerViews
         ];
     }
 
-    private static function orderLine(Shipment $s): array
+    private static function orderLine(Shipment $s, $claims = null): array
     {
         $lines = $s->lines()->with('product')->get();
         $first = $lines->first();
         $more = $lines->count() - 1;
         $o = $s->order;
+        $claim = $claims ? $claims->get($o->id) : Dispute::where('order_id', $o->id)->where('seller_id', $s->seller_id)->where('status', 'open')->latest('id')->first();
 
         // What a seller needs to pack and ship: who, where, what. The buyer's email is deliberately not here.
         return ['items' => ($first ? $first->name . ' × ' . $first->qty : 'Order') . ($more > 0 ? " +{$more} more" : ''), 'buyer' => $o->name, 'city' => trim("{$o->address}, {$o->city}, {$o->state} {$o->zip}", ', '),
             'phone' => (string) $o->phone, 'addrLines' => array_values(array_filter([$o->address, $o->address2, trim("{$o->city}, {$o->state} {$o->zip}", ', ')])),
             'note' => trim((string) $o->notes), 'paid' => $o->payment_status === 'paid',
+            'refund' => ['can' => $o->payment_status === 'paid' && $s->status !== 'refunded', 'amount' => self::money($s->gross), 'url' => route('seller.orders.refund', $s), 'declineUrl' => route('seller.orders.refund.decline', $s),
+                'claim' => $claim ? ['reason' => DisputeLabels::reason($claim->reason), 'details' => (string) $claim->details, 'when' => $claim->created_at->format('M j'),
+                    'declined' => (bool) $claim->seller_declined_at, 'note' => (string) $claim->seller_note] : null],
             'lines' => $lines->map(fn ($l) => ['name' => $l->name, 'variant' => collect([$l->color ? "Color: {$l->color}" : null, $l->size ? "Size: {$l->size}" : null])->filter()->implode(' · '),
                 'sku' => (string) $l->sku, 'qty' => (int) $l->qty, 'unit' => self::money($l->price), 'total' => self::money($l->total),
                 'img' => $l->product?->image ? Product::imageUrl($l->product->image) : null])->all(),
@@ -149,12 +154,13 @@ class SellerViews
         $counts = Shipment::where('seller_id', $seller->id)->whereHas('order', fn ($o) => $o->where('payment_status', 'paid'))->selectRaw('status, count(*) c')->groupBy('status')->pluck('c', 'status');
         $label = ['pending' => 'To ship', 'shipped' => 'Shipped', 'delivered' => 'Delivered', 'refunded' => 'Refunded'];
         $rows = Shipment::with('order', 'seller')->where('seller_id', $seller->id)->where('status', $tab)->whereHas('order', fn ($o) => $o->where('payment_status', 'paid'))->latest('id')->limit(100)->get();
+        $claims = Dispute::where('seller_id', $seller->id)->where('status', 'open')->latest('id')->get()->unique('order_id')->keyBy('order_id');
 
         return [
             'orderTabs' => collect($label)->map(fn ($l, $k) => ['label' => $l . ' (' . ($counts[$k] ?? 0) . ')', 'href' => route('seller.orders', ['tab' => $k]),
                 'bg' => $tab === $k ? '#111827' : '#FFFFFF', 'fg' => $tab === $k ? '#FFFFFF' : '#111827'])->values()->all(),
-            'orderRows' => $rows->map(function (Shipment $s) {
-                $base = self::orderLine($s);
+            'orderRows' => $rows->map(function (Shipment $s) use ($claims) {
+                $base = self::orderLine($s, $claims);
 
                 return array_merge($base, ['no' => $s->order->tracking_number, 'date' => $s->order->created_at->format('M j'), 'total' => self::money($s->gross), 'canShip' => $s->status === 'pending',
                     'shipUrl' => route('seller.orders.ship', $s), 'labeled' => in_array($s->status, ['shipped', 'delivered'], true), 'isReturn' => false,

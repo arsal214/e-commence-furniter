@@ -21,6 +21,24 @@ class AccountController extends Controller
         return view('account.page', AccountViews::build($request->user(), $tab));
     }
 
+    /** A signed-in shopper asks a seller for a refund. The seller can refund at once; if they decline, staff decide. */
+    public function requestRefund(Request $request, \App\Services\DisputeService $disputes)
+    {
+        $data = $request->validate([
+            'order' => 'required|string|max:40', 'seller' => 'required|string|max:40',
+            'reason' => 'required|in:' . implode(',', array_keys(\App\Services\DisputeService::REASONS)), 'details' => 'required|string|min:10|max:1500',
+        ], ['details.min' => 'Tell the seller a little more (at least 10 characters).']);
+
+        $order = \App\Models\Order::where('user_id', $request->user()->id)->where('tracking_number', strtoupper(trim($data['order'])))->firstOrFail();
+        $id = \App\Models\Seller::idFromRef($data['seller']);
+        abort_unless($id, 404);
+        abort_unless($order->items()->where('seller_id', $id)->exists(), 404);
+
+        $result = $disputes->open($order, $id, $order->email, $data['reason'], trim(strip_tags($data['details'])));
+
+        return redirect('/my-account/returns')->with(is_string($result) ? 'error' : 'success', is_string($result) ? $result : 'Your refund request was sent to the seller. You will get an email when it is answered.');
+    }
+
     public function profile(Request $request)
     {
         $user = $request->user();

@@ -24,7 +24,7 @@
     @if($p->stock <= 0 && $simple)
       <span class="mk-instock out">Sold out</span>
     @elseif($simple)
-      <form method="POST" action="{{ route('cart.add') }}" data-track="{{ json_encode(['id' => $p->id, 'name' => $p->name, 'price' => (float) $p->effective_price]) }}">
+      <form method="POST" action="{{ route('cart.add') }}" data-track="{{ json_encode(['id' => $p->uuid, 'name' => $p->name, 'price' => (float) $p->effective_price]) }}">
         @csrf <input type="hidden" name="product_id" value="{{ $p->uuid }}"><input type="hidden" name="qty" value="1">
         <button class="pg-btn" type="submit">Add to cart</button>
       </form>

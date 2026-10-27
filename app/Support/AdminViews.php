@@ -160,7 +160,7 @@ class AdminViews
                 [$label, $bg, $fg] = $colors[$d->status];
 
                 return ['reason' => DisputeLabels::reason($d->reason), 'amount' => MarketViews::money($d->amount), 'no' => $d->order->tracking_number, 'buyer' => $d->order->name, 'seller' => $d->seller->store_name,
-                    'date' => $d->created_at->format('M j'), 'status' => $label, 'bg' => $bg, 'fg' => $fg, 'summary' => $d->details . ($d->resolution_note ? ' · ' . $d->resolution_note : ''),
+                    'date' => $d->created_at->format('M j'), 'status' => $label, 'bg' => $bg, 'fg' => $fg, 'summary' => $d->details . ($d->seller_declined_at ? ' · Seller declined: ' . $d->seller_note : '') . ($d->resolution_note ? ' · ' . $d->resolution_note : ''),
                     'open' => $d->status === 'open', 'canManual' => $d->order->payment_method !== 'stripe', 'postUrl' => route('admin.disputes.decide', $d)];
             })->all(),
         ];

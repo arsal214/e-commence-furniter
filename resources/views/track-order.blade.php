@@ -64,7 +64,7 @@
               <details style="margin:6px 0 14px"><summary style="cursor:pointer;font-weight:700;font-size:13px;color:#C2410C">Problem with this order? Open a Buyer Protection claim</summary>
                 <form method="POST" action="{{ route('claim.store', $order->tracking_number) }}" data-once style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
                   @csrf
-                  <input type="hidden" name="seller_id" value="{{ $sid }}">
+                  <input type="hidden" name="seller_id" value="{{ $lines->first()->seller?->uuid }}">
                   <x-pg.field label="Email used for the order" name="email" type="email" required />
                   <label class="pg-field">What went wrong?
                     <select name="reason" required>@foreach (\App\Services\DisputeService::REASONS as $k => $label)<option value="{{ $k }}" @selected(old('reason') === $k)>{{ $label }}</option>@endforeach</select>

@@ -38,7 +38,7 @@ it('never prints a product\'s row number in what a shopper\'s browser posts', fu
     foreach (['/', '/shop', '/category/home', $p->seller->url(), route('product-details', $p->slug), '/cart', '/search?q=cushion'] as $url) {
         $html = $this->get($url)->assertOk()->getContent();
         expect($html)->not->toContain('data-id="' . PU_ID . '"')->not->toContain('name="product_id" value="' . PU_ID . '"')->not->toContain(PU_ID . '||')
-            ->not->toContain('value="' . PU_ID . '"');
+            ->not->toContain('value="' . PU_ID . '"')->not->toContain('&quot;id&quot;:' . PU_ID)->not->toContain('&quot;id&quot;:&quot;' . PU_ID); // tracking JSON too
     }
     $this->get(route('product-details', $p->slug))->assertSee('name="product_id" value="' . $p->uuid . '"', false);
 });

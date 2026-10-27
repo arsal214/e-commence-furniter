@@ -277,7 +277,7 @@ class CartController extends Controller
                 'price' => '$' . number_format($unitPrice, 2),
                 // Raw numbers for the Meta AddToCart pixel. The formatted `price`
                 // above is display-only ("$1,299.00") and cannot be fed to fbq.
-                'id'         => (string) $product->id,
+                'id'         => $product->uuid,
                 'unit_price' => round((float) $unitPrice, 2),
                 'value'      => round((float) $unitPrice * $qty, 2),
                 'meta_event_id' => $this->metaEventId,
@@ -307,7 +307,7 @@ class CartController extends Controller
         $this->metaEventId = preg_match('/^AddToCart\.[A-Za-z0-9]{8,40}$/', $given) ? $given : app(\App\Services\MetaEventsService::class)->newEventId('AddToCart');
         app(\App\Services\MetaEventsService::class)->track('AddToCart', $this->metaEventId, [
             'content_type' => 'product', 'content_ids' => [(string) $product->id], 'content_name' => $product->name,
-            'contents' => [['id' => (string) $product->id, 'quantity' => $qty, 'item_price' => round((float) $unitPrice, 2)]],
+            'contents' => [['id' => $product->uuid, 'quantity' => $qty, 'item_price' => round((float) $unitPrice, 2)]],
             'value' => round($unitPrice * $qty, 2),
         ], app(\App\Services\MetaEventsService::class)->buildUser($request), $request->headers->get('referer') ?: $request->fullUrl());
 

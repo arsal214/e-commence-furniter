@@ -106,7 +106,7 @@ it('sends one Purchase when a PayPal order is paid, with the order id as event i
         ->and($sent[0]->data()['test_event_code'])->toBe('TEST123')
         ->and($e['event_name'])->toBe('Purchase')->and($e['event_id'])->toBe('Purchase.order-' . $order->id)
         ->and($e['custom_data']['value'])->toBe(40.0)->and($e['custom_data']['currency'])->toBe('USD')
-        ->and($e['custom_data']['content_ids'])->toBe([(string) $item->id])
+        ->and($e['custom_data']['content_ids'])->toBe([$item->uuid]) // tracking uses the product uuid, never the row id
         ->and($e['custom_data']['num_items'])->toBe(1)
         ->and($e['user_data']['em'])->toBe([hash('sha256', 'pat@example.com')])
         ->and($order->fresh()->meta_event_sent_at)->not->toBeNull();
@@ -249,5 +249,5 @@ it('reports GA4 purchase on the thank-you page with the order id, items and coup
 
     expect($html)->toContain("gtag('event', 'purchase'")->and($html)->toContain($order->tracking_number)
         ->and($html)->toContain($code)->and($html)->toContain('Purchase.order-' . $order->id)
-        ->and($html)->toContain('"item_id":"' . $item->id . '"');
+        ->and($html)->toContain('"item_id":"' . $item->uuid . '"');
 });

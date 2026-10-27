@@ -87,7 +87,7 @@ class PageViews
         $opt = fn ($v) => ['price' => (float) $v->effective_price, 'list' => (float) $v->price, 'stock' => (int) $v->stock, 'image' => $v->image ? $url($v->image) : null];
 
         return ['pdp' => [
-            'id' => $p->uuid, 'tid' => $p->id, 'name' => $p->name, 'sub' => $p->category?->name ?? '', 'subHref' => $p->category ? route('category.landing', $p->category->slug) : url('/shop'),
+            'id' => $p->uuid, 'name' => $p->name, 'sub' => $p->category?->name ?? '', 'subHref' => $p->category ? route('category.landing', $p->category->slug) : url('/shop'),
             'catName' => $root?->name ?? 'Shop', 'catHref' => $root ? route('category.landing', $root->slug) : url('/shop'), 'tint' => MarketViews::tint($root?->slug, $root?->id),
             'img' => $gallery->isNotEmpty() ? $url($gallery[0]) : null,
             'thumbs' => $gallery->count() > 1 ? $gallery->map(fn ($g, $i) => ['label' => 'Photo ' . ($i + 1), 'img' => $url($g), 'bd' => $i === 0 ? '#111827' : '#E5E7EB'])->all() : [],

@@ -18,7 +18,7 @@
 
 @push('schema')
 <script type="application/ld+json">{!! json_encode(array_filter([
-  '@context' => 'https://schema.org', '@type' => 'Product', 'name' => $p->name, 'description' => $desc, 'sku' => $p->sku ?: (string) $p->id,
+  '@context' => 'https://schema.org', '@type' => 'Product', 'name' => $p->name, 'description' => $desc, 'sku' => $p->sku ?: $p->uuid,
   'image' => $gallery->map($img)->all(), 'brand' => $p->brand ? ['@type' => 'Brand', 'name' => $p->brand] : null,
   'offers' => ['@type' => 'Offer', 'priceCurrency' => 'USD', 'price' => number_format((float) $p->from_price, 2, '.', ''), 'url' => url()->current(),
     'availability' => $p->stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
@@ -38,7 +38,7 @@
 (function () {
   if (typeof fbq === 'function' && !window.__pgMetaViewContentFired) {
     window.__pgMetaViewContentFired = true;
-    var payload = { content_type: 'product', content_ids: [{!! json_encode((string) $p->id, $json) !!}], content_name: {!! json_encode($p->name, $json) !!}, value: {{ number_format((float) $p->effective_price, 2, '.', '') }}, currency: 'USD' };
+    var payload = { content_type: 'product', content_ids: [{!! json_encode($p->uuid, $json) !!}], content_name: {!! json_encode($p->name, $json) !!}, value: {{ number_format((float) $p->effective_price, 2, '.', '') }}, currency: 'USD' };
     fbq('track', 'ViewContent', payload, { eventID: {!! json_encode($metaViewContentId, $json) !!} });
     if (typeof gtag === 'function') gtag('event', 'view_item', { currency: 'USD', value: payload.value, items: [{ item_id: payload.content_ids[0], item_name: payload.content_name, price: payload.value }] });
   }

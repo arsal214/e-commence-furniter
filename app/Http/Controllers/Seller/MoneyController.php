@@ -33,6 +33,26 @@ class MoneyController extends Controller
             : back()->with('error', 'This order was already marked as shipped.');
     }
 
+    /** The seller refunds the buyer for their part of the order, in full. */
+    public function refund(Request $request, int $shipment, \App\Services\DisputeService $disputes)
+    {
+        $s = Shipment::where('seller_id', $request->user()->seller->id)->findOrFail($shipment);
+        $result = $disputes->sellerRefund($s);
+
+        return is_string($result) ? back()->with('error', $result) : back()->with('status', 'Refunded. The buyer has been emailed.');
+    }
+
+    /** The seller declines a buyer's request with a reason; staff then decide. */
+    public function declineRefund(Request $request, int $shipment, \App\Services\DisputeService $disputes)
+    {
+        $s = Shipment::where('seller_id', $request->user()->seller->id)->findOrFail($shipment);
+        $data = $request->validate(['note' => 'required|string|min:5|max:1000'], ['note.min' => 'Tell the buyer and our team why in a few words.']);
+        $claim = \App\Models\Dispute::where('order_id', $s->order_id)->where('seller_id', $s->seller_id)->where('status', 'open')->latest('id')->firstOrFail();
+        $result = $disputes->decline($claim, trim(strip_tags($data['note'])));
+
+        return is_string($result) ? back()->with('error', $result) : back()->with('status', 'Your reply was sent. Our team will review the request.');
+    }
+
     public function payouts(Request $request)
     {
         $seller = $request->user()->seller;

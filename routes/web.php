@@ -69,6 +69,8 @@ Route::prefix('seller')->name('seller.')->middleware(['auth', 'seller'])->group(
     $m = \App\Http\Controllers\Seller\MoneyController::class;
     Route::get('orders',            [$m, 'orders'])->name('orders');
     Route::post('orders/{shipment}/ship', [$m, 'ship'])->middleware('throttle:60,1,ship')->name('orders.ship');
+    Route::post('orders/{shipment}/refund', [$m, 'refund'])->middleware('throttle:20,1,seller-refund')->name('orders.refund');
+    Route::post('orders/{shipment}/refund/decline', [$m, 'declineRefund'])->middleware('throttle:20,1,seller-decline')->name('orders.refund.decline');
     Route::get('payouts',           [$m, 'payouts'])->name('payouts');
     Route::get('payouts/export',    [$m, 'payoutsCsv'])->name('payouts.export');
     Route::post('payouts/bank',     [$m, 'bank'])->middleware('throttle:10,1,bank-link')->name('payouts.bank');
@@ -125,6 +127,7 @@ Route::middleware(['auth', 'must-reset'])->group(function () {
     Route::get('/edit-account',  fn() => redirect('/my-account/settings'));
     Route::get('/order-history', fn() => redirect('/my-account/orders'));
     Route::get('/wishlist',      fn() => redirect('/my-account/wishlist'));
+    Route::post('/my-account/refunds', [\App\Http\Controllers\AccountController::class, 'requestRefund'])->middleware('throttle:10,60,refund-request')->name('account.refund');
     Route::post('/wishlist/toggle',  [WishlistController::class, 'toggle'])->name('wishlist.toggle');
     Route::post('/wishlist/remove',  [WishlistController::class, 'remove'])->name('wishlist.remove');
 

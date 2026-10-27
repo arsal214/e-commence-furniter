@@ -152,8 +152,9 @@ class MetaEventsService
     /** content_ids / contents / value for cart-style lines ([id|bundle_id, qty, price]). */
     public function cartData(array $lines): array
     {
+        $uuids = \App\Models\Product::whereIn('id', collect($lines)->pluck('id')->filter())->pluck('uuid', 'id');
         $contents = collect($lines)->map(fn ($l) => [
-            'id'         => (string) ($l['id'] ?? ('bundle-' . ($l['bundle_id'] ?? ''))),
+            'id'         => (string) (isset($l['id']) ? ($uuids[$l['id']] ?? $l['id']) : ('bundle-' . ($l['bundle_id'] ?? ''))),
             'quantity'   => (int) $l['qty'],
             'item_price' => round((float) $l['price'], 2),
         ])->values();
