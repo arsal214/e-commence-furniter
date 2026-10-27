@@ -11,7 +11,7 @@
         fills in the subject, headline, message, discount code and button — you can still edit anything before sending.
     </p>
     <a href="{{ route('admin.email-templates.create') }}"
-       class="px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors whitespace-nowrap">
+       class="px-4 py-2 bg-[#EA580C] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors whitespace-nowrap">
         <i class="mdi mdi-plus mr-1"></i> New Template
     </a>
 </div>
@@ -37,7 +37,7 @@
                 <td class="px-5 py-3 text-gray-600 max-w-xs truncate" title="{{ $template->subject }}">{{ $template->subject }}</td>
                 <td class="px-5 py-3">
                     @if($template->promo_code)
-                        <code class="text-xs text-[#bb976d] bg-[#bb976d]/8 px-1.5 py-0.5 rounded">{{ $template->promo_code }}</code>
+                        <code class="text-xs text-[#EA580C] bg-[#EA580C]/8 px-1.5 py-0.5 rounded">{{ $template->promo_code }}</code>
                     @else
                         <span class="text-gray-300">—</span>
                     @endif
@@ -51,7 +51,7 @@
                 </td>
                 <td class="px-5 py-3 text-right whitespace-nowrap">
                     <a href="{{ route('admin.email-templates.edit', $template) }}"
-                       class="text-[#bb976d] hover:underline text-xs font-medium">Edit</a>
+                       class="text-[#EA580C] hover:underline text-xs font-medium">Edit</a>
                     <form method="POST" action="{{ route('admin.email-templates.destroy', $template) }}" class="inline ml-3"
                           onsubmit="return confirm('Delete the “{{ $template->name }}” template? Emails already sent are unaffected.');">
                         @csrf
@@ -64,7 +64,7 @@
             <tr>
                 <td colspan="5" class="px-5 py-12 text-center">
                     <p class="text-gray-400 mb-3">No templates yet.</p>
-                    <a href="{{ route('admin.email-templates.create') }}" class="text-[#bb976d] hover:underline text-sm font-medium">Create your first one</a>
+                    <a href="{{ route('admin.email-templates.create') }}" class="text-[#EA580C] hover:underline text-sm font-medium">Create your first one</a>
                 </td>
             </tr>
             @endforelse

@@ -8,7 +8,7 @@
 <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
     <p class="text-sm text-gray-500">Manage the homepage carousel slides. Drag to reorder via the sort field.</p>
     <a href="{{ route('admin.sliders.create') }}"
-       class="inline-flex items-center gap-2 px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
+       class="inline-flex items-center gap-2 px-4 py-2 bg-[#EA580C] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
         <i class="mdi mdi-plus"></i> Add Slide
     </a>
 </div>
@@ -60,7 +60,7 @@
                 </td>
                 <td class="px-5 py-3 text-right space-x-2">
                     <a href="{{ route('admin.sliders.edit', $slider) }}"
-                       class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#bb976d] border border-[#bb976d] rounded-lg hover:bg-[#bb976d]/10 transition-colors">
+                       class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#EA580C] border border-[#EA580C] rounded-lg hover:bg-[#EA580C]/10 transition-colors">
                         <i class="mdi mdi-pencil"></i> Edit
                     </a>
                     <form action="{{ route('admin.sliders.destroy', $slider) }}" method="POST" class="inline"
@@ -76,7 +76,7 @@
             @empty
             <tr>
                 <td colspan="7" class="px-5 py-10 text-center text-gray-400">
-                    No slides yet. <a href="{{ route('admin.sliders.create') }}" class="text-[#bb976d] hover:underline">Add your first slide</a>.
+                    No slides yet. <a href="{{ route('admin.sliders.create') }}" class="text-[#EA580C] hover:underline">Add your first slide</a>.
                 </td>
             </tr>
             @endforelse

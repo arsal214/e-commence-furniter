@@ -1,5 +1,5 @@
 {{-- resources/views/checkout-stripe.blade.php --}}
-@extends('layouts.main')
+@extends('layouts.pg')
 
 @section('title', 'Complete payment — PeytonGhalib')
 @section('robots', 'noindex, nofollow')
@@ -12,7 +12,6 @@
     $payLink = $payLink ?? false;
 @endphp
 
-@include('includes.navbar')
 
 <x-checkout.shell step="payment" title="Complete payment">
 
@@ -169,7 +168,6 @@
 
 </x-checkout.shell>
 
-@include('includes.footer')
 
 @endsection
 
@@ -211,9 +209,9 @@
         appearance: {
             theme: isDark ? 'night' : 'stripe',
             variables: {
-                colorPrimary:    '#bb976d',
+                colorPrimary:    '#EA580C',
                 colorBackground: isDark ? '#12100e' : '#ffffff',
-                colorText:       isDark ? '#f3ede4' : '#1f1a15',
+                colorText:       isDark ? '#f3ede4' : '#111827',
                 colorDanger:     isDark ? '#ff9c94' : '#b42318',
                 /* A literal stack, not var(--pg-font-body): the Payment Element
                    renders in a cross-origin iframe that cannot see this page's

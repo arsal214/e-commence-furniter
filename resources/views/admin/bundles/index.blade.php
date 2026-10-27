@@ -4,7 +4,7 @@
 @section('page-title', 'Bundles')
 
 @section('content')
-@php $in = 'w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d]'; @endphp
+@php $in = 'w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#EA580C]'; @endphp
 <div class="max-w-4xl space-y-5">
 
     @if(session('success'))
@@ -41,7 +41,7 @@
                 <div><label class="block text-xs font-medium text-gray-600 mb-1">Starts (optional)</label><input class="{{ $in }}" type="datetime-local" name="starts_at" value="{{ $bundle->starts_at?->format('Y-m-d\TH:i') }}"></div>
                 <div><label class="block text-xs font-medium text-gray-600 mb-1">Ends (optional)</label><input class="{{ $in }}" type="datetime-local" name="ends_at" value="{{ $bundle->ends_at?->format('Y-m-d\TH:i') }}"></div>
             </div>
-            <button class="bg-[#bb976d] text-white font-semibold rounded-lg px-5 py-2 text-sm">Save</button>
+            <button class="bg-[#EA580C] text-white font-semibold rounded-lg px-5 py-2 text-sm">Save</button>
         </form>
     @empty
         <div class="bg-white rounded-xl border border-gray-100 p-6 text-sm text-gray-500">No bundles yet. Run <code>php artisan db:seed --class=BundleSeeder</code> after your products are loaded.</div>

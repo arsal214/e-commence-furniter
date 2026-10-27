@@ -12,12 +12,12 @@
  */
 
 $meta = [
-    'home' => ['Home page', 'Gifts, Toys & Home Essentials Online | PeytonGhalib',
-        'Shop gifts, toys, home décor, kitchen helpers, pet supplies and seasonal finds at PeytonGhalib. {shipping} and easy 30-day returns.'],
-    'shop' => ['Shop (all products)', 'Shop All Gifts, Toys & Home Finds | PeytonGhalib',
-        'Browse every product at PeytonGhalib: toys, home essentials, kitchen tools, jewelry, pet supplies and more. Filter by category and price.'],
+    'home' => ['Home page', 'Shop Direct from Independent US Sellers | PeytonGhalib',
+        'Shop direct from independent American sellers on PeytonGhalib. {shipping}, Buyer Protection on every order and easy returns.'],
+    'shop' => ['Shop (all products)', 'Shop All Products | PeytonGhalib',
+        'Browse products from verified US sellers on PeytonGhalib. Filter by category and price. Buyer Protection on every order.'],
     'categories' => ['All categories', 'Shop by Category | PeytonGhalib',
-        'Find gifts and everyday finds by category: toys, home essentials, kitchen, car accessories, garden, jewelry, lamps, pet supplies and more.'],
+        'Find products by category from independent US sellers: fashion, home and kitchen, beauty, toys, pet supplies, jewelry and more.'],
     'about' => ['About', 'About PeytonGhalib | Gifts & Home Store in NJ',
         'PeytonGhalib is an online gift and home store based in Jersey City, NJ. Learn how we pick products, ship across the US and handle returns.'],
     'contact' => ['Contact', 'Contact Us | PeytonGhalib Customer Support',
@@ -106,7 +106,7 @@ return [
             'Your online gift and home store: gifts, toys, home décor, kitchen helpers and pet supplies, curated for quality and delivered across the USA.', true),
         'nav.new_arrivals_desc' => $text('Menu', 'New Arrivals menu blurb', 'Fresh gifts, home finds and seasonal picks, added every week.'),
 
-        'home.h1' => $text('Home page', 'Main heading (H1)', 'Gifts, Home Finds & Fun for Every Season'),
+        'home.h1' => $text('Home page', 'Main heading (H1)', 'Shop direct from independent American sellers'),
         'home.categories_heading' => $text('Home page', 'Category section heading', 'Shop by Category'),
         'home.categories_intro' => $text('Home page', 'Category section intro',
             'Find gifts and everyday finds by category, from toys and home décor to kitchen helpers, pet supplies, jewelry and more.', true),

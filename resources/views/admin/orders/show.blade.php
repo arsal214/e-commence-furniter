@@ -18,8 +18,14 @@ $paymentColors = [
 ];
 @endphp
 
+@if($order->stock_issue)
+<div class="mb-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+    <strong>Stock problem:</strong> {{ $order->stock_issue }}
+</div>
+@endif
+
 <div class="mb-4">
-    <a href="{{ route('admin.orders.index') }}" class="text-sm text-gray-500 hover:text-[#bb976d] flex items-center gap-1">
+    <a href="{{ route('admin.orders.index') }}" class="text-sm text-gray-500 hover:text-[#EA580C] flex items-center gap-1">
         <i class="mdi mdi-arrow-left"></i> Back to Orders
     </a>
 </div>
@@ -82,7 +88,7 @@ $paymentColors = [
                                         </p>
                                     @endif
                                     @if($item->product)
-                                        <a href="{{ route('admin.products.edit', $item->product) }}" class="text-xs text-[#bb976d] hover:underline">Edit product</a>
+                                        <a href="{{ route('admin.products.edit', $item->product) }}" class="text-xs text-[#EA580C] hover:underline">Edit product</a>
                                     @endif
                                 </div>
                             </div>
@@ -208,7 +214,7 @@ $paymentColors = [
                         @endif
                         <div class="flex items-center gap-3 mt-2">
                             <a href="{{ route('admin.orders.delivery-proofs.show', [$order, $proof]) }}" download="{{ $proof->display_name }}"
-                               class="text-[11px] text-[#bb976d] hover:underline">Download</a>
+                               class="text-[11px] text-[#EA580C] hover:underline">Download</a>
                             <form action="{{ route('admin.orders.delivery-proofs.destroy', [$order, $proof]) }}" method="POST"
                                   onsubmit="return confirm('Delete this proof of delivery? This cannot be undone.')">
                                 @csrf @method('DELETE')
@@ -230,7 +236,7 @@ $paymentColors = [
                     <label for="proof-files" class="block text-xs font-medium text-gray-600 mb-1">Upload files</label>
                     <input type="file" name="files[]" id="proof-files" multiple
                            accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"
-                           class="w-full text-sm text-gray-600 border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]
+                           class="w-full text-sm text-gray-600 border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]
                                   file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium
                                   file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
                     <p class="text-xs text-gray-400 mt-1">JPG, PNG, WEBP, GIF or PDF. Up to 10 files, 8 MB each.</p>
@@ -243,7 +249,7 @@ $paymentColors = [
                     </label>
                     <input type="text" name="note" id="proof-note" maxlength="1000" value="{{ old('note') }}"
                            placeholder="e.g. Left with neighbour at no. 12 — signed by J. Ahmed"
-                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                     @error('note')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                 </div>
                 <button type="submit"
@@ -298,7 +304,7 @@ $paymentColors = [
                     {{-- Deep link into the matching Stripe dashboard; /test/ is a different account view. --}}
                     <a href="https://dashboard.stripe.com/{{ $order->stripe_mode === 'test' ? 'test/' : '' }}payments/{{ $order->stripe_payment_intent }}"
                        target="_blank" rel="noopener"
-                       class="text-xs text-[#bb976d] hover:underline truncate" title="{{ $order->stripe_payment_intent }}">
+                       class="text-xs text-[#EA580C] hover:underline truncate" title="{{ $order->stripe_payment_intent }}">
                         {{ $order->stripe_payment_intent }}
                     </a>
                 </div>
@@ -324,7 +330,7 @@ $paymentColors = [
                 <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Order Status</label>
                     <select name="status"
-                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d] bg-white text-gray-800">
+                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C] bg-white text-gray-800">
                         @foreach(['pending','processing','shipped','delivered','cancelled'] as $s)
                         <option value="{{ $s }}" {{ $order->status === $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
                         @endforeach
@@ -333,13 +339,13 @@ $paymentColors = [
                 <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Payment Status</label>
                     <select name="payment_status"
-                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d] bg-white text-gray-800">
+                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C] bg-white text-gray-800">
                         <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>Paid</option>
                     </select>
                 </div>
                 <button type="submit"
-                        class="w-full px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
+                        class="w-full px-4 py-2 bg-[#EA580C] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
                     Save Changes
                 </button>
             </form>
@@ -375,7 +381,7 @@ $paymentColors = [
                     </label>
                     <textarea name="message" id="payment-message" rows="3" maxlength="1000"
                               placeholder="e.g. Your card was declined at checkout — please try again using the link below."
-                              class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">{{ old('message') }}</textarea>
+                              class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">{{ old('message') }}</textarea>
                     @error('message')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                     <p class="text-xs text-gray-400 mt-1">Shown in the email above the payment button.</p>
                 </div>
@@ -394,7 +400,7 @@ $paymentColors = [
                     <input id="pay-link" type="text" readonly value="{{ $order->pay_url }}"
                            class="flex-1 min-w-0 text-xs border border-gray-200 rounded-lg px-3 py-2 bg-gray-50 text-gray-600">
                     <button type="button" data-copy="#pay-link"
-                            class="shrink-0 px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-600 hover:border-[#bb976d] hover:text-[#bb976d] transition-colors">
+                            class="shrink-0 px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-600 hover:border-[#EA580C] hover:text-[#EA580C] transition-colors">
                         <i class="mdi mdi-content-copy"></i> Copy
                     </button>
                 </div>
@@ -425,7 +431,7 @@ $paymentColors = [
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-base font-semibold text-gray-800">Emails Sent</h2>
-                <a href="{{ route('admin.email-logs.index', ['q' => $order->email]) }}" class="text-xs text-[#bb976d] hover:underline">View all</a>
+                <a href="{{ route('admin.email-logs.index', ['q' => $order->email]) }}" class="text-xs text-[#EA580C] hover:underline">View all</a>
             </div>
             @forelse($orderEmails as $log)
                 <div class="flex items-start gap-2 py-2 {{ ! $loop->last ? 'border-b border-gray-50' : '' }}">
@@ -455,7 +461,7 @@ $paymentColors = [
             @if($order->tracking_number)
             <div class="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-100 text-sm">
                 <p class="text-xs text-gray-400 mb-0.5">Customer Tracking #</p>
-                <p class="font-bold text-[#bb976d] tracking-widest text-base">{{ $order->tracking_number }}</p>
+                <p class="font-bold text-[#EA580C] tracking-widest text-base">{{ $order->tracking_number }}</p>
             </div>
             @endif
 
@@ -464,7 +470,7 @@ $paymentColors = [
                 <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Supplier Name</label>
                     <select name="supplier_name"
-                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d] bg-white text-gray-800">
+                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C] bg-white text-gray-800">
                         <option value="">-- Select Supplier --</option>
                         @foreach(['Amazon','Walmart','eBay','AliExpress','Other'] as $sup)
                         <option value="{{ $sup }}" {{ $order->supplier_name === $sup ? 'selected' : '' }}>{{ $sup }}</option>
@@ -475,18 +481,18 @@ $paymentColors = [
                     <label class="block text-xs font-medium text-gray-600 mb-1">Supplier Order ID</label>
                     <input type="text" name="supplier_order_id" value="{{ old('supplier_order_id', $order->supplier_order_id) }}"
                            placeholder="e.g. AMZ-123-4567890"
-                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Supplier Tracking #</label>
                     <input type="text" name="supplier_tracking" value="{{ old('supplier_tracking', $order->supplier_tracking) }}"
                            placeholder="e.g. 1Z999AA10123456784"
-                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-600 mb-1">Carrier</label>
                     <select name="carrier"
-                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d] bg-white text-gray-800">
+                            class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C] bg-white text-gray-800">
                         <option value="">-- Select Carrier --</option>
                         @foreach(['UPS','FedEx','USPS','DHL','Other'] as $carrier)
                         <option value="{{ strtolower($carrier) }}" {{ $order->carrier === strtolower($carrier) ? 'selected' : '' }}>{{ $carrier }}</option>

@@ -1,405 +1,50 @@
-{{-- resources/views/cart.blade.php --}}
-@extends('layouts.main')
+@extends('layouts.pg')
 
 @section('title', 'Your cart — PeytonGhalib')
 @section('robots', 'noindex, nofollow')
 
-@php
-    $itemCount = collect($cartItems)->sum('qty');
-@endphp
-
 @section('content')
+@include('market.dc.cart')
 
-@include('includes.navbar')
+{{-- Extras that sit under the cart: sets that complete something in it, and companion products. --}}
+@if(! empty($cartItems) && ($bundleOffers->isNotEmpty() || $crossSell->isNotEmpty()))
+<div style="max-width:1320px;margin:0 auto;padding:28px clamp(12px,4vw,40px) 0;display:flex;flex-direction:column;gap:20px">
+  @foreach ($bundleOffers as $bundle)
+    <section aria-label="Complete the set" style="border:1px solid #E5E7EB;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:10px">
+      <h2 style="margin:0;font-size:18px;font-weight:800">Complete the set &mdash; save ${{ number_format($bundle->savings(), 2) }}</h2>
+      <p style="margin:0;font-size:14px;color:#4B5563;line-height:1.5">{{ $bundle->name }}: {{ $bundle->items->map(fn ($i) => $i->product->name . ' ($' . number_format($i->unitPrice(), 2) . ')')->implode(' + ') }}.
+        Regular ${{ number_format($bundle->regularTotal(), 2) }}, set price <strong>${{ number_format($bundle->price, 2) }}</strong>.</p>
+      <form method="POST" action="{{ route('cart.add-bundle') }}">
+        @csrf
+        <input type="hidden" name="bundle_id" value="{{ $bundle->id }}">
+        <button type="submit" style="height:46px;padding:0 22px;border-radius:999px;border:1.5px solid #111827;background:#fff;font-weight:700;cursor:pointer">Add the set to cart</button>
+      </form>
+    </section>
+  @endforeach
 
-<x-checkout.shell step="cart" title="Your cart">
-
-    @if (empty($cartItems))
-
-        <section class="co-panel">
-            <div class="co-empty">
-                <div class="co-empty__icon" aria-hidden="true">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M2 3h3l2.4 12h11L21 7H6"/></svg>
-                </div>
-                <p class="co-empty__title">Your cart is empty</p>
-                <p class="co-empty__text">Once you add something you love, it'll show up here.</p>
-                <a class="co-submit" href="{{ url('/shop') }}" style="text-decoration:none">Continue shopping</a>
-            </div>
-        </section>
-
-    @else
-
-        <div class="co__grid">
-
-            {{-- ── Left: line items ─────────────────────────── --}}
-            <div>
-                <section class="co-panel" aria-labelledby="co-items-title">
-                    <h2 class="co-panel__title" id="co-items-title">
-                        {{ $itemCount }} item{{ $itemCount === 1 ? '' : 's' }} in your cart
-                    </h2>
-                    <p class="co-panel__hint">Prices and stock are confirmed at checkout.</p>
-
-                    <ul class="co-lines">
-                        @foreach ($cartItems as $item)
-                            <li class="co-line">
-                                @php
-                                    $img = $item['image'] ?? null;
-                                    $src = $img
-                                        ? (Str::startsWith($img, 'assets/') ? asset($img) : Storage::url($img))
-                                        : asset('assets/img/gallery/cart/cart-01.jpg');
-                                @endphp
-
-                                @if (! empty($item['slug']))
-                                <a href="{{ route('product-details', $item['slug']) }}">
-                                    <img class="co-line__thumb" src="{{ $src }}" alt="{{ $item['name'] }}"
-                                         width="76" height="76" loading="lazy">
-                                </a>
-                                @else
-                                    <img class="co-line__thumb" src="{{ $src }}" alt="{{ $item['name'] }}" width="76" height="76" loading="lazy">
-                                @endif
-
-                                <div style="min-width:0">
-                                    <p class="co-line__name">
-                                        @if (! empty($item['slug']))
-                                            <a href="{{ route('product-details', $item['slug']) }}">{{ $item['name'] }}</a>
-                                        @else
-                                            {{ $item['name'] }}
-                                        @endif
-                                    </p>
-                                    @if (! empty($item['bundle_id']))
-                                        <p class="co-line__variant">Set: every item included</p>
-                                    @endif
-
-                                    @if (!empty($item['color']) || !empty($item['size']))
-                                        <p class="co-line__variant">
-                                            {{ collect([$item['color'] ?? null, $item['size'] ?? null])->filter()->implode(' · ') }}
-                                        </p>
-                                    @endif
-
-                                    <p class="co-line__unit">${{ number_format($item['price'], 2) }} each</p>
-                                </div>
-
-                                {{-- Quantity. The +/- buttons submit this form; the number
-                                     input submits on change, so keyboard users don't need
-                                     a separate "update" click. --}}
-                                <form method="POST" action="{{ route('cart.update') }}" data-qty-form>
-                                    @csrf
-                                    <input type="hidden" name="cart_key" value="{{ $item['key'] }}">
-
-                                    <div class="co-qty">
-                                        <button class="co-qty__btn" type="button" data-qty-dec
-                                                aria-label="Decrease quantity of {{ $item['name'] }}"
-                                                @disabled($item['qty'] <= 1)>
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>
-                                        </button>
-
-                                        <input class="co-qty__input" type="number" name="qty" min="1"
-                                               value="{{ $item['qty'] }}" data-qty-input
-                                               aria-label="Quantity of {{ $item['name'] }}">
-
-                                        <button class="co-qty__btn" type="button" data-qty-inc
-                                                aria-label="Increase quantity of {{ $item['name'] }}">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-                                        </button>
-                                    </div>
-
-                                    <noscript>
-                                        <button class="co-ghost" type="submit" style="min-height:36px; margin-top:6px; font-size:13px">Update</button>
-                                    </noscript>
-                                </form>
-
-                                <span class="co-line__total">${{ number_format($item['price'] * $item['qty'], 2) }}</span>
-
-                                <form method="POST" action="{{ route('cart.remove') }}">
-                                    @csrf
-                                    <input type="hidden" name="cart_key" value="{{ $item['key'] }}">
-                                    <button class="co-line__remove" type="submit" aria-label="Remove {{ $item['name'] }} from cart">
-                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
-                                    </button>
-                                </form>
-                            </li>
-                        @endforeach
-                    </ul>
-                </section>
-
-                <form method="POST" action="{{ route('cart.clear') }}" style="margin-top:14px">
-                    @csrf
-                    <button class="co-back" type="submit" style="width:auto; margin:0">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
-                        Clear cart
-                    </button>
-                </form>
-            </div>
-
-            {{-- ── Right: summary ───────────────────────────── --}}
-            <div class="co-summary">
-                <section class="co-panel" aria-labelledby="co-sum-title">
-                    <h2 class="co-panel__title" id="co-sum-title">Summary</h2>
-                    {{-- Was "Shipping is calculated at the next step", which implied a
-                         cost that never materialises — CheckoutController exposes only
-                         the free option, so nothing is ever calculated. --}}
-                    <p class="co-panel__hint">{{ $shippingPromo }}.</p>
-
-                    {{-- Free shipping status.
-                         A completed bar, not a "you're $X away" counter: shipping is
-                         genuinely free on every order with no minimum, so a countdown
-                         would be counting toward a threshold that does not exist.
-                         Stating it as already earned is both true and the stronger
-                         message — most stores can only promise this above a spend. --}}
-                    @if (! $shippingEnabled)
-                    <div class="co-ship" role="status">
-                        <div class="co-ship__head">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M20 6 9 17l-5-5"/>
-                            </svg>
-                            <span>Free shipping unlocked</span>
-                        </div>
-                        <div class="co-ship__track" aria-hidden="true"><div class="co-ship__fill"></div></div>
-                        <p class="co-ship__note">
-                            Applies to every order — no minimum spend. Estimated
-                            {{ \App\Support\DeliveryEstimate::minDays() }}–{{ \App\Support\DeliveryEstimate::maxDays() }} business days.
-                        </p>
-                    </div>
-                    @else
-                    {{-- Threshold progress, computed on the server from the live cart. --}}
-                    <div class="co-ship" role="status">
-                        <div class="co-ship__head">
-                            <span>{{ $shippingRemaining === null ? 'Nice! Your order ships free.' : "You're $" . number_format($shippingRemaining, 2) . ' away from free shipping.' }}</span>
-                        </div>
-                        <div class="co-ship__track" aria-hidden="true"><div class="co-ship__fill" style="width:{{ min(100, round($cartTotal / $shippingThreshold * 100)) }}%"></div></div>
-                        <p class="co-ship__note">
-                            {{ $shippingPromo }}; ${{ number_format(config('checkout.flat_shipping_rate'), 2) }} flat rate below that.
-                            Estimated {{ \App\Support\DeliveryEstimate::minDays() }}–{{ \App\Support\DeliveryEstimate::maxDays() }} business days.
-                        </p>
-                    </div>
-                    @endif
-
-                    <div data-welcome-cart class="pgw-cart" hidden></div>
-                    <div class="co-sum__row">
-                        <span>Subtotal ({{ $itemCount }} item{{ $itemCount === 1 ? '' : 's' }})</span>
-                        <span>${{ number_format($cartTotal, 2) }}</span>
-                    </div>
-                    @if (($welcomeDiscount ?? 0) > 0)
-                        <div class="co-sum__row" style="color:#2f7d4f">
-                            <span>Welcome deal</span>
-                            <span>&minus;${{ number_format($welcomeDiscount, 2) }}</span>
-                        </div>
-                    @endif
-                    <div class="co-sum__row">
-                        <span>Shipping</span>
-                        <span>{{ $shippingCost > 0 ? '$' . number_format($shippingCost, 2) : 'Free' }}</span>
-                    </div>
-
-                    <div class="co-sum__rule"></div>
-
-                    <div class="co-sum__total">
-                        <span>Total</span>
-                        <b>${{ number_format($cartTotal - ($welcomeDiscount ?? 0) + $shippingCost, 2) }}</b>
-                    </div>
-
-                    {{-- Guests check out without an account; the thank-you page offers one. --}}
-                    @if ($addonBlocked)
-                        <p class="co-panel__hint" role="alert" style="color:#b45309">Add-on items ship free with orders of ${{ rtrim(rtrim(number_format($shippingThreshold, 2), '0'), '.') }} or more. Add another item to check out.</p>
-                        <span class="co-submit" aria-disabled="true" style="opacity:.5;pointer-events:none">Proceed to checkout</span>
-                    @else
-                    <a class="co-submit" href="{{ url('/checkout') }}" style="text-decoration:none">
-                        Proceed to checkout
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </a>
-                    @endif
-
-                    <a class="co-back" href="{{ url('/shop') }}">Continue shopping</a>
-
-                    <p class="co-secure">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-                        Secure, encrypted checkout
-                    </p>
-
-                    <div class="co-cards" aria-hidden="true">
-                        <img src="{{ asset('assets/img/Payment/payment-01.png') }}" alt="" loading="lazy">
-                        <img src="{{ asset('assets/img/Payment/payment-02.png') }}" alt="" loading="lazy">
-                        <img src="{{ asset('assets/img/Payment/payment-03.png') }}" alt="" loading="lazy">
-                    </div>
-                </section>
-            </div>
-
-        </div>
-
-        @foreach ($bundleOffers as $bundle)
-            <section class="co-panel" aria-label="Complete the set">
-                <h2 class="co-panel__title">Complete the set &mdash; save ${{ number_format($bundle->savings(), 2) }}</h2>
-                <p class="co-panel__hint">{{ $bundle->name }}: {{ $bundle->items->map(fn ($i) => $i->product->name . ' ($' . number_format($i->unitPrice(), 2) . ')')->implode(' + ') }}.
-                    Regular ${{ number_format($bundle->regularTotal(), 2) }}, set price <strong>${{ number_format($bundle->price, 2) }}</strong>.</p>
-                <form method="POST" action="{{ route('cart.add-bundle') }}">
-                    @csrf
-                    <input type="hidden" name="bundle_id" value="{{ $bundle->id }}">
-                    <button class="co-ghost" type="submit">Add the set to cart</button>
-                </form>
-            </section>
+  @if($crossSell->isNotEmpty())
+    <section aria-labelledby="xsell-title" style="display:flex;flex-direction:column;gap:12px">
+      <div><h2 id="xsell-title" style="margin:0;font-size:20px;font-weight:800">You might also like</h2>
+        <span style="font-size:14px;color:#4B5563">Popular add-ons shoppers grab before checkout.</span></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(176px,44%),1fr));gap:20px 16px">
+        @foreach($crossSell as $p)
+          <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+            <a href="{{ route('product-details', $p->slug) }}" style="display:block;aspect-ratio:1;border-radius:16px;background:#F3F4F6;overflow:hidden">
+              @if($p->image)<img src="{{ \App\Models\Product::imageUrl($p->image) }}" alt="{{ $p->name }}" loading="lazy" style="width:100%;height:100%;object-fit:cover">@endif
+            </a>
+            <a href="{{ route('product-details', $p->slug) }}" style="font-size:14px;line-height:1.35;color:#111827;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ $p->name }}</a>
+            <b style="font-size:16px;font-weight:800">{{ $p->display_price }}</b>
+            <form method="POST" action="{{ route('cart.add') }}" data-track="{{ json_encode(['id' => $p->id, 'name' => $p->name, 'price' => round((float) $p->effective_price, 2)]) }}" style="margin-top:auto">
+              @csrf
+              <input type="hidden" name="product_id" value="{{ $p->id }}">
+              <input type="hidden" name="qty" value="1">
+              <button type="submit" aria-label="Add {{ $p->name }} to cart" style="width:100%;height:44px;border-radius:999px;border:1.5px solid #111827;background:#fff;font-weight:700;cursor:pointer">+ Add</button>
+            </form>
+          </div>
         @endforeach
-
-        {{-- ── Cross-sell: companion products, full-width under the cart grid ──
-             "Add" does a normal POST (data-full-submit) so the cart list refreshes. --}}
-        @if($crossSell->isNotEmpty())
-        <section class="co-panel co-xsell" aria-labelledby="co-xsell-title">
-            <h2 class="co-panel__title" id="co-xsell-title">You might also like</h2>
-            <p class="co-panel__hint">Popular add-ons shoppers grab before checkout.</p>
-
-            <div class="co-xsell__row">
-                @foreach($crossSell as $p)
-                    @php
-                        $pimg = $p->image
-                            ? (Str::startsWith($p->image, 'assets/') ? asset($p->image) : Storage::url($p->image))
-                            : asset('assets/img/gallery/cart/cart-01.jpg');
-                    @endphp
-                    <div class="co-xsell__card">
-                        <a href="{{ route('product-details', $p->slug) }}" class="co-xsell__media">
-                            <img src="{{ $pimg }}" alt="{{ $p->name }}" width="140" height="140" loading="lazy">
-                        </a>
-                        <a href="{{ route('product-details', $p->slug) }}" class="co-xsell__name">{{ $p->name }}</a>
-                        <div class="co-xsell__price">{{ $p->display_price }}</div>
-                        {{-- data-atc-*: this form does a full POST, so the Meta AddToCart
-                             pixel has no JSON response to read its value from. --}}
-                        <form method="POST" action="{{ route('cart.add') }}" data-full-submit class="co-xsell__form"
-                              data-atc-id="{{ $p->id }}" data-atc-name="{{ $p->name }}" data-atc-price="{{ number_format($p->effective_price, 2, '.', '') }}">
-                            @csrf
-                            <input type="hidden" name="product_id" value="{{ $p->id }}">
-                            <input type="hidden" name="qty" value="1">
-                            <button type="submit" class="co-xsell__add" aria-label="Add {{ $p->name }} to cart">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-                                Add
-                            </button>
-                        </form>
-                    </div>
-                @endforeach
-            </div>
-        </section>
-        @endif
-
-    @endif
-
-    {{-- Sign-in gate for guests --}}
-
-</x-checkout.shell>
-
-@include('includes.footer')
-
+      </div>
+    </section>
+  @endif
+</div>
+@endif
 @endsection
-
-@push('scripts')
-<script>
-(function () {
-    'use strict';
-
-    /* ── Quantity stepper ───────────────────────────────────────
-       Submitting on change keeps the server as the source of truth for
-       stock limits — CartController clamps the qty and flashes a notice. */
-    document.querySelectorAll('[data-qty-form]').forEach(function (form) {
-        var input = form.querySelector('[data-qty-input]');
-        var dec   = form.querySelector('[data-qty-dec]');
-        var inc   = form.querySelector('[data-qty-inc]');
-        if (!input) return;
-
-        function submitWith(value) {
-            input.value = value;
-            form.submit();
-        }
-
-        if (dec) dec.addEventListener('click', function () {
-            var v = parseInt(input.value, 10) || 1;
-            if (v > 1) submitWith(v - 1);
-        });
-
-        if (inc) inc.addEventListener('click', function () {
-            var v = parseInt(input.value, 10) || 1;
-            submitWith(v + 1);
-        });
-
-        input.addEventListener('change', function () {
-            var v = parseInt(input.value, 10);
-            submitWith(!v || v < 1 ? 1 : v);
-        });
-    });
-
-    /* ── Sign-in modal ──────────────────────────────────────── */
-    var modal = document.getElementById('signin-modal');
-    if (!modal) return;
-
-    var opener  = document.querySelector('[data-signin-open]');
-    var lastFocused = null;
-
-    function open() {
-        lastFocused = document.activeElement;
-        modal.hidden = false;
-        document.body.style.overflow = 'hidden';
-        var first = modal.querySelector('a, button');
-        if (first) first.focus();
-    }
-
-    function close() {
-        modal.hidden = true;
-        document.body.style.overflow = '';
-        if (lastFocused) lastFocused.focus();   // return focus where it came from
-    }
-
-    if (opener) opener.addEventListener('click', open);
-    modal.querySelectorAll('[data-signin-close]').forEach(function (el) {
-        el.addEventListener('click', close);
-    });
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && !modal.hidden) close();   // every modal needs an escape route
-    });
-})();
-</script>
-@endpush
-
-@push('styles')
-<style>
-/* ── Free shipping status ── */
-.co-ship { background:#f2f9f4; border:1px solid #cfe8d6; border-radius:12px; padding:12px 14px; margin-bottom:16px; }
-.co-ship__head { display:flex; align-items:center; gap:7px; font-size:13.5px; font-weight:700; color:#15803d; }
-.co-ship__head svg { flex:none; }
-.co-ship__track { height:6px; border-radius:50px; background:#dcefe1; margin-top:9px; overflow:hidden; }
-.co-ship__fill { height:100%; width:100%; border-radius:50px; background:linear-gradient(90deg,#22a55b,#15803d); }
-.co-ship__note { font-size:11.5px; color:#4b7a58; line-height:1.45; margin:7px 0 0; }
-
-/* ── Cart cross-sell tray ── */
-.co-xsell { margin-top: 20px; }
-.co-xsell__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 14px; }
-@media (max-width: 720px) {
-    /* Horizontal swipe row on small screens so the cards stay tappable */
-    .co-xsell__row {
-        grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 60%;
-        overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-        padding-bottom: 6px;
-    }
-    .co-xsell__card { scroll-snap-align: start; }
-}
-.co-xsell__card {
-    display: flex; flex-direction: column;
-    border: 1px solid #e8e1d7; border-radius: 12px; padding: 10px; background: #fff;
-}
-.co-xsell__media { display: block; border-radius: 8px; overflow: hidden; background: #f5f2ec; aspect-ratio: 1 / 1; }
-.co-xsell__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.co-xsell__name {
-    font-size: 13px; font-weight: 600; color: #172430; line-height: 1.3; text-decoration: none;
-    margin: 10px 0 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-.co-xsell__name:hover { color: #bb976d; }
-.co-xsell__price { font-size: 14px; font-weight: 700; color: #172430; margin-bottom: 10px; }
-.co-xsell__form { margin-top: auto; margin-bottom: 0; }
-.co-xsell__add {
-    width: 100%; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    border: 1px solid #172430; border-radius: 8px; background: transparent;
-    color: #172430; font-size: 13px; font-weight: 700; cursor: pointer;
-    transition: background .2s ease, color .2s ease;
-}
-.co-xsell__add:hover { background: #172430; color: #fff; }
-.co-xsell__add:focus-visible { outline: 2px solid #bb976d; outline-offset: 2px; }
-.dark .co-xsell__card { background: #172430; border-color: #2f3b45; }
-.dark .co-xsell__name, .dark .co-xsell__price { color: #fff; }
-.dark .co-xsell__add { border-color: #fff; color: #fff; }
-.dark .co-xsell__add:hover { background: #fff; color: #172430; }
-</style>
-@endpush

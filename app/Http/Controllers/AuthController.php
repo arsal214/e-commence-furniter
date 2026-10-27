@@ -23,7 +23,7 @@ class AuthController extends Controller
         if ($request->query('redirect')) {
             session(['url.intended' => $request->query('redirect')]);
         }
-        return view('login');
+        return view('auth.login');
     }
 
     public function login(Request $request)
@@ -57,7 +57,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect('/my-account');
         }
-        return view('register');
+        return view('auth.register');
     }
 
     public function register(Request $request)
@@ -65,7 +65,7 @@ class AuthController extends Controller
         $data = $request->validate([
             'name'                  => ['required', 'string', 'max:255'],
             'email'                 => ['required', 'email', 'unique:users,email'],
-            'password'              => ['required', 'min:8', 'confirmed'],
+            'password'              => ['required', 'min:8'],
         ]);
 
         $user = User::create([
@@ -103,7 +103,7 @@ class AuthController extends Controller
     /** Show the "choose your own password" screen. */
     public function showSetPassword()
     {
-        return view('set-password');
+        return view('auth.set-password');
     }
 
     /** Persist the chosen password and clear the forced-reset flag. */
@@ -140,7 +140,7 @@ class AuthController extends Controller
     /** Show the reset password form (from the emailed link). */
     public function showResetForm(Request $request, string $token)
     {
-        return view('reset-password', [
+        return view('auth.reset', [
             'token' => $token,
             'email' => $request->query('email'),
         ]);

@@ -16,7 +16,7 @@ use Stripe\Webhook;
  */
 class StripeWebhookController extends Controller
 {
-    public function __invoke(Request $request, OrderSettlement $settlement)
+    public function __invoke(Request $request, OrderSettlement $settlement, \App\Services\SellerSubscriptionSync $subscriptions)
     {
         $secret = config('services.stripe.webhook_secret');
         if (! $secret) {
@@ -27,6 +27,16 @@ class StripeWebhookController extends Controller
             $event = Webhook::constructEvent($request->getContent(), (string) $request->header('Stripe-Signature'), $secret);
         } catch (\Throwable $e) {
             return response('Invalid signature.', 400);
+        }
+
+        // Seller $19.99 plan: subscription and invoice events.
+        if ($subscriptions->handle($event)) {
+            return response('OK', 200);
+        }
+
+        // A gift card paid through Stripe Checkout.
+        if (app(\App\Services\GiftCardService::class)->handleWebhook($event)) {
+            return response('OK', 200);
         }
 
         if ($event->type !== 'payment_intent.succeeded') {

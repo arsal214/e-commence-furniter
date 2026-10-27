@@ -13,6 +13,15 @@
 
 pest()->extend(Tests\TestCase::class)
  // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    // Card and PayPal are the only ways to pay. No test may reach the PayPal API, so the
+    // service is faked for every Feature test: order creation answers instantly and a capture succeeds.
+    ->beforeEach(function () {
+        $this->mock(\App\Services\PayPalService::class, function ($mock) {
+            $mock->shouldReceive('createOrder')->andReturn(['id' => 'PP-' . uniqid()]);
+            $mock->shouldReceive('livemode')->andReturn(false);
+            $mock->shouldReceive('captureOrder')->andReturn(['status' => 'COMPLETED']);
+        });
+    })
     ->in('Feature');
 
 /*
@@ -44,4 +53,13 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+/** Complete payment for the newest order the way the PayPal button does (capture -> settlement). */
+function payLatestOrder($test): \App\Models\Order
+{
+    $order = \App\Models\Order::latest('id')->firstOrFail();
+    $test->postJson(route('checkout.paypal-capture', $order))->assertOk();
+
+    return $order->fresh();
 }

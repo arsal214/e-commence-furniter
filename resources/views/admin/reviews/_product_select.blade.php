@@ -12,7 +12,7 @@
         <input type="text" id="product-search" autocomplete="off" role="combobox" aria-expanded="false"
                aria-controls="product-options" aria-autocomplete="list"
                placeholder="Search products…" value="{{ $selectedName }}"
-               class="w-full border border-gray-300 rounded-lg pl-9 pr-9 py-2.5 text-sm bg-white focus:outline-none focus:border-[#bb976d] transition-colors">
+               class="w-full border border-gray-300 rounded-lg pl-9 pr-9 py-2.5 text-sm bg-white focus:outline-none focus:border-[#EA580C] transition-colors">
 
         <i class="mdi mdi-magnify absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base pointer-events-none"></i>
         <button type="button" id="product-clear" title="Clear"

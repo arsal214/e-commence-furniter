@@ -22,13 +22,13 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Name <span class="text-red-500">*</span></label>
                 <input type="text" name="name" value="{{ old('name', $category->name) }}" required
-                       class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors">
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Description <span class="text-gray-400 font-normal">(shown on category landing page)</span></label>
                 <textarea name="description" rows="3"
-                          class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors resize-none">{{ old('description', $category->description) }}</textarea>
+                          class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors resize-none">{{ old('description', $category->description) }}</textarea>
             </div>
 
             <div class="border-t border-gray-100 pt-5">
@@ -38,12 +38,12 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Meta Title <span class="text-gray-400 font-normal">max 160 chars</span></label>
                         <input type="text" name="meta_title" value="{{ old('meta_title', $category->meta_title) }}" maxlength="160"
                                placeholder="Buy {{ $category->name }} Online | PeytonGhalib"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Meta Description <span class="text-gray-400 font-normal">max 320 chars</span></label>
                         <textarea name="meta_description" rows="2" maxlength="320"
-                                  class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors resize-none">{{ old('meta_description', $category->meta_description) }}</textarea>
+                                  class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors resize-none">{{ old('meta_description', $category->meta_description) }}</textarea>
                     </div>
                 </div>
             </div>
@@ -73,7 +73,7 @@
 
                 {{-- Upload zone --}}
                 <div id="upload-zone"
-                     class="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-[#bb976d] transition-colors {{ $category->image ? 'hidden' : '' }}"
+                     class="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-[#EA580C] transition-colors {{ $category->image ? 'hidden' : '' }}"
                      id="upload-zone"
                      onclick="document.getElementById('image-input').click()">
 
@@ -99,13 +99,13 @@
             <div class="flex items-center gap-3">
                 <input type="checkbox" name="is_active" id="is_active" value="1"
                        {{ $category->is_active ? 'checked' : '' }}
-                       class="w-4 h-4 rounded border-gray-300 text-[#bb976d]">
+                       class="w-4 h-4 rounded border-gray-300 text-[#EA580C]">
                 <label for="is_active" class="text-sm font-medium text-gray-700">Active (visible in store)</label>
             </div>
 
             <div class="flex items-center gap-3 pt-2">
                 <button type="submit"
-                        class="px-5 py-2.5 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
+                        class="px-5 py-2.5 bg-[#EA580C] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
                     Update Category
                 </button>
                 <a href="{{ route('admin.categories.index') }}"
@@ -167,11 +167,11 @@ if (input) {
     input.addEventListener('change', () => { if (input.files[0]) showPreview(input.files[0]); });
 }
 if (zone) {
-    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('border-[#bb976d]', 'bg-[#bb976d]/5'); });
-    zone.addEventListener('dragleave', () => zone.classList.remove('border-[#bb976d]', 'bg-[#bb976d]/5'));
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('border-[#EA580C]', 'bg-[#EA580C]/5'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('border-[#EA580C]', 'bg-[#EA580C]/5'));
     zone.addEventListener('drop', e => {
         e.preventDefault();
-        zone.classList.remove('border-[#bb976d]', 'bg-[#bb976d]/5');
+        zone.classList.remove('border-[#EA580C]', 'bg-[#EA580C]/5');
         const file = e.dataTransfer.files[0];
         if (file && file.type.startsWith('image/')) {
             const dt = new DataTransfer();

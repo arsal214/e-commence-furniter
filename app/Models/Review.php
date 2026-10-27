@@ -10,11 +10,12 @@ class Review extends Model
 
     protected $fillable = [
         'product_id', 'user_id', 'reviewer_name', 'rating', 'comment',
-        'image', 'country', 'is_verified',
+        'image', 'country', 'is_verified', 'seller_reply', 'seller_replied_at',
     ];
 
     protected $casts = [
         'is_verified' => 'boolean',
+        'seller_replied_at' => 'datetime',
     ];
 
     /**

@@ -113,25 +113,5 @@ return [
             ],
         ],
 
-        'CA' => [
-            'label'             => 'Canada',
-            'subdivision_label' => 'Province / Territory',
-            // Canadian postal codes exclude D, F, I, O, Q and U, and never start
-            // with W or Z. A loose /[A-Z]\d[A-Z]/ would accept codes that cannot
-            // exist and fail at the carrier instead of at checkout.
-            'postal_regex'      => '/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z] ?\d[ABCEGHJ-NPRSTV-Z]\d$/i',
-            'postal_example'    => 'K1A 0B1',
-            'postal_required'   => true,
-            'subdivisions'      => [
-                'AB' => 'Alberta',                    'BC' => 'British Columbia',
-                'MB' => 'Manitoba',                   'NB' => 'New Brunswick',
-                'NL' => 'Newfoundland and Labrador',  'NS' => 'Nova Scotia',
-                'NT' => 'Northwest Territories',      'NU' => 'Nunavut',
-                'ON' => 'Ontario',                    'PE' => 'Prince Edward Island',
-                'QC' => 'Quebec',                     'SK' => 'Saskatchewan',
-                'YT' => 'Yukon',
-            ],
-        ],
-
     ],
 ];

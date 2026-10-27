@@ -28,7 +28,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Reviewer Name <span class="text-red-500">*</span></label>
                 <input type="text" name="reviewer_name" value="{{ old('reviewer_name') }}" required maxlength="100"
                        placeholder="e.g. Sarah Mitchell"
-                       class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors">
             </div>
 
             @include('admin.reviews._rating', ['current' => old('rating', 5)])
@@ -36,14 +36,14 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Comment <span class="text-gray-400 font-normal">(optional, max 1000 chars)</span></label>
                 <textarea name="comment" rows="4" maxlength="1000"
-                          class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors resize-none">{{ old('comment') }}</textarea>
+                          class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors resize-none">{{ old('comment') }}</textarea>
             </div>
 
             @include('admin.reviews._display_fields', ['review' => null])
 
             <div class="flex items-center gap-3 pt-2">
                 <button type="submit"
-                        class="px-5 py-2.5 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
+                        class="px-5 py-2.5 bg-[#EA580C] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
                     Add Review
                 </button>
                 <a href="{{ route('admin.reviews.index') }}"

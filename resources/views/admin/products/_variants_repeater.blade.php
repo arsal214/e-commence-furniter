@@ -33,7 +33,7 @@
         $variantRows = collect($existingVariants)->values();
     }
 
-    $vInput = 'border border-gray-300 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors';
+    $vInput = 'border border-gray-300 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:border-[#EA580C] transition-colors';
 @endphp
 
 <div class="sm:col-span-2 border-t border-gray-100 pt-5">
@@ -92,7 +92,7 @@
                             <img src="{{ \Storage::url($rimg) }}" class="w-9 h-9 object-cover rounded border border-gray-200 flex-shrink-0" alt="">
                             @endif
                             <input type="file" accept="image/*" name="variants[{{ $dimension }}][{{ $i }}][image]"
-                                   class="w-full text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[11px] file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
+                                   class="w-full text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[11px] file:font-medium file:bg-[#EA580C]/10 file:text-[#EA580C]">
                         </div>
                     </div>
                     <button type="button" class="variant-remove flex-shrink-0 w-9 h-9 rounded-lg border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 transition-colors" aria-label="Remove variant">&times;</button>
@@ -102,7 +102,7 @@
         @endforeach
     </div>
 
-    <button type="button" id="variants-{{ $dimension }}-add" class="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[#bb976d] hover:text-[#a8845a]">
+    <button type="button" id="variants-{{ $dimension }}-add" class="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[#EA580C] hover:text-[#a8845a]">
         <span class="text-lg leading-none">+</span> Add {{ strtolower($optionLabel) }} price
     </button>
 </div>
@@ -143,7 +143,7 @@
             '<input type="text" name="' + fieldName(i, 'sku') + '" placeholder="optional" class="w-full ' + vInput + '"></div>' +
           '<div class="col-span-2 sm:col-span-1 flex items-end gap-2">' +
             '<div class="flex-1"><label class="block text-[11px] font-medium text-gray-500 mb-1">Image</label>' +
-              '<input type="file" accept="image/*" name="' + fieldName(i, 'image') + '" class="w-full text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[11px] file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]"></div>' +
+              '<input type="file" accept="image/*" name="' + fieldName(i, 'image') + '" class="w-full text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[11px] file:font-medium file:bg-[#EA580C]/10 file:text-[#EA580C]"></div>' +
             '<button type="button" class="variant-remove flex-shrink-0 w-9 h-9 rounded-lg border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 transition-colors" aria-label="Remove variant">×</button>' +
           '</div>' +
         '</div>';

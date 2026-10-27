@@ -45,11 +45,11 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
                 <div class="flex items-center justify-between gap-3 mb-2">
                     <label for="templatePicker" class="block text-sm font-medium text-gray-700">Start from a template</label>
-                    <a href="{{ route('admin.email-templates.index') }}" class="text-xs text-[#bb976d] hover:underline">Manage templates</a>
+                    <a href="{{ route('admin.email-templates.index') }}" class="text-xs text-[#EA580C] hover:underline">Manage templates</a>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <select id="templatePicker"
-                            class="flex-1 min-w-[220px] text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d] bg-white text-gray-800">
+                            class="flex-1 min-w-[220px] text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C] bg-white text-gray-800">
                         <option value="">— Blank email —</option>
                         @foreach($templates as $template)
                             <option value="{{ $template->id }}">{{ $template->name }}</option>
@@ -69,21 +69,21 @@
                     <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject <span class="text-red-500">*</span></label>
                     <input type="text" name="subject" id="subject" value="{{ old('subject') }}" required maxlength="180"
                            placeholder="e.g. @{{first_name}}, 20% off our new toy collection"
-                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                         <label for="eyebrow" class="block text-sm font-medium text-gray-700 mb-1">Eyebrow</label>
                         <input type="text" name="eyebrow" id="eyebrow" value="{{ old('eyebrow') }}" maxlength="60"
                                placeholder="Limited Time Offer"
-                               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                         <p class="text-xs text-gray-400 mt-1">Small gold line above the headline.</p>
                     </div>
                     <div class="sm:col-span-2">
                         <label for="heading" class="block text-sm font-medium text-gray-700 mb-1">Headline</label>
                         <input type="text" name="heading" id="heading" value="{{ old('heading') }}" maxlength="120"
                                placeholder="20% off everything this week"
-                               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                         <p class="text-xs text-gray-400 mt-1">Leave both blank to open straight with your message.</p>
                     </div>
                 </div>
@@ -104,7 +104,7 @@
                     <span class="text-xs text-gray-500 self-center mr-1">Insert:</span>
                     @foreach($mergeTags as $merge)
                         <button type="button" data-merge-tag="{{ $merge['tag'] }}"
-                                class="px-2 py-1 text-xs rounded border border-gray-200 text-gray-600 hover:border-[#bb976d] hover:text-[#bb976d] transition-colors">{{ $merge['label'] }}</button>
+                                class="px-2 py-1 text-xs rounded border border-gray-200 text-gray-600 hover:border-[#EA580C] hover:text-[#EA580C] transition-colors">{{ $merge['label'] }}</button>
                     @endforeach
                 </div>
                 <textarea name="body_html" id="body_html" class="tinymce-editor">{{ old('body_html') }}</textarea>
@@ -119,14 +119,14 @@
                         <label for="promo_code" class="block text-sm font-medium text-gray-700 mb-1">Discount code</label>
                         <input type="text" name="promo_code" id="promo_code" value="{{ old('promo_code') }}" maxlength="40"
                                placeholder="SUMMER20"
-                               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d] uppercase">
+                               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C] uppercase">
                         <p class="text-xs text-gray-400 mt-1">Shown in a boxed panel. Leave blank to hide it.</p>
                     </div>
                     <div>
                         <label for="promo_note" class="block text-sm font-medium text-gray-700 mb-1">Code caption</label>
                         <input type="text" name="promo_note" id="promo_note" value="{{ old('promo_note') }}" maxlength="160"
                                placeholder="Valid until 30 September. One use per customer."
-                               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                     </div>
                 </div>
 
@@ -135,13 +135,13 @@
                         <label for="cta_label" class="block text-sm font-medium text-gray-700 mb-1">Button label</label>
                         <input type="text" name="cta_label" id="cta_label" value="{{ old('cta_label') }}" maxlength="40"
                                placeholder="Shop the Sale"
-                               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                     </div>
                     <div class="sm:col-span-2">
                         <label for="cta_url" class="block text-sm font-medium text-gray-700 mb-1">Button link</label>
                         <input type="url" name="cta_url" id="cta_url" value="{{ old('cta_url') }}" maxlength="500" list="quickLinks"
                                placeholder="{{ url('/shop') }}"
-                               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                         <datalist id="quickLinks">
                             @foreach($quickLinks as $link)
                                 <option value="{{ $link['url'] }}">{{ $link['label'] }}</option>
@@ -160,7 +160,7 @@
                     <button type="submit" id="previewBtn"
                             formaction="{{ route('admin.campaigns.preview', $recipientParam) }}"
                             formtarget="previewFrame" formnovalidate
-                            class="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-700 hover:border-[#bb976d] hover:text-[#bb976d] transition-colors">
+                            class="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-700 hover:border-[#EA580C] hover:text-[#EA580C] transition-colors">
                         <i class="mdi mdi-eye-outline mr-1"></i> Refresh preview
                     </button>
                 </div>
@@ -180,7 +180,7 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
                 <p class="text-xs uppercase tracking-wide text-gray-400 font-medium mb-3">Sending to</p>
                 <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-full bg-[#bb976d]/15 text-[#bb976d] flex items-center justify-center font-bold flex-shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-[#EA580C]/15 text-[#EA580C] flex items-center justify-center font-bold flex-shrink-0">
                         {{ strtoupper(substr($name ?: $email, 0, 1)) }}
                     </div>
                     <div class="min-w-0">
@@ -207,12 +207,12 @@
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 space-y-3">
                 <button type="submit" id="sendBtn"
-                        class="w-full px-4 py-3 bg-[#bb976d] text-white text-sm font-semibold rounded-lg hover:bg-[#a8845a] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        class="w-full px-4 py-3 bg-[#EA580C] text-white text-sm font-semibold rounded-lg hover:bg-[#a8845a] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                         {{ $optedOut ? 'disabled' : '' }}>
                     <i class="mdi mdi-send mr-1"></i> Send to {{ $name ?: $email }}
                 </button>
                 <button type="submit" name="test" value="1"
-                        class="w-full px-4 py-2.5 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:border-[#bb976d] hover:text-[#bb976d] transition-colors">
+                        class="w-full px-4 py-2.5 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:border-[#EA580C] hover:text-[#EA580C] transition-colors">
                     <i class="mdi mdi-email-check-outline mr-1"></i> Send test to me
                 </button>
                 <p class="text-xs text-gray-400 text-center">
@@ -226,7 +226,7 @@
                 <ul class="space-y-1.5 text-xs">
                     @foreach($mergeTags as $merge)
                         <li class="flex items-center justify-between gap-2">
-                            <code class="text-[#bb976d] bg-[#bb976d]/8 px-1.5 py-0.5 rounded">{{ $merge['tag'] }}</code>
+                            <code class="text-[#EA580C] bg-[#EA580C]/8 px-1.5 py-0.5 rounded">{{ $merge['tag'] }}</code>
                             <span class="text-gray-500 truncate" title="{{ $merge['value'] }}">{{ $merge['value'] }}</span>
                         </li>
                     @endforeach

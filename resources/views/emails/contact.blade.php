@@ -9,8 +9,10 @@ You have received a new message from the contact form.
 
 **Email:** {{ $data['email'] }}
 
+@if(! empty($data['number']))
 **Phone:** {{ $data['number'] }}
 
+@endif
 **Subject:** {{ $data['subject'] }}
 
 **Message:**

@@ -1,5 +1,5 @@
 {{-- resources/views/checkout.blade.php --}}
-@extends('layouts.main')
+@extends('layouts.pg')
 
 @section('title', 'Checkout — PeytonGhalib')
 @section('robots', 'noindex, nofollow')
@@ -10,7 +10,6 @@
 
 @section('content')
 
-@include('includes.navbar')
 
 <x-checkout.shell step="details" title="Checkout">
 
@@ -29,8 +28,8 @@
             {{-- ── Left: 1 Contact · 2 Delivery · 3 Payment ── --}}
             <div>
                 <section class="co-panel">
-                    <h2 class="co-panel__title co-num"><span class="co-num__n">1</span>Contact</h2>
-                    <p class="co-panel__hint">We'll send your order confirmation and tracking here.</p>
+                    <h2 class="co-panel__title">1. Contact</h2>
+                    <p class="co-panel__hint">We'll send your order confirmation and tracking here. We ship within the US only.</p>
 
                     <div class="co-grid">
                         <div class="co-field co-field--full">
@@ -38,7 +37,7 @@
                                 Full name <span class="co-field__req" aria-hidden="true">*</span><span class="co-sr">(required)</span>
                             </label>
                             <input class="co-field__input" id="name" name="name" type="text"
-                                   value="{{ old('name', auth()->user()?->name) }}"
+                                   value="{{ old('name', $prefill?->name ?? auth()->user()?->name) }}"
                                    placeholder="Jane Doe" autocomplete="name"
                                    data-validate data-label="Full name" required
                                    @error('name') aria-invalid="true" @enderror
@@ -70,7 +69,7 @@
                                 Phone <span class="co-field__req" aria-hidden="true">*</span><span class="co-sr">(required)</span>
                             </label>
                             <input class="co-field__input" id="phone" name="phone" type="tel" inputmode="tel"
-                                   value="{{ old('phone') }}"
+                                   value="{{ old('phone', $prefill?->phone) }}"
                                    placeholder="+1 555 000 0000" autocomplete="tel"
                                    data-validate data-label="Phone" required
                                    @error('phone') aria-invalid="true" @enderror
@@ -85,7 +84,7 @@
 
 
                 <section class="co-panel">
-                    <h2 class="co-panel__title co-num"><span class="co-num__n">2</span>Delivery</h2>
+                    <h2 class="co-panel__title">2. Shipping address</h2>
                     <p class="co-panel__hint">Where should we deliver your order?</p>
 
                     <div class="co-grid">
@@ -94,7 +93,7 @@
                                 Address line 1 <span class="co-field__req" aria-hidden="true">*</span><span class="co-sr">(required)</span>
                             </label>
                             <input class="co-field__input" id="address" name="address" type="text"
-                                   value="{{ old('address') }}"
+                                   value="{{ old('address', $prefill?->address) }}"
                                    placeholder="123 Main Street" autocomplete="address-line1"
                                    data-validate data-label="Address" required
                                    @error('address') aria-invalid="true" @enderror
@@ -108,16 +107,16 @@
                         <div class="co-field co-field--full">
                             <label class="co-field__label" for="address2">Address line 2</label>
                             <input class="co-field__input" id="address2" name="address2" type="text"
-                                   value="{{ old('address2') }}"
+                                   value="{{ old('address2', $prefill?->address2) }}"
                                    placeholder="Apartment, suite, etc. (optional)" autocomplete="address-line2">
                         </div>
 
                         <div class="co-field">
                             <label class="co-field__label" for="city">
-                                Town / City <span class="co-field__req" aria-hidden="true">*</span><span class="co-sr">(required)</span>
+                                City <span class="co-field__req" aria-hidden="true">*</span><span class="co-sr">(required)</span>
                             </label>
                             <input class="co-field__input" id="city" name="city" type="text"
-                                   value="{{ old('city') }}" placeholder="Your city" autocomplete="address-level2"
+                                   value="{{ old('city', $prefill?->city) }}" placeholder="Your city" autocomplete="address-level2"
                                    data-validate data-label="Town / City" required
                                    @error('city') aria-invalid="true" @enderror
                                    aria-describedby="city-error">
@@ -127,25 +126,7 @@
                             </p>
                         </div>
 
-                        {{-- Country first: it decides what the state field is called,
-                             which options it holds, and how the ZIP is validated. --}}
-                        <div class="co-field">
-                            <label class="co-field__label" for="country">
-                                Country <span class="co-field__req" aria-hidden="true">*</span><span class="co-sr">(required)</span>
-                            </label>
-                            <select class="co-field__input co-field__select" id="country" name="country"
-                                    autocomplete="country" data-validate data-label="Country" required
-                                    @error('country') aria-invalid="true" @enderror
-                                    aria-describedby="country-error">
-                                @foreach ($countries as $code => $country)
-                                    <option value="{{ $code }}" @selected(old('country', $defaultCountry) === $code)>{{ $country['label'] }}</option>
-                                @endforeach
-                            </select>
-                            <p class="co-field__error @error('country') is-visible @enderror" id="country-error" role="alert">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-                                <span data-error-text>@error('country'){{ $message }}@enderror</span>
-                            </p>
-                        </div>
+                        <input type="hidden" id="country" name="country" value="US">
 
                         {{-- Options are rewritten by JS whenever country changes. The
                              full initial list is still rendered server-side so the
@@ -161,7 +142,7 @@
                                     aria-describedby="state-error">
                                 <option value="">Choose…</option>
                                 @foreach (($countries[old('country', $defaultCountry)]['subdivisions'] ?? []) as $code => $name)
-                                    <option value="{{ $code }}" @selected(old('state') === $code)>{{ $name }}</option>
+                                    <option value="{{ $code }}" @selected(old('state', $prefill?->state) === $code)>{{ $name }}</option>
                                 @endforeach
                             </select>
                             <p class="co-field__error @error('state') is-visible @enderror" id="state-error" role="alert">
@@ -175,7 +156,7 @@
                                 ZIP / Postcode <span class="co-field__req" aria-hidden="true">*</span><span class="co-sr">(required)</span>
                             </label>
                             <input class="co-field__input" id="zip" name="zip" type="text"
-                                   value="{{ old('zip') }}"
+                                   value="{{ old('zip', $prefill?->zip) }}"
                                    placeholder="{{ $countries[$defaultCountry]['postal_example'] ?? '' }}"
                                    autocomplete="postal-code" inputmode="text"
                                    data-validate data-label="ZIP / Postcode" required
@@ -198,7 +179,7 @@
                          matches whatever $shippingOptions the controller offers. --}}
                     <fieldset class="co-ship" style="border:0; padding:0; margin:18px 0 0; background:transparent !important; box-shadow:none">
                         <legend class="co-sr">Shipping method</legend>
-                        <div class="co-field__label" aria-hidden="true">Shipping method</div>
+                        <div class="co-panel__title" aria-hidden="true">3. Delivery</div>
 
                         @foreach ($shippingOptions as $key => $option)
                             <label class="co-choice">
@@ -256,7 +237,7 @@
 
 
                 <section class="co-panel" aria-labelledby="co-pay-title">
-                    <h2 class="co-panel__title co-num" id="co-pay-title"><span class="co-num__n">3</span>Payment</h2>
+                    <h2 class="co-panel__title" id="co-pay-title">4. Payment</h2>
                     <p class="co-panel__hint">All transactions are secure and encrypted. Your card details are entered on the next step.</p>
 
                     {{-- Stripe is pre-selected: it's the lower-friction default for a
@@ -332,8 +313,14 @@
                     <summary class="co-sumd__head"><span>Order summary <span style="font-weight:500; color:var(--co-muted)">({{ $itemCount }})</span></span><b data-co-total-mirror>${{ number_format($cartTotal, 2) }}</b></summary>
                     <p class="co-panel__hint" id="co-sum-title" style="margin-top:6px"><a href="{{ route('cart') }}" style="color:var(--co-gold-ink); font-weight:600; text-decoration:none">Edit cart</a></p>
 
+                    @php
+                        $sortedItems = collect($cartItems)->sortBy(fn ($i) => $sellerNames[$i['id'] ?? 0] ?? 'Peyton Ghalib')->values();
+                        $prevSeller = null;
+                    @endphp
                     <ul class="co-sum__items">
-                        @foreach ($cartItems as $item)
+                        @foreach ($sortedItems as $item)
+                        @php $thisSeller = $sellerNames[$item['id'] ?? 0] ?? 'Peyton Ghalib'; @endphp
+                        @if ($thisSeller !== $prevSeller)<li class="co-group">Sold by {{ $thisSeller }}</li>@php $prevSeller = $thisSeller; @endphp @endif
                             <li class="co-sum__item">
                                 <span class="co-sum__figure">
                                     @php
@@ -369,6 +356,15 @@
                     </div>
                     {{-- Only rendered once the bump is actually ticked, so the summary
                          never shows a line for something the customer has not chosen. --}}
+                    @if (($giftDiscount ?? 0) > 0)
+                        <div class="co-sum__row" style="color:#2f7d4f"><span>Gift card balance</span><span>&minus;${{ number_format($giftDiscount, 2) }}</span></div>
+                    @endif
+                    @if (($pointsDiscount ?? 0) > 0)
+                        <div class="co-sum__row" style="color:#2f7d4f"><span>Reward points ({{ number_format($pointsUsed) }})</span><span>&minus;${{ number_format($pointsDiscount, 2) }}</span></div>
+                    @endif
+                    @if (($couponDiscount ?? 0) > 0)
+                        <div class="co-sum__row" style="color:#2f7d4f"><span>Coupon {{ $couponCode }}</span><span>&minus;${{ number_format($couponDiscount, 2) }}</span></div>
+                    @endif
                     @if (($welcomeDiscount ?? 0) > 0)
                         <div class="co-sum__row" style="color:#2f7d4f">
                             <span>Welcome deal ({{ $welcomeEmail }})</span>
@@ -388,7 +384,7 @@
 
                     <div class="co-sum__total">
                         <span>Total</span>
-                        <b id="co-total">${{ number_format($cartTotal - ($welcomeDiscount ?? 0), 2) }}</b>
+                        <b id="co-total">${{ number_format($cartTotal - ($welcomeDiscount ?? 0) - ($couponDiscount ?? 0) - ($pointsDiscount ?? 0) - ($giftDiscount ?? 0), 2) }}</b>
                     </div>
                     </details>
                 </section>
@@ -418,7 +414,6 @@
 
 </x-checkout.shell>
 
-@include('includes.footer')
 
 @endsection
 
@@ -426,7 +421,7 @@
 @push('styles')
 <style>
 .co-num { display: flex; align-items: center; gap: 10px; font-size: 18px; }
-.co-num__n { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #172430; color: #fff; font-size: 13px; font-weight: 700; flex: none; }
+.co-num__n { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #111827; color: #fff; font-size: 13px; font-weight: 700; flex: none; }
 .co-summary { display: flex; flex-direction: column; gap: 16px; }
 .co-summary .co-panel + .co-panel { margin-top: 0; }
 @media (min-width: 1025px) { .co-summary { position: sticky; top: 24px; } }
@@ -438,7 +433,7 @@
 .co-trust__row { display: flex; gap: 12px; align-items: flex-start; font-size: 13.5px; }
 .co-trust__row b { display: block; font-weight: 700; color: var(--co-text); }
 .co-trust__row small { display: block; margin-top: 2px; color: var(--co-muted); font-size: 12.5px; line-height: 1.4; }
-.co-trust__ico { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: rgba(187,151,109,.14); color: var(--co-gold-ink); }
+.co-trust__ico { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: rgba(234,88,12,.14); color: var(--co-gold-ink); }
 .co-help { margin: 0; text-align: center; font-size: 12.5px; color: var(--co-muted); }
 .co-help a { color: var(--co-gold-ink); text-decoration: none; margin: 0 6px; }
 .co-help--links a { text-decoration: underline; }
@@ -454,7 +449,7 @@
     var form = document.querySelector('[data-co-form]');
     if (!form) return;
 
-    var SUBTOTAL = {{ (float) $cartTotal - (float) ($welcomeDiscount ?? 0) }};
+    var SUBTOTAL = {{ (float) $cartTotal - (float) ($welcomeDiscount ?? 0) - (float) ($couponDiscount ?? 0) - (float) ($pointsDiscount ?? 0) - (float) ($giftDiscount ?? 0) }};
     var GOODS = {{ (float) $cartTotal }};                     // pre-discount: what the free-shipping threshold is judged on
     var SHIP_RULE = @json($shipRule);                        // null = shipping is free on every order
 
@@ -1038,16 +1033,16 @@
             currency: @json(config('services.meta.currency', 'USD')),
             value: {{ number_format((float) $cartTotal, 2, '.', '') }},
             @if (! empty($welcomeDiscount) && ! empty($welcomeCode)) coupon: @json($welcomeCode), @endif
-            items: {!! json_encode(collect($icContents)->map(fn ($c, $i) => ['item_id' => $c['id'], 'item_name' => $icNames[$i] ?? '', 'price' => $c['item_price'], 'quantity' => $c['quantity']])->values()->all(), JSON_UNESCAPED_SLASHES) !!}
+            items: {!! json_encode(collect($icContents)->map(fn ($c, $i) => ['item_id' => $c['id'], 'item_name' => $icNames[$i] ?? '', 'price' => $c['item_price'], 'quantity' => $c['quantity']])->values()->all(), JSON_UNESCAPED_SLASHES|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT) !!}
         });
     }
 
     if (typeof fbq !== 'function') return;
     fbq('track', 'InitiateCheckout', {
         content_type: 'product',
-        content_ids:  {!! json_encode($icContentIds, JSON_UNESCAPED_SLASHES) !!},
+        content_ids:  {!! json_encode($icContentIds, JSON_UNESCAPED_SLASHES|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT) !!},
         content_name: @json(implode(', ', $icNames)),
-        contents:     {!! json_encode($icContents, JSON_UNESCAPED_SLASHES) !!},
+        contents:     {!! json_encode($icContents, JSON_UNESCAPED_SLASHES|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT) !!},
         num_items:    {{ (int) $icNumItems }},
         value:        {{ number_format((float) $cartTotal, 2, '.', '') }},
         currency:     @json(config('services.meta.currency', 'USD'))

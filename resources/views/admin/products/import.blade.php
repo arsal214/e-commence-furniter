@@ -9,8 +9,8 @@
     {{-- ── Upload Card ── --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div class="flex items-center gap-3 mb-1">
-            <div class="w-9 h-9 rounded-lg bg-[#bb976d]/10 flex items-center justify-center">
-                <i class="mdi mdi-file-upload text-[#bb976d] text-xl"></i>
+            <div class="w-9 h-9 rounded-lg bg-[#EA580C]/10 flex items-center justify-center">
+                <i class="mdi mdi-file-upload text-[#EA580C] text-xl"></i>
             </div>
             <div>
                 <h2 class="text-base font-semibold text-gray-800">Bulk Update Products via CSV</h2>
@@ -43,8 +43,8 @@
 
             {{-- Drop zone --}}
             <label for="csv_file"
-                   class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 hover:border-[#bb976d] transition-colors group">
-                <i class="mdi mdi-cloud-upload-outline text-4xl text-gray-300 group-hover:text-[#bb976d] transition-colors mb-2"></i>
+                   class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 hover:border-[#EA580C] transition-colors group">
+                <i class="mdi mdi-cloud-upload-outline text-4xl text-gray-300 group-hover:text-[#EA580C] transition-colors mb-2"></i>
                 <p class="text-sm text-gray-500 group-hover:text-gray-700">Click to select or drag &amp; drop your CSV</p>
                 <p id="fileName" class="text-xs text-gray-400 mt-1">No file chosen</p>
                 <input type="file" id="csv_file" name="csv_file" accept=".csv,.txt" class="hidden">
@@ -54,7 +54,7 @@
 
             <div class="mt-5 flex items-center gap-3">
                 <button type="submit"
-                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#EA580C] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
                     <i class="mdi mdi-upload"></i> Upload &amp; Update
                 </button>
                 <a href="{{ route('admin.products.index') }}"
@@ -147,7 +147,7 @@
 
         <div class="flex flex-wrap gap-3">
             <a href="{{ route('admin.products.index') }}"
-               class="inline-flex items-center gap-2 px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
+               class="inline-flex items-center gap-2 px-4 py-2 bg-[#EA580C] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
                 <i class="mdi mdi-package-variant"></i> View All Products
             </a>
             <a href="{{ route('admin.products.import') }}"

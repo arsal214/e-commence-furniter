@@ -15,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(\App\Services\MarketCatalog::class);
     }
 
     /**
@@ -23,6 +23,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Seller Center frame (sidebar, banners) for every page inside it.
+        \Illuminate\Support\Facades\View::composer(['seller.center.*', 'seller.dc.*'], function ($view) {
+            $seller = auth()->user()?->seller;
+            if ($seller) {
+                $view->with(\App\Support\SellerViews::shell($seller, request()));
+            }
+        });
+        // The design's page frame (header, menu, footer) needs the same data on every page that uses it.
+        \Illuminate\Support\Facades\View::composer(['layouts.pg', 'market.*', 'cart', 'checkout', 'checkout-stripe', 'checkout-paypal', 'thank-you', 'track-order'], fn ($view) => $view->with(\App\Support\MarketViews::shell(request())));
         $this->registerVersionedAssetDirective();
 
         // Registered explicitly rather than relying on listener auto-discovery,

@@ -190,7 +190,7 @@ class CartService
 
     public function clear(): void
     {
-        session()->forget($this->sessionKey);
+        session()->forget([$this->sessionKey, CouponService::SESSION]);
     }
 
     public function total(): float
@@ -206,5 +206,14 @@ class CartService
     private function makeKey(int $productId, ?string $color, ?string $size): string
     {
         return $productId . '|' . ($color ?? '') . '|' . ($size ?? '');
+    }
+
+    /** Product id => the store that sells it, for grouping cart lines. House products show as "Peyton Ghalib". */
+    public function sellerNames(array $items): array
+    {
+        $ids = collect($items)->pluck('id')->filter()->unique();
+
+        return Product::with('seller:id,store_name')->whereIn('id', $ids)->get()
+            ->mapWithKeys(fn ($p) => [$p->id => $p->seller?->store_name ?? 'Peyton Ghalib'])->all();
     }
 }

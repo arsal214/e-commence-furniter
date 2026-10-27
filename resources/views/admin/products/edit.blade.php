@@ -24,7 +24,7 @@
                     <div class="sm:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Product Name <span class="text-red-500">*</span></label>
                         <input type="text" name="name" value="{{ old('name', $product->name) }}" required
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors">
                     </div>
 
                     <div class="sm:col-span-2">
@@ -32,13 +32,13 @@
                             <span class="text-gray-400 font-normal ml-1 text-xs">optional — real maker, e.g. "Ninja". Used in Google Product schema; leave blank for unbranded items.</span>
                         </label>
                         <input type="text" name="brand" value="{{ old('brand', $product->brand) }}"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Category <span class="text-red-500">*</span></label>
                         <select name="category_id" required
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors bg-white">
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors bg-white">
                             <option value="">Select category</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
@@ -51,7 +51,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">SKU</label>
                         <input type="text" name="sku" value="{{ old('sku', $product->sku) }}"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors">
                     </div>
 
                     <div>
@@ -59,7 +59,7 @@
                             <span class="text-gray-400 font-normal text-xs">optional — barcode number, used in Google Shopping schema</span>
                         </label>
                         <input type="text" name="gtin" value="{{ old('gtin', $product->gtin) }}"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors">
                     </div>
 
                     <div>
@@ -67,7 +67,7 @@
                             <span class="text-gray-400 font-normal text-xs">optional — Manufacturer Part Number</span>
                         </label>
                         <input type="text" name="mpn" value="{{ old('mpn', $product->mpn) }}"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors">
                     </div>
 
                     <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-5 p-4 rounded-lg bg-amber-50 border border-amber-200" id="roi-box">
@@ -75,11 +75,11 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier Price ($)</label>
                             <input type="number" id="supplier_cost" name="supplier_cost" value="{{ old('supplier_cost', $product->supplier_cost) }}" step="0.01" min="0"
-                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] bg-white">
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] bg-white">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">ROI</label>
-                            <select id="roi_percent" name="roi_percent" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] bg-white">
+                            <select id="roi_percent" name="roi_percent" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] bg-white">
                                 <option value="">-- Select --</option>
                                 @foreach([20,30,35,40,50,60] as $r)
                                 <option value="{{ $r }}" {{ (string) old('roi_percent', $product->roi_percent) === (string) $r ? 'selected' : '' }}>{{ $r }}%</option>
@@ -89,13 +89,13 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Sale Discount (%)</label>
                             <input type="number" id="sale_discount_percent" name="sale_discount_percent" value="{{ old('sale_discount_percent', $product->sale_discount_percent) }}" min="0" max="90" step="1" placeholder="e.g. 10"
-                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] bg-white">
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] bg-white">
                         </div>
                         <div class="sm:col-span-3 border-t border-amber-200 pt-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Supplier Source <span class="ml-1 normal-case font-medium text-amber-700">Internal only &mdash; never shown to customers</span></div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier</label>
                             <select name="supplier_name"
-                                    class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] bg-white">
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] bg-white">
                                 <option value="">-- Select --</option>
                                 @foreach(['Amazon','Walmart','eBay','AliExpress','Other'] as $sup)
                                 <option value="{{ $sup }}" {{ old('supplier_name', $product->supplier_name) === $sup ? 'selected' : '' }}>{{ $sup }}</option>
@@ -106,15 +106,15 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier SKU / Product ID</label>
                             <input type="text" name="supplier_sku" value="{{ old('supplier_sku', $product->supplier_sku) }}"
                                    placeholder="e.g. B08N5WRWNW"
-                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d]">
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C]">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Supplier Product URL</label>
                             <input type="url" name="supplier_url" value="{{ old('supplier_url', $product->supplier_url) }}"
                                    placeholder="https://amazon.com/dp/..."
-                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d]">
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C]">
                             @if($product->supplier_url)
-                            <a href="{{ $product->supplier_url }}" target="_blank" class="text-xs text-[#bb976d] hover:underline mt-1 inline-block">Open supplier page &rarr;</a>
+                            <a href="{{ $product->supplier_url }}" target="_blank" class="text-xs text-[#EA580C] hover:underline mt-1 inline-block">Open supplier page &rarr;</a>
                             @endif
                         </div>
                         <div class="sm:col-span-3 text-sm font-semibold text-gray-800" id="roi-preview"></div>
@@ -145,25 +145,25 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Price ($) <span class="text-red-500">*</span></label>
                         <input type="number" name="price" value="{{ old('price', $product->price) }}" step="0.01" min="0" required
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Sale Price ($) <span class="text-gray-400 font-normal">(optional)</span></label>
                         <input type="number" name="sale_price" value="{{ old('sale_price', $product->sale_price) }}" step="0.01" min="0"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Stock <span class="text-red-500">*</span></label>
                         <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" min="0" required
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1.5">Badge Tag</label>
                         <select name="tag"
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors bg-white">
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors bg-white">
                             <option value="">None</option>
                             <option value="Sale"  {{ old('tag', $product->tag) === 'Sale'  ? 'selected' : '' }}>Hot Sale (green)</option>
                             <option value="NEW"   {{ old('tag', $product->tag) === 'NEW'   ? 'selected' : '' }}>NEW (purple)</option>
@@ -192,7 +192,7 @@
                                 <span class="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">✓</span>
                                 <input type="text" name="key_feature_{{ $i+1 }}" value="{{ old('key_feature_'.($i+1), $existingFeatures[$i] ?? '') }}"
                                        placeholder="e.g. Premium solid wood frame built to last"
-                                       class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                                       class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#EA580C] transition-colors">
                             </div>
                             @endforeach
                         </div>
@@ -234,12 +234,12 @@
                             <img id="imagePreview" src="#" alt="Preview" class="mb-3 w-28 h-28 object-cover rounded-lg border border-gray-200 hidden">
                         @endif
                         <input type="file" name="image" accept="image/*" id="imageInput"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#EA580C] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#EA580C]/10 file:text-[#EA580C]">
                         <p class="text-xs text-gray-400 mt-1">Max 4MB. JPG, PNG, WEBP.</p>
                         <div class="mt-3">
                             <label class="block text-xs font-medium text-gray-500 mb-1">Colour this image represents <span class="font-normal">(optional)</span></label>
                             <select name="image_color" data-selected="{{ old('image_color', $product->image_color) }}"
-                                    class="js-color-select w-40 text-sm border border-gray-300 rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#bb976d]">
+                                    class="js-color-select w-40 text-sm border border-gray-300 rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#EA580C]">
                                 <option value="">— colour —</option>
                             </select>
                         </div>
@@ -278,7 +278,7 @@
                                 </div>
                                 @unless($img->isVideo())
                                 <select name="image_colors[{{ $img->id }}]" data-selected="{{ $img->color }}"
-                                        class="js-color-select mt-1.5 w-24 text-xs border border-gray-300 rounded px-1.5 py-1 focus:outline-none focus:border-[#bb976d]">
+                                        class="js-color-select mt-1.5 w-24 text-xs border border-gray-300 rounded px-1.5 py-1 focus:outline-none focus:border-[#EA580C]">
                                     <option value="">— colour —</option>
                                 </select>
                                 @endunless
@@ -289,7 +289,7 @@
 
                         <p class="text-xs text-gray-400 mb-2">Add more gallery images (select multiple). Max 4MB each.</p>
                         <input type="file" name="images[]" accept="image/*" id="galleryInput" multiple
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#EA580C] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#EA580C]/10 file:text-[#EA580C]">
                         <div id="galleryPreviewList" class="flex flex-wrap gap-3 mt-3"></div>
                     </div>
 
@@ -301,7 +301,7 @@
                         </label>
                         <p class="text-xs text-gray-400 mb-3">MP4, WebM, MOV, or OGG. Max 50MB each. You can add more than one.</p>
                         <input type="file" name="videos[]" accept="video/*" id="galleryVideoInput" multiple
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#EA580C] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#EA580C]/10 file:text-[#EA580C]">
                         <div id="galleryVideoPreviewList" class="flex flex-wrap gap-3 mt-3"></div>
                     </div>
                 </div>
@@ -323,7 +323,7 @@
                         Colors
                         <span class="text-gray-400 font-normal ml-1 text-xs">e.g. Red, Blue, Black, Walnut, Ivory</span>
                     </label>
-                    <div class="variant-tag-box border border-gray-300 rounded-lg px-3 py-2 min-h-[46px] flex flex-wrap gap-2 items-center cursor-text focus-within:border-[#bb976d] transition-colors">
+                    <div class="variant-tag-box border border-gray-300 rounded-lg px-3 py-2 min-h-[46px] flex flex-wrap gap-2 items-center cursor-text focus-within:border-[#EA580C] transition-colors">
                         <span class="variant-placeholder text-sm text-gray-400 select-none pointer-events-none">Type a color and press Enter...</span>
                         <input type="text" class="variant-input flex-1 min-w-[140px] outline-none text-sm bg-transparent py-0.5" autocomplete="off">
                     </div>
@@ -337,7 +337,7 @@
                         Sizes
                         <span class="text-gray-400 font-normal ml-1 text-xs">e.g. S, M, L, XL &nbsp;·&nbsp; 38, 39, 40 &nbsp;·&nbsp; One Size</span>
                     </label>
-                    <div class="variant-tag-box border border-gray-300 rounded-lg px-3 py-2 min-h-[46px] flex flex-wrap gap-2 items-center cursor-text focus-within:border-[#bb976d] transition-colors">
+                    <div class="variant-tag-box border border-gray-300 rounded-lg px-3 py-2 min-h-[46px] flex flex-wrap gap-2 items-center cursor-text focus-within:border-[#EA580C] transition-colors">
                         <span class="variant-placeholder text-sm text-gray-400 select-none pointer-events-none">Type a size and press Enter...</span>
                         <input type="text" class="variant-input flex-1 min-w-[140px] outline-none text-sm bg-transparent py-0.5" autocomplete="off">
                     </div>
@@ -395,7 +395,7 @@
 
                     <div id="sizeChartUploadWrap">
                         <input type="file" name="size_chart" accept="image/*" id="sizeChartInput"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#bb976d]/10 file:text-[#bb976d]">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#EA580C] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-[#EA580C]/10 file:text-[#EA580C]">
                         <p class="text-xs text-gray-400 mt-1">Upload to replace. Max 8MB.</p>
                     </div>
                 </div>
@@ -406,25 +406,25 @@
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" name="is_featured" value="1"
                            {{ old('is_featured', $product->is_featured) ? 'checked' : '' }}
-                           class="w-4 h-4 rounded border-gray-300 accent-[#bb976d]">
+                           class="w-4 h-4 rounded border-gray-300 accent-[#EA580C]">
                     <span class="text-sm font-medium text-gray-700">Featured product</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" name="is_best_seller" value="1"
                            {{ old('is_best_seller', $product->is_best_seller) ? 'checked' : '' }}
-                           class="w-4 h-4 rounded border-gray-300 accent-[#bb976d]">
+                           class="w-4 h-4 rounded border-gray-300 accent-[#EA580C]">
                     <span class="text-sm font-medium text-gray-700">Best seller</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" name="is_addon" value="1"
                            {{ old('is_addon', $product->is_addon) ? 'checked' : '' }}
-                           class="w-4 h-4 rounded border-gray-300 accent-[#bb976d]">
+                           class="w-4 h-4 rounded border-gray-300 accent-[#EA580C]">
                     <span class="text-sm font-medium text-gray-700">Add-on item (ships free with orders over the threshold)</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" name="is_active" value="1"
                            {{ old('is_active', $product->is_active) ? 'checked' : '' }}
-                           class="w-4 h-4 rounded border-gray-300 accent-[#bb976d]">
+                           class="w-4 h-4 rounded border-gray-300 accent-[#EA580C]">
                     <span class="text-sm font-medium text-gray-700">Active (show in store)</span>
                 </label>
             </div>
@@ -442,7 +442,7 @@
                             URL Slug
                             <span class="text-gray-400 font-normal ml-1 text-xs">e.g. chunky-knit-throw-blanket-50x60 — lowercase, hyphens only</span>
                         </label>
-                        <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:border-[#bb976d] transition-colors">
+                        <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:border-[#EA580C] transition-colors">
                             <span class="px-3 py-2.5 text-sm text-gray-400 bg-gray-50 border-r border-gray-300 whitespace-nowrap">/product-details/</span>
                             <input type="text" name="slug" value="{{ old('slug', $product->slug) }}"
                                    pattern="[a-z0-9\-]+"
@@ -459,7 +459,7 @@
                         <input type="text" name="meta_title" maxlength="160"
                                value="{{ old('meta_title', $product->meta_title) }}"
                                placeholder="e.g. Chunky Knit Throw Blanket 50x60 Soft Chenille"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors">
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors">
                         <p class="text-xs text-gray-400 mt-1">Leave blank to fall back to product name.</p>
                     </div>
 
@@ -470,7 +470,7 @@
                         </label>
                         <textarea name="meta_description" maxlength="320" rows="3"
                                   placeholder="e.g. Shop a soft chunky knit throw blanket made with chenille yarn, perfect for couch, sofa, bed, and cozy home decor."
-                                  class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d] transition-colors resize-none">{{ old('meta_description', $product->meta_description) }}</textarea>
+                                  class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C] transition-colors resize-none">{{ old('meta_description', $product->meta_description) }}</textarea>
                         <p class="text-xs text-gray-400 mt-1">Leave blank to auto-generate from the product description.</p>
                     </div>
                 </div>
@@ -478,7 +478,7 @@
 
             <div class="flex items-center gap-3 pt-2">
                 <button type="submit"
-                        class="px-5 py-2.5 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
+                        class="px-5 py-2.5 bg-[#EA580C] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
                     Update Product
                 </button>
                 <a href="{{ route('admin.products.index') }}"

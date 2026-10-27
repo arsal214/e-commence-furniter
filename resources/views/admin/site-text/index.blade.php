@@ -4,7 +4,7 @@
 @section('page-title', 'Site Text & SEO')
 
 @section('content')
-@php $in = 'w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d]'; @endphp
+@php $in = 'w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#EA580C]'; @endphp
 <div class="max-w-4xl space-y-4">
 
     @if(session('success'))
@@ -32,7 +32,7 @@
                             class="st-tab px-4 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap text-gray-500 border-transparent hover:text-gray-800">
                         {{ $panel['label'] }}
                         @if($panel['edited'])
-                            <span class="ml-1 inline-block text-[11px] leading-none rounded-full bg-[#bb976d] text-white px-1.5 py-1" title="{{ $panel['edited'] }} customised">{{ $panel['edited'] }}</span>
+                            <span class="ml-1 inline-block text-[11px] leading-none rounded-full bg-[#EA580C] text-white px-1.5 py-1" title="{{ $panel['edited'] }} customised">{{ $panel['edited'] }}</span>
                         @endif
                     </button>
                 @endforeach
@@ -43,7 +43,7 @@
             <section id="panel-{{ $slug }}" role="tabpanel" aria-labelledby="tab-{{ $slug }}" data-panel="{{ $slug }}" class="st-panel bg-white rounded-b-xl rounded-tr-xl shadow-sm border border-gray-100 border-t-0 p-5 sm:p-6 space-y-5" hidden>
                 <div class="flex items-center justify-between gap-3">
                     <h3 class="text-base font-semibold text-gray-800">{{ $panel['label'] }}</h3>
-                    <a href="{{ $panel['url'] }}" target="_blank" rel="noopener" class="text-sm text-[#bb976d] font-medium hover:underline">View page &rarr;</a>
+                    <a href="{{ $panel['url'] }}" target="_blank" rel="noopener" class="text-sm text-[#EA580C] font-medium hover:underline">View page &rarr;</a>
                 </div>
 
                 @php $lastGroup = null; @endphp
@@ -80,7 +80,7 @@
                 @endforelse
 
                 <div class="pt-2 border-t border-gray-100">
-                    <button class="bg-[#bb976d] text-white font-semibold rounded-lg px-6 py-2.5 text-sm">Save</button>
+                    <button class="bg-[#EA580C] text-white font-semibold rounded-lg px-6 py-2.5 text-sm">Save</button>
                 </div>
             </section>
         @endforeach
@@ -95,7 +95,7 @@
         tabs.forEach(function (t) {
             var on = t.dataset.tab === slug;
             t.setAttribute('aria-selected', on ? 'true' : 'false');
-            t.classList.toggle('border-[#bb976d]', on); t.classList.toggle('text-[#bb976d]', on);
+            t.classList.toggle('border-[#EA580C]', on); t.classList.toggle('text-[#EA580C]', on);
             t.classList.toggle('border-transparent', !on); t.classList.toggle('text-gray-500', !on);
         });
         panels.forEach(function (p) { p.hidden = p.dataset.panel !== slug; });

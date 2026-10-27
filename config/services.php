@@ -32,6 +32,8 @@ return [
         'key'    => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        // Recurring $19.99/month price created in the Stripe dashboard for the seller plan.
+        'seller_price_id' => env('STRIPE_SELLER_PRICE_ID'),
     ],
 
     'paypal' => [

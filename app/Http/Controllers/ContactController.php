@@ -37,7 +37,7 @@ class ContactController extends Controller
             'name'    => ['required', 'string', 'max:255'],
             'email'   => ['required', 'email', 'max:255'],
             // A phone number is not a number: '+1 555 000 0000' is not `numeric`.
-            'number'  => ['required', 'string', 'max:30'],
+            'number'  => ['nullable', 'string', 'max:30'],
             'subject' => ['required', 'string', 'max:255'],
             'Message' => ['required', 'string', 'max:5000'],
         ]);

@@ -1,0 +1,10 @@
+
+  <div style="max-width:760px;margin:0 auto;padding:48px clamp(16px,4vw,40px) 0;display:flex;flex-direction:column;gap:20px">
+    <span style="width:64px;height:64px;border-radius:50%;background:#ECFDF3;color:#15803D;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800">✓</span>
+    <h1 style="margin:0;font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-.03em">Thank you, Jessica! Your order is placed.</h1>
+    <span style="font-size:16px;color:#374151;line-height:1.55">Order <b>{{ $placed['no'] ?? '' }}</b> · Total {{ $placed['total'] ?? '' }}. A receipt is on its way to {{ $placed['email'] ?? '' }}<?php if(!empty($placedSms)): ?> and we'll text you delivery updates<?php endif; ?>.</span>
+    <div style="display:flex;flex-direction:column;gap:10px"><?php foreach($placed['groups'] ?? [] as $__k => $g): ?><div style="border:1px solid #E5E7EB;border-radius:16px;padding:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><span style="display:flex;flex-direction:column;gap:2px"><b>{{ $g['store'] ?? '' }}</b><span style="font-size:14px;color:#4B5563">{{ $g['n'] ?? '' }} · Arrives {{ $g['arrive'] ?? '' }}</span></span><a href="/order-history" style="font-weight:700;font-size:14px">Track</a></div><?php endforeach; ?></div>
+    <div style="padding:16px;border-radius:16px;background:#FFF7ED;font-size:14px;color:#7C2D12"><b>+{{ $placed['earn'] ?? '' }} reward points</b> will be added when your order is delivered.</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><a href="/order-history" style="height:50px;padding:0 26px;border-radius:999px;background:#C2410C;color:#FFFFFF;display:flex;align-items:center;font-weight:800">View your orders</a><a href="/" style="height:50px;padding:0 26px;border-radius:999px;border:1.5px solid #111827;color:#111827;display:flex;align-items:center;font-weight:700">Keep shopping</a></div>
+    <div style="border:1px dashed #D1D5DB;border-radius:16px;padding:16px;font-size:14px;color:#374151">Checked out as a guest? <a href="/login">Create an account</a> to save this order, earn points and track every package in one place.</div>
+  </div>

@@ -24,11 +24,11 @@
     <div class="flex-1 min-w-[200px]">
         <label class="block text-xs font-medium text-gray-600 mb-1">Search</label>
         <input type="text" name="q" value="{{ request('q') }}" placeholder="Email address, name or subject"
-               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
     </div>
     <div>
         <label class="block text-xs font-medium text-gray-600 mb-1">Type</label>
-        <select name="type" class="text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d] bg-white text-gray-800">
+        <select name="type" class="text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C] bg-white text-gray-800">
             <option value="">All types</option>
             @foreach($types as $type)
                 <option value="{{ $type }}" {{ request('type') === $type ? 'selected' : '' }}>{{ class_basename($type) }}</option>
@@ -37,13 +37,13 @@
     </div>
     <div>
         <label class="block text-xs font-medium text-gray-600 mb-1">Status</label>
-        <select name="status" class="text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d] bg-white text-gray-800">
+        <select name="status" class="text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C] bg-white text-gray-800">
             <option value="">All</option>
             <option value="sent"   {{ request('status') === 'sent' ? 'selected' : '' }}>Delivered</option>
             <option value="failed" {{ request('status') === 'failed' ? 'selected' : '' }}>Failed</option>
         </select>
     </div>
-    <button type="submit" class="px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">Filter</button>
+    <button type="submit" class="px-4 py-2 bg-[#EA580C] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">Filter</button>
     @if(request()->hasAny(['q','type','status']))
         <a href="{{ route('admin.email-logs.index') }}" class="px-4 py-2 text-sm text-gray-500 hover:text-gray-700">Reset</a>
     @endif
@@ -81,7 +81,7 @@
                 <td class="px-5 py-3 text-gray-600 max-w-xs truncate" title="{{ $log->subject }}">{{ $log->subject ?: '—' }}</td>
                 <td class="px-5 py-3">
                     @if($log->order_id)
-                        <a href="{{ route('admin.orders.show', $log->order_id) }}" class="text-[#bb976d] hover:underline">#{{ $log->order_id }}</a>
+                        <a href="{{ route('admin.orders.show', $log->order_id) }}" class="text-[#EA580C] hover:underline">#{{ $log->order_id }}</a>
                     @else
                         <span class="text-gray-300">—</span>
                     @endif

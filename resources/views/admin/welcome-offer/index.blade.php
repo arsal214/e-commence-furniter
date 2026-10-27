@@ -5,7 +5,7 @@
 
 @section('content')
 @php
-    $in = 'w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d]';
+    $in = 'w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C]';
     $tiers = old('tiers', $offer->tiers->map(fn ($t) => ['type' => $t->type, 'amount' => (float) $t->amount, 'min_subtotal' => (float) $t->min_subtotal, 'max_discount' => $t->max_discount])->all());
 @endphp
 <div class="max-w-4xl space-y-5">
@@ -79,7 +79,7 @@
             @endforeach
         </div>
 
-        <button class="bg-[#bb976d] text-white font-semibold rounded-lg px-6 py-2.5 text-sm">Save</button>
+        <button class="bg-[#EA580C] text-white font-semibold rounded-lg px-6 py-2.5 text-sm">Save</button>
     </form>
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 overflow-x-auto">

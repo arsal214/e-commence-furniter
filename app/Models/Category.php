@@ -11,7 +11,7 @@ class Category extends Model
 {
     /** Cache key for the nav/footer category list. */
     private const NAV_CACHE_KEY = 'categories.navigation';
-    protected $fillable = ['name', 'slug', 'description', 'meta_title', 'meta_description', 'image', 'is_active'];
+    protected $fillable = ['parent_id', 'name', 'slug', 'description', 'meta_title', 'meta_description', 'image', 'is_active'];
 
     protected $casts = [
         'is_active' => 'boolean',
@@ -56,13 +56,23 @@ class Category extends Model
         return $memo = Cache::remember(
             self::NAV_CACHE_KEY,
             now()->addHours(6),
-            fn () => static::where('is_active', true)->orderBy('name')->get()
+            fn () => static::where('is_active', true)->whereNull('parent_id')->orderBy('name')->get()
         );
     }
 
     public static function forgetNavigation(): void
     {
         Cache::forget(self::NAV_CACHE_KEY);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
     }
 
     public function products()

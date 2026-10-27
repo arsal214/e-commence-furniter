@@ -14,6 +14,7 @@ class Product extends Model
         'gtin', 'mpn', 'specifications',
         'colors', 'sizes', 'size_chart',
         'supplier_name', 'supplier_url', 'supplier_sku',
+        'seller_id', 'moderation_status', 'moderation_note',
     ];
 
     protected $casts = [
@@ -29,11 +30,27 @@ class Product extends Model
         'specifications' => 'array',
     ];
 
-    /** Storefront visibility: the product is active AND its category is active. */
+    /**
+     * Storefront visibility: active, moderation-approved, category active, and either
+     * a house product (no seller) or one from a live seller (approved + subscription paid).
+     */
     public function scopeVisible($query)
     {
         return $query->where('products.is_active', true)
-            ->whereHas('category', fn ($c) => $c->where('is_active', true));
+            ->where('products.moderation_status', 'approved')
+            ->whereHas('category', fn ($c) => $c->where('is_active', true))
+            ->where(fn ($q) => $q->whereNull('products.seller_id')
+                ->orWhereHas('seller', fn ($s) => $s->live()));
+    }
+
+    public function seller()
+    {
+        return $this->belongsTo(Seller::class);
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
     }
 
     protected static function boot()

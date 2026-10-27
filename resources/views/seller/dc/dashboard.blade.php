@@ -1,0 +1,34 @@
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:12px"><?php foreach($kpis ?? [] as $__k => $k): ?><div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#4B5563;font-weight:600">{{ $k['h'] ?? '' }}</span><b style="font-size:28px;font-weight:800;letter-spacing:-.02em">{{ $k['v'] ?? '' }}</b><span style="font-size:12px;font-weight:700;color:{{ $k['c'] ?? '' }}">{{ $k['s'] ?? '' }}</span></div><?php endforeach; ?></div>
+          <div style="display:flex;flex-wrap:wrap;gap:16px">
+            <div style="flex:2 1 460px;min-width:0;background:#FFFFFF;border:1px solid #E5E7EB;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><b style="font-size:16px">Sales · last 30 days</b><span style="font-size:13px;color:#4B5563">Daily revenue</span></div>
+              <div style="height:180px;display:flex;align-items:flex-end;gap:4px"><?php foreach($bars ?? [] as $__k => $b): ?><div style="flex:1;height:{{ $b['h'] ?? '' }};background:{{ $b['bg'] ?? '' }};border-radius:4px 4px 0 0"></div><?php endforeach; ?></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:#6B7280"><span>{{ $barLabels[0] ?? '' }}</span><span>{{ $barLabels[1] ?? '' }}</span><span>Today</span></div>
+            </div>
+            <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:16px">
+              <div style="background:#111827;color:#FFFFFF;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="height:26px;padding:0 10px;border-radius:999px;background:#DBEAFE;color:#1E40AF;font-size:12px;font-weight:800;display:flex;align-items:center">{{ $lv['name'] ?? '' }}</span><a href="/seller/levels" style="font-size:13px;color:#FDBA74;font-weight:700">Levels →</a></div>
+                <b style="font-size:15px">{{ $lv['line'] ?? '' }}</b>
+                <div style="height:8px;border-radius:4px;background:#374151"><div style="height:8px;border-radius:4px;background:#EA580C;width:{{ $lv['pct'] ?? '' }}"></div></div>
+                <span style="font-size:12px;color:#D1D5DB">{{ $lv['have'] ?? '' }} of {{ $lv['goal'] ?? '' }} lifetime · payouts {{ $lv['hold'] ?? '' }}</span>
+              </div>
+              <div style="background:#FFF7ED;border-radius:18px;padding:18px;display:flex;justify-content:space-between;align-items:center;gap:12px"><span style="display:flex;flex-direction:column"><span style="font-size:12px;font-weight:800;color:#9A3412;letter-spacing:.1em">REWARD POINTS</span><b style="font-size:24px;font-weight:800">{{ $points ?? '' }}</b><span style="font-size:12px;color:#7C2D12">= {{ $pointsVal ?? '' }} off your plan</span></span><?php if(!empty($notRedeemed)): ?><button data-post="/seller/points/redeem" style="height:40px;padding:0 14px;border-radius:999px;border:0;background:#C2410C;color:#FFFFFF;font-weight:800;font-size:13px;cursor:pointer">Redeem {{ $redeemAmount ?? '' }}</button><?php endif; ?><?php if(!empty($redeemed)): ?><span style="font-size:13px;font-weight:700;color:#15803D">✓ Applied</span><?php endif; ?></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:16px">
+            <div style="flex:1.4 1 420px;min-width:0;background:#FFFFFF;border:1px solid #E5E7EB;border-radius:18px;overflow:hidden">
+              <div style="display:flex;justify-content:space-between;padding:16px 18px;border-bottom:1px solid #F3F4F6"><b style="font-size:16px">Orders to ship</b><a href="/seller/orders" style="font-size:13px;font-weight:700">All orders →</a></div>
+              <?php foreach($toShip ?? [] as $__k => $x): ?><div style="display:flex;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid #F3F4F6;flex-wrap:wrap;align-items:center"><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><b style="font-size:14px">{{ $x['items'] ?? '' }}</b><span style="font-size:12px;color:#4B5563">{{ $x['no'] ?? '' }} · {{ $x['buyer'] ?? '' }}, {{ $x['city'] ?? '' }}</span></span><span style="font-size:12px;font-weight:800;color:#9A3412">{{ $x['due'] ?? '' }}</span></div><?php endforeach; ?>
+            </div>
+            <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:16px">
+              <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;justify-content:space-between"><b style="font-size:16px">Store setup</b><span style="font-size:13px;color:#4B5563">{{ $checkDone ?? '' }}</span></div>
+                <div style="height:6px;border-radius:3px;background:#E5E7EB"><div style="height:6px;border-radius:3px;background:#15803D;width:{{ $checkPct ?? '' }}"></div></div>
+                <?php foreach($checklist ?? [] as $__k => $c): ?><a href="{{ $c['href'] ?? '' }}" style="display:flex;gap:10px;align-items:center;font-size:14px;color:{{ $c['fg'] ?? '' }};text-decoration:{{ $c['deco'] ?? '' }};min-height:30px"><span style="width:20px;height:20px;border-radius:50%;border:1.5px solid {{ $c['bd'] ?? '' }};background:{{ $c['bg'] ?? '' }};color:#FFFFFF;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none">{{ $c['mark'] ?? '' }}</span>{{ $c['t'] ?? '' }}</a><?php endforeach; ?>
+              </div>
+              <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:8px"><b style="font-size:16px">Inventory alerts</b><?php foreach($lowStock ?? [] as $__k => $l): ?><div style="display:flex;justify-content:space-between;gap:10px;font-size:14px"><span>{{ $l['name'] ?? '' }}</span><b style="color:#B91C1C;white-space:nowrap">{{ $l['left'] ?? '' }}</b></div><?php endforeach; ?><a href="/seller/products" style="font-size:13px;font-weight:700">Restock →</a></div>
+              <div style="background:#FFFFFF;border:1px solid #E5E7EB;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between"><b style="font-size:16px">Subscription</b><a href="/seller/billing" style="font-size:13px;font-weight:700">Billing →</a></div><span style="font-size:14px;color:#374151">Seller plan · $19.99/mo · {{ $planLine ?? '' }}</span></div>
+            </div>
+          </div>
+        

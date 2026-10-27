@@ -20,7 +20,7 @@
             <i class="mdi mdi-upload"></i> Import CSV
         </a>
         <a href="{{ route('admin.products.create') }}"
-           class="inline-flex items-center gap-2 px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
+           class="inline-flex items-center gap-2 px-4 py-2 bg-[#EA580C] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
             <i class="mdi mdi-plus"></i> Add Product
         </a>
     </div>
@@ -40,7 +40,7 @@
         <a href="{{ route('admin.products.index', array_filter(['status' => $key ?: null, 'search' => $search ?: null])) }}"
            class="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-medium rounded-lg border transition-colors
                   {{ $isCurrent
-                        ? 'bg-[#bb976d] text-white border-[#bb976d]'
+                        ? 'bg-[#EA580C] text-white border-[#EA580C]'
                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50' }}">
             {{ $tab['label'] }}
             <span class="inline-flex items-center justify-center min-w-[1.25rem] px-1.5 py-0.5 rounded-full text-xs font-semibold
@@ -66,7 +66,7 @@
                 value="{{ $search }}"
                 placeholder="Search by name, SKU or category…"
                 class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg bg-white
-                       focus:outline-none focus:ring-2 focus:ring-[#bb976d]/40 focus:border-[#bb976d]
+                       focus:outline-none focus:ring-2 focus:ring-[#EA580C]/40 focus:border-[#EA580C]
                        placeholder-gray-400 transition-all"
                 autofocus="{{ $search ? 'autofocus' : false }}"
             >
@@ -78,7 +78,7 @@
             @endif
         </div>
         <button type="submit"
-                class="px-4 py-2.5 bg-[#bb976d] text-white text-sm font-medium rounded-lg
+                class="px-4 py-2.5 bg-[#EA580C] text-white text-sm font-medium rounded-lg
                        hover:bg-[#a8845a] transition-colors">
             Search
         </button>
@@ -155,7 +155,7 @@
                 <td class="px-5 py-3 text-right">
                     <div class="flex items-center justify-end gap-2">
                         <a href="{{ route('admin.products.edit', $product) }}"
-                           class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#bb976d] border border-[#bb976d] rounded-lg hover:bg-[#bb976d]/10 transition-colors">
+                           class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#EA580C] border border-[#EA580C] rounded-lg hover:bg-[#EA580C]/10 transition-colors">
                             <i class="mdi mdi-pencil"></i> Edit
                         </a>
                         <form method="POST" action="{{ route('admin.products.destroy', $product) }}"
@@ -174,12 +174,12 @@
                 <td colspan="8" class="px-5 py-10 text-center text-gray-400">
                     @if($search)
                         No products match <span class="font-medium text-gray-600">"{{ $search }}"</span>@if($status) in <span class="font-medium text-gray-600">{{ $status }}</span>@endif.
-                        <a href="{{ route('admin.products.index', array_filter(['status' => $status ?: null])) }}" class="text-[#bb976d] hover:underline ml-1">Clear search</a>
+                        <a href="{{ route('admin.products.index', array_filter(['status' => $status ?: null])) }}" class="text-[#EA580C] hover:underline ml-1">Clear search</a>
                     @elseif($status)
                         No <span class="font-medium text-gray-600">{{ $status }}</span> products.
-                        <a href="{{ route('admin.products.index') }}" class="text-[#bb976d] hover:underline ml-1">View all</a>
+                        <a href="{{ route('admin.products.index') }}" class="text-[#EA580C] hover:underline ml-1">View all</a>
                     @else
-                        No products found. <a href="{{ route('admin.products.create') }}" class="text-[#bb976d] hover:underline">Add one?</a>
+                        No products found. <a href="{{ route('admin.products.create') }}" class="text-[#EA580C] hover:underline">Add one?</a>
                     @endif
                 </td>
             </tr>

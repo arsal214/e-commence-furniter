@@ -15,7 +15,7 @@
         $specRows = $existingSpecs;
     }
 
-    $specInput = 'border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#bb976d] transition-colors';
+    $specInput = 'border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#EA580C] transition-colors';
     $specDel   = 'spec-remove flex-shrink-0 w-9 h-9 rounded-lg border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 transition-colors';
 @endphp
 
@@ -43,7 +43,7 @@
         @endforelse
     </div>
 
-    <button type="button" id="specs-add" class="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[#bb976d] hover:text-[#a8845a]">
+    <button type="button" id="specs-add" class="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[#EA580C] hover:text-[#a8845a]">
         <span class="text-lg leading-none">+</span> Add specification
     </button>
 </div>

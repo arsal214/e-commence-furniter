@@ -21,7 +21,7 @@
 
         function buildChip(value) {
             const chip = document.createElement('span');
-            chip.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[#bb976d]/15 text-[#7a5c35] border border-[#bb976d]/30 whitespace-nowrap';
+            chip.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[#EA580C]/15 text-[#7a5c35] border border-[#EA580C]/30 whitespace-nowrap';
             chip.dataset.value = value;
 
             const label = document.createElement('span');

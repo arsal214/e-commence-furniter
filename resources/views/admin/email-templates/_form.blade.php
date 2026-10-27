@@ -21,27 +21,27 @@
                 <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Template name <span class="text-red-500">*</span></label>
                 <input type="text" name="name" id="name" value="{{ $value('name') }}" required maxlength="80"
                        placeholder="Seasonal sale — 20% off"
-                       class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                       class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                 <p class="text-xs text-gray-400 mt-1">Internal only. This is what staff pick from on the compose screen.</p>
             </div>
             <div>
                 <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject <span class="text-red-500">*</span></label>
                 <input type="text" name="subject" id="subject" value="{{ $value('subject') }}" required maxlength="180"
                        placeholder="@{{first_name}}, 20% off our new collection"
-                       class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                       class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                     <label for="eyebrow" class="block text-sm font-medium text-gray-700 mb-1">Eyebrow</label>
                     <input type="text" name="eyebrow" id="eyebrow" value="{{ $value('eyebrow') }}" maxlength="60"
                            placeholder="Limited Time Offer"
-                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                 </div>
                 <div class="sm:col-span-2">
                     <label for="heading" class="block text-sm font-medium text-gray-700 mb-1">Headline</label>
                     <input type="text" name="heading" id="heading" value="{{ $value('heading') }}" maxlength="120"
                            placeholder="20% off everything this week"
-                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                 </div>
             </div>
         </div>
@@ -59,13 +59,13 @@
                     <label for="promo_code" class="block text-sm font-medium text-gray-700 mb-1">Discount code</label>
                     <input type="text" name="promo_code" id="promo_code" value="{{ $value('promo_code') }}" maxlength="40"
                            placeholder="SUMMER20"
-                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d] uppercase">
+                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C] uppercase">
                 </div>
                 <div>
                     <label for="promo_note" class="block text-sm font-medium text-gray-700 mb-1">Code caption</label>
                     <input type="text" name="promo_note" id="promo_note" value="{{ $value('promo_note') }}" maxlength="160"
                            placeholder="Valid until 30 September. One use per customer."
-                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                 </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-gray-100 pt-4">
@@ -73,13 +73,13 @@
                     <label for="cta_label" class="block text-sm font-medium text-gray-700 mb-1">Button label</label>
                     <input type="text" name="cta_label" id="cta_label" value="{{ $value('cta_label') }}" maxlength="40"
                            placeholder="Shop the Sale"
-                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                 </div>
                 <div class="sm:col-span-2">
                     <label for="cta_url" class="block text-sm font-medium text-gray-700 mb-1">Button link</label>
                     <input type="url" name="cta_url" id="cta_url" value="{{ $value('cta_url') }}" maxlength="500"
                            placeholder="{{ url('/shop') }}"
-                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                           class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                 </div>
             </div>
         </div>
@@ -92,16 +92,16 @@
             <input type="hidden" name="is_active" value="0">
             <label class="flex items-center gap-2 text-sm text-gray-700">
                 <input type="checkbox" name="is_active" value="1" {{ $value('is_active', true) ? 'checked' : '' }}
-                       class="rounded border-gray-300 text-[#bb976d] focus:ring-[#bb976d]">
+                       class="rounded border-gray-300 text-[#EA580C] focus:ring-[#EA580C]">
                 Available on the compose screen
             </label>
             <div>
                 <label for="sort_order" class="block text-sm font-medium text-gray-700 mb-1">Order</label>
                 <input type="number" name="sort_order" id="sort_order" value="{{ $value('sort_order', 0) }}" min="0" max="9999"
-                       class="w-24 text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+                       class="w-24 text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
                 <p class="text-xs text-gray-400 mt-1">Lower numbers appear first.</p>
             </div>
-            <button type="submit" class="w-full px-4 py-3 bg-[#bb976d] text-white text-sm font-semibold rounded-lg hover:bg-[#a8845a] transition-colors">
+            <button type="submit" class="w-full px-4 py-3 bg-[#EA580C] text-white text-sm font-semibold rounded-lg hover:bg-[#a8845a] transition-colors">
                 {{ $template ? 'Save changes' : 'Create template' }}
             </button>
             <a href="{{ route('admin.email-templates.index') }}" class="block text-center text-sm text-gray-500 hover:text-gray-700">Cancel</a>
@@ -113,7 +113,7 @@
             <ul class="space-y-1.5 text-xs">
                 @foreach(\App\Support\EmailHtml::MERGE_TAGS as $tag => $label)
                     <li class="flex items-center justify-between gap-2">
-                        <code class="text-[#bb976d] bg-[#bb976d]/8 px-1.5 py-0.5 rounded">{{ \App\Support\EmailHtml::tag($tag) }}</code>
+                        <code class="text-[#EA580C] bg-[#EA580C]/8 px-1.5 py-0.5 rounded">{{ \App\Support\EmailHtml::tag($tag) }}</code>
                         <span class="text-gray-500">{{ $label }}</span>
                     </li>
                 @endforeach

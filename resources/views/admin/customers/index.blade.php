@@ -16,7 +16,7 @@
     </div>
     <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
         <p class="text-sm text-gray-500 font-medium">Offers Sent</p>
-        <p class="text-2xl font-bold text-[#bb976d] mt-1">{{ number_format($offersSentCount) }}</p>
+        <p class="text-2xl font-bold text-[#EA580C] mt-1">{{ number_format($offersSentCount) }}</p>
     </div>
     <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
         <p class="text-sm text-gray-500 font-medium">Opted Out</p>
@@ -29,12 +29,12 @@
 <div class="flex flex-wrap items-center gap-2 mb-5">
     <a href="{{ route('admin.customers.index') }}"
        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
-              {{ $tab === 'customers' ? 'bg-[#bb976d] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:text-gray-800' }}">
+              {{ $tab === 'customers' ? 'bg-[#EA580C] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:text-gray-800' }}">
         <i class="mdi mdi-account-multiple mr-1"></i> Accounts ({{ number_format($customerCount) }})
     </a>
     <a href="{{ route('admin.customers.index', ['tab' => 'subscribers']) }}"
        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
-              {{ $tab === 'subscribers' ? 'bg-[#bb976d] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:text-gray-800' }}">
+              {{ $tab === 'subscribers' ? 'bg-[#EA580C] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:text-gray-800' }}">
         <i class="mdi mdi-email-newsletter mr-1"></i> Newsletter ({{ number_format($subscriberCount) }})
     </a>
     <a href="{{ route('admin.email-templates.index') }}"
@@ -49,11 +49,11 @@
         <label class="block text-xs font-medium text-gray-600 mb-1">Search</label>
         <input type="text" name="q" value="{{ request('q') }}"
                placeholder="{{ $tab === 'customers' ? 'Name or email address' : 'Email address' }}"
-               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d]">
+               class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C]">
     </div>
     <div>
         <label class="block text-xs font-medium text-gray-600 mb-1">Show</label>
-        <select name="filter" class="text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d] bg-white text-gray-800">
+        <select name="filter" class="text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C] bg-white text-gray-800">
             <option value="">Everyone</option>
             @if($tab === 'customers')
                 <option value="buyers"    {{ request('filter') === 'buyers' ? 'selected' : '' }}>Has ordered</option>
@@ -65,14 +65,14 @@
     @if($tab === 'customers')
     <div>
         <label class="block text-xs font-medium text-gray-600 mb-1">Sort</label>
-        <select name="sort" class="text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#bb976d] bg-white text-gray-800">
+        <select name="sort" class="text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-[#EA580C] bg-white text-gray-800">
             <option value="">Newest first</option>
             <option value="spend"  {{ request('sort') === 'spend' ? 'selected' : '' }}>Highest spend</option>
             <option value="orders" {{ request('sort') === 'orders' ? 'selected' : '' }}>Most orders</option>
         </select>
     </div>
     @endif
-    <button type="submit" class="px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">Filter</button>
+    <button type="submit" class="px-4 py-2 bg-[#EA580C] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">Filter</button>
     @if(request()->hasAny(['q','filter','sort']))
         <a href="{{ route('admin.customers.index', ['tab' => $tab]) }}" class="px-4 py-2 text-sm text-gray-500 hover:text-gray-700">Reset</a>
     @endif
@@ -114,7 +114,7 @@
                         <span class="text-xs text-gray-400">Opted out</span>
                     @else
                         <a href="{{ route('admin.campaigns.compose', ['user' => $customer->id]) }}"
-                           class="inline-flex items-center gap-1 px-3 py-1.5 bg-[#bb976d] text-white text-xs font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
+                           class="inline-flex items-center gap-1 px-3 py-1.5 bg-[#EA580C] text-white text-xs font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
                             <i class="mdi mdi-email-fast-outline"></i> Send Offer
                         </a>
                     @endif
@@ -157,7 +157,7 @@
                         <span class="text-xs text-gray-400">Opted out</span>
                     @else
                         <a href="{{ route('admin.campaigns.compose', ['subscriber' => $subscriber->id]) }}"
-                           class="inline-flex items-center gap-1 px-3 py-1.5 bg-[#bb976d] text-white text-xs font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
+                           class="inline-flex items-center gap-1 px-3 py-1.5 bg-[#EA580C] text-white text-xs font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
                             <i class="mdi mdi-email-fast-outline"></i> Send Offer
                         </a>
                     @endif

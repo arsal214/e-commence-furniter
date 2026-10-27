@@ -5,7 +5,7 @@
 
 @section('content')
 @php
-    $in = 'w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#bb976d]';
+    $in = 'w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#EA580C]';
     $show = function (string $type, $v) {
         return $type === 'bool' ? ($v ? 'On' : 'Off') : ($type === 'money' ? '$' . number_format((float) $v, 2) : (string) $v);
     };
@@ -55,14 +55,14 @@
                         @endif
 
                         <p class="text-xs text-gray-400 mt-1">{{ $help }}
-                            <span class="{{ $isSet ? 'text-[#bb976d] font-semibold' : '' }}">{{ $isSet ? 'Set here.' : 'Using the .env default.' }}</span>
+                            <span class="{{ $isSet ? 'text-[#EA580C] font-semibold' : '' }}">{{ $isSet ? 'Set here.' : 'Using the .env default.' }}</span>
                         </p>
                     </div>
                 @endforeach
             </div>
         @endforeach
 
-        <button class="bg-[#bb976d] text-white font-semibold rounded-lg px-6 py-2.5 text-sm">Save settings</button>
+        <button class="bg-[#EA580C] text-white font-semibold rounded-lg px-6 py-2.5 text-sm">Save settings</button>
     </form>
 </div>
 @endsection

@@ -19,6 +19,7 @@ class CartController extends Controller
 
         return view('cart', [
             'cartItems' => $items,
+            'sellerNames' => $this->cart->sellerNames($items),
             'cartTotal' => $subtotal,
             'shippingEnabled'   => $this->shipping->enabled(),
             'shippingCost'      => $this->shipping->cost($subtotal),
@@ -31,7 +32,7 @@ class CartController extends Controller
                 ->reject(fn ($b) => isset($items['bundle|' . $b->id])),
             'welcomeDiscount' => $this->welcome->sessionDiscount($subtotal),
             'crossSell' => $this->crossSell($items),
-        ]);
+        ] + \App\Support\PageViews::cart($items, $subtotal, $this->shipping, (float) $this->welcome->sessionDiscount($subtotal), app(\App\Services\CouponService::class)->quote($items), $this->pointsFor($items, $subtotal), $this->giftFor($items, $subtotal)));
     }
 
     /**
@@ -66,6 +67,54 @@ class CartController extends Controller
         // Same-category only: an unrelated filler item (a coat beside a camera) wastes the slot.
         // Fewer suggestions, or none, is the right answer when the catalogue has no match.
         return $catIds->isEmpty() ? collect() : $picks;
+    }
+
+    public function coupon(Request $request, \App\Services\CouponService $coupons)
+    {
+        $data = $request->validate(['code' => ['required', 'string', 'max:40']]);
+        $result = $coupons->apply($data['code'], $this->cart->items());
+
+        return $result === true ? back()->with('success', 'Coupon applied.') : back()->with('error', $result);
+    }
+
+    /** Switches "use my reward points" on or off for this cart. */
+    public function points(Request $request, \App\Services\RewardsService $rewards)
+    {
+        if (! $request->user()) {
+            return redirect()->route('login');
+        }
+        session([\App\Services\RewardsService::SESSION => ! $rewards->wanted()]);
+
+        return back();
+    }
+
+    /** @return array{points: int, discount: float, available: int, on: bool} */
+    protected function pointsFor(array $items, float $subtotal): array
+    {
+        $rewards = app(\App\Services\RewardsService::class);
+        $user = auth()->user();
+        $coupon = app(\App\Services\CouponService::class)->quote($items)['discount'];
+        $payable = max(0.0, $subtotal - $coupon - (float) $this->welcome->sessionDiscount($subtotal));
+        $quote = $rewards->quote($user, $payable);
+        $available = $user ? min($rewards->available($user), intdiv((int) floor($payable * 100), \App\Services\RewardsService::STEP) * \App\Services\RewardsService::STEP) : 0;
+
+        return $quote + ['available' => $available, 'on' => $rewards->wanted()];
+    }
+
+    protected function giftFor(array $items, float $subtotal): float
+    {
+        $quote = $this->pointsFor($items, $subtotal);
+        $coupon = app(\App\Services\CouponService::class)->quote($items)['discount'];
+        $due = $subtotal - $coupon - (float) $this->welcome->sessionDiscount($subtotal) - $quote['discount'] + $this->shipping->cost($subtotal);
+
+        return app(\App\Services\GiftCardService::class)->quote(auth()->user(), max(0.0, round($due, 2)));
+    }
+
+    public function removeCoupon(\App\Services\CouponService $coupons)
+    {
+        $coupons->remove();
+
+        return back();
     }
 
     public function add(Request $request)
@@ -126,7 +175,8 @@ class CartController extends Controller
             return response()->json($this->cartPayload('success', $message, $product, $qty, $unitPrice));
         }
 
-        return back()->with('success', $message);
+        // "Buy now" goes straight on to checkout; the cart already holds the line.
+        return $request->boolean('buy') ? redirect('/checkout') : back()->with('success', $message);
     }
 
     /**

@@ -48,7 +48,7 @@ class ProductController extends Controller
 
     public function show(string $slug, Request $request)
     {
-        $item = Product::with(['category', 'productImages', 'variants', 'reviews.user'])
+        $item = Product::with(['category.parent', 'seller', 'productImages', 'variants', 'reviews.user'])
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
             ->where('slug', $slug)
@@ -89,7 +89,8 @@ class ProductController extends Controller
 
         // Delivery dates are per-day; a CDN/shared cache must not replay yesterday's page.
         return response()
-            ->view('product-details', compact('item', 'newProducts', 'delivery', 'boughtTogether', 'completeSet', 'metaViewContentId'))
+            ->view('market.product', compact('item', 'newProducts', 'delivery', 'boughtTogether', 'completeSet', 'metaViewContentId')
+                + \App\Support\PageViews::product($item, $delivery, $newProducts, $boughtTogether, $completeSet))
             ->header('Cache-Control', 'private, no-cache, must-revalidate');
     }
 

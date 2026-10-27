@@ -7,7 +7,7 @@
 <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
     <p class="text-sm text-gray-500">{{ $categories->total() }} categories total</p>
     <a href="{{ route('admin.categories.create') }}"
-       class="inline-flex items-center gap-2 px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
+       class="inline-flex items-center gap-2 px-4 py-2 bg-[#EA580C] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
         <i class="mdi mdi-plus"></i> Add Category
     </a>
 </div>
@@ -60,7 +60,7 @@
                 <td class="px-5 py-3 text-right">
                     <div class="flex items-center justify-end gap-2">
                         <a href="{{ route('admin.categories.edit', $category) }}"
-                           class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#bb976d] border border-[#bb976d] rounded-lg hover:bg-[#bb976d]/10 transition-colors">
+                           class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#EA580C] border border-[#EA580C] rounded-lg hover:bg-[#EA580C]/10 transition-colors">
                             <i class="mdi mdi-pencil"></i> Edit
                         </a>
                         <form method="POST" action="{{ route('admin.categories.destroy', $category) }}"
@@ -77,7 +77,7 @@
             @empty
             <tr>
                 <td colspan="6" class="px-5 py-10 text-center text-gray-400">
-                    No categories found. <a href="{{ route('admin.categories.create') }}" class="text-[#bb976d] hover:underline">Add one?</a>
+                    No categories found. <a href="{{ route('admin.categories.create') }}" class="text-[#EA580C] hover:underline">Add one?</a>
                 </td>
             </tr>
             @endforelse

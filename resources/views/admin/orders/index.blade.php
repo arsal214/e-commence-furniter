@@ -23,12 +23,12 @@ $currentStatus = request('status');
 
 <div class="flex flex-wrap gap-2 mb-5">
     <a href="{{ route('admin.orders.index') }}"
-       class="px-3 py-1.5 text-sm rounded-lg font-medium transition-colors {{ !$currentStatus ? 'bg-[#bb976d] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50' }}">
+       class="px-3 py-1.5 text-sm rounded-lg font-medium transition-colors {{ !$currentStatus ? 'bg-[#EA580C] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50' }}">
         All <span class="ml-1 text-xs opacity-70">{{ $counts['all'] }}</span>
     </a>
     @foreach(['pending','processing','shipped','delivered','cancelled'] as $s)
     <a href="{{ route('admin.orders.index', ['status' => $s]) }}"
-       class="px-3 py-1.5 text-sm rounded-lg font-medium transition-colors {{ $currentStatus === $s ? 'bg-[#bb976d] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50' }}">
+       class="px-3 py-1.5 text-sm rounded-lg font-medium transition-colors {{ $currentStatus === $s ? 'bg-[#EA580C] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50' }}">
         {{ ucfirst($s) }} <span class="ml-1 text-xs opacity-70">{{ $counts[$s] }}</span>
     </a>
     @endforeach
@@ -81,7 +81,7 @@ $currentStatus = request('status');
                 </td>
                 <td class="px-5 py-3 text-right">
                     <a href="{{ route('admin.orders.show', $order) }}"
-                       class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#bb976d] border border-[#bb976d] rounded-lg hover:bg-[#bb976d]/10 transition-colors">
+                       class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#EA580C] border border-[#EA580C] rounded-lg hover:bg-[#EA580C]/10 transition-colors">
                         <i class="mdi mdi-eye"></i> View
                     </a>
                 </td>

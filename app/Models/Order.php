@@ -18,7 +18,7 @@ class Order extends Model
         'meta_fbp', 'meta_fbc', 'client_ip', 'client_user_agent', 'meta_event_sent_at',
         'tracking_number', 'supplier_name', 'supplier_order_id',
         'supplier_tracking', 'carrier', 'shipped_at',
-        'payment_token', 'payment_requested_at', 'payment_request_count',
+        'coupon_code', 'coupon_discount', 'points_used', 'points_discount', 'gift_card_discount', 'payment_token', 'payment_requested_at', 'payment_request_count', 'stock_issue',
     ];
 
     protected $casts = [

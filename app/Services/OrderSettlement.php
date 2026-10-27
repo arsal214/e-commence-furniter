@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Mail;
  */
 class OrderSettlement
 {
-    public function __construct(protected WelcomeOfferService $welcome, protected MetaEventsService $meta) {}
+    public function __construct(protected WelcomeOfferService $welcome, protected MetaEventsService $meta, protected InventoryService $inventory) {}
 
     /**
      * Mark the order paid. Returns true only for the call that flipped it.
@@ -46,7 +46,14 @@ class OrderSettlement
                 'payment_method' => $method,
             ] + ($method === 'stripe' && $livemode !== null ? ['stripe_livemode' => $livemode] : []));
 
+            $locked->loadMissing('items');
+            $this->inventory->commit($locked);
+            app(ShipmentService::class)->createForOrder($locked);
+
             $this->welcome->markUsed($locked, $cardFingerprint);
+            app(CouponService::class)->recordUse($locked);
+            app(RewardsService::class)->recordSpend($locked);
+            app(GiftCardService::class)->spend($locked);
 
             $order->refresh();
 

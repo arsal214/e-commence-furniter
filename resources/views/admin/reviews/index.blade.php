@@ -7,7 +7,7 @@
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
     <p class="text-sm text-gray-500">{{ $reviews->total() }} {{ Str::plural('review', $reviews->total()) }} total</p>
     <a href="{{ route('admin.reviews.create', ['product_id' => $productId]) }}"
-       class="inline-flex items-center gap-2 px-4 py-2 bg-[#bb976d] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
+       class="inline-flex items-center gap-2 px-4 py-2 bg-[#EA580C] text-white text-sm font-medium rounded-lg hover:bg-[#a8845a] transition-colors">
         <i class="mdi mdi-plus"></i> Add Review
     </a>
 </div>
@@ -15,7 +15,7 @@
 {{-- Filters --}}
 <form method="GET" action="{{ route('admin.reviews.index') }}" class="flex flex-col sm:flex-row gap-3 mb-5">
     <select name="product_id" onchange="this.form.submit()"
-            class="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#bb976d]/40">
+            class="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#EA580C]/40">
         <option value="">All products</option>
         @foreach ($products as $product)
             <option value="{{ $product->id }}" @selected((string) $productId === (string) $product->id)>{{ $product->name }}</option>
@@ -23,7 +23,7 @@
     </select>
     <div class="flex gap-2 flex-1">
         <input type="text" name="search" value="{{ $search }}" placeholder="Search reviewer, comment, product…"
-               class="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#bb976d]/40">
+               class="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#EA580C]/40">
         <button type="submit" class="px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors">
             <i class="mdi mdi-magnify"></i>
         </button>
@@ -75,7 +75,7 @@
                 <td class="px-5 py-3 text-right">
                     <div class="flex items-center justify-end gap-2">
                         <a href="{{ route('admin.reviews.edit', $review) }}"
-                           class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#bb976d] border border-[#bb976d] rounded-lg hover:bg-[#bb976d]/10 transition-colors">
+                           class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-[#EA580C] border border-[#EA580C] rounded-lg hover:bg-[#EA580C]/10 transition-colors">
                             <i class="mdi mdi-pencil"></i> Edit
                         </a>
                         <form method="POST" action="{{ route('admin.reviews.destroy', $review) }}"
@@ -92,7 +92,7 @@
             @empty
             <tr>
                 <td colspan="6" class="px-5 py-10 text-center text-gray-400">
-                    No reviews found. <a href="{{ route('admin.reviews.create', ['product_id' => $productId]) }}" class="text-[#bb976d] hover:underline">Add one?</a>
+                    No reviews found. <a href="{{ route('admin.reviews.create', ['product_id' => $productId]) }}" class="text-[#EA580C] hover:underline">Add one?</a>
                 </td>
             </tr>
             @endforelse

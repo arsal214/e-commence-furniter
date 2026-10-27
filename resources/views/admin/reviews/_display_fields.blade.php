@@ -15,7 +15,7 @@
         Photo <span class="text-gray-400 font-normal">(optional, max 4MB)</span>
     </label>
     <input type="file" name="image" accept="image/jpeg,image/png,image/webp"
-           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-gray-100 file:text-gray-700 file:text-sm focus:outline-none focus:border-[#bb976d]">
+           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-gray-100 file:text-gray-700 file:text-sm focus:outline-none focus:border-[#EA580C]">
 
     @if($review?->image_url)
         <div class="flex items-center gap-3 mt-2">
@@ -31,7 +31,7 @@
 
 <label class="flex items-start gap-2.5 cursor-pointer">
     <input type="checkbox" name="is_verified" value="1" {{ $currentVerified ? 'checked' : '' }}
-           class="mt-0.5 rounded border-gray-300 text-[#bb976d] focus:ring-[#bb976d]">
+           class="mt-0.5 rounded border-gray-300 text-[#EA580C] focus:ring-[#EA580C]">
     <span class="text-sm">
         <span class="font-medium text-gray-700">Verified purchase</span>
         <span class="block text-xs text-gray-400">

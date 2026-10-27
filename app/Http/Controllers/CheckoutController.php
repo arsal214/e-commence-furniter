@@ -24,6 +24,9 @@ use Stripe\PaymentIntent;
 
 class CheckoutController extends Controller
 {
+    /** @var array<int,int|null> product id => seller id for the order being created */
+    protected array $sellerIds = [];
+
     public function __construct(
         protected CartService $cart,
         protected TikTokEventsService $tiktok,
@@ -86,10 +89,13 @@ class CheckoutController extends Controller
         $icData    = $this->meta->cartData($this->cart->items());
         $this->meta->track('InitiateCheckout', $icEventId, $icData, $this->meta->buildUser(request()), request()->fullUrl());
 
+        $couponQuote = app(\App\Services\CouponService::class)->quote($this->cart->items());
         $claim   = \App\Models\WelcomeClaim::find(session('welcome_claim_id'));
         $preview = $claim
-            ? $this->welcome->validateAtCheckout($claim->email, $this->cart->total(), 0.0)
+            ? $this->welcome->validateAtCheckout($claim->email, max(0.0, $this->cart->total() - $couponQuote['discount']), 0.0)
             : null;
+        $pointsQuote = app(\App\Services\RewardsService::class)->quote(auth()->user(), max(0.0, $this->cart->total() - $couponQuote['discount'] - ($preview['discount'] ?? 0.0)));
+        $giftQuote = app(\App\Services\GiftCardService::class)->quote(auth()->user(), max(0.0, $this->cart->total() - $couponQuote['discount'] - ($preview['discount'] ?? 0.0) - $pointsQuote['discount'] + $shippingCost));
 
         return view('checkout', [
             'metaIcEventId'   => $icEventId,
@@ -97,7 +103,14 @@ class CheckoutController extends Controller
             'welcomeEmail'    => $claim?->email,
             'welcomeDiscount' => $preview['discount'] ?? 0.0,
             'welcomeCode'     => $claim?->code,
+            'prefill'         => auth()->user()?->addresses()->where('is_default', true)->first(), // the saved default address
+            'couponCode'      => $couponQuote['discount'] > 0 ? $couponQuote['code'] : null,
+            'couponDiscount'  => $couponQuote['discount'],
+            'pointsUsed'      => $pointsQuote['points'],
+            'pointsDiscount'  => $pointsQuote['discount'],
+            'giftDiscount'    => $giftQuote,
             'cartItems'       => $this->cart->items(),
+            'sellerNames'     => $this->cart->sellerNames($this->cart->items()),
             'cartTotal'       => $this->cart->total(),
             'shippingOptions' => $shippingOptions,
             'stripeKey'       => config('services.stripe.key'),
@@ -299,18 +312,28 @@ class CheckoutController extends Controller
             return redirect()->route('cart')->with('error', $this->addonMessage());
         }
 
+        // The cart may have sat open while someone else bought the last unit.
+        if ($short = app(\App\Services\InventoryService::class)->shortfalls($this->cart->items())) {
+            return redirect()->route('cart')->with('error', implode(' ', $short));
+        }
+
         $shippingCosts = ['free' => $this->shipping->cost($subtotal), 'fast' => 10, 'local' => 15];
         $shippingCost  = $shippingCosts[$data['shipping']];
 
         // Welcome offer: decided here from the database; nothing the browser sends
         // can change it. A rejected claim just means no discount, with a reason shown.
-        $quote    = $this->welcome->validateAtCheckout($data['email'], $subtotal, $shippingCost, [
+        $couponQuote = app(\App\Services\CouponService::class)->quote($this->cart->items());
+        $couponDiscount = $couponQuote['discount'];
+        $quote    = $this->welcome->validateAtCheckout($data['email'], max(0.0, $subtotal - $couponDiscount), $shippingCost, [
             'address' => $data['address'], 'address2' => $data['address2'] ?? null,
             'zip' => $data['zip'] ?? null, 'country' => $data['country'],
         ]);
         $discount = $quote['discount'];
         $shippingCost = max(0.0, $shippingCost - $quote['shipping_discount']);
-        $total    = max(0.0, round($subtotal - $discount + $shippingCost, 2));
+        $pointsQuote = app(\App\Services\RewardsService::class)->quote(auth()->user(), max(0.0, $subtotal - $couponDiscount - $discount));
+        $pointsDiscount = $pointsQuote['discount'];
+        $giftDiscount = app(\App\Services\GiftCardService::class)->quote(auth()->user(), max(0.0, round($subtotal - $couponDiscount - $discount - $pointsDiscount + $shippingCost, 2)));
+        $total    = max(0.0, round($subtotal - $couponDiscount - $discount - $pointsDiscount - $giftDiscount + $shippingCost, 2));
 
         if ($quote['reason'] && $quote['reason'] !== 'below_minimum') {
             session()->flash('welcome_notice', \App\Services\WelcomeOfferService::REASONS[$quote['reason']]);
@@ -345,59 +368,95 @@ class CheckoutController extends Controller
             }
         }
 
-        // Create the order
-        $order = Order::create([
-            'user_id'         => $buyerId,
-            'name'            => $data['name'],
-            'email'           => $data['email'],
-            'phone'           => $data['phone'],
-            'city'            => $data['city'] ?? null,
-            'state'           => $data['state'] ?? null,
-            'zip'             => $data['zip'] ?? null,
-            'country'         => $data['country'],
-            'address'         => $data['address'],
-            'address2'        => $data['address2'] ?? null,
-            'notes'           => $data['notes'] ?? null,
-            'payment_method'  => $data['payment_method'],
-            'payment_status'  => 'pending',
-            'shipping'        => $data['shipping'],
-            'subtotal'        => $subtotal,
-            'shipping_cost'   => $shippingCost,
-            'discount'        => $discount,
-            'utm_source'      => session('attribution.utm_source'),
-            'utm_medium'      => session('attribution.utm_medium'),
-            'utm_campaign'    => session('attribution.utm_campaign'),
-            'utm_content'     => session('attribution.utm_content'),
-            'utm_term'        => session('attribution.utm_term'),
-            'meta_fbp'        => $request->cookie('_fbp'),
-            'meta_fbc'        => $request->cookie('_fbc') ?: (session('attribution.fbclid') ? 'fb.1.' . now()->getTimestampMs() . '.' . session('attribution.fbclid') : null),
-            'client_ip'       => $request->ip(),
-            'client_user_agent' => substr((string) $request->userAgent(), 0, 512),
-            'welcome_claim_id' => $discount > 0 || $quote['shipping_discount'] > 0 ? $quote['claim']?->id : null,
-            'total'           => $total,
-            'status'          => 'pending',
-            'tracking_number' => 'FRN-' . date('Y') . '-' . strtoupper(Str::random(8)),
-        ]);
+        // Double-click / retry guard. The same buyer, cart, email and total within 30 minutes
+        // is one order: a second request waits for the first, then reuses its pending order
+        // instead of creating a duplicate order and a second payment.
+        $key = 'checkout:' . sha1(json_encode($this->cart->items()) . '|' . $data['email'] . '|' . $data['payment_method'] . '|' . $total);
 
-        // Save order items
-        foreach ($this->cart->items() as $item) {
-            if (! empty($item['bundle_id'])) {
-                $this->expandBundleLine($order, $item);
-                continue;
+        $order = \Illuminate\Support\Facades\Cache::lock('lock:' . $key, 30)->block(15, function () use ($key, $data, $request, $buyerId, $subtotal, $shippingCost, $discount, $quote, $total, $couponQuote, $pointsQuote, $giftDiscount) {
+            $existing = ($id = \Illuminate\Support\Facades\Cache::get($key)) ? Order::where('id', $id)->where('payment_status', 'pending')->first() : null;
+            if ($existing) {
+                return $existing;
             }
 
-            OrderItem::create([
-                'order_id'   => $order->id,
-                'product_id' => $item['id'],
-                'name'       => $item['name'],
-                'color'      => $item['color'] ?? null,
-                'size'       => $item['size'] ?? null,
-                'sku'        => $item['sku'] ?? null,
-                'price'      => $item['price'],
-                'qty'        => $item['qty'],
-                'total'      => $item['price'] * $item['qty'],
+            $order = \Illuminate\Support\Facades\DB::transaction(function () use ($data, $request, $buyerId, $subtotal, $shippingCost, $discount, $quote, $total, $couponQuote, $pointsQuote, $giftDiscount) {
+                // Who sells each line, for payouts and the seller's own order list.
+                $this->sellerIds = Product::whereIn('id', collect($this->cart->items())->pluck('id')->filter())->pluck('seller_id', 'id')->all();
+                $order = Order::create([
+                'user_id'         => $buyerId,
+                'name'            => $data['name'],
+                'email'           => $data['email'],
+                'phone'           => $data['phone'],
+                'city'            => $data['city'] ?? null,
+                'state'           => $data['state'] ?? null,
+                'zip'             => $data['zip'] ?? null,
+                'country'         => $data['country'],
+                'address'         => $data['address'],
+                'address2'        => $data['address2'] ?? null,
+                'notes'           => $data['notes'] ?? null,
+                'payment_method'  => $data['payment_method'],
+                'payment_status'  => 'pending',
+                'shipping'        => $data['shipping'],
+                'subtotal'        => $subtotal,
+                'shipping_cost'   => $shippingCost,
+                'discount'        => $discount,
+                'coupon_code'     => $couponQuote['discount'] > 0 ? $couponQuote['code'] : null,
+                'coupon_discount' => $couponQuote['discount'],
+                'points_used'     => $pointsQuote['points'],
+                'points_discount' => $pointsQuote['discount'],
+                'gift_card_discount' => $giftDiscount,
+                'utm_source'      => session('attribution.utm_source'),
+                'utm_medium'      => session('attribution.utm_medium'),
+                'utm_campaign'    => session('attribution.utm_campaign'),
+                'utm_content'     => session('attribution.utm_content'),
+                'utm_term'        => session('attribution.utm_term'),
+                'meta_fbp'        => $request->cookie('_fbp'),
+                'meta_fbc'        => $request->cookie('_fbc') ?: (session('attribution.fbclid') ? 'fb.1.' . now()->getTimestampMs() . '.' . session('attribution.fbclid') : null),
+                'client_ip'       => $request->ip(),
+                'client_user_agent' => substr((string) $request->userAgent(), 0, 512),
+                'welcome_claim_id' => $discount > 0 || $quote['shipping_discount'] > 0 ? $quote['claim']?->id : null,
+                'total'           => $total,
+                'status'          => 'pending',
+                'tracking_number' => 'FRN-' . date('Y') . '-' . strtoupper(Str::random(8)),
             ]);
-        }
+
+            // Each seller's coupon is shared over that seller's own lines, so the seller's payout is reduced by exactly their coupon.
+            $perLine = [];
+            foreach (collect($this->cart->items())->reject(fn ($i) => ! empty($i['bundle_id']))->groupBy(fn ($i) => $this->sellerIds[$i["id"]] ?? 0, true) as $sid => $lines) {
+                if ($off = $couponQuote['bySeller'][$sid] ?? 0) {
+                    $perLine += \App\Services\CouponService::allocate($off, $lines->map(fn ($i) => (float) $i['price'] * (int) $i['qty'])->all());
+                }
+            }
+
+            // Save order items
+            foreach ($this->cart->items() as $key2 => $item) {
+                if (! empty($item['bundle_id'])) {
+                    $this->expandBundleLine($order, $item);
+                    continue;
+                }
+
+                OrderItem::create([
+                    'order_id'   => $order->id,
+                    'product_id' => $item['id'],
+                    'seller_id'  => $this->sellerIds[$item['id']] ?? null,
+                    'name'       => $item['name'],
+                    'color'      => $item['color'] ?? null,
+                    'size'       => $item['size'] ?? null,
+                    'sku'        => $item['sku'] ?? null,
+                    'price'      => $item['price'],
+                    'qty'        => $item['qty'],
+                    'total'      => $item['price'] * $item['qty'],
+                    'coupon_discount' => $perLine[$key2] ?? 0,
+                ]);
+            }
+
+                return $order;
+            });
+
+            \Illuminate\Support\Facades\Cache::put($key, $order->id, now()->addMinutes(30));
+
+            return $order;
+        });
 
         // A freshly auto-created account: sign the buyer in for this session and
         // email their temporary credentials. Done here (not per payment branch) so
@@ -412,17 +471,31 @@ class CheckoutController extends Controller
             }
         }
 
-        if ($data['payment_method'] === 'paypal') {
-            $paypalOrder = $this->paypal->createOrder($total, (string) $order->id);
+        // Gift cards, points and offers can cover the whole order: nothing is left to pay, so there is no payment step.
+        if ((float) $order->total <= 0) {
+            $order->load('items');
+            $this->settlement->markPaid($order, 'gift_card', 0);
+            $order->refresh();
+            $this->settlement->sendConfirmation($order);
+            $this->cart->clear();
+            session()->put('recent_order', $order->tracking_number);
 
-            $order->update([
-                'paypal_order_id' => $paypalOrder['id'],
-                'paypal_livemode' => $this->paypal->livemode(),
-            ]);
+            return redirect()->route('thank-you');
+        }
+
+        if ($data['payment_method'] === 'paypal') {
+            // A reused order (double-click) keeps its existing PayPal order.
+            if (! $order->paypal_order_id) {
+                $paypalOrder = $this->paypal->createOrder($total, (string) $order->id);
+                $order->update([
+                    'paypal_order_id' => $paypalOrder['id'],
+                    'paypal_livemode' => $this->paypal->livemode(),
+                ]);
+            }
 
             return view('checkout-paypal', [
                 'order'          => $order,
-                'paypalOrderId'  => $paypalOrder['id'],
+                'paypalOrderId'  => $order->paypal_order_id,
                 'paypalClientId' => config('services.paypal.client_id'),
             ]);
         }
@@ -430,12 +503,8 @@ class CheckoutController extends Controller
         // Stripe payment
         Stripe::setApiKey(config('services.stripe.secret'));
 
-        $intent = PaymentIntent::create([
-            'amount'   => (int) round($total * 100), // cents
-            'currency' => 'usd',
-            'automatic_payment_methods' => ['enabled' => true], // Apple Pay / Google Pay / Link per dashboard settings
-            'metadata' => ['order_id' => $order->id],
-        ]);
+        // Reuses the order's existing intent (double-click) instead of minting a second.
+        $intent = $this->paymentIntentFor($order);
 
         // Stamped here rather than derived at read time: the API keys get swapped
         // from test to live later, and this has to stay a fact about the moment
@@ -476,6 +545,7 @@ class CheckoutController extends Controller
             OrderItem::create([
                 'order_id'    => $order->id,
                 'product_id'  => $i->product_id,
+                'seller_id'   => $i->product->seller_id,
                 'name'        => $i->product->name,
                 'color'       => $i->variant?->type === 'color' ? $i->variant->value : null,
                 'size'        => $i->variant?->type === 'size' ? $i->variant->value : null,

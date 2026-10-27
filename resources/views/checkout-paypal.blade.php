@@ -1,12 +1,11 @@
 {{-- resources/views/checkout-paypal.blade.php --}}
-@extends('layouts.main')
+@extends('layouts.pg')
 
 @section('title', 'Complete payment — PeytonGhalib')
 @section('robots', 'noindex, nofollow')
 
 @section('content')
 
-@include('includes.navbar')
 
 <x-checkout.shell step="payment" title="Complete payment">
 
@@ -143,7 +142,6 @@
 
 </x-checkout.shell>
 
-@include('includes.footer')
 
 @endsection
 

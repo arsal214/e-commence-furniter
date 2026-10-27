@@ -218,7 +218,7 @@ class HomeController extends Controller
     
     public function forgerPassword()
     {
-        return view('forger-password');  
+        return view('auth.forgot');  
     }
 
     public function comingSoon()
@@ -231,7 +231,7 @@ class HomeController extends Controller
         $order = null;
 
         if ($tracking = session('recent_order')) {
-            $order = Order::with('items.product')
+            $order = Order::with('items.product', 'items.seller')
                 ->where('tracking_number', $tracking)
                 ->first();
         }
@@ -270,14 +270,17 @@ class HomeController extends Controller
     public function trackOrder(Request $request)
     {
         $order = null;
+        $raw = $request->query('tracking');
+        $tracking = is_string($raw) ? strtoupper(trim(mb_substr($raw, 0, 40))) : ''; // tracking[]=x is not a tracking number
 
-        if ($request->filled('tracking')) {
-            $order = Order::with('items')
-                ->where('tracking_number', strtoupper(trim($request->tracking)))
-                ->first();
+        if ($tracking !== '') {
+            $order = Order::with('items.product', 'items.seller')->where('tracking_number', $tracking)->first();
         }
 
-        return view('track-order', compact('order'));
+        $shipments = $order ? \App\Models\Shipment::with('seller')->where('order_id', $order->id)->get()->keyBy('seller_id') : collect();
+        $claims = $order ? \App\Models\Dispute::where('order_id', $order->id)->get()->keyBy('seller_id') : collect();
+
+        return view('track-order', compact('order', 'tracking', 'shipments', 'claims'));
     }
 
     public function paymentMethod()

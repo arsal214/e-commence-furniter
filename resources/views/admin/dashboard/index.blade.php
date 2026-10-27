@@ -72,8 +72,8 @@
         <h2 class="text-base font-semibold text-gray-800 mb-4">Quick Actions</h2>
         <div class="space-y-3">
             <a href="{{ route('admin.products.create') }}"
-               class="flex items-center gap-3 p-3 rounded-lg bg-[#bb976d]/10 hover:bg-[#bb976d]/20 transition-colors">
-                <i class="mdi mdi-plus-circle text-[#bb976d] text-xl"></i>
+               class="flex items-center gap-3 p-3 rounded-lg bg-[#EA580C]/10 hover:bg-[#EA580C]/20 transition-colors">
+                <i class="mdi mdi-plus-circle text-[#EA580C] text-xl"></i>
                 <span class="text-sm font-medium text-gray-700">Add New Product</span>
             </a>
             <a href="{{ route('admin.categories.create') }}"
@@ -93,7 +93,7 @@
     <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-semibold text-gray-800">Recent Orders</h2>
-            <a href="{{ route('admin.orders.index') }}" class="text-xs text-[#bb976d] hover:underline">View all</a>
+            <a href="{{ route('admin.orders.index') }}" class="text-xs text-[#EA580C] hover:underline">View all</a>
         </div>
         @php $recentOrders = \App\Models\Order::latest()->take(6)->get(); @endphp
         @if ($recentOrders->isEmpty())
@@ -111,8 +111,8 @@
                     ];
                 @endphp
                 <li class="py-2.5 flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-[#bb976d]/10 flex items-center justify-center flex-shrink-0">
-                        <i class="mdi mdi-receipt text-[#bb976d] text-sm"></i>
+                    <div class="w-9 h-9 rounded-full bg-[#EA580C]/10 flex items-center justify-center flex-shrink-0">
+                        <i class="mdi mdi-receipt text-[#EA580C] text-sm"></i>
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-medium text-gray-800">#{{ $order->id }} · {{ $order->name }}</p>
@@ -121,7 +121,7 @@
                     <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-600' }}">
                         {{ ucfirst($order->status) }}
                     </span>
-                    <a href="{{ route('admin.orders.show', $order) }}" class="text-xs text-[#bb976d] hover:underline ml-1">View</a>
+                    <a href="{{ route('admin.orders.show', $order) }}" class="text-xs text-[#EA580C] hover:underline ml-1">View</a>
                 </li>
                 @endforeach
             </ul>

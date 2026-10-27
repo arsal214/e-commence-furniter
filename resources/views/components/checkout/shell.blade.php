@@ -15,25 +15,25 @@
 @push('styles')
 <style>
 /* ── Checkout (co-) ────────────────────────────────────────────
-   Gold #bb976d is an accent tone only — it fails 4.5:1 on white,
+   Gold #EA580C is an accent tone only — it fails 4.5:1 on white,
    so link/label text uses the darker --co-gold-ink. */
 .co {
-    --co-gold:      #bb976d;
-    --co-gold-ink:  #8a6a3f;
+    --co-gold:      #EA580C;
+    --co-gold-ink:  #C2410C;
     --co-surface:   #ffffff;
-    --co-bg:        #faf9f7;
-    --co-border:    rgba(187, 151, 109, .24);
-    --co-text:      #1f1a15;
-    --co-muted:     #6b6157;
+    --co-bg:        #F9FAFB;
+    --co-border:    rgba(234,88,12, .24);
+    --co-text:      #111827;
+    --co-muted:     #4B5563;
     --co-danger:    #b42318;
     --co-success:   #15803d;
     --co-field:     #ffffff;
 
     background:
-        radial-gradient(900px 400px at 85% -5%, rgba(187, 151, 109, .13), transparent 60%),
+        radial-gradient(900px 400px at 85% -5%, rgba(234,88,12, .13), transparent 60%),
         var(--co-bg);
     padding: 36px 0 80px;
-    font-family: var(--pg-font-body);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     color: var(--co-text);
 }
 .dark .co {
@@ -44,7 +44,7 @@
     --co-muted:   #a89f93;
     --co-danger:  #ff9c94;
     --co-success: #6ee7a8;
-    --co-gold-ink:#d4a96a;
+    --co-gold-ink:#FB923C;
     --co-field:   rgba(10, 8, 6, .4);
 }
 
@@ -71,7 +71,7 @@
 }
 .co-step--done .co-step__dot    { background: var(--co-gold); border-color: var(--co-gold); color: #0a0806; }
 .co-step--done                  { color: var(--co-gold-ink); }
-.co-step--current .co-step__dot { border-color: var(--co-gold); color: var(--co-gold-ink); box-shadow: 0 0 0 4px rgba(187, 151, 109, .16); }
+.co-step--current .co-step__dot { border-color: var(--co-gold); color: var(--co-gold-ink); box-shadow: 0 0 0 4px rgba(234,88,12, .16); }
 .co-step--current               { color: var(--co-text); }
 .co-steps__sep { width: 22px; height: 1px; background: var(--co-border); }
 
@@ -115,8 +115,8 @@
 .co-field__input { height: 50px; }                       /* >= 44px touch target */
 .co-field__area  { height: 104px; padding: 13px 14px; resize: vertical; line-height: 1.5; }
 .co-field__input::placeholder, .co-field__area::placeholder { color: var(--co-muted); opacity: .75; }
-.co-field__input:hover, .co-field__area:hover { border-color: rgba(187, 151, 109, .5); }
-.co-field__input:focus-visible, .co-field__area:focus-visible { border-color: var(--co-gold); box-shadow: 0 0 0 4px rgba(187, 151, 109, .18); }
+.co-field__input:hover, .co-field__area:hover { border-color: rgba(234,88,12, .5); }
+.co-field__input:focus-visible, .co-field__area:focus-visible { border-color: var(--co-gold); box-shadow: 0 0 0 4px rgba(234,88,12, .18); }
 .co-field__input[aria-invalid="true"], .co-field__area[aria-invalid="true"] { border-color: var(--co-danger); background: rgba(180, 35, 24, .04); }
 
 /* Selects reuse .co-field__input wholesale so they cannot drift from the text
@@ -199,13 +199,13 @@
     border-radius: 8px; cursor: pointer;
 }
 .co-combo__opt mark {
-    background: rgba(187, 151, 109, .28); color: inherit;
+    background: rgba(234,88,12, .28); color: inherit;
     border-radius: 3px; padding: 0 1px; font-weight: 700;
 }
 /* .is-active is the keyboard cursor; aria-selected is the committed value.
    They are different things and a buyer arrowing through the list needs to
    see both at once. */
-.co-combo__opt.is-active { background: rgba(187, 151, 109, .16); }
+.co-combo__opt.is-active { background: rgba(234,88,12, .16); }
 .co-combo__opt[aria-selected="true"] { color: var(--co-gold-ink); font-weight: 600; }
 .co-combo__opt[aria-selected="true"]::after {
     content: ''; flex: none; width: 15px; height: 15px;
@@ -227,6 +227,7 @@
 /* ── Summary (sticky) ──────────────────────────────────────── */
 @media (min-width: 1025px) { .co-summary { position: sticky; top: 24px; } }
 
+.co-group { list-style: none; font-size: 12.5px; font-weight: 700; letter-spacing: .02em; color: var(--co-gold-ink); padding: 10px 0 4px; border-bottom: 1px solid var(--co-border); margin-top: 6px; }
 .co-sum__items { list-style: none; margin: 0 0 4px; padding: 0; display: grid; gap: 12px; }
 .co-sum__item  { display: flex; align-items: center; gap: 12px; }
 
@@ -235,7 +236,7 @@
     width: 54px; height: 54px;
     border-radius: 11px; object-fit: cover;
     border: 1px solid var(--co-border);
-    background: rgba(187, 151, 109, .12);
+    background: rgba(234,88,12, .12);
 }
 .co-sum__qty {
     position: absolute; top: -7px; right: -7px;
@@ -276,7 +277,7 @@
     transition: border-color .2s ease, background .2s ease;
 }
 .co-choice + .co-choice { margin-top: 9px; }
-.co-choice:hover { border-color: rgba(187, 151, 109, .55); }
+.co-choice:hover { border-color: rgba(234,88,12, .55); }
 .co-choice__input { position: absolute; opacity: 0; width: 0; height: 0; }
 .co-choice__mark {
     display: grid; place-items: center;
@@ -295,7 +296,7 @@
 .co-choice__input:checked + .co-choice__mark::after { transform: scale(1); }
 .co-choice__input:focus-visible + .co-choice__mark { outline: 2px solid var(--co-gold); outline-offset: 2px; }
 /* Selected card: border + tint + filled dot — not colour alone */
-.co-choice:has(.co-choice__input:checked) { border-color: var(--co-gold); background: rgba(187, 151, 109, .09); }
+.co-choice:has(.co-choice__input:checked) { border-color: var(--co-gold); background: rgba(234,88,12, .09); }
 
 .co-choice__label { font-size: 14px; font-weight: 600; color: var(--co-text); }
 .co-choice__note  { display: block; font-size: 12.5px; font-weight: 400; color: var(--co-muted); margin-top: 3px; }
@@ -326,7 +327,7 @@
    deliberately quieter than .co-submit — it must never compete with the button
    that completes the order. Reuses .co-check__input / .co-check__box for the
    tick so the control is identical to the terms checkbox. */
-.co-bump { border-color: rgba(187, 151, 109, .45); background: rgba(187, 151, 109, .05); }
+.co-bump { border-color: rgba(234,88,12, .45); background: rgba(234,88,12, .05); }
 .co-bump__row {
     display: flex; align-items: center; gap: 12px;
     cursor: pointer;
@@ -336,8 +337,8 @@
     background: var(--co-surface);
     transition: border-color .2s ease, box-shadow .2s ease;
 }
-.co-bump__row:hover { border-color: rgba(187, 151, 109, .55); }
-.co-bump__row:focus-within { border-color: var(--co-gold); box-shadow: 0 0 0 4px rgba(187, 151, 109, .18); }
+.co-bump__row:hover { border-color: rgba(234,88,12, .55); }
+.co-bump__row:focus-within { border-color: var(--co-gold); box-shadow: 0 0 0 4px rgba(234,88,12, .18); }
 .co-bump__img { width: 52px; height: 52px; flex: none; border-radius: 9px; object-fit: cover; }
 .co-bump__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .co-bump__name { font-size: 14px; font-weight: 600; color: var(--co-text); }
@@ -351,14 +352,14 @@
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     margin-top: 16px;
     font-size: 15px; font-weight: 700;
-    color: #0a0806;
-    background: linear-gradient(135deg, #d4a96a 0%, #bb976d 55%, #a9855c 100%);
+    color: #ffffff;
+    background: linear-gradient(135deg, #FB923C 0%, #EA580C 55%, #C2410C 100%);
     border: 0; border-radius: 999px;
     cursor: pointer;
-    box-shadow: 0 6px 20px -6px rgba(187, 151, 109, .55);
+    box-shadow: 0 6px 20px -6px rgba(234,88,12, .55);
     transition: transform .18s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s ease, opacity .2s ease;
 }
-.co-submit:hover  { transform: translateY(-2px); box-shadow: 0 12px 28px -8px rgba(187, 151, 109, .7); }
+.co-submit:hover  { transform: translateY(-2px); box-shadow: 0 12px 28px -8px rgba(234,88,12, .7); }
 .co-submit:active { transform: translateY(0) scale(.99); }
 .co-submit:focus-visible { outline: 2px solid var(--co-gold-ink); outline-offset: 3px; }
 .co-submit[disabled], .co-submit[aria-busy="true"] { opacity: .7; cursor: not-allowed; transform: none; box-shadow: none; }
@@ -398,7 +399,7 @@
 .co-stripe__skeleton { display: grid; gap: 12px; }
 .co-stripe__bar {
     height: 46px; border-radius: 10px;
-    background: linear-gradient(90deg, rgba(187,151,109,.10) 25%, rgba(187,151,109,.20) 37%, rgba(187,151,109,.10) 63%);
+    background: linear-gradient(90deg, rgba(234,88,12,.10) 25%, rgba(234,88,12,.20) 37%, rgba(234,88,12,.10) 63%);
     background-size: 400% 100%;
     animation: co-shimmer 1.4s ease infinite;
 }
@@ -429,7 +430,7 @@
     width: 76px; height: 76px;
     border-radius: 12px; object-fit: cover;
     border: 1px solid var(--co-border);
-    background: rgba(187, 151, 109, .12);
+    background: rgba(234,88,12, .12);
 }
 .co-line__name {
     font-size: 15px; font-weight: 600; margin: 0 0 4px;
@@ -459,7 +460,7 @@
 }
 .co-qty__btn:first-child { border-radius: 999px 0 0 999px; }
 .co-qty__btn:last-child  { border-radius: 0 999px 999px 0; }
-.co-qty__btn:hover:not([disabled]) { background: rgba(187, 151, 109, .12); border-color: var(--co-gold); color: var(--co-gold-ink); }
+.co-qty__btn:hover:not([disabled]) { background: rgba(234,88,12, .12); border-color: var(--co-gold); color: var(--co-gold-ink); }
 .co-qty__btn:focus-visible { outline: 2px solid var(--co-gold); outline-offset: -2px; z-index: 1; }
 .co-qty__btn[disabled] { opacity: .45; cursor: not-allowed; }
 
@@ -477,7 +478,7 @@
 }
 .co-qty__input::-webkit-outer-spin-button,
 .co-qty__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.co-qty__input:focus-visible { border-color: var(--co-gold); box-shadow: 0 0 0 3px rgba(187, 151, 109, .16); z-index: 1; position: relative; }
+.co-qty__input:focus-visible { border-color: var(--co-gold); box-shadow: 0 0 0 3px rgba(234,88,12, .16); z-index: 1; position: relative; }
 
 .co-line__remove {
     display: grid; place-items: center;
@@ -504,7 +505,7 @@
     display: grid; place-items: center;
     width: 62px; height: 62px; margin: 0 auto 16px;
     border-radius: 50%;
-    background: rgba(187, 151, 109, .12);
+    background: rgba(234,88,12, .12);
     color: var(--co-gold);
 }
 .co-empty__title { font-size: 18px; font-weight: 700; margin: 0 0 6px; color: var(--co-text); }
@@ -542,14 +543,14 @@
     cursor: pointer;
     transition: background .2s ease, color .2s ease;
 }
-.co-modal__close:hover { background: rgba(187, 151, 109, .12); color: var(--co-text); }
+.co-modal__close:hover { background: rgba(234,88,12, .12); color: var(--co-text); }
 .co-modal__close:focus-visible { outline: 2px solid var(--co-gold); outline-offset: 2px; }
 
 .co-modal__icon {
     display: grid; place-items: center;
     width: 56px; height: 56px; margin: 0 auto 14px;
     border-radius: 50%;
-    background: rgba(187, 151, 109, .14);
+    background: rgba(234,88,12, .14);
     color: var(--co-gold-ink);
 }
 .co-modal__title { font-size: 19px; font-weight: 700; margin: 0 0 6px; color: var(--co-text); }
@@ -568,7 +569,7 @@
     text-decoration: none;
     transition: background .2s ease, border-color .2s ease;
 }
-.co-ghost:hover { background: rgba(187, 151, 109, .08); border-color: var(--co-gold); }
+.co-ghost:hover { background: rgba(234,88,12, .08); border-color: var(--co-gold); }
 .co-ghost:focus-visible { outline: 2px solid var(--co-gold); outline-offset: 2px; }
 
 /* ── Banners ───────────────────────────────────────────────── */
@@ -589,6 +590,17 @@
 @media (prefers-reduced-motion: reduce) {
     .co *, .co *::before, .co *::after { transition-duration: .01ms !important; animation: none !important; }
 }
+
+/* ── Marketplace design: plain white page, 1320px frame, bordered cards ── */
+.co { background: #fff; padding: 24px 0 80px; }
+.co__wrap { max-width: 1320px; padding: 0 clamp(12px, 4vw, 40px); }
+.co__wrap--narrow { max-width: 900px; }
+.co__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.co__title { margin: 0; font-size: clamp(26px, 3.4vw, 36px); font-weight: 800; letter-spacing: -.03em; }
+.co__secure { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #15803D; }
+.co-panel { border-color: #E5E7EB; border-radius: 20px; box-shadow: none; }
+.co-panel__title { font-size: 16px; font-weight: 800; }
+.co-field__input, .co-field__area { border-color: #D1D5DB; }
 </style>
 @endpush
 @endonce
@@ -596,45 +608,10 @@
 <div class="co">
     <div class="co__wrap {{ $step === 'payment' ? 'co__wrap--narrow' : '' }}">
 
-        <nav class="co__crumbs" aria-label="Breadcrumb">
-            <a href="{{ url('/') }}">Home</a>
-            <span aria-hidden="true">/</span>
-            <a href="{{ route('cart') }}">Cart</a>
-            <span aria-hidden="true">/</span>
-            <span aria-current="page">{{ $step === 'payment' ? 'Payment' : 'Checkout' }}</span>
-        </nav>
-
-        <h1 class="co__title">{{ $title }}</h1>
-
-        @php
-            // How far along the flow this page is: cart 1, details 2, payment 3.
-            $stepIndex = ['cart' => 1, 'details' => 2, 'payment' => 3][$step] ?? 1;
-        @endphp
-
-        <ol class="co-steps">
-            @foreach (['Cart', 'Details', 'Payment'] as $i => $label)
-                @php
-                    $n     = $i + 1;
-                    $state = $n < $stepIndex ? 'done' : ($n === $stepIndex ? 'current' : 'todo');
-                @endphp
-
-                @if ($i > 0)
-                    <li class="co-steps__sep" aria-hidden="true"></li>
-                @endif
-
-                <li class="co-step {{ $state !== 'todo' ? 'co-step--' . $state : '' }}"
-                    @if ($state === 'current') aria-current="step" @endif>
-                    <span class="co-step__dot" aria-hidden="true">
-                        @if ($state === 'done')
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                        @else
-                            {{ $n }}
-                        @endif
-                    </span>
-                    {{ $label }}
-                </li>
-            @endforeach
-        </ol>
+        <div class="co__head">
+            <h1 class="co__title">{{ $title }}</h1>
+            <span class="co__secure"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Secure checkout</span>
+        </div>
 
         {{ $slot }}
 
